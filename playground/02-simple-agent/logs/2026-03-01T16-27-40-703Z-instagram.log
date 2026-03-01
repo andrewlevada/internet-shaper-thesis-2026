@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-03-01T16-27-40-703Z",
+  "domName": "instagram",
+  "request": "i don't wanna see the like count on posts",
+  "rules": [
+    {
+      "query_selector": "span.xe9ewy2",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "agentResponse": [
+    {
+      "type": "text",
+      "text": "Done! Like counts on posts are now hidden. The rule targets the specific `xe9ewy2` class that Instagram uses for displaying like numbers (e.g., \"44\", \"23.3K\", \"252.3K\"), and it will persist across page loads. The Like button and other post interactions remain fully functional — you just won't see the numbers anymore."
+    }
+  ],
+  "usage": {
+    "input_tokens": 163024,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 81,
+    "service_tier": "standard",
+    "inference_geo": "global"
+  }
+}

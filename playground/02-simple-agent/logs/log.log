@@ -1,0 +1,3 @@
+These experiments ended up billing at $10.36. Even thought there are 2 log files, there were 2 additional attempts at running the agent — once on youtube, and once on substack, but both failed due to the rate limit for anthropic's api.
+
+All this suggests the need for further context compacting.
