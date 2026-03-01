@@ -1,0 +1,34 @@
+============================================================
+Processing: instagram
+============================================================
+00-original: 1,025,897 tokens, 1,964,595 chars
+01-remove-head-script-link-style: 172,355 tokens, 289,061 chars
+02-clean-svg-contents: 161,611 tokens, 271,406 chars
+03-remove-comments: 161,523 tokens, 271,210 chars
+
+Summary for instagram:
+    Token reduction: 1,025,897 → 161,523 (84.3%)
+
+============================================================
+Processing: substack
+============================================================
+00-original: 192,875 tokens, 453,795 chars
+01-remove-head-script-link-style: 176,177 tokens, 406,452 chars
+02-clean-svg-contents: 148,017 tokens, 358,749 chars
+03-remove-comments: 147,964 tokens, 358,530 chars
+
+Summary for substack:
+    Token reduction: 192,875 → 147,964 (23.3%)
+
+============================================================
+Processing: youtube
+============================================================
+00-original: 1,629,793 tokens, 4,040,550 chars
+01-remove-head-script-link-style: 1,049,200 tokens, 2,791,420 chars
+02-clean-svg-contents: 844,389 tokens, 2,475,218 chars
+03-remove-comments: 665,466 tokens, 2,001,866 chars
+
+Summary for youtube:
+    Token reduction: 1,629,793 → 665,466 (59.2%)
+
+Done!

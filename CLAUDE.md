@@ -10,3 +10,8 @@ Popular, commertial user interfaces have systematically misaligned business and 
 
 How can adaptive generative interfaces counteract this problem by re-aligning
 the interface with a user's articulated goal?
+
+# Best Practices
+
+- Write in TypeScript, use Deno
+- Log all script results with input configuration in .log files for reproducability
