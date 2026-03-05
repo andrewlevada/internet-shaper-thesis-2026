@@ -11,20 +11,6 @@ Popular, commertial user interfaces have systematically misaligned business and 
 How can adaptive generative interfaces counteract this problem by re-aligning
 the interface with a user's articulated goal?
 
-# Packages
-
-## browser-extension
-
-Chrome extension built with [fiber-extension](../fiber/README.md) framework.
-
-```bash
-cd browser-extension
-pnpm dev    # Dev mode with HMR
-pnpm build  # Production build
-```
-
-Load `browser-extension/dist/` in chrome://extensions as unpacked extension.
-
 # Best Practices
 
 - Write in TypeScript, use Deno

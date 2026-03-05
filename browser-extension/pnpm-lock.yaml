@@ -6,9 +6,7 @@ settings:
 
 importers:
 
-  .: {}
-
-  browser-extension:
+  .:
     dependencies:
       fiber-extension:
         specifier: link:../../fiber
