@@ -1,0 +1,18 @@
+Compacting DOMs...
+
+substack.html
+  Chars:  355,505 -> 120,790 (66.0% reduction)
+  Tokens: 146,372 -> 46,248 (68.4% reduction)
+  433 wrappers, 193 siblings, 3 classes
+
+youtube.html
+  Chars:  1,960,978 -> 422,659 (78.4% reduction)
+  Tokens: 651,941 -> 142,426 (78.2% reduction)
+  4011 wrappers, 138 siblings, 1 classes
+
+instagram.html
+  Chars:  264,195 -> 54,898 (79.2% reduction)
+  Tokens: 157,880 -> 33,642 (78.7% reduction)
+  681 wrappers, 106 siblings, 15 classes
+
+Output: /Users/andrewlevada/Projects/my/internet-shaper/playground/03-compact-agent/doms/compacted

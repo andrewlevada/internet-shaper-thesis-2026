@@ -1,0 +1,40 @@
+Input:  /Users/andrewlevada/Projects/my/internet-shaper/playground/00-dom-samples
+Output: /Users/andrewlevada/Projects/my/internet-shaper/playground/01-dom-cleaning/output
+
+============================================================
+Processing: instagram
+============================================================
+  00-original: 1,025,897 tokens, 1,964,595 chars
+  01-remove-head-script-link-style: 172,355 tokens, 289,061 chars
+  02-remove-hidden-elements: 168,715 tokens, 282,058 chars
+  03-clean-svg-contents: 157,968 tokens, 264,391 chars
+  04-remove-comments: 157,880 tokens, 264,195 chars
+
+  Summary for instagram:
+    Token reduction: 1,025,897 → 157,880 (84.6%)
+
+============================================================
+Processing: substack
+============================================================
+  00-original: 192,875 tokens, 453,795 chars
+  01-remove-head-script-link-style: 176,177 tokens, 406,452 chars
+  02-remove-hidden-elements: 174,586 tokens, 403,434 chars
+  03-clean-svg-contents: 146,425 tokens, 355,724 chars
+  04-remove-comments: 146,372 tokens, 355,505 chars
+
+  Summary for substack:
+    Token reduction: 192,875 → 146,372 (24.1%)
+
+============================================================
+Processing: youtube
+============================================================
+  00-original: 1,629,793 tokens, 4,040,550 chars
+  01-remove-head-script-link-style: 1,049,200 tokens, 2,791,420 chars
+  02-remove-hidden-elements: 964,634 tokens, 2,645,643 chars
+  03-clean-svg-contents: 828,747 tokens, 2,428,783 chars
+  04-remove-comments: 651,941 tokens, 1,960,978 chars
+
+  Summary for youtube:
+    Token reduction: 1,629,793 → 651,941 (60.0%)
+
+Done!

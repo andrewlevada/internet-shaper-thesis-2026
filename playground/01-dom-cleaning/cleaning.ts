@@ -6,8 +6,9 @@
  *
  * Steps:
  * 1. Remove all head, script, link, style tags
- * 2. Remove all tags inside svg tags except for title tags
- * 3. Remove HTML comments
+ * 2. Remove elements with display:none in style attribute
+ * 3. Remove all tags inside svg tags except for title tags
+ * 4. Remove HTML comments
  */
 
 import { load } from "https://deno.land/std@0.224.0/dotenv/mod.ts";
@@ -93,6 +94,21 @@ function removeComments(html: string): string {
   return html.replace(/<!--[\s\S]*?-->/g, "");
 }
 
+function removeHiddenElements(html: string): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  if (!doc) throw new Error("Failed to parse HTML");
+
+  const allElements = doc.querySelectorAll("[style]");
+  for (const el of allElements) {
+    const style = (el as Element).getAttribute("style") ?? "";
+    if (style.includes("display:none") || style.includes("display: none")) {
+      el.remove();
+    }
+  }
+
+  return doc.documentElement?.outerHTML ?? "";
+}
+
 type CleaningStep = {
   name: string;
   apply: (html: string) => string;
@@ -104,11 +120,15 @@ const steps: CleaningStep[] = [
     apply: (html) => removeElements(html, ["head", "script", "link", "style"]),
   },
   {
-    name: "02-clean-svg-contents",
+    name: "02-remove-hidden-elements",
+    apply: removeHiddenElements,
+  },
+  {
+    name: "03-clean-svg-contents",
     apply: cleanSvgContents,
   },
   {
-    name: "03-remove-comments",
+    name: "04-remove-comments",
     apply: removeComments,
   },
 ];
