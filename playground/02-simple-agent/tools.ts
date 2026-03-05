@@ -5,12 +5,25 @@ import type { UpdateRule } from "./types.ts";
 
 const collectedRules: UpdateRule[] = [];
 
+export interface ToolCall {
+  name: string;
+  input: unknown;
+  result: string;
+}
+
+const toolCallHistory: ToolCall[] = [];
+
 export function getCollectedRules(): UpdateRule[] {
   return [...collectedRules];
 }
 
-export function resetCollectedRules(): void {
+export function getToolCallHistory(): ToolCall[] {
+  return [...toolCallHistory];
+}
+
+export function resetCollectedState(): void {
   collectedRules.length = 0;
+  toolCallHistory.length = 0;
 }
 
 export function createTools(domName: string, scriptDir: string) {
@@ -24,10 +37,13 @@ export function createTools(domName: string, scriptDir: string) {
     run: async () => {
       try {
         const content = await Deno.readTextFile(domPath);
+        toolCallHistory.push({ name: "read_dom", input: {}, result: content });
         return content;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        return `Error reading DOM: ${message}`;
+        const result = `Error reading DOM: ${message}`;
+        toolCallHistory.push({ name: "read_dom", input: {}, result });
+        return result;
       }
     },
   });
@@ -67,7 +83,9 @@ Prefer specific selectors (class names, data attributes, tag names) over structu
 
       collectedRules.push(rule);
 
-      return `Rule registered (#${collectedRules.length}): selector="${input.query_selector}"`;
+      const result = `Rule registered (#${collectedRules.length}): selector="${input.query_selector}"`;
+      toolCallHistory.push({ name: "set_update_rule", input, result });
+      return result;
     },
   });
 

@@ -5,10 +5,12 @@ import Anthropic from "npm:@anthropic-ai/sdk";
 import {
   createTools,
   getCollectedRules,
-  resetCollectedRules,
+  getToolCallHistory,
+  resetCollectedState,
+  type ToolCall,
 } from "./tools.ts";
 import { join } from "https://deno.land/std@0.224.0/path/mod.ts";
-import { AgentLogEntry, UpdateRule } from "./types.ts";
+import type { UpdateRule } from "./types.ts";
 
 await load({ export: true });
 
@@ -46,6 +48,8 @@ async function main() {
     Deno.exit(1);
   }
 
+  const cliCommand = `./agent.ts ${domName} "${userRequest}"`;
+
   const scriptDir = new URL(".", import.meta.url).pathname;
   const domPath = join(scriptDir, "doms", `${domName}.html`);
 
@@ -62,7 +66,7 @@ async function main() {
   console.log(`Request: ${userRequest}`);
   console.log("Starting agent...\n");
 
-  resetCollectedRules();
+  resetCollectedState();
 
   const anthropic = new Anthropic();
   const tools = createTools(domName, scriptDir);
@@ -89,32 +93,84 @@ async function main() {
   }
 
   const rules = getCollectedRules();
-  await outputResults(domName, userRequest, rules, finalMessage, scriptDir);
+  const toolCalls = getToolCallHistory();
+  await outputResults(cliCommand, userRequest, rules, toolCalls, finalMessage, scriptDir);
 }
 
 async function outputResults(
-  domName: string,
-  request: string,
+  cliCommand: string,
+  userRequest: string,
   rules: UpdateRule[],
+  toolCalls: ToolCall[],
   response: Anthropic.Beta.BetaMessage | undefined,
   scriptDir: string,
 ): Promise<void> {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const timestamp = new Date().toISOString();
   const logDir = join(scriptDir, "logs");
   await Deno.mkdir(logDir, { recursive: true });
 
-  const logContent: AgentLogEntry = {
-    timestamp,
-    domName,
-    request,
-    rules,
-    agentResponse: response?.content ?? null,
-    usage: response?.usage ?? { input_tokens: 0, output_tokens: 0 },
-  };
+  // Build text log
+  const lines: string[] = [
+    `Timestamp: ${timestamp}`,
+    `Command: ${cliCommand}`,
+    `Model: ${MODEL}`,
+    `Tokens: ${response?.usage?.input_tokens ?? 0} in / ${response?.usage?.output_tokens ?? 0} out`,
+    "",
+    "=== Result ===",
+    "",
+  ];
 
-  const logPath = join(logDir, `${timestamp}-${domName}.log`);
-  await Deno.writeTextFile(logPath, JSON.stringify(logContent, null, 2));
+  if (rules.length === 0) {
+    lines.push("(no rules generated)");
+  } else {
+    for (const [i, rule] of rules.entries()) {
+      lines.push(`[${i + 1}] ${rule.query_selector}`);
+      lines.push(`    ${rule.logic}`);
+      lines.push("");
+    }
+  }
 
+  lines.push("");
+  lines.push("=== Agent Chat ===");
+  lines.push("");
+  lines.push("--- USER ---");
+  lines.push(userRequest);
+  lines.push("");
+
+  // Interleave tool calls with their results
+  for (const call of toolCalls) {
+    lines.push(`--- TOOL CALL: ${call.name} ---`);
+    const inputStr = Object.keys(call.input as object).length > 0
+      ? JSON.stringify(call.input, null, 2)
+      : "(no input)";
+    lines.push(inputStr);
+    lines.push("");
+    lines.push(`--- TOOL RESULT: ${call.name} ---`);
+    lines.push(call.result);
+    lines.push("");
+  }
+
+  // Final assistant response
+  const textBlocks = response?.content.filter((b) => b.type === "text") ?? [];
+  if (textBlocks.length > 0) {
+    lines.push("--- ASSISTANT ---");
+    for (const block of textBlocks) {
+      if (block.type === "text") {
+        lines.push(block.text);
+      }
+    }
+    lines.push("");
+  }
+
+  const logContent = lines.join("\n");
+  const fileTimestamp = timestamp.replace(/[:.]/g, "-");
+  // Extract dom name from command for filename
+  const domMatch = cliCommand.match(/\.\/agent\.ts\s+(\w+)/);
+  const domName = domMatch?.[1] ?? "unknown";
+  const logPath = join(logDir, `${fileTimestamp}-${domName}.log`);
+  await Deno.writeTextFile(logPath, logContent);
+
+  // Console output
   console.log("\n" + "=".repeat(50));
   console.log("Generated Update Rules:");
   console.log("=".repeat(50));
