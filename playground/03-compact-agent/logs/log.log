@@ -1,0 +1,7 @@
+Some info on the compacting used for the get_map_of_dom tool:
+
+| DOM       | Before            | After            |
+|-----------|-------------------|------------------|
+| substack  | 358K / 148K tok   | 121K /  46K tok  |
+| youtube   | 2M   / 665K tok   | 449K / 151K tok  |
+| instagram | 271K / 162K tok   |  53K /  32K tok  |
