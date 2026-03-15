@@ -177,6 +177,13 @@ export const styles = css`
     opacity: 0.5;
   }
 
+  .element-count {
+    font-size: 11px;
+    color: #666666;
+    padding: 2px 6px;
+    background: #ffffff;
+  }
+
   * {
     color: inherit;
   }

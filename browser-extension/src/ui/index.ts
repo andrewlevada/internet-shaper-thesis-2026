@@ -1,7 +1,12 @@
 import { html as litHtml, render } from "lit";
 import { computed, signal, withWatch } from "@lit-labs/preact-signals";
 import { overlay } from "fiber-extension";
-import { applyRules, runAgent, type UpdateRule } from "../agent/index.ts";
+import {
+  applyRules,
+  getElementCounts,
+  runAgent,
+  type UpdateRule,
+} from "../agent/index.ts";
 import { getApiKey, showApiKeyPrompt } from "../api-key.ts";
 import { styles } from "../styles.ts";
 
@@ -45,6 +50,7 @@ const isProcessing = signal(false);
 const status = signal("");
 const view = signal<View>("main");
 const inputValue = signal("");
+const elementCounts = signal<number[]>([]);
 
 // Computed signals
 const buttonText = computed(() => (isProcessing.value ? "..." : "Run"));
@@ -168,7 +174,8 @@ function renderMain(renderRoot: HTMLElement | ShadowRoot) {
 
         <button
           class="btn-sm"
-          @click="${() => {
+          @click="${async () => {
+            elementCounts.value = await getElementCounts();
             showRulesView();
             render(renderRules(renderRoot), renderRoot);
           }}"
@@ -184,6 +191,7 @@ function renderMain(renderRoot: HTMLElement | ShadowRoot) {
 
 function renderRules(renderRoot: HTMLElement | ShadowRoot) {
   const rules = loadRules();
+  const counts = elementCounts.value;
   return html`
     <style>
     ${styles}
@@ -217,6 +225,7 @@ function renderRules(renderRoot: HTMLElement | ShadowRoot) {
                     : ""}">${rule.label}</strong>
 
                   <div class="row">
+                    <span class="element-count">${counts[i] ?? 0} elements</span>
                     <div
                       class="switch ${rule.enabled !== false
                         ? "switch-enabled"
@@ -269,4 +278,8 @@ export function shouldOpenRulesOnLoad(): boolean {
     return true;
   }
   return false;
+}
+
+export async function refreshElementCounts(): Promise<void> {
+  elementCounts.value = await getElementCounts();
 }
