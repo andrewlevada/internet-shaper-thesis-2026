@@ -11,7 +11,7 @@ export const styles = css`
     gap: 8px;
     padding: 12px;
     background: #ffffff;
-    color: #1111111;
+    color: #111111;
     font-family: system-ui, -apple-system, sans-serif;
   }
 
@@ -130,5 +130,9 @@ export const styles = css`
     display: block;
     font-size: 11px;
     word-break: break-all;
+  }
+
+  * {
+    color: inherit;
   }
 `;

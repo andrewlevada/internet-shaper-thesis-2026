@@ -12,6 +12,24 @@ function isDataAttribute(name: string): boolean {
   return name.startsWith("data-");
 }
 
+function getClassName(element: Element): string {
+  const cn = element.className;
+  if (typeof cn === "string") return cn;
+  if (cn && typeof cn === "object" && "baseVal" in cn) {
+    return (cn as SVGAnimatedString).baseVal;
+  }
+  return "";
+}
+
+function setClassName(element: Element, value: string): void {
+  const cn = element.className;
+  if (typeof cn === "string") {
+    element.className = value;
+  } else if (cn && typeof cn === "object" && "baseVal" in cn) {
+    (cn as SVGAnimatedString).baseVal = value;
+  }
+}
+
 function filterAttributes(element: Element): void {
   const toRemove: string[] = [];
   for (const attr of element.attributes) {
@@ -27,11 +45,7 @@ function filterAttributes(element: Element): void {
 function getElementSignature(element: Element): string {
   const tag = element.tagName.toLowerCase();
   const id = element.id || "";
-  const classes = element.className
-    .split(/\s+/)
-    .filter(Boolean)
-    .sort()
-    .join(" ");
+  const classes = getClassName(element).split(/\s+/).filter(Boolean).sort().join(" ");
   return `${tag}:${id}:${classes}`;
 }
 
@@ -39,8 +53,9 @@ function countAllClasses(element: Element): Map<string, number> {
   const counts = new Map<string, number>();
 
   function walk(el: Element) {
-    if (el.className && typeof el.className === "string") {
-      for (const cls of el.className.split(/\s+/).filter(Boolean)) {
+    const cn = getClassName(el);
+    if (cn) {
+      for (const cls of cn.split(/\s+/).filter(Boolean)) {
         counts.set(cls, (counts.get(cls) || 0) + 1);
       }
     }
@@ -77,12 +92,13 @@ function removeHighFrequencyClasses(
   }
 
   function walk(el: Element) {
-    if (el.className && typeof el.className === "string") {
-      const remaining = el.className
+    const cn = getClassName(el);
+    if (cn) {
+      const remaining = cn
         .split(/\s+/)
         .filter((cls) => cls && !toRemove.has(cls))
         .join(" ");
-      el.className = remaining;
+      setClassName(el, remaining);
     }
     for (const child of el.children) {
       walk(child);
@@ -119,14 +135,10 @@ function collapseChain(element: Element, doc: Document): number {
   for (const wrapper of chain) {
     for (const attr of wrapper.attributes) {
       if (attr.name === "class") {
-        const parentClasses = (element.className || "").split(/\s+/).filter(
-          Boolean,
-        );
-        const wrapperClasses = (wrapper.className || "").split(/\s+/).filter(
-          Boolean,
-        );
+        const parentClasses = getClassName(element).split(/\s+/).filter(Boolean);
+        const wrapperClasses = getClassName(wrapper).split(/\s+/).filter(Boolean);
         const merged = [...new Set([...parentClasses, ...wrapperClasses])];
-        element.className = merged.join(" ");
+        setClassName(element, merged.join(" "));
       } else if (!element.hasAttribute(attr.name)) {
         element.setAttribute(attr.name, attr.value);
       }
