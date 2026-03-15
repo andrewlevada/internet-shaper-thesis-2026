@@ -78,7 +78,13 @@ export async function runAgent(
     const response = await anthropic.messages.create({
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      system: SYSTEM_PROMPT,
+      system: [
+        {
+          type: "text",
+          text: SYSTEM_PROMPT,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
       tools: toolDefinitions,
       messages,
     });
@@ -138,6 +144,22 @@ export async function runAgent(
         console.log(`[Agent] Executing tool: ${block.name}`);
         const result = executeTool(block.name, block.input, context);
         console.log(`[Agent] Tool result length: ${result.length}`);
+
+        // Cache the DOM map result (largest payload)
+        if (block.name === "get_map_of_dom") {
+          return {
+            type: "tool_result" as const,
+            tool_use_id: block.id,
+            content: [
+              {
+                type: "text" as const,
+                text: result,
+                cache_control: { type: "ephemeral" as const },
+              },
+            ],
+          };
+        }
+
         return {
           type: "tool_result" as const,
           tool_use_id: block.id,

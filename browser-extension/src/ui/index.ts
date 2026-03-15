@@ -57,7 +57,7 @@ async function handleSubmit() {
     return;
   }
 
-  const apiKey = getApiKey();
+  const apiKey = await getApiKey();
   console.log("[Shaper] API key present:", !!apiKey);
 
   if (!apiKey) {
