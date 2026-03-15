@@ -8,6 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@lit-labs/preact-signals": "^1.0.3",
     "fiber-extension": "link:../../fiber",
     "lit": "^3.3.2"
   },

@@ -15,3 +15,4 @@ the interface with a user's articulated goal?
 
 - Write in TypeScript, use Deno
 - Log all script results with input configuration in .log files for reproducability
+- Use Lit's `css` template for styles instead of inline styles
