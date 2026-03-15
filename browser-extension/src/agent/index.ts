@@ -171,7 +171,10 @@ export async function applyRules(rules: UpdateRule[]): Promise<void> {
             try {
               fn(el);
             } catch (e) {
-              console.error(`[Apply] Rule "${rule.label}" failed on element:`, e);
+              console.error(
+                `[Apply] Rule "${rule.label}" failed on element:`,
+                e,
+              );
             }
           }
           console.log(

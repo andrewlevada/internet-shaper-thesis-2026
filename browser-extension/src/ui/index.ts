@@ -12,6 +12,8 @@ function getRulesStorageKey(): string {
   return `internet-shaper-rules:${globalThis.location.hostname}`;
 }
 
+const OPEN_RULES_FLAG = "internet-shaper-open-rules";
+
 export function loadRules(): UpdateRule[] {
   const stored = localStorage.getItem(getRulesStorageKey());
   return stored ? JSON.parse(stored) : [];
@@ -26,6 +28,13 @@ function saveRules(rules: UpdateRule[]): void {
 function deleteRule(index: number): void {
   const rules = loadRules();
   rules.splice(index, 1);
+  localStorage.setItem(getRulesStorageKey(), JSON.stringify(rules));
+}
+
+function toggleRule(index: number): void {
+  const rules = loadRules();
+  const rule = rules[index];
+  rule.enabled = rule.enabled === false ? true : false;
   localStorage.setItem(getRulesStorageKey(), JSON.stringify(rules));
 }
 
@@ -112,9 +121,16 @@ function showMainView() {
   view.value = "main";
 }
 
-function handleDeleteRule(index: number, renderRoot: HTMLElement | ShadowRoot) {
+function handleDeleteRule(index: number) {
   deleteRule(index);
-  render(renderRules(renderRoot), renderRoot);
+  sessionStorage.setItem(OPEN_RULES_FLAG, "true");
+  location.reload();
+}
+
+function handleToggleRule(index: number) {
+  toggleRule(index);
+  sessionStorage.setItem(OPEN_RULES_FLAG, "true");
+  location.reload();
 }
 
 function renderMain(renderRoot: HTMLElement | ShadowRoot) {
@@ -123,6 +139,7 @@ function renderMain(renderRoot: HTMLElement | ShadowRoot) {
     <style>
     ${styles}
     </style>
+
     <div class="overlay-container">
       <div class="row">
         <input
@@ -195,16 +212,29 @@ function renderRules(renderRoot: HTMLElement | ShadowRoot) {
             html`
               <div class="rule-card">
                 <div class="row-between">
-                  <strong class="rule-title">${rule.label}</strong>
-                  <button
-                    class="btn-delete"
-                    @click="${() => handleDeleteRule(i, renderRoot)}"
-                  >
-                    Delete
-                  </button>
+                  <strong class="rule-title ${rule.enabled === false
+                    ? "disabled"
+                    : ""}">${rule.label}</strong>
+
+                  <div class="row">
+                    <div
+                      class="switch ${rule.enabled !== false
+                        ? "switch-enabled"
+                        : ""}"
+                      @click="${() => handleToggleRule(i)}"
+                    >
+                    </div>
+                    <button
+                      class="btn-delete"
+                      @click="${() => handleDeleteRule(i)}"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
 
                 <code class="rule-selector">${rule.query_selector}</code>
+                <pre class="rule-logic">${rule.logic}</pre>
               </div>
             `,
         )}
@@ -223,5 +253,20 @@ function renderRules(renderRoot: HTMLElement | ShadowRoot) {
 }
 
 export function createOverlayTemplate(renderRoot: HTMLElement | ShadowRoot) {
-  return renderMain(renderRoot);
+  return view.value === "rules"
+    ? renderRules(renderRoot)
+    : renderMain(renderRoot);
+}
+
+export function setView(v: View) {
+  view.value = v;
+}
+
+export function shouldOpenRulesOnLoad(): boolean {
+  const flag = sessionStorage.getItem(OPEN_RULES_FLAG);
+  if (flag) {
+    sessionStorage.removeItem(OPEN_RULES_FLAG);
+    return true;
+  }
+  return false;
 }
