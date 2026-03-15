@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { ext } from "fiber-extension";
 import type { UpdateRule } from "./types";
 import { capturePageDom } from "./dom-processing";
 import {
@@ -154,33 +155,36 @@ export async function runAgent(
   return { rules: context.rules, context };
 }
 
-export function applyRules(rules: UpdateRule[]): void {
+export async function applyRules(rules: UpdateRule[]): Promise<void> {
   console.log("[Apply] Applying rules:", rules.length);
 
-  for (const rule of rules) {
-    try {
-      console.log(`[Apply] Rule "${rule.label}": ${rule.query_selector}`);
-      const elements = document.querySelectorAll(rule.query_selector);
-      console.log(`[Apply] Found ${elements.length} elements`);
-
-      // This code is dangerous on purpose. We are executing strings here!
-      const fn = new Function("element", rule.logic);
-      for (const element of elements) {
+  // Execute in page's main world via chrome.scripting API to bypass CSP
+  await ext.scripting.executeInMainWorld(
+    (rulesToApply: UpdateRule[]) => {
+      for (const rule of rulesToApply) {
         try {
-          fn(element);
+          console.log(`[Apply] Rule "${rule.label}": ${rule.query_selector}`);
+          const elements = document.querySelectorAll(rule.query_selector);
+          console.log(`[Apply] Found ${elements.length} elements`);
+          const fn = new Function("element", rule.logic);
+          for (const el of elements) {
+            try {
+              fn(el);
+            } catch (e) {
+              console.error(`[Apply] Rule "${rule.label}" failed on element:`, e);
+            }
+          }
+          console.log(
+            `[Apply] Rule "${rule.label}" applied to ${elements.length} elements`,
+          );
         } catch (e) {
-          console.error(`[Apply] Rule "${rule.label}" failed on element:`, e);
+          console.error(`[Apply] Rule "${rule.label}" failed:`, e);
         }
       }
-      console.log(
-        `[Apply] Rule "${rule.label}" applied to ${elements.length} elements`,
-      );
-    } catch (e) {
-      console.error(`[Apply] Rule "${rule.label}" failed:`, e);
-    }
-  }
-
-  console.log("[Apply] All rules applied");
+      console.log("[Apply] All rules applied");
+    },
+    [rules],
+  );
 }
 
 export type { UpdateRule } from "./types";

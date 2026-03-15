@@ -2,12 +2,12 @@ import { overlay } from "fiber-extension";
 import { applyRules } from "./agent/index.ts";
 import { createOverlayTemplate, loadRules } from "./ui/index.ts";
 
-function main() {
+async function main() {
   console.log("Internet Shaper loaded");
 
   const savedRules = loadRules();
   if (savedRules.length > 0) {
-    applyRules(savedRules);
+    await applyRules(savedRules);
     console.log(`Applied ${savedRules.length} saved rules`);
   }
 

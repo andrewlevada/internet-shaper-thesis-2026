@@ -81,7 +81,7 @@ async function handleSubmit() {
 
     if (result.rules.length > 0) {
       console.log("[Shaper] Applying rules...");
-      applyRules(result.rules);
+      await applyRules(result.rules);
       saveRules(result.rules);
       console.log("[Shaper] Rules applied and saved");
     }
@@ -148,6 +148,7 @@ function renderMain(renderRoot: HTMLElement | ShadowRoot) {
 
       <div class="row-between">
         <span class="status">${status}</span>
+
         <button
           class="btn-sm"
           @click="${() => {
@@ -157,6 +158,7 @@ function renderMain(renderRoot: HTMLElement | ShadowRoot) {
         >
           Rules (${rules.length})
         </button>
+
         <button class="btn-sm" @click="${showApiKeyPrompt}">API Key</button>
       </div>
     </div>
@@ -169,6 +171,7 @@ function renderRules(renderRoot: HTMLElement | ShadowRoot) {
     <style>
     ${styles}
     </style>
+
     <div class="modal-container">
       <div class="modal-header">
         <h2 class="modal-title">Rules for ${globalThis.location.hostname}</h2>
@@ -200,6 +203,7 @@ function renderRules(renderRoot: HTMLElement | ShadowRoot) {
                     Delete
                   </button>
                 </div>
+
                 <code class="rule-selector">${rule.query_selector}</code>
               </div>
             `,

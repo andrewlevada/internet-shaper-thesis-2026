@@ -9,7 +9,7 @@ export default defineConfig({
         version: "0.1.0",
         description: "Shape your internet experience",
         host_permissions: ["<all_urls>"],
-        permissions: ["storage"],
+        permissions: ["storage", "scripting"],
         action: {},
       },
     }),

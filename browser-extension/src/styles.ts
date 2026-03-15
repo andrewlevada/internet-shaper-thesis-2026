@@ -10,8 +10,8 @@ export const styles = css`
     flex-direction: column;
     gap: 8px;
     padding: 12px;
-    background: #f;
-    color: #1;
+    background: #ffffff;
+    color: #1111111;
     font-family: system-ui, -apple-system, sans-serif;
   }
 
@@ -25,8 +25,8 @@ export const styles = css`
     max-height: 80vh;
     overflow-y: auto;
     padding: 16px;
-    background: #f;
-    color: #1;
+    background: #ffffff;
+    color: #111111;
     font-family: system-ui, -apple-system, sans-serif;
   }
 
@@ -46,8 +46,7 @@ export const styles = css`
     width: 320px;
     padding: 10px 14px;
     border: none;
-    background: #e;
-    color: #1;
+    background: #eeeeee;
     font-size: 14px;
     outline: none;
   }
@@ -55,8 +54,7 @@ export const styles = css`
   .btn {
     padding: 10px 20px;
     border: none;
-    background: #e;
-    color: #1;
+    background: #eeeeee;
     font-size: 14px;
     cursor: pointer;
   }
@@ -64,8 +62,7 @@ export const styles = css`
   .btn-sm {
     padding: 6px 12px;
     border: none;
-    background: #e;
-    color: #1;
+    background: #eeeeee;
     font-size: 12px;
     cursor: pointer;
   }
@@ -73,8 +70,7 @@ export const styles = css`
   .btn-close {
     padding: 10px 12px;
     border: none;
-    background: #e;
-    color: #1;
+    background: #eeeeee;
     font-size: 14px;
     cursor: pointer;
   }
@@ -82,8 +78,8 @@ export const styles = css`
   .btn-close-sm {
     padding: 4px 8px;
     border: none;
-    background: #e;
-    color: #1;
+    background: #eeeeee;
+
     cursor: pointer;
   }
 
@@ -91,8 +87,7 @@ export const styles = css`
     margin-top: 12px;
     padding: 10px 16px;
     border: none;
-    background: #e;
-    color: #1;
+    background: #eeeeee;
     cursor: pointer;
     width: 100%;
   }
@@ -100,14 +95,12 @@ export const styles = css`
   .btn-delete {
     padding: 4px 8px;
     border: none;
-    background: #f;
-    color: #1;
+    background: #ffffff;
     cursor: pointer;
   }
 
   .status {
     font-size: 12px;
-    color: #1;
     flex: 1;
   }
 
@@ -123,14 +116,10 @@ export const styles = css`
     font-size: 16px;
   }
 
-  .empty-text {
-    color: #1;
-  }
-
   .rule-card {
     padding: 12px;
     margin-bottom: 8px;
-    background: #e;
+    background: #eeeeee;
   }
 
   .rule-title {
@@ -139,9 +128,7 @@ export const styles = css`
 
   .rule-selector {
     display: block;
-    margin-top: 8px;
     font-size: 11px;
-    color: #1;
     word-break: break-all;
   }
 `;
