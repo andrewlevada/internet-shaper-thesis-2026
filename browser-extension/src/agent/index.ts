@@ -180,38 +180,61 @@ export async function runAgent(
 export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
   console.log("[Apply] Applying rules:", rules.length);
 
-  // Execute in page's main world via chrome.scripting API to bypass CSP
+  // Execute in page's main world via fiber's executeInMainWorld
+  // The rule functions are inlined as strings and will be eval'd via TrustedTypes policy
   const counts = await ext.scripting.executeInMainWorld(
-    (rulesToApply: UpdateRule[]) => {
-      // Store rules and processed element sets globally for the observer.
-      // Note: WeakSet uses reference equality, so if a framework replaces a DOM node
-      // (e.g., React re-render), the new node will be treated as unprocessed and rules
-      // will re-apply. This is usually fine since most rules are idempotent.
+    (rulesToApply: Array<{ label: string; query_selector: string; logic: string; enabled?: boolean }>) => {
       const w = window as Window & {
-        __internetShaperRules?: UpdateRule[];
+        __internetShaperRules?: typeof rulesToApply;
         __internetShaperCounts?: number[];
         __internetShaperProcessed?: Map<string, WeakSet<Element>>;
         __internetShaperObserver?: MutationObserver;
+        __fiberTTPolicy?: { createScript: (input: string) => unknown };
+        trustedTypes?: {
+          createPolicy: (
+            name: string,
+            rules: Record<string, (input: string) => string>,
+          ) => { createScript: (input: string) => unknown };
+        };
+      };
+
+      // Ensure Trusted Types policy exists (created by fiber, or create our own)
+      if (w.trustedTypes && !w.__fiberTTPolicy) {
+        try {
+          w.__fiberTTPolicy = w.trustedTypes.createPolicy("fiber-extension", {
+            createScript: (input: string) => input,
+          });
+        } catch {
+          // Policy might already exist or be restricted
+        }
+      }
+
+      // Helper to create a function from string using TrustedTypes if available
+      const createFn = (logic: string): ((el: Element) => void) => {
+        const code = `(function(element) { ${logic} })`;
+        if (w.__fiberTTPolicy) {
+          const trusted = w.__fiberTTPolicy.createScript(code);
+          return (0, eval)(trusted as string) as (el: Element) => void;
+        }
+        return (0, eval)(code) as (el: Element) => void;
       };
 
       // Merge with existing rules and counts
       const existingRules = w.__internetShaperRules ?? [];
       const existingCounts = w.__internetShaperCounts ?? [];
       w.__internetShaperRules = [...existingRules, ...rulesToApply];
-      // Pre-allocate count slots for new rules (will be filled below)
       w.__internetShaperCounts = [
         ...existingCounts,
         ...new Array(rulesToApply.length).fill(0),
       ];
       const countOffset = existingCounts.length;
 
-      // Initialize processed elements map (selector -> WeakSet of processed elements)
+      // Initialize processed elements map
       if (!w.__internetShaperProcessed) {
         w.__internetShaperProcessed = new Map();
       }
       const processedMap = w.__internetShaperProcessed;
 
-      // Helper to get or create WeakSet for a selector
       const getProcessedSet = (selector: string): WeakSet<Element> => {
         let set = processedMap.get(selector);
         if (!set) {
@@ -221,9 +244,8 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
         return set;
       };
 
-      // Helper to apply a single rule to an element
       const applyRuleToElement = (
-        rule: UpdateRule,
+        rule: typeof rulesToApply[0],
         el: Element,
         fn: (el: Element) => void,
       ): boolean => {
@@ -243,7 +265,6 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
       const elementCounts: number[] = [];
       for (let i = 0; i < rulesToApply.length; i++) {
         const rule = rulesToApply[i];
-        // Skip disabled rules but keep index alignment
         if (rule.enabled === false) {
           elementCounts.push(0);
           continue;
@@ -251,16 +272,13 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
         try {
           console.log(`[Apply] Rule "${rule.label}": ${rule.query_selector}`);
           const elements = document.querySelectorAll(rule.query_selector);
-          const fn = new Function("element", rule.logic) as (
-            el: Element,
-          ) => void;
+          const fn = createFn(rule.logic);
           let count = 0;
           for (const el of elements) {
             if (applyRuleToElement(rule, el, fn)) count++;
           }
           console.log(`[Apply] Rule "${rule.label}" applied to ${count} elements`);
           elementCounts.push(count);
-          // Update global counts
           w.__internetShaperCounts![countOffset + i] = count;
         } catch (e) {
           console.error(`[Apply] Rule "${rule.label}" failed:`, e);
@@ -276,7 +294,6 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
           const rules = w.__internetShaperRules ?? [];
           if (rules.length === 0) return;
 
-          // Collect all added nodes
           const addedNodes: Node[] = [];
           for (const mutation of mutations) {
             for (const node of mutation.addedNodes) {
@@ -287,25 +304,20 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
           }
           if (addedNodes.length === 0) return;
 
-          // Check each rule against added nodes
           for (let ruleIndex = 0; ruleIndex < rules.length; ruleIndex++) {
             const rule = rules[ruleIndex];
             if (rule.enabled === false) continue;
             try {
-              const fn = new Function("element", rule.logic) as (
-                el: Element,
-              ) => void;
+              const fn = createFn(rule.logic);
               const processed = getProcessedSet(rule.query_selector);
 
               for (const node of addedNodes) {
                 const el = node as Element;
-                // Check if the added node itself matches
                 if (el.matches?.(rule.query_selector) && !processed.has(el)) {
                   if (applyRuleToElement(rule, el, fn)) {
                     w.__internetShaperCounts![ruleIndex]++;
                   }
                 }
-                // Check descendants of the added node
                 const descendants = el.querySelectorAll?.(rule.query_selector);
                 if (descendants) {
                   for (const desc of descendants) {
@@ -318,19 +330,12 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
                 }
               }
             } catch (e) {
-              console.error(
-                `[Apply] Observer rule "${rule.label}" failed:`,
-                e,
-              );
+              console.error(`[Apply] Observer rule "${rule.label}" failed:`, e);
             }
           }
         });
 
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-        });
-
+        observer.observe(document.body, { childList: true, subtree: true });
         w.__internetShaperObserver = observer;
       }
 
