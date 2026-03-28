@@ -134,6 +134,8 @@ export const styles = css`
 
   .rule-logic {
     display: block;
+    width: 100%;
+    min-height: 120px;
     margin-top: 8px;
     padding: 8px;
     background: #ffffff;
@@ -141,6 +143,19 @@ export const styles = css`
     font-size: 11px;
     white-space: pre-wrap;
     word-break: break-word;
+    border: none;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+
+  .btn-apply {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: none;
+    background: #4caf50;
+    color: #ffffff;
+    font-size: 12px;
+    cursor: pointer;
   }
 
   .switch {
