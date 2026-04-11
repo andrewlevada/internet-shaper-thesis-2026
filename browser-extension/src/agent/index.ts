@@ -39,6 +39,12 @@ When using set_update_rule:
 - The logic has NO access to window, document, or any global APIs - ONLY the \`element\` variable
 - Common operations: element.remove(), element.style.display = 'none', element.textContent = ''
 
+Rules must be idempotent and deterministic:
+- Running the same logic on the same element multiple times must produce the same result as running it once.
+- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
+- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
+- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
+
 Be thorough - if there are multiple variations of elements matching the user's request, create rules for each variation.`;
 
 export interface AgentResult {
@@ -244,16 +250,60 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
         return set;
       };
 
+      // Pending debounce timers keyed by element+rule
+      const pendingRetries = new Map<Element, Map<string, ReturnType<typeof setTimeout>>>();
+
+      const scheduleRetry = (
+        rule: typeof rulesToApply[0],
+        el: Element,
+        fn: (el: Element) => void,
+        ruleIndex: number,
+      ) => {
+        let byElement = pendingRetries.get(el);
+        if (!byElement) {
+          byElement = new Map();
+          pendingRetries.set(el, byElement);
+        }
+        const existing = byElement.get(rule.query_selector);
+        if (existing) clearTimeout(existing);
+        byElement.set(rule.query_selector, setTimeout(() => {
+          byElement!.delete(rule.query_selector);
+          // Re-run the rule unconditionally (rules must be idempotent)
+          try {
+            fn(el);
+            if (ruleIndex >= 0) w.__internetShaperCounts![ruleIndex]++;
+          } catch (e) {
+            console.error(`[Apply] Retry rule "${rule.label}" failed on element:`, e);
+          }
+        }, 300));
+      };
+
+      const watchElementChildren = (
+        rule: typeof rulesToApply[0],
+        el: Element,
+        fn: (el: Element) => void,
+        ruleIndex: number,
+      ) => {
+        const childObserver = new MutationObserver(() => {
+          scheduleRetry(rule, el, fn, ruleIndex);
+        });
+        childObserver.observe(el, { childList: true, subtree: true, characterData: true });
+        // Stop watching after 5 seconds — by then the content should be settled
+        setTimeout(() => childObserver.disconnect(), 5000);
+      };
+
       const applyRuleToElement = (
         rule: typeof rulesToApply[0],
         el: Element,
         fn: (el: Element) => void,
+        ruleIndex = -1,
       ): boolean => {
         const processed = getProcessedSet(rule.query_selector);
         if (processed.has(el)) return false;
         try {
           fn(el);
           processed.add(el);
+          watchElementChildren(rule, el, fn, ruleIndex);
           return true;
         } catch (e) {
           console.error(`[Apply] Rule "${rule.label}" failed on element:`, e);
@@ -275,7 +325,7 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
           const fn = createFn(rule.logic);
           let count = 0;
           for (const el of elements) {
-            if (applyRuleToElement(rule, el, fn)) count++;
+            if (applyRuleToElement(rule, el, fn, countOffset + i)) count++;
           }
           console.log(`[Apply] Rule "${rule.label}" applied to ${count} elements`);
           elementCounts.push(count);
@@ -314,7 +364,7 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
               for (const node of addedNodes) {
                 const el = node as Element;
                 if (el.matches?.(rule.query_selector) && !processed.has(el)) {
-                  if (applyRuleToElement(rule, el, fn)) {
+                  if (applyRuleToElement(rule, el, fn, ruleIndex)) {
                     w.__internetShaperCounts![ruleIndex]++;
                   }
                 }
@@ -322,7 +372,7 @@ export async function applyRules(rules: UpdateRule[]): Promise<number[]> {
                 if (descendants) {
                   for (const desc of descendants) {
                     if (!processed.has(desc)) {
-                      if (applyRuleToElement(rule, desc, fn)) {
+                      if (applyRuleToElement(rule, desc, fn, ruleIndex)) {
                         w.__internetShaperCounts![ruleIndex]++;
                       }
                     }

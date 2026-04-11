@@ -95,7 +95,7 @@ Prefer specific selectors (class names, data attributes, tag names) over structu
         logic: {
           type: "string",
           description:
-            "Valid JavaScript code with access to 'element' variable only. No window/document/global APIs.",
+            "Valid JavaScript code with access to 'element' variable only. No window/document/global APIs. The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once. If the rule reads child content to make a decision, return early (do nothing) when the content is absent — the rule will be automatically re-run once child content populates. Prefer element.style.display = 'none' over element.remove() for conditional hiding.",
         },
       },
       required: ["label", "query_selector", "logic"],
