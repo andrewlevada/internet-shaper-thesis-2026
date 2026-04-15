@@ -145,31 +145,45 @@ AI agents via Cursor Editor and Claude Code CLI were used extensivly in writing 
 
 ## Implementation
 
-This section describes how the final interation of the system works in detail
+This section describes how the final interation of the system works in detail. The code repository is avaliable in the appendix.
 
 ### Overview
 
+[image will be here]
+
+The browser extansion can be seen as connected systems: there is an agent, it has acces to tools which in tern use browser apis and processing to get the data from the page. Separately there is a rule storage module and an engene for allying rules to web pages on load and on content change.
+
+Nothe that the LLM agent does not affect the DOM directly, instead only populating the rules store, which then can be managed by user and used by the extension.
+
+To make sure difrent layers of the system can communicate without hastle, we have created a helper framework that provides unified contexts for code execution, handiling the browser extension constaraints under the hood with RPC implementation of most useful APIs. We go in depth at a later section
+
 ### Agentic System
 
-The loop is: send system prompt + conversation history + tool definitions → receive content blocks → execute any `tool_use` blocks → push `tool_result` → repeat until no tool calls or `stop_reason === "end_turn"`.
+We use Anthropic's model harnes with thir best practices to implement tool use. Generally, the loop is: send system prompt + conversation history + tool definitions → receive content blocks → execute any `tool_use` blocks → push `tool_result` → repeat until no tool calls or `stop_reason === "end_turn"`.
 
-Prompt caching (`cache_control: ephemeral`) is applied to the system prompt and the `get_map_of_dom` result (the largest context item), reducing cost on multi-turn conversations.
+#### Tools
 
 The agent is given three tools:
 
-`**get_map_of_dom()` — Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout:
+`**get_map_of_dom()` – returns a compact page DOM structure. It agressivly algorithmivally excludes elements that are suspect to have little semantic meaning by using lossy DOM sompration: it collapses single child wrappers, repeating sibling elements , and non-semantic attributes with t
 
-1. Single-child wrapper chains are collapsed (nested divs with one child become flat)
-2. Repeating sibling elements (3+ with same tag/classes) show only the first with a comment indicating count
-3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data- attributes
+Prompt caching is applied to the system prompt and the `get_map_of_dom` result (the largest context item), reducing cost on multi-turn conversations.
 
-Use this first to understand the page structure. Then use show_in_dom() to examine specific elements in full detail.
+`show_in_dom(query_selector, include_children)` — Returns the full, unprocessed HTML of a specific element from the DOM. Used after get_map_of_dom() to examine elements in detail. The element is returned exactly as it appears in the original DOM, with all attributes and children intact.
 
-`**show_in_dom(query_selector, include_children)`** — Returns the full, unprocessed HTML of a specific element from the DOM. Use this after get_map_of_dom() to examine elements in detail. The element is returned exactly as it appears in the original DOM, with all attributes and children intact.
+`set_update_rule(label, query_selector, logic)` — Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. The `logic` parameter is JavaScript code that executes with `element` bound to each matching DOM element. The logic has no access to window, document, or any global APIs — only the `element` variable is available. The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once.
 
-`**set_update_rule(label, query_selector, logic)`** — Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. The `logic` parameter is JavaScript code that executes with `element` bound to each matching DOM element. The logic has no access to window, document, or any global APIs — only the `element` variable is available. The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once.
+The system prompt instructs the agent to prefer stable selectors (class names, `data-`* attributes, semantic tags) over brittle structural paths, to cover all meaningful variations by emitting multiple rules when necessary, and to write idempotent logic that sets absolute state rather than toggling or accumulating effects. 
 
 Both `get_map_of_dom` and `show_in_dom` operate on a captured snapshot of the DOM (`document.documentElement.outerHTML`) taken at the time the user submits a request. `set_update_rule` does not immediately apply — it appends to a list of rules that are applied to the live page after the agent finishes.
+
+#### Workflow
+
+The agent is instructed to follow a fixed exploration-then-action workflow. It must always begin by calling `get_map_of_dom` to form a structural understanding of the page before taking any other action. From this map it identifies candidate elements relevant to the user's request. When it needs full attribute and children detail for a specific element — for example, to construct a precise selector or inspect dynamic content markers — it calls `show_in_dom`.
+
+Only after this exploration phase does it emit one or more `set_update_rule` calls. Logic that depends on child content that may not yet be in the DOM is expected to return early and re-run once the relevant subtree has populated, as the apply layer re-invokes rules on newly added nodes via `MutationObserver`.
+
+The conversation loop continues until the agent produces a reply with no tool calls, or the stop reason is `end_turn`, at which point the collected rules are applied to the live page.
 
 #### Proproitary model aside
 
@@ -185,9 +199,7 @@ Because of these considerations, however, we will not compare the performance of
 
 ### DOM Compression
 
-(key challange: How to compact the DOM in a way that retains the maximum useful information and reduces the maximum noise)
-
-The system uses 2 DOM compression algorithms: lossless and lossy. Lossless is used as a pre-processing step for any DOM that is given to the LLM, while lossy compression is used for the initial context given at each request (actually the model calls a tool to get it, but ). Lossy compression discards parts of the dom to make it extra compact, so that the model does not run out of context
+Following the system design scheme, we use 2 DOM compression algorithms: lossless and lossy. Lossless is used as a pre-processing step for any DOM that is given to the LLM, while lossy compression is used for the initial context given at each request (actually the model calls a tool to get it, but ). Lossy compression discards parts of the dom to make it extra compact, so that the model does not run out of context
 
 #### Lossless
 
@@ -209,7 +221,7 @@ Produces a compacted structural map of the DOM, used as the agent's initial view
 
 ### Browser Extension Wrapper (Fiber)
 
-A browser extension is the natural fit for this system: it gets unique read/write access to any page's DOM and JS runtime without requiring any cooperation from the page's authors.
+We have already mentioned that the browser extension is the natural fit for this system: it gets unique read/write access to any page's DOM and JS runtime without requiring any cooperation from the page's authors.
 
 The challenge is that browser extensions operate across multiple execution contexts that cannot directly call each other: content scripts (isolated world), the page's JS runtime (main world), and the background service worker. A single user-visible action — like applying a rule — requires jumping across all three. In practice this means constantly threading execution between contexts within a single logical flow.
 
@@ -218,6 +230,11 @@ To manage this, we built **Fiber** — a small, reusable extension framework tha
 Rules are saved to `localStorage` keyed by `internet-shaper-rules:${hostname}` as an array of `{ label, query_selector, logic, enabled }` objects. On every page load, `app.ts` reads the stored rules and calls `applyRules`, which runs via `executeInMainWorld` so rule logic has access to the real `document`. Inside the main world, rules are merged into `window.__internetShaperRules`, and a MutationObserver on `document.body` re-applies rules to any newly added nodes. This handles SPAs like YouTube and Instagram that load content dynamically without full page reloads. Individual rules that read child content to make a decision return early when content is absent and are re-run once the subtree populates.
 
 ### Security Concerns
+
+The prototype in it's current state has a lot of holes and must not be used in a public setting:
+
+- it stores api keys in the browser's storage in a non-encoded plain way
+- it has no protection against prompt enjections that can be present in the page contnent. this can enable extermly harmful behavour up to remote code execution, as the rule application sandbox can fetch data from any irls
 
 ## Results
 
