@@ -41,7 +41,7 @@ The system is defined by the initial design constraints. We descibe them and sho
 
 ### Design Goals
 
-Constraints for this system are pretty unique, cuz it democratizes reshaping of web to user's needs. normally adaptive ui methods are made for developers, but here actions are performed on an already built software. here they are:
+Unlike most adaptive interface methods — which are built into the application by its developers — this system operates on software that already exists and was not designed to be modified. The constraints reflect this:
 
 - The system must have a way to change and override the existing application's user interface. This key constraint motivated the browser extension as a host for the solution. Broser extensions can uniquely modify any opened website, making them well-suited for testing whether user-initiated interface adaptation is a feasible and useful approach to improving the user experience in hostile interfaces.
 - The underlying LLM must have access to all the information visible to the user when the user edits a page.
@@ -52,12 +52,12 @@ These goals motivate the use of a browser extension environment, mainly because 
 
 ### Key Challenges
 
-from the goals and constraints we get the challanges
+These goals surface two interconnected challenges:
 
 1. Interaction model: how can an LLM change the web page to re-align it?
 2. Representation model: how do we represent the web page data to the LLM?
 
-Both are closely connected.
+The two are tightly coupled — the representation must support whatever operations the interaction model requires.
 
 #### Interaction model
 
@@ -79,9 +79,9 @@ Frontier models excel at code generation, especially for tech stacks that are ex
 
 #### Representation model
 
-There is a relevant adjacent area of research from which this work draws valuable insights: web agents — systems that can comprehend web pages and take actions on behalf of users. This approach diverges from them in that the goal is not to interact with the environment on the user's behalf, but to re-shape the environment to better fit a particular user's task. The comprehension challenge, however, is shared.
+There is a relevant adjacent area of research from which this work draws valuable insights: web agents — systems that can comprehend web pages and take actions on behalf of users. Specifically, we are interested in the methods web agents use to comprehend web pages.
 
-Following [citation]'s classification of comprehension techniques into text-based (which operates on code rather than natural text), screenshot-based, and multimodal — all approaches have shown promising results. However, since the interaction model relies on the DOM structure to query and modify components, the agent requires textual input, making screenshot-based perception infeasible. This paper focuses on text-based perception; multimodal perception remains a direction for future work.
+Following [citation]'s classification of comprehension techniques into text-based (which operates on code rather than natural text), screenshot-based, and multimodal — all approaches have shown promising results. However, since the interaction model relies on the DOM structure to query and modify components, the agent requires textual input, making screenshot-based perception infeasible. This paper focuses on text-based perception; multimodal perception is left for future work.
 
 The primary challange with textual representation is the size of DOMs. To demonstrate, three unprocessed DOM snapshots were collected from logged-in websites — Instagram, Substack, and YouTube. These DOMs differ in file size, complexity, and underlying technologies:
 
