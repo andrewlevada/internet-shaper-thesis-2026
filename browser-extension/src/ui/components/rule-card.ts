@@ -1,25 +1,25 @@
-import { html as litHtml } from "lit";
-import type { Signal } from "@lit-labs/preact-signals";
-import { withWatch } from "@lit-labs/preact-signals";
-import type { UpdateRule } from "../../agent/index.ts";
+import type { Signal } from "@lit-labs/preact-signals"
+import { withWatch } from "@lit-labs/preact-signals"
+import { html as litHtml } from "lit"
+import type { UpdateRule } from "../../agent/index.ts"
 
-const html = withWatch(litHtml);
+const html = withWatch(litHtml)
 
 export interface RuleCardCallbacks {
-  onToggle: (index: number) => void;
-  onDelete: (index: number) => void;
-  onLogicEdit: (index: number, value: string) => void;
-  onApply: (index: number) => void;
+	onToggle: (index: number) => void
+	onDelete: (index: number) => void
+	onLogicEdit: (index: number, value: string) => void
+	onApply: (index: number) => void
 }
 
 export function renderRuleCard(
-  rule: UpdateRule,
-  index: number,
-  elementCount: number,
-  editedLogic: Signal<Record<number, string>>,
-  callbacks: RuleCardCallbacks,
+	rule: UpdateRule,
+	index: number,
+	elementCount: number,
+	editedLogic: Signal<Record<number, string>>,
+	callbacks: RuleCardCallbacks,
 ) {
-  return html`
+	return html`
     <div class="rule-card">
       <div class="row-between">
         <strong class="rule-title ${rule.enabled === false ? "disabled" : ""}">
@@ -47,11 +47,19 @@ export function renderRuleCard(
         class="rule-logic"
         .value="${editedLogic.value[index] ?? rule.logic}"
         @input="${(e: Event) =>
-          callbacks.onLogicEdit(index, (e.target as HTMLTextAreaElement).value)}"
+					callbacks.onLogicEdit(
+						index,
+						(e.target as HTMLTextAreaElement).value,
+					)}"
       ></textarea>
-      ${editedLogic.value[index] !== undefined
-        ? html`<button class="btn-apply" @click="${() => callbacks.onApply(index)}">Apply</button>`
-        : null}
+      ${
+				editedLogic.value[index] !== undefined
+					? html`
+          <button class="btn-apply" @click="${() =>
+						callbacks.onApply(index)}">Apply</button>
+        `
+					: null
+			}
     </div>
-  `;
+  `
 }

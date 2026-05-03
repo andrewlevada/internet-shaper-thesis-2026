@@ -1,4 +1,4 @@
-import { css } from "lit";
+import { css } from "lit"
 
 export const styles = css`
   .overlay-container {
@@ -210,4 +210,4 @@ export const styles = css`
   * {
     color: inherit;
   }
-`;
+`

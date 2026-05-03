@@ -1,19 +1,18 @@
-import Anthropic from "@anthropic-ai/sdk";
-import { ext } from "fiber-extension";
-import type { UpdateRule } from "./rules-engine.ts";
-import { capturePageDom } from "./dom-processing.ts";
+import Anthropic from "@anthropic-ai/sdk"
+import { ext } from "fiber-extension"
+import { capturePageDom } from "./dom-processing.ts"
+import type { UpdateRule } from "./rules-engine.ts"
 import {
-  createToolContext,
-  executeTool,
-  type ToolContext,
-  toolDefinitions,
-} from "./tools.ts";
+	createToolContext,
+	executeTool,
+	type ToolContext,
+	toolDefinitions,
+} from "./tools.ts"
 
-const MODEL = "claude-sonnet-4-6";
-const MAX_TOKENS = 16384;
+const MODEL = "claude-sonnet-4-6"
+const MAX_TOKENS = 16384
 
-const SYSTEM_PROMPT =
-  `You are a browser extension agent that modifies web pages based on user requests.
+const SYSTEM_PROMPT = `You are a browser extension agent that modifies web pages based on user requests.
 
 You have access to three tools:
 
@@ -45,150 +44,150 @@ Rules must be idempotent and deterministic:
 - Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
 - Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
 
-Be thorough - if there are multiple variations of elements matching the user's request, create rules for each variation.`;
+Be thorough - if there are multiple variations of elements matching the user's request, create rules for each variation.`
 
 export interface AgentResult {
-  rules: UpdateRule[];
-  context: ToolContext;
+	rules: UpdateRule[]
+	context: ToolContext
 }
 
 export async function runAgent(
-  userRequest: string,
-  apiKey: string,
-  onProgress?: (message: string) => void,
+	userRequest: string,
+	apiKey: string,
+	onProgress?: (message: string) => void,
 ): Promise<AgentResult> {
-  console.log("[Agent] runAgent called with request:", userRequest);
+	console.log("[Agent] runAgent called with request:", userRequest)
 
-  onProgress?.("Capturing page DOM...");
-  const rawHtml = capturePageDom();
-  console.log("[Agent] Captured DOM, length:", rawHtml.length);
+	onProgress?.("Capturing page DOM...")
+	const rawHtml = capturePageDom()
+	console.log("[Agent] Captured DOM, length:", rawHtml.length)
 
-  const context = createToolContext(rawHtml);
+	const context = createToolContext(rawHtml)
 
-  console.log("[Agent] Creating Anthropic client...");
-  const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
+	console.log("[Agent] Creating Anthropic client...")
+	const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: true })
 
-  const messages: Anthropic.MessageParam[] = [
-    { role: "user", content: userRequest },
-  ];
+	const messages: Anthropic.MessageParam[] = [
+		{ role: "user", content: userRequest },
+	]
 
-  onProgress?.("Calling Claude API...");
-  console.log("[Agent] Starting conversation loop");
+	onProgress?.("Calling Claude API...")
+	console.log("[Agent] Starting conversation loop")
 
-  let iteration = 0;
-  while (true) {
-    iteration++;
-    console.log(`[Agent] Iteration ${iteration}, sending request...`);
-    onProgress?.(`Thinking... (turn ${iteration})`);
+	let iteration = 0
+	while (true) {
+		iteration++
+		console.log(`[Agent] Iteration ${iteration}, sending request...`)
+		onProgress?.(`Thinking... (turn ${iteration})`)
 
-    const response = await anthropic.messages.create({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system: [
-        {
-          type: "text",
-          text: SYSTEM_PROMPT,
-          cache_control: { type: "ephemeral" },
-        },
-      ],
-      tools: toolDefinitions,
-      messages,
-    });
+		const response = await anthropic.messages.create({
+			model: MODEL,
+			max_tokens: MAX_TOKENS,
+			system: [
+				{
+					type: "text",
+					text: SYSTEM_PROMPT,
+					cache_control: { type: "ephemeral" },
+				},
+			],
+			tools: toolDefinitions,
+			messages,
+		})
 
-    console.log("[Agent] Response received:", {
-      stopReason: response.stop_reason,
-      contentBlocks: response.content.length,
-      usage: response.usage,
-    });
+		console.log("[Agent] Response received:", {
+			stopReason: response.stop_reason,
+			contentBlocks: response.content.length,
+			usage: response.usage,
+		})
 
-    // Process response content
-    const assistantContent: Anthropic.ContentBlockParam[] = [];
+		// Process response content
+		const assistantContent: Anthropic.ContentBlockParam[] = []
 
-    for (const block of response.content) {
-      if (block.type === "text") {
-        console.log("[Agent] Text block:", block.text.slice(0, 1000) + "...");
-        onProgress?.(
-          block.text.slice(0, 80) + (block.text.length > 80 ? "..." : ""),
-        );
-        assistantContent.push({ type: "text", text: block.text });
-      } else if (block.type === "tool_use") {
-        console.log("[Agent] Tool use:", block.name, block.input);
-        onProgress?.(`Using tool: ${block.name}`);
-        assistantContent.push({
-          type: "tool_use",
-          id: block.id,
-          name: block.name,
-          input: block.input,
-        });
-      }
-    }
+		for (const block of response.content) {
+			if (block.type === "text") {
+				console.log("[Agent] Text block:", block.text.slice(0, 1000) + "...")
+				onProgress?.(
+					block.text.slice(0, 80) + (block.text.length > 80 ? "..." : ""),
+				)
+				assistantContent.push({ type: "text", text: block.text })
+			} else if (block.type === "tool_use") {
+				console.log("[Agent] Tool use:", block.name, block.input)
+				onProgress?.(`Using tool: ${block.name}`)
+				assistantContent.push({
+					type: "tool_use",
+					id: block.id,
+					name: block.name,
+					input: block.input,
+				})
+			}
+		}
 
-    messages.push({ role: "assistant", content: assistantContent });
+		messages.push({ role: "assistant", content: assistantContent })
 
-    // Check if we need to handle tool calls
-    const toolUseBlocks = response.content.filter(
-      (block) => block.type === "tool_use",
-    );
+		// Check if we need to handle tool calls
+		const toolUseBlocks = response.content.filter(
+			(block) => block.type === "tool_use",
+		)
 
-    console.log(
-      "[Agent] Tool use blocks:",
-      toolUseBlocks.length,
-      "Stop reason:",
-      response.stop_reason,
-    );
+		console.log(
+			"[Agent] Tool use blocks:",
+			toolUseBlocks.length,
+			"Stop reason:",
+			response.stop_reason,
+		)
 
-    if (toolUseBlocks.length === 0 || response.stop_reason === "end_turn") {
-      console.log("[Agent] Conversation complete");
-      break;
-    }
+		if (toolUseBlocks.length === 0 || response.stop_reason === "end_turn") {
+			console.log("[Agent] Conversation complete")
+			break
+		}
 
-    // Execute tools and add results
-    console.log("[Agent] Executing tools...");
-    const toolResults: Anthropic.ToolResultBlockParam[] = toolUseBlocks.map(
-      (block) => {
-        if (block.type !== "tool_use") throw new Error("Expected tool_use");
-        console.log(`[Agent] Executing tool: ${block.name}`);
-        const result = executeTool(block.name, block.input, context);
-        console.log(`[Agent] Tool result length: ${result.length}`);
+		// Execute tools and add results
+		console.log("[Agent] Executing tools...")
+		const toolResults: Anthropic.ToolResultBlockParam[] = toolUseBlocks.map(
+			(block) => {
+				if (block.type !== "tool_use") throw new Error("Expected tool_use")
+				console.log(`[Agent] Executing tool: ${block.name}`)
+				const result = executeTool(block.name, block.input, context)
+				console.log(`[Agent] Tool result length: ${result.length}`)
 
-        // Cache the DOM map result (largest payload)
-        if (block.name === "get_map_of_dom") {
-          return {
-            type: "tool_result" as const,
-            tool_use_id: block.id,
-            content: [
-              {
-                type: "text" as const,
-                text: result,
-                cache_control: { type: "ephemeral" as const },
-              },
-            ],
-          };
-        }
+				// Cache the DOM map result (largest payload)
+				if (block.name === "get_map_of_dom") {
+					return {
+						type: "tool_result" as const,
+						tool_use_id: block.id,
+						content: [
+							{
+								type: "text" as const,
+								text: result,
+								cache_control: { type: "ephemeral" as const },
+							},
+						],
+					}
+				}
 
-        return {
-          type: "tool_result" as const,
-          tool_use_id: block.id,
-          content: result,
-        };
-      },
-    );
+				return {
+					type: "tool_result" as const,
+					tool_use_id: block.id,
+					content: result,
+				}
+			},
+		)
 
-    messages.push({ role: "user", content: toolResults });
-  }
+		messages.push({ role: "user", content: toolResults })
+	}
 
-  console.log("[Agent] Final rules:", context.rules);
-  onProgress?.(`Done! Generated ${context.rules.length} rules.`);
+	console.log("[Agent] Final rules:", context.rules)
+	onProgress?.(`Done! Generated ${context.rules.length} rules.`)
 
-  return { rules: context.rules, context };
+	return { rules: context.rules, context }
 }
 
 export async function getElementCounts(): Promise<number[]> {
-  const counts = await ext.scripting.executeInMainWorld(() => {
-    const w = window as Window & { __internetShaperCounts?: number[] };
-    return w.__internetShaperCounts ?? [];
-  }, []);
-  return counts ?? [];
+	const counts = await ext.scripting.executeInMainWorld(() => {
+		const w = window as Window & { __internetShaperCounts?: number[] }
+		return w.__internetShaperCounts ?? []
+	}, [])
+	return counts ?? []
 }
 
-export type { UpdateRule } from "./rules-engine.ts";
+export type { UpdateRule } from "./rules-engine.ts"
