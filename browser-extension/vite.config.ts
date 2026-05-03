@@ -11,6 +11,8 @@ export default defineConfig({
         host_permissions: ["<all_urls>"],
         permissions: ["storage", "scripting"],
         action: {},
+        // Chrome 138+ ships the Prompt API for extensions on the stable channel.
+        minimum_chrome_version: "138",
       },
     }),
   ],

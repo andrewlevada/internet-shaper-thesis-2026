@@ -199,6 +199,27 @@ export const styles = css`
     background: #ffffff;
   }
 
+  .mode-toggle {
+    display: inline-flex;
+    background: #eeeeee;
+  }
+
+  .mode-btn {
+    padding: 4px 10px;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .mode-btn-active {
+    border: 1px solid #666666;
+  }
+
+  .mode-btn:disabled {
+    cursor: default;
+  }
+
   * {
     color: inherit;
   }
