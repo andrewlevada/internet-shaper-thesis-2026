@@ -1,5 +1,5 @@
 import { overlay } from "fiber-extension";
-import { applyRules } from "./agent/index.ts";
+import { applyRules } from "./agent/rules-engine.ts";
 import {
   createOverlayTemplate,
   loadRules,

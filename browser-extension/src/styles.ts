@@ -99,8 +99,16 @@ export const styles = css`
     cursor: pointer;
   }
 
+  .input:hover,
+  .btn:hover,
+  .btn-sm:hover,
+  .btn-close:hover,
+  .btn-close-sm:hover,
+  .btn-full:hover {
+    background: #dddddd;
+  }
+
   .status {
-    font-size: 12px;
     flex: 1;
   }
 

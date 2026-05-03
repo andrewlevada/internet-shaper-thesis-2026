@@ -1,10 +1,11 @@
 import { html as litHtml, render } from "lit";
 import { computed, signal, withWatch } from "@lit-labs/preact-signals";
 import { overlay } from "fiber-extension";
-import { applyRules, getElementCounts, runAgent } from "../agent/index.ts";
-import { getApiKey, showApiKeyPrompt } from "../api-key.ts";
-import { styles } from "../styles.ts";
-import { elementCounts, loadRules, saveRules, setView } from "./store.ts";
+import { getElementCounts, runAgent } from "../../agent/index.ts";
+import { applyRules } from "../../agent/rules-engine.ts";
+import { getApiKey, showApiKeyPrompt } from "../../api-key.ts";
+import { styles } from "../../styles.ts";
+import { elementCounts, loadRules, saveRules, setView } from "../store.ts";
 
 const html = withWatch(litHtml);
 
@@ -95,15 +96,15 @@ export function renderMain(
           class="input"
           type="text"
           placeholder="What do you want to change about this page?"
-          .value="${inputValue}"
-          ?disabled="${isProcessing}"
+          .value="${inputValue.value}"
+          ?disabled="${isProcessing.value}"
           @input="${handleInput}"
           @keydown="${handleKeydown}"
         />
 
         <button
           class="btn"
-          ?disabled="${isProcessing}"
+          ?disabled="${isProcessing.value}"
           @click="${handleSubmit}"
         >
           ${buttonText}

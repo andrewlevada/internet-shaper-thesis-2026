@@ -1,5 +1,5 @@
-import { renderMain } from "./constructor-overlay.ts";
-import { renderRules } from "./rules-list.ts";
+import { renderMain } from "./pages/index.ts";
+import { renderRules } from "./pages/rules.ts";
 import {
   loadRules,
   refreshElementCounts,

@@ -1,5 +1,5 @@
 import type { Tool } from "@anthropic-ai/sdk/resources/messages";
-import type { UpdateRule } from "./types.ts";
+import type { UpdateRule } from "./rules-engine.ts";
 import { createDomMap, extractElement } from "./dom-processing.ts";
 
 export interface ToolCall {

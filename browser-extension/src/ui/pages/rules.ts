@@ -1,7 +1,7 @@
 import { html as litHtml, render } from "lit";
 import { withWatch } from "@lit-labs/preact-signals";
-import { styles } from "../styles.ts";
-import { renderRuleCard } from "./components/rule-card.ts";
+import { styles } from "../../styles.ts";
+import { renderRuleCard } from "../components/rule-card.ts";
 import {
   deleteRule,
   editedLogic,
@@ -11,7 +11,7 @@ import {
   setView,
   toggleRule,
   updateRuleLogic,
-} from "./store.ts";
+} from "../store.ts";
 
 const html = withWatch(litHtml);
 
@@ -59,7 +59,8 @@ export function renderRules(
   const rules = loadRules();
   const counts = elementCounts.value;
 
-  const rerender = () => render(renderRules(renderRoot, renderMain), renderRoot);
+  const rerender = () =>
+    render(renderRules(renderRoot, renderMain), renderRoot);
 
   const callbacks = {
     onToggle: handleToggleRule,
@@ -88,10 +89,12 @@ export function renderRules(
       </div>
 
       ${rules.length === 0
-        ? html`<p class="empty-text">No rules yet</p>`
+        ? html`
+          <p class="empty-text">No rules yet</p>
+        `
         : rules.map((rule, i) =>
-            renderRuleCard(rule, i, counts[i] ?? 0, editedLogic, callbacks),
-          )}
+          renderRuleCard(rule, i, counts[i] ?? 0, editedLogic, callbacks)
+        )}
 
       <button
         class="btn-full"
