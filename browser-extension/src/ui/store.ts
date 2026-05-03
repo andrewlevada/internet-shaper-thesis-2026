@@ -1,48 +1,101 @@
 import { signal } from "@lit-labs/preact-signals"
+import { ext } from "fiber-extension"
 import { getElementCounts, type UpdateRule } from "../agent/index.ts"
 
 export type View = "main" | "rules"
 
 const OPEN_RULES_FLAG = "internet-shaper-open-rules"
+const RULES_BY_HOST_KEY = "internet-shaper-rules-by-host" as const
 
-function getRulesStorageKey(): string {
-	return `internet-shaper-rules:${globalThis.location.hostname}`
+function hostname(): string {
+	return globalThis.location.hostname
+}
+
+async function readRulesByHost(): Promise<Record<string, UpdateRule[]>> {
+	const result = await ext.storage.local.get(RULES_BY_HOST_KEY)
+	let record = (result[RULES_BY_HOST_KEY] ?? {}) as Record<string, UpdateRule[]>
+
+	const legacyKey = `internet-shaper-rules:${hostname()}`
+	const legacyRaw = globalThis.localStorage?.getItem(legacyKey)
+	if (legacyRaw) {
+		try {
+			const legacyRules = JSON.parse(legacyRaw) as UpdateRule[]
+			const current = record[hostname()] ?? []
+			if (current.length === 0 && legacyRules.length > 0) {
+				record = { ...record, [hostname()]: legacyRules }
+				await ext.storage.local.set({ [RULES_BY_HOST_KEY]: record })
+			}
+		} catch {
+			// ignore invalid legacy payload
+		}
+		globalThis.localStorage?.removeItem(legacyKey)
+	}
+
+	return record
+}
+
+async function writeRulesByHost(
+	record: Record<string, UpdateRule[]>,
+): Promise<void> {
+	await ext.storage.local.set({ [RULES_BY_HOST_KEY]: record })
+}
+
+async function getRulesForCurrentHost(): Promise<UpdateRule[]> {
+	const record = await readRulesByHost()
+	return record[hostname()] ?? []
+}
+
+async function setRulesForCurrentHost(rules: UpdateRule[]): Promise<void> {
+	const record = await readRulesByHost()
+	record[hostname()] = rules
+	await writeRulesByHost(record)
 }
 
 // Shared signals
 export const view = signal<View>("main")
 export const elementCounts = signal<number[]>([])
 export const editedLogic = signal<Record<number, string>>({})
+/** In-memory rules for the current host; keep in sync with storage via `refreshSavedRules` and mutating helpers. */
+export const savedRules = signal<UpdateRule[]>([])
 
-// Storage functions
-export function loadRules(): UpdateRule[] {
-	const stored = localStorage.getItem(getRulesStorageKey())
-	return stored ? JSON.parse(stored) : []
+export async function refreshSavedRules(): Promise<void> {
+	savedRules.value = await getRulesForCurrentHost()
 }
 
-export function saveRules(rules: UpdateRule[]): void {
-	const existing = loadRules()
+export async function loadRules(): Promise<UpdateRule[]> {
+	return getRulesForCurrentHost()
+}
+
+export async function saveRules(rules: UpdateRule[]): Promise<void> {
+	const existing = await getRulesForCurrentHost()
 	const combined = [...existing, ...rules]
-	localStorage.setItem(getRulesStorageKey(), JSON.stringify(combined))
+	await setRulesForCurrentHost(combined)
+	savedRules.value = combined
 }
 
-export function deleteRule(index: number): void {
-	const rules = loadRules()
+export async function deleteRule(index: number): Promise<void> {
+	const rules = await getRulesForCurrentHost()
 	rules.splice(index, 1)
-	localStorage.setItem(getRulesStorageKey(), JSON.stringify(rules))
+	await setRulesForCurrentHost(rules)
+	savedRules.value = rules
 }
 
-export function toggleRule(index: number): void {
-	const rules = loadRules()
+export async function toggleRule(index: number): Promise<void> {
+	const rules = await getRulesForCurrentHost()
 	const rule = rules[index]
 	rule.enabled = rule.enabled === false ? true : false
-	localStorage.setItem(getRulesStorageKey(), JSON.stringify(rules))
+	await setRulesForCurrentHost(rules)
+	savedRules.value = rules
 }
 
-export function updateRuleLogic(index: number, logic: string): void {
-	const rules = loadRules()
+export async function updateRuleLogic(
+	index: number,
+	logic: string,
+): Promise<void> {
+	const rules = await getRulesForCurrentHost()
 	rules[index].logic = logic
-	localStorage.setItem(getRulesStorageKey(), JSON.stringify(rules))
+	await setRulesForCurrentHost(rules)
+	savedRules.value = rules
 }
 
 // View helpers

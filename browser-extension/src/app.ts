@@ -2,8 +2,9 @@ import { overlay } from "fiber-extension"
 import { applyRules } from "./agent/rules-engine.ts"
 import {
 	createOverlayTemplate,
-	loadRules,
 	refreshElementCounts,
+	refreshSavedRules,
+	savedRules,
 	setView,
 	shouldOpenRulesOnLoad,
 } from "./ui/index.ts"
@@ -11,10 +12,12 @@ import {
 async function main() {
 	console.log("Internet Shaper loaded")
 
-	const savedRules = loadRules()
-	if (savedRules.length > 0) {
-		await applyRules(savedRules)
-		const enabledCount = savedRules.filter((r) => r.enabled !== false).length
+	await refreshSavedRules()
+	if (savedRules.value.length > 0) {
+		await applyRules(savedRules.value)
+		const enabledCount = savedRules.value.filter(
+			(r) => r.enabled !== false,
+		).length
 		console.log(`Applied ${enabledCount} saved rules`)
 	}
 

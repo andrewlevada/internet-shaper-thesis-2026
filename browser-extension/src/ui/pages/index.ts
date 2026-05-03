@@ -5,7 +5,13 @@ import { getElementCounts, runAgent } from "../../agent/index.ts"
 import { applyRules } from "../../agent/rules-engine.ts"
 import { getApiKey, showApiKeyPrompt } from "../../api-key.ts"
 import { styles } from "../../styles.ts"
-import { elementCounts, loadRules, saveRules, setView } from "../store.ts"
+import {
+	elementCounts,
+	refreshSavedRules,
+	savedRules,
+	saveRules,
+	setView,
+} from "../store.ts"
 
 const html = withWatch(litHtml)
 
@@ -57,7 +63,7 @@ async function handleSubmit() {
 		if (result.rules.length > 0) {
 			console.log("[Shaper] Applying rules...")
 			await applyRules(result.rules)
-			saveRules(result.rules)
+			await saveRules(result.rules)
 			console.log("[Shaper] Rules applied and saved")
 		}
 
@@ -83,8 +89,6 @@ export function renderMain(
 	renderRoot: HTMLElement | ShadowRoot,
 	renderRules: (root: HTMLElement | ShadowRoot) => unknown,
 ) {
-	const rules = loadRules()
-
 	return html`
     <style>
     ${styles}
@@ -119,12 +123,13 @@ export function renderMain(
         <button
           class="btn-sm"
           @click="${async () => {
+						await refreshSavedRules()
 						elementCounts.value = await getElementCounts()
 						setView("rules")
 						render(renderRules(renderRoot), renderRoot)
 					}}"
         >
-          Rules (${rules.length})
+          Rules (${savedRules.value.length})
         </button>
 
         <button class="btn-sm" @click="${showApiKeyPrompt}">API Key</button>

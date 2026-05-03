@@ -3,13 +3,22 @@ import { renderRules } from "./pages/rules.ts"
 import {
 	loadRules,
 	refreshElementCounts,
+	refreshSavedRules,
+	savedRules,
 	setView,
 	shouldOpenRulesOnLoad,
 	view,
 } from "./store.ts"
 
 // Re-export public API
-export { loadRules, refreshElementCounts, setView, shouldOpenRulesOnLoad }
+export {
+	loadRules,
+	refreshElementCounts,
+	refreshSavedRules,
+	savedRules,
+	setView,
+	shouldOpenRulesOnLoad,
+}
 
 export function createOverlayTemplate(renderRoot: HTMLElement | ShadowRoot) {
 	const renderMainView = (root: HTMLElement | ShadowRoot) =>

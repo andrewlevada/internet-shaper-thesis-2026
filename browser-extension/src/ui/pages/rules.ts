@@ -6,8 +6,8 @@ import {
 	deleteRule,
 	editedLogic,
 	elementCounts,
-	loadRules,
 	markReopenRules,
+	savedRules,
 	setView,
 	toggleRule,
 	updateRuleLogic,
@@ -15,21 +15,21 @@ import {
 
 const html = withWatch(litHtml)
 
-function handleDeleteRule(index: number) {
-	deleteRule(index)
+async function handleDeleteRule(index: number) {
+	await deleteRule(index)
 	markReopenRules()
 	location.reload()
 }
 
-function handleToggleRule(index: number) {
-	toggleRule(index)
+async function handleToggleRule(index: number) {
+	await toggleRule(index)
 	markReopenRules()
 	location.reload()
 }
 
 function createHandleLogicEdit(rerender: () => void) {
 	return (index: number, value: string) => {
-		const rules = loadRules()
+		const rules = savedRules.value
 		const original = rules[index].logic
 		const updated = { ...editedLogic.value }
 
@@ -43,11 +43,11 @@ function createHandleLogicEdit(rerender: () => void) {
 	}
 }
 
-function handleApplyRule(index: number) {
+async function handleApplyRule(index: number) {
 	const newLogic = editedLogic.value[index]
 	if (!newLogic) return
 
-	updateRuleLogic(index, newLogic)
+	await updateRuleLogic(index, newLogic)
 	markReopenRules()
 	location.reload()
 }
@@ -56,7 +56,7 @@ export function renderRules(
 	renderRoot: HTMLElement | ShadowRoot,
 	renderMain: (root: HTMLElement | ShadowRoot) => unknown,
 ) {
-	const rules = loadRules()
+	const rules = savedRules.value
 	const counts = elementCounts.value
 
 	const rerender = () => render(renderRules(renderRoot, renderMain), renderRoot)
