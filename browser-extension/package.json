@@ -8,10 +8,13 @@
 		"build": "vite build"
 	},
 	"dependencies": {
+		"@ai-sdk/openai": "^3.0.58",
 		"@anthropic-ai/sdk": "^0.78.0",
 		"@lit-labs/preact-signals": "^1.0.3",
+		"ai": "^6.0.174",
 		"fiber-extension": "link:../../fiber",
-		"lit": "^3.3.2"
+		"lit": "^3.3.2",
+		"zod": "^4.4.2"
 	},
 	"devDependencies": {
 		"ts-lit-plugin": "^2.0.2",

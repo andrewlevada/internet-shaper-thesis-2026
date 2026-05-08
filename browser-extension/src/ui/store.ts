@@ -1,11 +1,13 @@
 import { signal } from "@lit-labs/preact-signals"
 import { ext } from "fiber-extension"
 import { getElementCounts, type UpdateRule } from "../agent/index.ts"
+import { DEFAULT_MODEL, type ModelId } from "../agent/models.ts"
 
 export type View = "main" | "rules"
 
 const OPEN_RULES_FLAG = "internet-shaper-open-rules"
 const RULES_BY_HOST_KEY = "internet-shaper-rules-by-host" as const
+const SELECTED_MODEL_KEY = "internet-shaper-selected-model" as const
 
 function hostname(): string {
 	return globalThis.location.hostname
@@ -57,9 +59,13 @@ export const elementCounts = signal<number[]>([])
 export const editedLogic = signal<Record<number, string>>({})
 /** In-memory rules for the current host; keep in sync with storage via `refreshSavedRules` and mutating helpers. */
 export const savedRules = signal<UpdateRule[]>([])
+export const selectedModel = signal<ModelId>(DEFAULT_MODEL)
 
 export async function refreshSavedRules(): Promise<void> {
 	savedRules.value = await getRulesForCurrentHost()
+	const stored = await ext.storage.local.get(SELECTED_MODEL_KEY)
+	const storedModel = stored[SELECTED_MODEL_KEY]
+	if (storedModel) selectedModel.value = storedModel as ModelId
 }
 
 export async function loadRules(): Promise<UpdateRule[]> {
@@ -101,6 +107,11 @@ export async function updateRuleLogic(
 // View helpers
 export function setView(v: View): void {
 	view.value = v
+}
+
+export async function setSelectedModel(id: ModelId): Promise<void> {
+	selectedModel.value = id
+	await ext.storage.local.set({ [SELECTED_MODEL_KEY]: id })
 }
 
 export function shouldOpenRulesOnLoad(): boolean {

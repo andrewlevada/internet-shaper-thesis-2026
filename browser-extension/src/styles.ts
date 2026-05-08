@@ -67,6 +67,19 @@ export const styles = css`
     cursor: pointer;
   }
 
+  .select-model {
+    padding: 6px 8px;
+    border: none;
+    background: #eeeeee;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .select-model:hover {
+    background: #dddddd;
+  }
+
   .btn-close {
     padding: 10px 12px;
     border: none;
@@ -110,6 +123,7 @@ export const styles = css`
 
   .status {
     flex: 1;
+    font-size: 12px;
   }
 
   .modal-header {

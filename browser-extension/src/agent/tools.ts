@@ -1,5 +1,6 @@
 import type { Tool } from "@anthropic-ai/sdk/resources/messages"
 import { createDomMap, extractElement } from "./dom-processing.ts"
+import { truncateToolOutputForGateway } from "./gateway-limits.ts"
 import type { UpdateRule } from "./rules-engine.ts"
 
 export interface ToolCall {
@@ -12,14 +13,44 @@ export interface ToolContext {
 	rawHtml: string
 	rules: UpdateRule[]
 	toolCalls: ToolCall[]
+	maxToolOutputChars?: number
 }
 
-export function createToolContext(rawHtml: string): ToolContext {
+export function createToolContext(
+	rawHtml: string,
+	options?: { maxToolOutputChars?: number },
+): ToolContext {
 	return {
 		rawHtml,
 		rules: [],
 		toolCalls: [],
+		...(options?.maxToolOutputChars != null
+			? { maxToolOutputChars: options.maxToolOutputChars }
+			: {}),
 	}
+}
+
+function maybeCapToolOutput(
+	toolName: string,
+	raw: string,
+	context: ToolContext,
+): string {
+	const max = context.maxToolOutputChars
+	if (max == null || max <= 0) return raw
+
+	const { text, truncated } = truncateToolOutputForGateway(raw, max)
+	if (truncated) {
+		console.warn(
+			`[Tools] ${toolName} truncated for gateway cap:`,
+			raw.length,
+			"->",
+			text.length,
+			"(max chars:",
+			max,
+			")",
+		)
+	}
+	return text
 }
 
 export const toolDefinitions: Tool[] = [
@@ -127,7 +158,8 @@ export function executeTool(
 				)
 				const mapResult = createDomMap(context.rawHtml)
 				console.log("[Tools] DOM map stats:", mapResult.stats)
-				const result = `${mapResult.html}\n\n<!-- Stats: ${mapResult.stats.collapsedWrappers} wrappers collapsed, ${mapResult.stats.truncatedListItems} list items truncated -->`
+				let result = `${mapResult.html}\n\n<!-- Stats: ${mapResult.stats.collapsedWrappers} wrappers collapsed, ${mapResult.stats.truncatedListItems} list items truncated -->`
+				result = maybeCapToolOutput("get_map_of_dom", result, context)
 				context.toolCalls.push({ name: "get_map_of_dom", input: {}, result })
 				console.log("[Tools] DOM map result length:", result.length)
 				return result
@@ -136,11 +168,12 @@ export function executeTool(
 			case "show_in_dom": {
 				const input = toolInput as ShowInDomInput
 				console.log("[Tools] Extracting element:", input.query_selector)
-				const result = extractElement(
+				let result = extractElement(
 					context.rawHtml,
 					input.query_selector,
 					input.include_children ?? true,
 				)
+				result = maybeCapToolOutput("show_in_dom", result, context)
 				context.toolCalls.push({ name: "show_in_dom", input, result })
 				console.log("[Tools] Element result length:", result.length)
 				return result
