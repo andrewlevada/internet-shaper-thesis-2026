@@ -190,23 +190,6 @@ async function countTokens(content: string): Promise<number> {
 	return data.input_tokens
 }
 
-function collectPostOrderElements(root: CdpDomNode | undefined): CdpDomNode[] {
-	const out: CdpDomNode[] = []
-	function visit(node: CdpDomNode) {
-		for (const child of node.children ?? []) {
-			visit(child as CdpDomNode)
-		}
-		for (const sr of node.shadowRoots ?? []) {
-			const shadow = sr as CdpDomNode
-			if (shadow.shadowRootType === "user-agent") continue
-			visit(shadow)
-		}
-		if (node.nodeType === 1) out.push(node)
-	}
-	if (root) visit(root)
-	return out
-}
-
 function findDescendantBody(root: CdpDomNode): CdpDomNode | null {
 	const nameOf = (n: CdpDomNode) =>
 		(n.localName ?? n.nodeName ?? "").replace(/^#/, "").toLowerCase()
@@ -224,29 +207,64 @@ function findDescendantBody(root: CdpDomNode): CdpDomNode | null {
 	return null
 }
 
-async function unwrapElementsNotInAxTree(
+/** Group key: shared parent for siblings; isolates nodes with no known parent. */
+function pruneGroupKey(
+	parentId: number | undefined,
+	nodeId: number,
+): number | string {
+	return parentId !== undefined ? parentId : `orphan:${nodeId}`
+}
+
+interface PruneOperation {
+	seq: number
+	nodeId: number
+	parentId: number | undefined
+	childIds: number[]
+	commentOuterHtml: string | null
+}
+
+/**
+ * Snapshot nodes to unwrap/remove before any mutation, assign at most one
+ * visibility comment per DOM parent container: `<!-- Hidden element -->` or
+ * `<!-- Hid N elements -->`.
+ */
+async function collectPruneOperations(
 	client: CDPSession,
+	root: CdpDomNode | undefined,
 	axBackendIds: Set<number>,
-): Promise<number> {
-	const { root } = await client.send("DOM.getDocument", {
-		pierce: true,
-		depth: -1,
-	})
-	const postOrder = collectPostOrderElements(root as CdpDomNode | undefined)
+): Promise<PruneOperation[]> {
+	const staged: Array<{
+		seq: number
+		nodeId: number
+		parentId: number | undefined
+		childIds: number[]
+		groupKey: number | string
+	}> = []
 
-	let unwrappedOrRemoved = 0
+	let seq = 0
 
-	for (const node of postOrder) {
-		if (node.nodeType !== 1) continue
+	async function visitPostOrder(
+		node: CdpDomNode,
+		treeParent: CdpDomNode | null,
+	) {
+		for (const child of node.children ?? []) {
+			await visitPostOrder(child as CdpDomNode, node)
+		}
+		for (const sr of node.shadowRoots ?? []) {
+			const shadow = sr as CdpDomNode
+			if (shadow.shadowRootType === "user-agent") continue
+			await visitPostOrder(shadow, node)
+		}
+
+		if (node.nodeType !== 1) return
 		const local =
 			node.localName?.toLowerCase() ??
 			node.nodeName?.replace(/^#/, "").toLowerCase() ??
 			""
-		if (SKIP_UNWRAP_TAGS.has(local)) continue
-
+		if (SKIP_UNWRAP_TAGS.has(local)) return
 		const bid = node.backendNodeId
-		if (bid === undefined) continue
-		if (axBackendIds.has(bid)) continue
+		if (bid === undefined) return
+		if (axBackendIds.has(bid)) return
 
 		const { node: fresh } = await client.send("DOM.describeNode", {
 			nodeId: node.nodeId,
@@ -256,23 +274,110 @@ async function unwrapElementsNotInAxTree(
 		const childIds = (f.children ?? []).map((c) => c.nodeId)
 		const parentId = f.parentId
 
+		if (childIds.length > 0 && parentId === undefined) return
+
+		const groupKey = pruneGroupKey(treeParent?.nodeId, node.nodeId)
+		staged.push({
+			seq: seq++,
+			nodeId: node.nodeId,
+			parentId,
+			childIds,
+			groupKey,
+		})
+	}
+
+	if (root) await visitPostOrder(root as CdpDomNode, null)
+
+	const byParent = new Map<number | string, typeof staged>()
+	for (const s of staged) {
+		const k = s.groupKey
+		let g = byParent.get(k)
+		if (!g) {
+			g = []
+			byParent.set(k, g)
+		}
+		g.push(s)
+	}
+
+	const commentForGroup = (
+		items: typeof staged,
+	): { anchorSeq: number; text: string } => {
+		const anchor = items.reduce((a, b) => (a.seq < b.seq ? a : b))
+		const n = items.length
+		const text =
+			n === 1 ? "<!-- Hidden element -->" : `<!-- Hid ${n} elements -->`
+		return { anchorSeq: anchor.seq, text }
+	}
+
+	const anchorComment = new Map<number, string>()
+	for (const items of byParent.values()) {
+		const { anchorSeq, text } = commentForGroup(items)
+		anchorComment.set(anchorSeq, text)
+	}
+
+	return staged.map((s) => ({
+		seq: s.seq,
+		nodeId: s.nodeId,
+		parentId: s.parentId,
+		childIds: s.childIds,
+		commentOuterHtml: anchorComment.get(s.seq) ?? null,
+	}))
+}
+
+async function applyPruneOperations(
+	client: CDPSession,
+	operations: PruneOperation[],
+): Promise<number> {
+	let count = 0
+	for (const op of operations) {
+		const { nodeId, childIds, parentId, commentOuterHtml } = op
 		if (childIds.length === 0) {
-			await client.send("DOM.removeNode", { nodeId: node.nodeId })
+			if (commentOuterHtml) {
+				await client.send("DOM.setOuterHTML", {
+					nodeId,
+					outerHTML: commentOuterHtml,
+				})
+			} else {
+				await client.send("DOM.removeNode", { nodeId })
+			}
 		} else {
 			if (!parentId) continue
 			for (const childId of childIds) {
 				await client.send("DOM.moveTo", {
 					nodeId: childId,
 					targetNodeId: parentId,
-					insertBeforeNodeId: node.nodeId,
+					insertBeforeNodeId: nodeId,
 				})
 			}
-			await client.send("DOM.removeNode", { nodeId: node.nodeId })
+			if (commentOuterHtml) {
+				await client.send("DOM.setOuterHTML", {
+					nodeId,
+					outerHTML: commentOuterHtml,
+				})
+			} else {
+				await client.send("DOM.removeNode", { nodeId })
+			}
 		}
-		unwrappedOrRemoved++
+		count++
 	}
+	return count
+}
 
-	return unwrappedOrRemoved
+async function unwrapElementsNotInAxTree(
+	client: CDPSession,
+	axBackendIds: Set<number>,
+): Promise<number> {
+	const { root } = await client.send("DOM.getDocument", {
+		pierce: true,
+		depth: -1,
+	})
+
+	const operations = await collectPruneOperations(
+		client,
+		root as CdpDomNode | undefined,
+		axBackendIds,
+	)
+	return applyPruneOperations(client, operations)
 }
 
 async function axPruneBodyHtml(
