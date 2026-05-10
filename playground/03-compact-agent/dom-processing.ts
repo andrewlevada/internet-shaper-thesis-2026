@@ -5,13 +5,17 @@ import {
 } from "https://deno.land/x/deno_dom@v0.1.48/deno-dom-wasm.ts"
 
 const ALLOWED_ATTRIBUTES = new Set([
+	"alt",
+	"aria-label",
 	"class",
 	"id",
-	"role",
-	"aria-label",
 	"label",
-	"alt",
+	"name",
+	"placeholder",
+	"role",
+	"title",
 	"type",
+	"value",
 ])
 
 function isDataAttribute(name: string): boolean {

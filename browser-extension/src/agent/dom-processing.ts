@@ -1,11 +1,15 @@
 const ALLOWED_ATTRIBUTES = new Set([
+	"alt",
+	"aria-label",
 	"class",
 	"id",
-	"role",
-	"aria-label",
 	"label",
-	"alt",
+	"name",
+	"placeholder",
+	"role",
+	"title",
 	"type",
+	"value",
 ])
 
 function isDataAttribute(name: string): boolean {
