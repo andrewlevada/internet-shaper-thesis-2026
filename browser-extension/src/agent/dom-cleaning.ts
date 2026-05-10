@@ -29,24 +29,10 @@ function removeComments(html: string): string {
 	return html.replace(/<!--[\s\S]*?-->/g, "")
 }
 
-function removeHiddenElements(html: string): string {
-	const doc = new DOMParser().parseFromString(html, "text/html")
-	for (const el of doc.querySelectorAll("[style]")) {
-		const style = el.getAttribute("style") ?? ""
-		if (style.includes("display:none") || style.includes("display: none")) {
-			el.remove()
-		}
-	}
-	return doc.documentElement?.outerHTML ?? ""
-}
-
-/**
- * Same ordered steps as playground `applyFullCleaning` (through `04-remove-comments`).
- */
+/** Strips non-structural markup; subtree hiding uses computed styles in `captureDocumentHtml`. */
 export function applyFullCleaning(html: string): string {
 	let out = html
 	out = removeElements(out, ["head", "script", "link", "style", "noscript"])
-	out = removeHiddenElements(out)
 	out = cleanSvgContents(out)
 	out = removeComments(out)
 	return out

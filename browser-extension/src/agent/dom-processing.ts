@@ -1,3 +1,5 @@
+import { captureDocumentHtml } from "./dom-visibility-capture.ts"
+
 /** Strip class tokens whose occurrence count is strictly greater than this fraction of all elements. */
 const COMMON_CLASS_FREQUENCY_THRESHOLD = 0.05
 
@@ -450,7 +452,7 @@ export function extractElement(
 }
 
 export function capturePageDom(): string {
-	const html = document.documentElement.outerHTML
+	const html = captureDocumentHtml(document)
 	console.log("[DOM] Captured page DOM, length:", html.length)
 	return html
 }
