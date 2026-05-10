@@ -8,7 +8,7 @@
  */
 
 import { join } from "https://deno.land/std@0.224.0/path/mod.ts"
-
+import { PLAYGROUND_LOG_MANUAL_NOTE_LINE } from "../log-manual-note.ts"
 import { normalizeHtmlWhitespace } from "./whitespace-normalize.ts"
 
 const SCRIPT_VERSION = "05-dom-whitespace-normalization/1"
@@ -56,6 +56,8 @@ async function main() {
 
 	await Deno.mkdir(logsDir, { recursive: true })
 
+	logLines.push(PLAYGROUND_LOG_MANUAL_NOTE_LINE)
+	logLines.push("")
 	logSection(logLines, "DOM whitespace normalization run")
 	logLines.push(`timestamp (UTC): ${timestamp}`)
 	logLines.push(`script: ${SCRIPT_VERSION}`)

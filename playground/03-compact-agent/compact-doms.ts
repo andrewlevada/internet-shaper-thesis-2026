@@ -7,6 +7,7 @@
 
 import { load } from "https://deno.land/std@0.224.0/dotenv/mod.ts"
 import { join } from "https://deno.land/std@0.224.0/path/mod.ts"
+import { PLAYGROUND_LOG_MANUAL_NOTE_LINE } from "../log-manual-note.ts"
 import {
 	COMMON_CLASS_FREQUENCY_THRESHOLD,
 	createDomMap,
@@ -60,6 +61,8 @@ const logLines: string[] = []
 await Deno.mkdir(outputDir, { recursive: true })
 await Deno.mkdir(logsDir, { recursive: true })
 
+logLines.push(PLAYGROUND_LOG_MANUAL_NOTE_LINE)
+logLines.push("")
 logSection(logLines, "DOM compaction run")
 logLines.push(`timestamp (UTC): ${timestamp}`)
 logLines.push(`script: ${SCRIPT_VERSION}`)

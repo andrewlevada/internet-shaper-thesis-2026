@@ -3,6 +3,7 @@
 import { load } from "https://deno.land/std@0.224.0/dotenv/mod.ts"
 import { join } from "https://deno.land/std@0.224.0/path/mod.ts"
 import Anthropic from "npm:@anthropic-ai/sdk"
+import { PLAYGROUND_LOG_MANUAL_NOTE_LINE } from "../log-manual-note.ts"
 import {
 	createTools,
 	getCollectedRules,
@@ -129,6 +130,8 @@ async function outputResults(
 
 	// Build text log
 	const lines: string[] = [
+		PLAYGROUND_LOG_MANUAL_NOTE_LINE,
+		"",
 		`Timestamp: ${timestamp}`,
 		`Command: ${cliCommand}`,
 		`Model: ${MODEL}`,

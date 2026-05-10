@@ -1,3 +1,5 @@
+Manual note: Same prunning, but updated postprocessing with common class thresh of 5%
+
 Accessibility-tree pruning + compaction...
 common class threshold (03 compaction): count > elements × 0.05 (strict >5%)
 

@@ -1,3 +1,5 @@
+Manual note: Added comments in place of pruned out elements
+
 Accessibility-tree pruning + compaction...
 common class threshold (03 compaction): count > elements × 0.05 (strict >5%)
 

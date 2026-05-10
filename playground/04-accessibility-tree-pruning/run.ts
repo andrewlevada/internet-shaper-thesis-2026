@@ -29,6 +29,7 @@ import {
 	COMMON_CLASS_FREQUENCY_THRESHOLD,
 	createDomMap,
 } from "../03-compact-agent/dom-processing.ts"
+import { PLAYGROUND_LOG_MANUAL_NOTE_LINE } from "../log-manual-note.ts"
 
 async function loadEnvFromCommonLocations(): Promise<void> {
 	const scriptDir = new URL(".", import.meta.url).pathname
@@ -500,6 +501,8 @@ async function main() {
 
 	const timestamp = new Date().toISOString()
 	const logLines: string[] = [
+		PLAYGROUND_LOG_MANUAL_NOTE_LINE,
+		"",
 		"Accessibility-tree pruning + compaction...",
 		`common class threshold (03 compaction): count > elements × ${COMMON_CLASS_FREQUENCY_THRESHOLD} (strict >${COMMON_CLASS_FREQUENCY_THRESHOLD * 100}%)`,
 		"",
