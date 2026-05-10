@@ -49,15 +49,100 @@ function filterAttributes(element: Element): void {
 	}
 }
 
-function getElementSignature(element: Element): string {
-	const tag = element.tagName.toLowerCase()
-	const id = element.id || ""
-	const classes = getClassName(element)
-		.split(/\s+/)
-		.filter(Boolean)
-		.sort()
-		.join(" ")
-	return `${tag}:${id}:${classes}`
+function getClassTokens(element: Element): Set<string> {
+	return new Set(getClassName(element).split(/\s+/).filter(Boolean))
+}
+
+/** Symmetric difference size |A Δ B| for class token sets. */
+function classTokenSymmetricDifferenceSize(
+	a: Set<string>,
+	b: Set<string>,
+): number {
+	let n = 0
+	for (const t of a) {
+		if (!b.has(t)) n++
+	}
+	for (const t of b) {
+		if (!a.has(t)) n++
+	}
+	return n
+}
+
+/**
+ * Class bag similarity: strict for few classes, then allow growing token mismatch budget.
+ * - max 1–2 classes on either side: sets must match exactly.
+ * - 3–9: symmetric difference ≤ 2 (tolerates one extra / one mismatch pair).
+ * - 10+: symmetric difference ≤ 3.
+ */
+function classTokensMatchForSiblings(a: Set<string>, b: Set<string>): boolean {
+	const maxLen = Math.max(a.size, b.size)
+	const sym = classTokenSymmetricDifferenceSize(a, b)
+	if (maxLen <= 2) return sym === 0
+	if (maxLen <= 9) return sym <= 2
+	return sym <= 3
+}
+
+function getImmediateChildTags(element: Element): string[] {
+	const tags: string[] = []
+	for (const child of element.children) {
+		tags.push(child.tagName.toLowerCase())
+	}
+	return tags
+}
+
+/** Levenshtein edit distance on ordered tag sequences. */
+function levenshteinSequences(a: string[], b: string[]): number {
+	const m = a.length
+	const n = b.length
+	if (m === 0) return n
+	if (n === 0) return m
+	const row = new Array<number>(n + 1)
+	for (let j = 0; j <= n; j++) row[j] = j
+	for (let i = 1; i <= m; i++) {
+		let prev = row[0]
+		row[0] = i
+		for (let j = 1; j <= n; j++) {
+			const tmp = row[j]
+			const cost = a[i - 1] === b[j - 1] ? 0 : 1
+			row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + cost)
+			prev = tmp
+		}
+	}
+	return row[n]
+}
+
+/**
+ * Immediate child tag structures match within an edit-distance budget tied to sequence length.
+ */
+function childTagSequencesMatchForSiblings(a: string[], b: string[]): boolean {
+	const maxLen = Math.max(a.length, b.length)
+	const dist = levenshteinSequences(a, b)
+	if (maxLen <= 3) return dist === 0
+	if (maxLen <= 8) return dist <= 1
+	if (maxLen <= 15) return dist <= 2
+	return dist <= 3
+}
+
+/**
+ * Consecutive list items are "the same shape" for truncation when tag+id match exactly,
+ * class tokens pass tiered bag similarity, and immediate child tag order is within edit distance.
+ */
+function siblingsMatchForTruncation(a: Element, b: Element): boolean {
+	const tagA = a.tagName.toLowerCase()
+	const tagB = b.tagName.toLowerCase()
+	if (tagA !== tagB) return false
+	if ((a.id || "") !== (b.id || "")) return false
+	if (!classTokensMatchForSiblings(getClassTokens(a), getClassTokens(b)))
+		return false
+	if (
+		!childTagSequencesMatchForSiblings(
+			getImmediateChildTags(a),
+			getImmediateChildTags(b),
+		)
+	) {
+		return false
+	}
+	return true
 }
 
 function countAllClasses(element: Element): Map<string, number> {
@@ -190,12 +275,11 @@ function truncateSiblingLists(element: Element, doc: Document): number {
 
 	while (i < children.length) {
 		const child = children[i]
-		const signature = getElementSignature(child)
 		let groupEnd = i + 1
 
 		while (groupEnd < children.length) {
 			const sibling = children[groupEnd]
-			if (getElementSignature(sibling) !== signature) break
+			if (!siblingsMatchForTruncation(child, sibling)) break
 			groupEnd++
 		}
 
