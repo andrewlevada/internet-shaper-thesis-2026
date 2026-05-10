@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"noEmit": true,
+		"lib": ["ES2022", "DOM"],
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"types": [],
+		"baseUrl": ".",
+		"paths": {
+			"npm:zod": ["./node_modules/zod"],
+			"npm:zod/*": ["./node_modules/zod/*"],
+			"npm:@anthropic-ai/sdk": ["./node_modules/@anthropic-ai/sdk"],
+			"npm:@anthropic-ai/sdk/*": ["./node_modules/@anthropic-ai/sdk/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.d.ts"]
+}

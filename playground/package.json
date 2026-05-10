@@ -1,0 +1,15 @@
+{
+	"name": "@playground/workspace",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json"
+	},
+	"dependencies": {
+		"@anthropic-ai/sdk": "^0.95.1",
+		"zod": "^3.25.0"
+	},
+	"devDependencies": {
+		"typescript": "~5.8"
+	}
+}
