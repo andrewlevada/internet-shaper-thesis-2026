@@ -1,0 +1,29 @@
+Manual note: changed inserted comments from full-form to compact — "Collapsed N wrappers" → "-N wrappers"; "Truncated N similar siblings" → "-N siblings"; "Hidden element" / "Hid N elements" → "-N elements"
+
+DOM whitespace normalization run
+--------------------------------
+timestamp (UTC): 2026-05-10T11:35:01.975Z
+script: 05-dom-whitespace-normalization/1
+normalizer: parse as text/html; drop whitespace-only text nodes outside script/style/pre/textarea; collapse whitespace runs in other text nodes
+
+source: 03-compact-agent/doms/compacted
+---------------------------------------
+input symlink: inputs/from-03-compacted
+resolved path: /Users/andrewlevada/Projects/my/internet-shaper/playground/03-compact-agent/doms/compacted
+output dir: output/from-03
+
+substack.html: chars 91065 -> 86489 (5.0% smaller)
+youtube.html: chars 416378 -> 411850 (1.1% smaller)
+instagram.html: chars 27452 -> 27171 (1.0% smaller)
+
+source: 04-accessibility-tree-pruning/output/compacted
+------------------------------------------------------
+input symlink: inputs/from-04-compacted
+resolved path: /Users/andrewlevada/Projects/my/internet-shaper/playground/04-accessibility-tree-pruning/output/compacted
+output dir: output/from-04
+
+substack.html: chars 73785 -> 69209 (6.2% smaller)
+youtube.html: chars 384504 -> 380105 (1.1% smaller)
+instagram.html: chars 26311 -> 26030 (1.1% smaller)
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/playground/05-dom-whitespace-normalization/logs/2026-05-10T11-35-01-975Z-whitespace-normalize.log

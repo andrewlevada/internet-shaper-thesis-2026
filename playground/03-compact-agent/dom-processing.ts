@@ -155,7 +155,7 @@ function collapseChain(element: Element): number {
 
 	// Add comment
 	const comment = element.ownerDocument?.createComment(
-		` Collapsed ${chain.length} wrappers `,
+		` -${chain.length} wrappers `,
 	)
 	if (comment) {
 		element.insertBefore(comment, element.firstChild)
@@ -207,7 +207,7 @@ function truncateSiblingLists(element: Element): number {
 
 			// Add comment after the first element
 			const comment = element.ownerDocument?.createComment(
-				` Truncated ${groupSize - 1} similar siblings `,
+				` -${groupSize - 1} siblings `,
 			)
 			if (comment && child.nextSibling) {
 				element.insertBefore(comment, child.nextSibling)
@@ -269,7 +269,7 @@ export function createDomMap(html: string): MapResult {
 	// Step 1: Filter attributes
 	filterAllAttributes(body)
 
-	// Step 2: Remove high-frequency classes (>5% of elements, strict)
+	// Step 2: Remove high-frequency classes
 	const removedClasses = removeHighFrequencyClasses(
 		body,
 		COMMON_CLASS_FREQUENCY_THRESHOLD,

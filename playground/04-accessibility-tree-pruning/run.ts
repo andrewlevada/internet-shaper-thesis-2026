@@ -226,8 +226,7 @@ interface PruneOperation {
 
 /**
  * Snapshot nodes to unwrap/remove before any mutation, assign at most one
- * visibility comment per DOM parent container: `<!-- Hidden element -->` or
- * `<!-- Hid N elements -->`.
+ * visibility comment per DOM parent container: `<!-- -N elements -->`.
  */
 async function collectPruneOperations(
 	client: CDPSession,
@@ -305,8 +304,7 @@ async function collectPruneOperations(
 	): { anchorSeq: number; text: string } => {
 		const anchor = items.reduce((a, b) => (a.seq < b.seq ? a : b))
 		const n = items.length
-		const text =
-			n === 1 ? "<!-- Hidden element -->" : `<!-- Hid ${n} elements -->`
+		const text = `<!-- -${n} elements -->`
 		return { anchorSeq: anchor.seq, text }
 	}
 
