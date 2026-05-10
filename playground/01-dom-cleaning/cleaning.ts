@@ -5,7 +5,7 @@
  * Saves intermediate files to output directory.
  *
  * Steps:
- * 1. Remove all head, script, link, style tags
+ * 1. Remove all head, script, link, style, noscript tags
  * 2. Remove elements with display:none in style attribute
  * 3. Remove all tags inside svg tags except for title tags
  * 4. Remove HTML comments
@@ -120,7 +120,8 @@ type CleaningStep = {
 const steps: CleaningStep[] = [
 	{
 		name: "01-remove-head-script-link-style",
-		apply: (html) => removeElements(html, ["head", "script", "link", "style"]),
+		apply: (html) =>
+			removeElements(html, ["head", "script", "link", "style", "noscript"]),
 	},
 	{
 		name: "02-remove-hidden-elements",

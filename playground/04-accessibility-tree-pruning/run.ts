@@ -6,13 +6,43 @@
  * `backendNodeId` does not appear in `Accessibility.getFullAXTree`, then runs
  * the same compaction as playground/03 (`createDomMap`).
  *
+ * ## Running this script (for agents / CI)
+ *
+ * From repo root, with API key in `.env`:
+ *
+ *   deno run --env-file=.env --allow-read --allow-write --allow-env --allow-net --allow-run --allow-sys \\
+ *     playground/04-accessibility-tree-pruning/run.ts
+ *
+ * ### When launch fails: “Failed to launch Chrome” / channel `chrome`
+ *
+ * Resolution order is `resolveChromeForPuppeteer()` below. Typical failure on
+ * macOS: **Google Chrome is not installed** at
+ * `/Applications/Google Chrome.app/...`, there is no `chromium` on `PATH`, and
+ * either Playwright’s browser was never downloaded or **`chromium.executablePath()`**
+ * returned a path that does not exist on disk (Deno’s `npm:playwright-core` cache
+ * can differ from `pnpm`’s; the path is only used if `stat` succeeds). The code
+ * then falls back to Puppeteer **channel `chrome`**, which still expects a
+ * system-installed Google Chrome — so you get the same class of error.
+ *
+ * **Reliable fix:** install Chromium via Playwright from `playground/`, then point
+ * the env var at the real binary (folder name includes a revision, e.g.
+ * `chromium-1217`):
+ *
+ *   cd playground && pnpm run install-playwright-chromium
+ *   export CHROME_PATH="$HOME/Library/Caches/ms-playwright/chromium-1217/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+ *   cd 04-accessibility-tree-pruning && deno run --env-file=../../.env --allow-read --allow-write --allow-env --allow-net --allow-run --allow-sys run.ts
+ *
+ * Adjust `chromium-1217` to whatever exists under `$HOME/Library/Caches/ms-playwright/`.
+ * Linux paths differ (e.g. `.../chrome-linux64/chrome`). Alternatively install
+ * Google Chrome or Chromium and set `CHROME_PATH` / `PUPPETEER_EXECUTABLE_PATH`.
+ *
  * Chrome resolution (first match wins):
  *   PUPPETEER_EXECUTABLE_PATH or CHROME_PATH (must exist on disk)
  *   Common install paths (macOS/Linux) and `command -v` for
  *   google-chrome-stable, google-chrome, chromium
- *   Playwright’s downloaded Chromium (Fiber-style e2e): `chromium.executablePath()`
- *   from `playwright-core` after `pnpm exec playwright install chromium` in `playground/`
- *   Else Puppeteer `channel: chrome` (Google Chrome.app only)
+ *   Playwright’s downloaded Chromium: `chromium.executablePath()` from
+ *   `npm:playwright-core` after `pnpm run install-playwright-chromium` in `playground/`
+ *   Else Puppeteer `channel: chrome` (Google Chrome.app at default path only)
  *
  * Deno: `--allow-read --allow-write --allow-env --allow-net --allow-run --allow-sys`
  * (`allow-run` for Chrome subprocess; `allow-sys` needed for spawning on some platforms.)
@@ -103,7 +133,14 @@ async function resolveCommandPath(cmd: string): Promise<string | undefined> {
 	}
 }
 
-/** Playwright-downloaded Chromium (same idea as Fiber `e2e/fixtures.ts`), usable as CDP host for puppeteer-core. */
+/**
+ * Playwright-downloaded Chromium (same idea as Fiber `e2e/fixtures.ts`), usable
+ * as CDP host for puppeteer-core.
+ *
+ * Returns a path only if it passes `pathExists` — if `playwright install` was
+ * never run, or the path points at a missing cache dir, this returns `undefined`
+ * and callers fall back to Puppeteer channel `chrome` (needs Google Chrome.app).
+ */
 async function tryPlaywrightChromiumExecutable(): Promise<string | undefined> {
 	try {
 		const { chromium } = await import("npm:playwright-core")

@@ -1,0 +1,32 @@
+Manual note: added noscript tag to excluded tags list at 01 step
+
+DOM compaction run
+------------------
+timestamp (UTC): 2026-05-10T11:42:35.875Z
+script: 03-compact-agent/compact-doms/1
+token counter API: https://api.anthropic.com/v1/messages/count_tokens
+token counter model: claude-sonnet-4-6
+input dir: doms/
+output dir: doms/compacted/
+common class threshold: count > elements × 0.05 (strict >5%)
+
+substack.html
+-------------
+Chars:  355,277 -> 90,891 (74.4% reduction)
+Tokens: 146,306 -> 34,226 (76.6% reduction)
+433 wrappers, 193 siblings, 18 classes
+
+youtube.html
+------------
+Chars:  1,960,222 -> 416,378 (78.8% reduction)
+Tokens: 651,253 -> 141,192 (78.3% reduction)
+4011 wrappers, 138 siblings, 3 classes
+
+instagram.html
+--------------
+Chars:  264,195 -> 27,452 (89.6% reduction)
+Tokens: 157,880 -> 15,098 (90.4% reduction)
+681 wrappers, 107 siblings, 82 classes
+
+output: /Users/andrewlevada/Projects/my/internet-shaper/playground/03-compact-agent/doms/compacted
+log file: /Users/andrewlevada/Projects/my/internet-shaper/playground/03-compact-agent/logs/2026-05-10T11-42-35-875Z-compact-doms.log

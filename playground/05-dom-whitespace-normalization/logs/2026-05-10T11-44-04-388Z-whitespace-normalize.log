@@ -1,0 +1,29 @@
+Manual note: added noscript tag to excluded tags list at 01 step
+
+DOM whitespace normalization run
+--------------------------------
+timestamp (UTC): 2026-05-10T11:44:04.388Z
+script: 05-dom-whitespace-normalization/1
+normalizer: parse as text/html; drop whitespace-only text nodes outside script/style/pre/textarea; collapse whitespace runs in other text nodes
+
+source: 03-compact-agent/doms/compacted
+---------------------------------------
+input symlink: inputs/from-03-compacted
+resolved path: /Users/andrewlevada/Projects/my/internet-shaper/playground/03-compact-agent/doms/compacted
+output dir: output/from-03
+
+substack.html: chars 90891 -> 86339 (5.0% smaller)
+youtube.html: chars 416378 -> 411850 (1.1% smaller)
+instagram.html: chars 27452 -> 27171 (1.0% smaller)
+
+source: 04-accessibility-tree-pruning/output/compacted
+------------------------------------------------------
+input symlink: inputs/from-04-compacted
+resolved path: /Users/andrewlevada/Projects/my/internet-shaper/playground/04-accessibility-tree-pruning/output/compacted
+output dir: output/from-04
+
+substack.html: chars 73611 -> 69059 (6.2% smaller)
+youtube.html: chars 384504 -> 380105 (1.1% smaller)
+instagram.html: chars 26311 -> 26030 (1.1% smaller)
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/playground/05-dom-whitespace-normalization/logs/2026-05-10T11-44-04-388Z-whitespace-normalize.log
