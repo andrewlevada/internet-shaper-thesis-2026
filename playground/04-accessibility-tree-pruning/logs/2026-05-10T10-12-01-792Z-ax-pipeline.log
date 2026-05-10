@@ -1,0 +1,24 @@
+Accessibility-tree pruning + compaction...
+common class threshold (03 compaction): count > elements × 0.05 (strict >5%)
+
+substack.html
+  Chars:  355,505 -> 56,616 (84.1% reduction)
+  Tokens: 146,372 -> 19,550 (86.6% reduction)
+  326 wrappers, 66 siblings, 24 classes
+  AX prune -> 163,209 chars (54.1%), 59,798 tokens (59.1%), 528 ids, 730 unwrapped, ~elements 1787 -> 1055
+
+youtube.html
+  Chars:  1,960,222 -> 388,078 (80.2% reduction)
+  Tokens: 651,253 -> 131,277 (79.8% reduction)
+  2726 wrappers, 110 siblings, 3 classes
+  AX prune -> 1,047,424 chars (46.6%), 349,732 tokens (46.3%), 5711 ids, 10467 unwrapped, ~elements 19506 -> 9037
+
+instagram.html
+  Chars:  264,195 -> 27,267 (89.7% reduction)
+  Tokens: 157,880 -> 14,639 (90.7% reduction)
+  681 wrappers, 107 siblings, 82 classes
+  AX prune -> 254,890 chars (3.5%), 153,125 tokens (3.0%), 1433 ids, 56 unwrapped, ~elements 1492 -> 1434
+
+
+Output: /Users/andrewlevada/Projects/my/internet-shaper/playground/04-accessibility-tree-pruning/output/compacted
+AX-pruned: /Users/andrewlevada/Projects/my/internet-shaper/playground/04-accessibility-tree-pruning/output/pruned

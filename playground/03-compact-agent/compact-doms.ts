@@ -1,13 +1,27 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-env --allow-net
 
+/**
+ * Compacts raw HTML under `doms/`, writes `doms/compacted/*.html`, and logs
+ * configuration + per-file metrics under `logs/<timestamp>-compact-doms.log`.
+ */
+
 import { load } from "https://deno.land/std@0.224.0/dotenv/mod.ts"
 import { join } from "https://deno.land/std@0.224.0/path/mod.ts"
-import { createDomMap } from "./dom-processing.ts"
+import {
+	COMMON_CLASS_FREQUENCY_THRESHOLD,
+	createDomMap,
+} from "./dom-processing.ts"
 
 await load({ export: true })
 
+const SCRIPT_VERSION = "03-compact-agent/compact-doms/1"
 const API_URL = "https://api.anthropic.com/v1/messages/count_tokens"
 const MODEL = "claude-sonnet-4-6"
+
+function logSection(lines: string[], title: string) {
+	lines.push(title)
+	lines.push("-".repeat(Math.min(title.length, 72)))
+}
 
 async function countTokens(content: string): Promise<number> {
 	const apiKey = Deno.env.get("ANTHROPIC_API_KEY")
@@ -37,8 +51,26 @@ async function countTokens(content: string): Promise<number> {
 const scriptDir = new URL(".", import.meta.url).pathname
 const domsDir = join(scriptDir, "doms")
 const outputDir = join(domsDir, "compacted")
+const logsDir = join(scriptDir, "logs")
+const timestamp = new Date().toISOString()
+const fileTimestamp = timestamp.replace(/[:.]/g, "-")
+const logPath = join(logsDir, `${fileTimestamp}-compact-doms.log`)
+const logLines: string[] = []
 
 await Deno.mkdir(outputDir, { recursive: true })
+await Deno.mkdir(logsDir, { recursive: true })
+
+logSection(logLines, "DOM compaction run")
+logLines.push(`timestamp (UTC): ${timestamp}`)
+logLines.push(`script: ${SCRIPT_VERSION}`)
+logLines.push(`token counter API: ${API_URL}`)
+logLines.push(`token counter model: ${MODEL}`)
+logLines.push(`input dir: doms/`)
+logLines.push(`output dir: doms/compacted/`)
+logLines.push(
+	`common class threshold: count > elements × ${COMMON_CLASS_FREQUENCY_THRESHOLD} (strict >${COMMON_CLASS_FREQUENCY_THRESHOLD * 100}%)`,
+)
+logLines.push("")
 
 console.log("Compacting DOMs...\n")
 
@@ -62,6 +94,18 @@ for await (const entry of Deno.readDir(domsDir)) {
 	const charReduction = ((1 - result.html.length / raw.length) * 100).toFixed(1)
 	const tokenReduction = ((1 - compactedTokens / rawTokens) * 100).toFixed(1)
 
+	logSection(logLines, entry.name)
+	logLines.push(
+		`Chars:  ${raw.length.toLocaleString()} -> ${result.html.length.toLocaleString()} (${charReduction}% reduction)`,
+	)
+	logLines.push(
+		`Tokens: ${rawTokens.toLocaleString()} -> ${compactedTokens.toLocaleString()} (${tokenReduction}% reduction)`,
+	)
+	logLines.push(
+		`${result.stats.collapsedWrappers} wrappers, ${result.stats.truncatedListItems} siblings, ${result.stats.removedClasses} classes`,
+	)
+	logLines.push("")
+
 	console.log(`${entry.name}`)
 	console.log(
 		`  Chars:  ${raw.length.toLocaleString()} -> ${result.html.length.toLocaleString()} (${charReduction}% reduction)`,
@@ -75,4 +119,9 @@ for await (const entry of Deno.readDir(domsDir)) {
 	console.log()
 }
 
+logLines.push(`output: ${outputDir}`)
+logLines.push(`log file: ${logPath}`)
+await Deno.writeTextFile(logPath, logLines.join("\n"))
+
 console.log(`Output: ${outputDir}`)
+console.log(`\nLog: ${logPath}`)

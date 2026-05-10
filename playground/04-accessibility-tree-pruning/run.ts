@@ -25,7 +25,10 @@ import { join, toFileUrl } from "https://deno.land/std@0.224.0/path/mod.ts"
 import type { CDPSession } from "npm:puppeteer-core"
 import puppeteer from "npm:puppeteer-core"
 
-import { createDomMap } from "../03-compact-agent/dom-processing.ts"
+import {
+	COMMON_CLASS_FREQUENCY_THRESHOLD,
+	createDomMap,
+} from "../03-compact-agent/dom-processing.ts"
 
 async function loadEnvFromCommonLocations(): Promise<void> {
 	const scriptDir = new URL(".", import.meta.url).pathname
@@ -391,7 +394,11 @@ async function main() {
 	const chromeResolution = await resolveChromeForPuppeteer()
 
 	const timestamp = new Date().toISOString()
-	const logLines: string[] = ["Accessibility-tree pruning + compaction...", ""]
+	const logLines: string[] = [
+		"Accessibility-tree pruning + compaction...",
+		`common class threshold (03 compaction): count > elements × ${COMMON_CLASS_FREQUENCY_THRESHOLD} (strict >${COMMON_CLASS_FREQUENCY_THRESHOLD * 100}%)`,
+		"",
+	]
 
 	console.log("Accessibility-tree DOM pruning + 03 compaction\n")
 	console.log(`Chrome: ${chromeResolutionLabel(chromeResolution)}\n`)

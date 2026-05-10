@@ -18,6 +18,9 @@ const ALLOWED_ATTRIBUTES = new Set([
 	"value",
 ])
 
+/** Strip class tokens whose occurrence count is strictly greater than this fraction of all elements. */
+export const COMMON_CLASS_FREQUENCY_THRESHOLD = 0.05
+
 function isDataAttribute(name: string): boolean {
 	return name.startsWith("data-")
 }
@@ -79,7 +82,7 @@ function removeHighFrequencyClasses(
 
 	const toRemove = new Set<string>()
 	for (const [cls, count] of classCounts) {
-		if (count >= cutoff) {
+		if (count > cutoff) {
 			toRemove.add(cls)
 		}
 	}
@@ -266,8 +269,11 @@ export function createDomMap(html: string): MapResult {
 	// Step 1: Filter attributes
 	filterAllAttributes(body)
 
-	// Step 2: Remove high-frequency classes (>20% of elements)
-	const removedClasses = removeHighFrequencyClasses(body, 0.2)
+	// Step 2: Remove high-frequency classes (>5% of elements, strict)
+	const removedClasses = removeHighFrequencyClasses(
+		body,
+		COMMON_CLASS_FREQUENCY_THRESHOLD,
+	)
 
 	// Step 3: Collapse single-child chains
 	const collapsedWrappers = collapseSingleChildChains(body)

@@ -1,3 +1,6 @@
+/** Strip class tokens whose occurrence count is strictly greater than this fraction of all elements. */
+const COMMON_CLASS_FREQUENCY_THRESHOLD = 0.05
+
 const ALLOWED_ATTRIBUTES = new Set([
 	"alt",
 	"aria-label",
@@ -94,7 +97,7 @@ function removeHighFrequencyClasses(
 
 	const toRemove = new Set<string>()
 	for (const [cls, count] of classCounts) {
-		if (count >= cutoff) {
+		if (count > cutoff) {
 			toRemove.add(cls)
 		}
 	}
@@ -264,7 +267,10 @@ export function createDomMap(html: string): MapResult {
 	const body = doc.body
 
 	filterAllAttributes(body)
-	const removedClasses = removeHighFrequencyClasses(body, 0.2)
+	const removedClasses = removeHighFrequencyClasses(
+		body,
+		COMMON_CLASS_FREQUENCY_THRESHOLD,
+	)
 	const collapsedWrappers = collapseSingleChildChains(body, doc)
 	const truncatedListItems = truncateSiblingLists(body, doc)
 	removeEmptyAttributes(body)
