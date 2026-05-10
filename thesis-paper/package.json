@@ -1,0 +1,8 @@
+{
+	"name": "thesis-paper",
+	"private": true,
+	"scripts": {
+		"compile": "typst compile doc/main.typ doc/main.pdf --font-path doc",
+		"watch": "typst watch doc/main.typ doc/main.pdf --font-path doc"
+	}
+}
