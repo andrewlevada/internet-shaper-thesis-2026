@@ -249,7 +249,7 @@ function collapseChain(element: Element, doc: Document): number {
 		element.appendChild(node)
 	}
 
-	const comment = doc.createComment(` Collapsed ${chain.length} wrappers `)
+	const comment = doc.createComment(` -${chain.length} wrappers `)
 	element.insertBefore(comment, element.firstChild)
 
 	return chain.length
@@ -290,9 +290,7 @@ function truncateSiblingLists(element: Element, doc: Document): number {
 				truncatedItems++
 			}
 
-			const comment = doc.createComment(
-				` Truncated ${groupSize - 1} similar siblings `,
-			)
+			const comment = doc.createComment(` -${groupSize - 1} siblings `)
 			if (child.nextSibling) {
 				element.insertBefore(comment, child.nextSibling)
 			} else {
@@ -330,6 +328,48 @@ function removeEmptyAttributes(element: Element): void {
 	for (const child of element.children) {
 		removeEmptyAttributes(child)
 	}
+}
+
+const RAW_ANCESTOR_TAGS = new Set(["script", "style", "pre", "textarea"])
+
+function hasRawTextAncestor(el: Element | null): boolean {
+	let p: Element | null = el
+	while (p) {
+		if (RAW_ANCESTOR_TAGS.has(p.tagName.toLowerCase())) return true
+		p = p.parentElement
+	}
+	return false
+}
+
+function normalizeElementSubtree(root: Element): void {
+	const walk = (el: Element) => {
+		const children = [...el.childNodes]
+		for (const child of children) {
+			if (child.nodeType === Node.TEXT_NODE) {
+				if (hasRawTextAncestor(child.parentElement)) continue
+				const raw = child.textContent ?? ""
+				if (/^\s*$/.test(raw)) {
+					child.parentNode?.removeChild(child)
+					continue
+				}
+				const collapsed = raw.replace(/\s+/g, " ")
+				if (collapsed !== raw) child.textContent = collapsed
+				continue
+			}
+			if (child.nodeType === Node.ELEMENT_NODE) {
+				walk(child as Element)
+			}
+		}
+	}
+	walk(root)
+}
+
+export function normalizeHtmlWhitespace(html: string): string {
+	const doc = new DOMParser().parseFromString(html, "text/html")
+	const body = doc.body
+	if (!body) return html
+	normalizeElementSubtree(body)
+	return body.outerHTML
 }
 
 export interface MapResult {
