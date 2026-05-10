@@ -1,7 +1,18 @@
-Some info on the compacting used for the get_map_of_dom tool:
+Compacting DOMs...
 
-| DOM       | Before            | After            |
-|-----------|-------------------|------------------|
-| substack  | 358K / 148K tok   | 121K /  46K tok  |
-| youtube   | 2M   / 665K tok   | 449K / 151K tok  |
-| instagram | 271K / 162K tok   |  53K /  32K tok  |
+substack.html
+  Chars:  355,505 -> 121,753 (65.8% reduction)
+  Tokens: 146,372 -> 46,705 (68.1% reduction)
+  433 wrappers, 193 siblings, 3 classes
+
+youtube.html
+  Chars:  1,960,222 -> 426,438 (78.2% reduction)
+  Tokens: 651,253 -> 143,618 (77.9% reduction)
+  4011 wrappers, 138 siblings, 1 classes
+
+instagram.html
+  Chars:  264,195 -> 54,951 (79.2% reduction)
+  Tokens: 157,880 -> 33,663 (78.7% reduction)
+  681 wrappers, 106 siblings, 15 classes
+
+Output: /Users/andrewlevada/Projects/my/internet-shaper/playground/03-compact-agent/doms/compacted

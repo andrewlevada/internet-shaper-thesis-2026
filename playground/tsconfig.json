@@ -14,7 +14,11 @@
 			"npm:zod": ["./node_modules/zod"],
 			"npm:zod/*": ["./node_modules/zod/*"],
 			"npm:@anthropic-ai/sdk": ["./node_modules/@anthropic-ai/sdk"],
-			"npm:@anthropic-ai/sdk/*": ["./node_modules/@anthropic-ai/sdk/*"]
+			"npm:@anthropic-ai/sdk/*": ["./node_modules/@anthropic-ai/sdk/*"],
+			"npm:puppeteer-core": ["./node_modules/puppeteer-core"],
+			"npm:puppeteer-core/*": ["./node_modules/puppeteer-core/*"],
+			"npm:playwright-core": ["./node_modules/playwright-core"],
+			"npm:playwright-core/*": ["./node_modules/playwright-core/*"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.d.ts"]

@@ -1,4 +1,5 @@
 {
+	"editor.maxTokenizationLineLength": 500000,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "biomejs.biome",
 	"biome.enabled": true,

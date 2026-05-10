@@ -3,13 +3,17 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"typecheck": "tsc -p tsconfig.json"
+		"typecheck": "tsc -p tsconfig.json",
+		"install-playwright-chromium": "playwright install chromium"
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.95.1",
+		"playwright-core": "^1.51.1",
+		"puppeteer-core": "^24.1.1",
 		"zod": "^3.25.0"
 	},
 	"devDependencies": {
+		"playwright": "^1.51.1",
 		"typescript": "~5.8"
 	}
 }
