@@ -1,0 +1,28 @@
+Manual note: First run — 3 types of comments: wrapper, sibling, and pruning hiding
+
+HTML comment character ratio (post step 05 output)
+--------------------------------------------------
+timestamp (UTC): 2026-05-10T11:10:39.374Z
+script: 05-dom-whitespace-normalization/comment-char-ratio/1
+reproduce: deno run --allow-read --allow-write ./comment-char-ratio.ts
+metric: sum(length of <!-- ... --> spans) / total file length (characters)
+
+artifact dir: output/from-03
+----------------------------
+upstream source id: 03-compact-agent/doms/compacted
+path: /Users/andrewlevada/Projects/my/internet-shaper/playground/05-dom-whitespace-normalization/output/from-03
+
+substack.html: comments 7487 chars / 89055 total (8.41%)
+youtube.html: comments 27251 chars / 420378 total (6.48%)
+instagram.html: comments 3520 chars / 28329 total (12.43%)
+
+artifact dir: output/from-04
+----------------------------
+upstream source id: 04-accessibility-tree-pruning/output/compacted
+path: /Users/andrewlevada/Projects/my/internet-shaper/playground/05-dom-whitespace-normalization/output/from-04
+
+substack.html: comments 10098 chars / 71846 total (14.06%)
+youtube.html: comments 41215 chars / 390237 total (10.56%)
+instagram.html: comments 3704 chars / 27212 total (13.61%)
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/playground/05-dom-whitespace-normalization/logs/metrics/2026-05-10T11-10-39-374Z-comment-char-ratio.log
