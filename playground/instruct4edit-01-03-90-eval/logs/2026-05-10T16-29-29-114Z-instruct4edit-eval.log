@@ -1,0 +1,42 @@
+Manual note: FILL IN"
+
+Instruct4Edit in-process 01 → 03 → 90 evaluation
+------------------------------------------------
+timestamp (UTC): 2026-05-10T16:29:29.114Z
+script: instruct4edit-01-03-90-eval/run/1
+sample count: 20
+rng seed (mulberry32): 42
+token model (all stages): claude-opus-4-6
+
+dataset file: existing /Users/andrewlevada/Projects/my/internet-shaper/playground/instruct4edit-01-03-90-eval/data/instruction_tuning_data.json
+
+eligible entries: 1150
+picked ids: sample_217, sample_1076, sample_680, sample_343, sample_468, sample_528, sample_552, sample_988, sample_73, sample_1110, sample_118, sample_589, sample_648, sample_683, sample_127, sample_745, sample_1014, sample_1043, sample_170, sample_13
+
+OK sample_217: chars 23710→7621→6180→6161
+OK sample_1076: chars 11873→11051→5276→5280
+OK sample_680: chars 11878→10266→5658→5431
+OK sample_343: chars 30918→10507→7378→7188
+OK sample_468: chars 8771→7091→3116→3052
+OK sample_528: chars 26864→9649→6238→6233
+OK sample_552: chars 7650→5479→3934→3927
+OK sample_988: chars 23819→9061→6099→6095
+OK sample_73: chars 12304→7314→3027→3021
+OK sample_1110: chars 16958→5674→3703→3549
+OK sample_118: chars 22657→6854→3054→3054
+OK sample_589: chars 14145→8278→5157→4944
+OK sample_648: chars 11637→7372→5884→5863
+OK sample_683: chars 11102→8178→5839→5719
+OK sample_127: chars 12248→7070→5825→5718
+OK sample_745: chars 4509→1695→1141→1141
+OK sample_1014: chars 15512→5869→4474→4450
+OK sample_1043: chars 7651→5480→3935→3928
+OK sample_170: chars 11607→10134→6882→6857
+OK sample_13: chars 23109→7885→4408→4204
+
+summary (successful samples)
+n: 20
+char reduction % vs raw @90: mean 65.0, median 68.3
+token reduction % vs raw @90: mean 66.8, median 71.6
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/playground/instruct4edit-01-03-90-eval/logs/2026-05-10T16-29-29-114Z-instruct4edit-eval.log

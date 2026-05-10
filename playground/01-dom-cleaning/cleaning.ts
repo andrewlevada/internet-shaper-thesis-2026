@@ -18,8 +18,6 @@ import {
 	type Element,
 } from "https://deno.land/x/deno_dom@v0.1.48/deno-dom-wasm.ts"
 
-await load({ export: true })
-
 const INPUT_DIR = "../00-dom-samples"
 const OUTPUT_DIR = "./output"
 const API_URL = "https://api.anthropic.com/v1/messages/count_tokens"
@@ -137,6 +135,15 @@ const steps: CleaningStep[] = [
 	},
 ]
 
+/** Same four steps as the CLI (final state equals `04-remove-comments.html`). */
+export function applyFullCleaning(html: string): string {
+	let out = html
+	for (const step of steps) {
+		out = step.apply(out)
+	}
+	return out
+}
+
 async function processFile(filePath: string, outputDir: string): Promise<void> {
 	const fileName = basename(filePath, ".html")
 	const fileOutputDir = join(outputDir, fileName)
@@ -185,6 +192,8 @@ async function processFile(filePath: string, outputDir: string): Promise<void> {
 }
 
 async function main() {
+	await load({ export: true })
+
 	// Resolve paths relative to script location
 	const scriptDir = new URL(".", import.meta.url).pathname
 	const inputDir = join(scriptDir, INPUT_DIR)
@@ -211,4 +220,6 @@ async function main() {
 	console.log("\nDone!")
 }
 
-main()
+if (import.meta.main) {
+	await main()
+}

@@ -1,0 +1,123 @@
+Manual note: FILL IN"
+
+Instruct4Edit in-process 01 → 03 → 90 evaluation
+------------------------------------------------
+timestamp (UTC): 2026-05-10T16:34:01.257Z
+script: instruct4edit-01-03-90-eval/run/1
+sample count: 100
+rng seed (mulberry32): 42
+token model (all stages): claude-opus-4-6
+
+dataset file: existing /Users/andrewlevada/Projects/my/internet-shaper/playground/instruct4edit-01-03-90-eval/data/instruction_tuning_data.json
+dataset snapshot sha used for fetch: 55a6fe0dd45e678bfcd76d866bf1fdd1789db016
+
+eligible entries: 1150
+picked ids: sample_217, sample_1076, sample_680, sample_343, sample_468, sample_528, sample_552, sample_988, sample_73, sample_1110, sample_118, sample_589, sample_648, sample_683, sample_127, sample_745, sample_1014, sample_1043, sample_170, sample_13, sample_438, sample_1049, sample_34, sample_919, sample_279, sample_475, sample_757, sample_72, sample_108, sample_520, sample_836, sample_317, sample_965, sample_503, sample_1061, sample_223, sample_889, sample_922, sample_772, sample_255, sample_771, sample_110, sample_212, sample_228, sample_491, sample_211, sample_976, sample_77, sample_268, sample_860, sample_38, sample_286, sample_865, sample_787, sample_193, sample_874, sample_674, sample_721, sample_2, sample_392, sample_621, sample_245, sample_288, sample_958, sample_991, sample_299, sample_82, sample_575, sample_1062, sample_833, sample_104, sample_558, sample_911, sample_935, sample_918, sample_62, sample_199, sample_60, sample_514, sample_632, sample_1073, sample_1124, sample_430, sample_956, sample_577, sample_560, sample_347, sample_830, sample_222, sample_695, sample_633, sample_724, sample_457, sample_803, sample_812, sample_432, sample_238, sample_637, sample_834, sample_1080
+
+OK sample_217: chars 23710→7621→6180→6161
+OK sample_1076: chars 11873→11051→5276→5280
+OK sample_680: chars 11878→10266→5658→5431
+OK sample_343: chars 30918→10507→7378→7188
+OK sample_468: chars 8771→7091→3116→3052
+OK sample_528: chars 26864→9649→6238→6233
+OK sample_552: chars 7650→5479→3934→3927
+OK sample_988: chars 23819→9061→6099→6095
+OK sample_73: chars 12304→7314→3027→3021
+OK sample_1110: chars 16958→5674→3703→3549
+OK sample_118: chars 22657→6854→3054→3054
+OK sample_589: chars 14145→8278→5157→4944
+OK sample_648: chars 11637→7372→5884→5863
+OK sample_683: chars 11102→8178→5839→5719
+OK sample_127: chars 12248→7070→5825→5718
+OK sample_745: chars 4509→1695→1141→1141
+OK sample_1014: chars 15512→5869→4474→4450
+OK sample_1043: chars 7651→5480→3935→3928
+OK sample_170: chars 11607→10134→6882→6857
+OK sample_13: chars 23109→7885→4408→4204
+OK sample_438: chars 17492→10489→3631→3608
+OK sample_1049: chars 11351→10421→6804→6695
+OK sample_34: chars 23745→11172→6152→6149
+OK sample_919: chars 20786→7741→6648→6201
+OK sample_279: chars 7097→4746→1749→1658
+OK sample_475: chars 8903→7841→5215→5114
+OK sample_757: chars 12181→6122→4617→4606
+OK sample_72: chars 8675→7787→3980→3973
+OK sample_108: chars 10736→9522→5408→5292
+OK sample_520: chars 10393→7709→3992→3827
+OK sample_836: chars 17987→9930→5959→5950
+OK sample_317: chars 11456→10187→8346→8330
+OK sample_965: chars 9831→8658→5103→5092
+OK sample_503: chars 14271→7202→3928→3896
+OK sample_1061: chars 14307→6791→6055→6049
+OK sample_223: chars 16485→7008→4397→4384
+OK sample_889: chars 14802→6642→5660→5653
+OK sample_922: chars 13672→11354→6428→6203
+OK sample_772: chars 7465→4376→1703→1716
+OK sample_255: chars 23041→10654→9273→9245
+OK sample_771: chars 22683→9540→5473→5428
+OK sample_110: chars 15540→11465→8579→8566
+OK sample_212: chars 15805→11215→9152→9117
+OK sample_228: chars 22585→11955→3328→3328
+OK sample_491: chars 9155→7603→4445→4215
+OK sample_211: chars 6211→3971→687→570
+OK sample_976: chars 5339→3820→2150→2049
+OK sample_77: chars 20669→10924→5408→5402
+OK sample_268: chars 12185→8210→3733→3340
+OK sample_860: chars 16197→11447→10446→10140
+OK sample_38: chars 4990→3775→2863→2735
+OK sample_286: chars 11642→5204→2680→2680
+OK sample_865: chars 10162→9056→4131→4123
+OK sample_787: chars 18766→9037→5471→5403
+OK sample_193: chars 8086→5226→4198→4180
+OK sample_874: chars 18117→9625→7804→7790
+OK sample_674: chars 17211→9170→2840→2840
+OK sample_721: chars 8937→5005→4277→4269
+OK sample_2: chars 8658→3621→3124→3080
+OK sample_392: chars 10853→6979→2749→2674
+OK sample_621: chars 13333→11337→9358→9114
+OK sample_245: chars 15291→12464→11789→11663
+OK sample_288: chars 11642→5204→2680→2680
+OK sample_958: chars 8326→7186→5477→5424
+OK sample_991: chars 24974→8717→7018→7014
+OK sample_299: chars 16125→12241→7040→6978
+OK sample_82: chars 9901→5129→3449→3448
+OK sample_575: chars 22543→9752→5271→5261
+OK sample_1062: chars 14307→6791→6055→6049
+OK sample_833: chars 14214→8732→5824→5713
+OK sample_104: chars 10111→7874→3161→2903
+OK sample_558: chars 19644→8937→4726→4611
+OK sample_911: chars 11362→10476→7439→7406
+OK sample_935: chars 28608→11529→9009→8980
+OK sample_918: chars 10127→9432→8497→8379
+OK sample_62: chars 25279→10834→5720→5346
+OK sample_199: chars 18609→7187→4143→4132
+OK sample_60: chars 14588→7408→2173→2149
+OK sample_514: chars 13100→9010→6530→6514
+OK sample_632: chars 25612→10772→7795→7764
+OK sample_1073: chars 15243→10035→8158→7733
+OK sample_1124: chars 20394→8329→4642→4642
+OK sample_430: chars 15050→8590→5859→5842
+OK sample_956: chars 8934→7735→6468→6423
+OK sample_577: chars 14538→6338→3747→3740
+OK sample_560: chars 13710→10796→8920→8870
+OK sample_347: chars 15789→9790→7176→7163
+OK sample_830: chars 11052→7553→4385→4188
+OK sample_222: chars 9400→8656→6757→6606
+OK sample_695: chars 12206→10954→4931→4536
+OK sample_633: chars 12185→5002→3679→3673
+OK sample_724: chars 12113→8104→1002→1002
+OK sample_457: chars 15432→8774→8155→8074
+OK sample_803: chars 30938→11634→8792→8785
+OK sample_812: chars 12366→10097→8092→8075
+OK sample_432: chars 11328→5748→5079→5041
+OK sample_238: chars 15360→10102→7415→7403
+OK sample_637: chars 15639→5613→3828→3649
+OK sample_834: chars 14214→8732→5824→5713
+OK sample_1080: chars 3981→3322→1668→1534
+
+summary (successful samples)
+n: 100
+char reduction % vs raw @90: mean 61.3, median 62.1
+token reduction % vs raw @90: mean 63.0, median 63.5
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/playground/instruct4edit-01-03-90-eval/logs/2026-05-10T16-34-01-257Z-instruct4edit-eval.log
