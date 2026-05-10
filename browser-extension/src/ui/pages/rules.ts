@@ -3,6 +3,7 @@ import { html as litHtml, render } from "lit"
 import { styles } from "../../styles.ts"
 import { renderRuleCard } from "../components/rule-card.ts"
 import {
+	clearAllRules,
 	deleteRule,
 	editedLogic,
 	elementCounts,
@@ -52,6 +53,15 @@ async function handleApplyRule(index: number) {
 	location.reload()
 }
 
+async function handleClearAllRules() {
+	if (!confirm("Remove every rule for this site? This cannot be undone.")) {
+		return
+	}
+	await clearAllRules()
+	markReopenRules()
+	location.reload()
+}
+
 export function renderRules(
 	renderRoot: HTMLElement | ShadowRoot,
 	renderMain: (root: HTMLElement | ShadowRoot) => unknown,
@@ -95,6 +105,19 @@ export function renderRules(
 					: rules.map((rule, i) =>
 							renderRuleCard(rule, i, counts[i] ?? 0, editedLogic, callbacks),
 						)
+			}
+
+      ${
+				rules.length > 0
+					? html`
+          <button
+            class="btn-full-danger"
+            @click="${handleClearAllRules}"
+          >
+            Remove all rules
+          </button>
+        `
+					: null
 			}
 
       <button

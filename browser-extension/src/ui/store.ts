@@ -86,6 +86,13 @@ export async function deleteRule(index: number): Promise<void> {
 	savedRules.value = rules
 }
 
+export async function clearAllRules(): Promise<void> {
+	await setRulesForCurrentHost([])
+	savedRules.value = []
+	elementCounts.value = []
+	editedLogic.value = {}
+}
+
 export async function toggleRule(index: number): Promise<void> {
 	const rules = await getRulesForCurrentHost()
 	const rule = rules[index]

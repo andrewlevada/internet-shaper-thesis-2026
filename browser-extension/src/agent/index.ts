@@ -168,6 +168,16 @@ export async function getElementCounts(): Promise<number[]> {
 	return counts ?? []
 }
 
+export { buildDomMapToolText } from "./dom-map-output.ts"
+export { capturePageDom } from "./dom-processing.ts"
 export { AgentGatewayError, isAgentGatewayError } from "./errors.ts"
+export {
+	ensureLiveDomContextPolling,
+	formatLiveContextSummary,
+	type LiveDomContext,
+	liveDomContext,
+	measureLiveDomContext,
+	stopLiveDomContextPolling,
+} from "./live-context.ts"
 
 export type { UpdateRule } from "./rules-engine.ts"

@@ -2,9 +2,16 @@ import { computed, signal, withWatch } from "@lit-labs/preact-signals"
 import { overlay } from "fiber-extension"
 import { html as litHtml, render } from "lit"
 import {
+	buildDomMapToolText,
+	capturePageDom,
+	ensureLiveDomContextPolling,
+	formatLiveContextSummary,
 	getElementCounts,
 	isAgentGatewayError,
+	liveDomContext,
+	measureLiveDomContext,
 	runAgent,
+	stopLiveDomContextPolling,
 } from "../../agent/index.ts"
 import { MODELS } from "../../agent/models.ts"
 import { applyRules } from "../../agent/rules-engine.ts"
@@ -102,12 +109,43 @@ function handleInput(e: Event) {
 	inputValue.value = (e.target as HTMLInputElement).value
 }
 
+function downloadTextFile(filename: string, content: string, mime: string) {
+	const blob = new Blob([content], { type: mime })
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement("a")
+	a.href = url
+	a.download = filename
+	a.click()
+	queueMicrotask(() => URL.revokeObjectURL(url))
+}
+
+function saveDomDebugSnapshots(
+	rerender: () => void,
+	statusRef: { value: string },
+) {
+	try {
+		const rawHtml = capturePageDom()
+		const { mapText } = buildDomMapToolText(rawHtml)
+		const ts = new Date().toISOString().replaceAll(/[:.]/g, "-")
+		const base = `internet-shaper-dom-${ts}`
+		downloadTextFile(`${base}-full.html`, rawHtml, "text/html;charset=utf-8")
+		downloadTextFile(`${base}-map.html`, mapText, "text/html;charset=utf-8")
+		statusRef.value = "Saved DOM snapshots (full + map)"
+	} catch (e) {
+		console.error("[Shaper] snapshot save failed:", e)
+		statusRef.value =
+			e instanceof Error ? `Snapshot error: ${e.message}` : "Snapshot error"
+	}
+	rerender()
+}
+
 export function renderMain(
 	renderRoot: HTMLElement | ShadowRoot,
 	renderRules: (root: HTMLElement | ShadowRoot) => unknown,
 ) {
 	const rerender = () => render(renderMain(renderRoot, renderRules), renderRoot)
 	const handleSubmit = createHandleSubmit(rerender)
+	ensureLiveDomContextPolling(() => selectedModel.value, rerender)
 
 	return html`
     <style>
@@ -134,7 +172,31 @@ export function renderMain(
           ${buttonText}
         </button>
 
-        <button class="btn-close" @click="${() => overlay.hide()}">x</button>
+        <button class="btn-close" @click="${() => {
+					stopLiveDomContextPolling()
+					overlay.hide()
+				}}">x</button>
+      </div>
+
+      <div
+        class="context-row"
+        title="Approximate tokens use chars÷4. Refreshes every 3s. Kimi shows gateway map cap when applicable."
+      >
+        <span class="context-indicator">
+          ${
+						liveDomContext.value
+							? formatLiveContextSummary(liveDomContext.value)
+							: "Measuring page context…"
+					}
+        </span>
+        <button
+          class="btn-sm"
+          type="button"
+          ?disabled="${isProcessing.value}"
+          @click="${() => saveDomDebugSnapshots(rerender, status)}"
+        >
+          Save DOM snap
+        </button>
       </div>
 
       <div class="row-between">
@@ -149,6 +211,11 @@ export function renderMain(
 							(e.target as HTMLSelectElement)
 								.value as typeof selectedModel.value,
 						)
+						try {
+							liveDomContext.value = measureLiveDomContext(selectedModel.value)
+						} catch (err) {
+							console.error("[Shaper] context remeasure failed:", err)
+						}
 						rerender()
 					}}"
         >
@@ -164,6 +231,7 @@ export function renderMain(
         <button
           class="btn-sm"
           @click="${async () => {
+						stopLiveDomContextPolling()
 						await refreshSavedRules()
 						elementCounts.value = await getElementCounts()
 						setView("rules")

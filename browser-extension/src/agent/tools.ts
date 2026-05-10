@@ -1,10 +1,6 @@
 import type { Tool } from "@anthropic-ai/sdk/resources/messages"
-import { applyFullCleaning } from "./dom-cleaning.ts"
-import {
-	createDomMap,
-	extractElement,
-	normalizeHtmlWhitespace,
-} from "./dom-processing.ts"
+import { buildDomMapToolText } from "./dom-map-output.ts"
+import { extractElement } from "./dom-processing.ts"
 import { truncateToolOutputForGateway } from "./gateway-limits.ts"
 import type { UpdateRule } from "./rules-engine.ts"
 
@@ -161,11 +157,9 @@ export function executeTool(
 					"[Tools] Creating DOM map from HTML of length:",
 					context.rawHtml.length,
 				)
-				const cleaned = applyFullCleaning(context.rawHtml)
-				const mapResult = createDomMap(cleaned)
-				const compactHtml = normalizeHtmlWhitespace(mapResult.html)
-				console.log("[Tools] DOM map stats:", mapResult.stats)
-				let result = `${compactHtml}\n\n<!-- Stats: ${mapResult.stats.collapsedWrappers} wrappers collapsed, ${mapResult.stats.truncatedListItems} list items truncated -->`
+				const { mapText, stats } = buildDomMapToolText(context.rawHtml)
+				console.log("[Tools] DOM map stats:", stats)
+				let result = mapText
 				result = maybeCapToolOutput("get_map_of_dom", result, context)
 				context.toolCalls.push({ name: "get_map_of_dom", input: {}, result })
 				console.log("[Tools] DOM map result length:", result.length)

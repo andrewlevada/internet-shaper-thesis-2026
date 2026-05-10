@@ -105,6 +105,17 @@ export const styles = css`
     width: 100%;
   }
 
+  .btn-full-danger {
+    margin-top: 12px;
+    padding: 10px 16px;
+    border: none;
+    background: #ffebee;
+    color: #b71c1c;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+  }
+
   .btn-delete {
     padding: 4px 8px;
     border: none;
@@ -121,9 +132,29 @@ export const styles = css`
     background: #dddddd;
   }
 
+  .btn-full-danger:hover {
+    background: #ffcdd2;
+  }
+
   .status {
     flex: 1;
     font-size: 12px;
+  }
+
+  .context-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #444444;
+  }
+
+  .context-indicator {
+    flex: 1;
+    min-width: 180px;
+    line-height: 1.35;
   }
 
   .modal-header {
