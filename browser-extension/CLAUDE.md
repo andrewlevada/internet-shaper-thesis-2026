@@ -80,9 +80,17 @@ const createFn = (logic: string) => {
 };
 ```
 
-Content scripts run in an isolated world exempt from page CSP/Trusted Types, but
-any scripts they inject into the DOM are subject to page restrictions. That's why
-we use `chrome.scripting.executeScript` from the background script instead.
+Content scripts run in an **isolated world**, so many **DOM sinks** (for example
+passing strings to `innerHTML` from the extension alone) do not hit the same
+**require-trusted-types-for** rules as the page's own scripts. Policy **`createPolicy`**
+is different: the page's **`trusted-types`** directive can **allowlist policy names**, so
+calls like `trustedTypes.createPolicy('lit-html', …)` throw on sites such as LinkedIn.
+We load [`lit-trusted-types-shim.ts`](src/lit-trusted-types-shim.ts) **before** any `lit`
+import so Lit still initializes when `lit-html` is disallowed.
+
+Any code the extension injects into the page's main world (or DOM that runs as
+page scripts) remains subject to page CSP/Trusted Types. That's why we use
+`chrome.scripting.executeScript` with `world: "MAIN"` for eval-like rule logic.
 
 ## Best Practices
 

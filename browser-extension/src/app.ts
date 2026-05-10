@@ -1,3 +1,4 @@
+import "./lit-trusted-types-shim.ts"
 import { overlay } from "fiber-extension"
 import { applyRules } from "./agent/rules-engine.ts"
 import {
