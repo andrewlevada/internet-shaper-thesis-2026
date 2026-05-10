@@ -53,7 +53,7 @@ function normalizeElementSubtree(root: Element): void {
 /**
  * Parses `html` as `text/html` and returns `document.body.outerHTML` after
  * whitespace normalization. Input is treated as a body fragment (same shape
- * as compacted samples in `03` / `04`).
+ * as compacted samples in playground `03`).
  */
 export function normalizeHtmlWhitespace(html: string): string {
 	const doc = new DOMParser().parseFromString(html, "text/html")

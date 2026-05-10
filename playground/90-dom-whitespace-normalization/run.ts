@@ -2,9 +2,8 @@
 
 /**
  * Reads compacted DOM samples via symlinks under `inputs/`, normalizes
- * insignificant whitespace (see `whitespace-normalize.ts`), writes paired
- * outputs under `output/from-03` and `output/from-04`, and logs configuration +
- * per-file metrics under `logs/`.
+ * insignificant whitespace (see `whitespace-normalize.ts`), writes outputs under
+ * `output/from-03`, and logs configuration + per-file metrics under `logs/`.
  */
 
 import { join } from "https://deno.land/std@0.224.0/path/mod.ts"
@@ -24,11 +23,6 @@ const SOURCES: InputSource[] = [
 		id: "03-compact-agent/doms/compacted",
 		symlinkName: "from-03-compacted",
 		outputSubdir: "from-03",
-	},
-	{
-		id: "04-accessibility-tree-pruning/output/compacted",
-		symlinkName: "from-04-compacted",
-		outputSubdir: "from-04",
 	},
 ]
 

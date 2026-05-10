@@ -23,11 +23,6 @@ const SOURCES: InputSource[] = [
 		symlinkName: "from-03-compacted",
 		outputSubdir: "from-03",
 	},
-	{
-		id: "04-accessibility-tree-pruning/output/compacted",
-		symlinkName: "from-04-compacted",
-		outputSubdir: "from-04",
-	},
 ]
 
 /** Length of all non-overlapping `<!-- ... -->` spans (including delimiters). */
