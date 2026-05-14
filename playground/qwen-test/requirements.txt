@@ -1,3 +1,4 @@
 transformers>=4.46.0
 accelerate>=1.0.0
 safetensors>=0.4.5
+tqdm>=4.66.0

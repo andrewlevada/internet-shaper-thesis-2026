@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"lib": ["deno.ns", "dom", "dom.iterable"]
+	},
+	"imports": {
+		"linkedom": "npm:linkedom@0.18.11"
+	}
+}
