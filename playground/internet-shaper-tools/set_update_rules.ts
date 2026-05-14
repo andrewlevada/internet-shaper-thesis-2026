@@ -3,25 +3,8 @@
  * Offline batch analogue of agent tool `set_update_rule`: apply many rules at once to a snapshot.
  */
 
-import { applyUpdateRulesToHtml, type UpdateRule } from "./lib/rules-apply.ts"
-import { appendRunLog } from "./lib/run-log.ts"
-
-function parseFlags(argv: string[]): Map<string, string> {
-	const m = new Map<string, string>()
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i]
-		if (!arg.startsWith("--")) continue
-		const key = arg.slice(2)
-		const next = argv[i + 1]
-		if (next && !next.startsWith("--")) {
-			m.set(key, next)
-			i++
-		} else {
-			m.set(key, "true")
-		}
-	}
-	return m
-}
+import { DOMParser } from "linkedom"
+import { parseFlags } from "./lib/parse-flags.ts"
 
 function usage(): never {
 	console.error(`Usage:
@@ -34,43 +17,47 @@ Rules run in array order on the parsed document (matches extension semantics wit
 	Deno.exit(1)
 }
 
-function parseRulesJson(text: string): UpdateRule[] {
-	const data = JSON.parse(text) as unknown
-	if (!Array.isArray(data)) {
-		throw new Error("rules JSON must be an array")
+interface UpdateRule {
+	label: string
+	query_selector: string
+	logic: string
+	enabled?: boolean
+}
+
+function compileRuleLogic(logic: string): (element: Element) => void {
+	return new Function("element", `"use strict";\n${logic}`) as (
+		element: Element,
+	) => void
+}
+
+function applyUpdateRulesToHtml(html: string, rules: UpdateRule[]): string {
+	const doc = new DOMParser().parseFromString(html, "text/html")
+	const root = doc.documentElement
+	if (!root) throw new Error("Failed to parse HTML")
+
+	for (const rule of rules) {
+		if (rule.enabled === false) continue
+
+		let fn: (element: Element) => void
+		try {
+			fn = compileRuleLogic(rule.logic)
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e)
+			throw new Error(`Rule "${rule.label}" compile failed: ${msg}`)
+		}
+
+		const matches = [...doc.querySelectorAll(rule.query_selector)]
+		for (const el of matches) {
+			try {
+				fn(el)
+			} catch (e) {
+				const msg = e instanceof Error ? e.message : String(e)
+				throw new Error(`Rule "${rule.label}" failed on element: ${msg}`)
+			}
+		}
 	}
-	const rules: UpdateRule[] = []
-	let i = 0
-	for (const item of data) {
-		i++
-		if (item == null || typeof item !== "object") {
-			throw new Error(`rules[${i - 1}] must be an object`)
-		}
-		const o = item as Record<string, unknown>
-		const label = o.label
-		const query_selector = o.query_selector
-		const logic = o.logic
-		if (
-			typeof label !== "string" ||
-			typeof query_selector !== "string" ||
-			typeof logic !== "string"
-		) {
-			throw new Error(
-				`rules[${i - 1}] requires string fields label, query_selector, logic`,
-			)
-		}
-		const enabled = o.enabled
-		if (enabled !== undefined && typeof enabled !== "boolean") {
-			throw new Error(`rules[${i - 1}].enabled must be boolean if present`)
-		}
-		rules.push({
-			label,
-			query_selector,
-			logic,
-			...(typeof enabled === "boolean" ? { enabled } : {}),
-		})
-	}
-	return rules
+
+	return root.outerHTML
 }
 
 function main(): void {
@@ -92,15 +79,43 @@ function main(): void {
 
 	let rules: UpdateRule[]
 	try {
-		rules = parseRulesJson(rulesText)
+		const data = JSON.parse(rulesText) as unknown
+		if (!Array.isArray(data)) {
+			throw new Error("rules JSON must be an array")
+		}
+		rules = []
+		let i = 0
+		for (const item of data) {
+			i++
+			if (item == null || typeof item !== "object") {
+				throw new Error(`rules[${i - 1}] must be an object`)
+			}
+			const o = item as Record<string, unknown>
+			const label = o.label
+			const query_selector = o.query_selector
+			const logic = o.logic
+			if (
+				typeof label !== "string" ||
+				typeof query_selector !== "string" ||
+				typeof logic !== "string"
+			) {
+				throw new Error(
+					`rules[${i - 1}] requires string fields label, query_selector, logic`,
+				)
+			}
+			const enabled = o.enabled
+			if (enabled !== undefined && typeof enabled !== "boolean") {
+				throw new Error(`rules[${i - 1}].enabled must be boolean if present`)
+			}
+			rules.push({
+				label,
+				query_selector,
+				logic,
+				...(typeof enabled === "boolean" ? { enabled } : {}),
+			})
+		}
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e)
-		appendRunLog({
-			tool: "set_update_rules",
-			config: { snapshot, rulesPath, output },
-			outputChars: 0,
-			error: msg,
-		})
 		console.error(msg)
 		Deno.exit(1)
 	}
@@ -110,17 +125,6 @@ function main(): void {
 		outHtml = applyUpdateRulesToHtml(rawHtml, rules)
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e)
-		appendRunLog({
-			tool: "set_update_rules",
-			config: {
-				snapshot,
-				rulesPath,
-				output,
-				ruleLabels: rules.map((r) => r.label),
-			},
-			outputChars: 0,
-			error: msg,
-		})
 		console.error(msg)
 		Deno.exit(1)
 	}
@@ -131,22 +135,6 @@ function main(): void {
 		console.error(String(e))
 		Deno.exit(1)
 	}
-
-	console.error(`Wrote ${outHtml.length} chars to ${output}`)
-
-	const logHref = appendRunLog({
-		tool: "set_update_rules",
-		config: {
-			snapshot,
-			rulesPath,
-			output,
-			ruleCount: rules.length,
-			ruleLabels: rules.map((r) => r.label),
-		},
-		outputChars: outHtml.length,
-		outputPreview: outHtml,
-	})
-	console.error(`Run log: ${logHref}`)
 }
 
 main()
