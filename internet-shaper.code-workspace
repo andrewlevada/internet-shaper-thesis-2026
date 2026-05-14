@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "playground/qwen-test",
+			"name": "qwen-test"
+		},
+		{
+			"path": ".",
+			"name": "internet-shaper"
+		}
+	],
+	"settings": {}
+}
