@@ -59,7 +59,6 @@ export function formatLiveContextSummary(ctx: LiveDomContext): string {
 	const parts = [
 		`HTML ${formatCompactNumber(ctx.rawHtmlChars)} chars (~${formatCompactNumber(ctx.rawHtmlEstTokens)} tok)`,
 		`map ${formatCompactNumber(ctx.mapChars)} chars (~${formatCompactNumber(ctx.mapEstTokens)} tok)`,
-		`system ~${formatCompactNumber(ctx.systemEstTokens)} tok`,
 	]
 	if (ctx.mapWouldTruncate && ctx.gatewayMaxToolChars !== null) {
 		parts.push(

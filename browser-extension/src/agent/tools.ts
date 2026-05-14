@@ -54,6 +54,9 @@ function maybeCapToolOutput(
 	return text
 }
 
+/** Default `depth` for show_in_dom when the model omits it. */
+export const SHOW_IN_DOM_DEFAULT_DEPTH = 3
+
 export const toolDefinitions: Tool[] = [
 	{
 		name: "get_map_of_dom",
@@ -72,9 +75,9 @@ Use this first to understand the page structure. Then use show_in_dom() to exami
 	},
 	{
 		name: "show_in_dom",
-		description: `Returns the full, unprocessed HTML of a specific element from the DOM.
+		description: `Returns HTML for a specific element from the captured DOM.
 
-Use this after get_map_of_dom() to examine elements in detail. The element is returned exactly as it appears in the original DOM, with all attributes and children intact.`,
+Depth counts element levels below the matched node: 0 returns only that element (direct text kept; nested elements replaced by <!-- -N children -->). Larger depth includes deeper descendants; default is ${SHOW_IN_DOM_DEFAULT_DEPTH}. Use a higher depth when you need the full subtree.`,
 		input_schema: {
 			type: "object" as const,
 			properties: {
@@ -83,11 +86,11 @@ Use this after get_map_of_dom() to examine elements in detail. The element is re
 					description:
 						"CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')",
 				},
-				include_children: {
-					type: "boolean",
-					description:
-						"If true (default), returns the full element with all children. If false, returns just the element's opening/closing tags and a summary of children.",
-					default: true,
+				depth: {
+					type: "integer",
+					description: `Non-negative number of element descendant levels to include below the matched element. Omitted defaults to ${SHOW_IN_DOM_DEFAULT_DEPTH}.`,
+					minimum: 0,
+					default: SHOW_IN_DOM_DEFAULT_DEPTH,
 				},
 			},
 			required: ["query_selector"],
@@ -134,7 +137,7 @@ Prefer specific selectors (class names, data attributes, tag names) over structu
 
 interface ShowInDomInput {
 	query_selector: string
-	include_children?: boolean
+	depth?: number
 }
 
 interface SetUpdateRuleInput {
@@ -168,14 +171,20 @@ export function executeTool(
 
 			case "show_in_dom": {
 				const input = toolInput as ShowInDomInput
-				console.log("[Tools] Extracting element:", input.query_selector)
+				const depth = input.depth ?? SHOW_IN_DOM_DEFAULT_DEPTH
+				const resolvedInput = { query_selector: input.query_selector, depth }
+				console.log("[Tools] Extracting element:", input.query_selector, depth)
 				let result = extractElement(
 					context.rawHtml,
 					input.query_selector,
-					input.include_children ?? true,
+					depth,
 				)
 				result = maybeCapToolOutput("show_in_dom", result, context)
-				context.toolCalls.push({ name: "show_in_dom", input, result })
+				context.toolCalls.push({
+					name: "show_in_dom",
+					input: resolvedInput,
+					result,
+				})
 				console.log("[Tools] Element result length:", result.length)
 				return result
 			}

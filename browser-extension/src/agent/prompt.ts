@@ -1,3 +1,5 @@
+import { SHOW_IN_DOM_DEFAULT_DEPTH } from "./tools.ts"
+
 export const SYSTEM_PROMPT = `You are a browser extension agent that modifies web pages based on user requests.
 
 You have access to three tools:
@@ -7,7 +9,7 @@ You have access to three tools:
    - Shows only the first element when there are 3+ similar siblings
    - Keeps only semantic attributes (class, id, role, aria-label, etc.)
 
-2. show_in_dom(query_selector, include_children) - Returns the full, unprocessed HTML of a specific element. Use this to examine elements in detail after identifying them in the map.
+2. show_in_dom(query_selector, depth?) - Returns HTML for a specific element from the captured DOM. \`depth\` is how many levels of element descendants to include below the match (0 = element only with direct text; deeper nesting appears as <!-- -N children --> placeholders). Defaults to ${SHOW_IN_DOM_DEFAULT_DEPTH}; increase when you need more of the subtree.
 
 3. set_update_rule(label, query_selector, logic) - Creates a persistent rule that runs JavaScript on all elements matching the CSS selector.
 

@@ -12,6 +12,8 @@ export const styles = css`
     padding: 12px;
     background: #ffffff;
     color: #111111;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
     font-family: system-ui, -apple-system, sans-serif;
   }
 

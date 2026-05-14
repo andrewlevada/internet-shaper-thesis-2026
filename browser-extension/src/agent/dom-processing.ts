@@ -411,11 +411,34 @@ export function createDomMap(html: string): MapResult {
 	}
 }
 
+/** Limits serialized element subtree depth for show_in_dom; adds <!-- -N children --> when element children are stripped. */
+function pruneShowInDomDepth(el: Element, remaining: number): void {
+	const doc = el.ownerDocument
+	if (!doc) throw new Error("pruneShowInDomDepth: missing ownerDocument")
+
+	if (remaining <= 0) {
+		const elementChildren = [...el.children]
+		const n = elementChildren.length
+		for (const c of elementChildren) el.removeChild(c)
+		if (n > 0) {
+			el.appendChild(doc.createComment(` -${n} children `))
+		}
+		return
+	}
+	for (const child of [...el.children]) {
+		pruneShowInDomDepth(child, remaining - 1)
+	}
+}
+
 export function extractElement(
 	html: string,
 	selector: string,
-	includeChildren: boolean,
+	depth: number,
 ): string {
+	if (!Number.isFinite(depth) || !Number.isInteger(depth) || depth < 0) {
+		throw new Error("extractElement: depth must be a non-negative integer")
+	}
+
 	const parser = new DOMParser()
 	const doc = parser.parseFromString(html, "text/html")
 	if (!doc) {
@@ -427,28 +450,9 @@ export function extractElement(
 		return `No element found matching selector: ${selector}`
 	}
 
-	if (includeChildren) {
-		return element.outerHTML
-	}
-
-	const tagName = element.tagName.toLowerCase()
-	const attrs = [...element.attributes]
-		.map((a) => `${a.name}="${a.value}"`)
-		.join(" ")
-	const openTag = attrs ? `<${tagName} ${attrs}>` : `<${tagName}>`
-
-	const directText = [...element.childNodes]
-		.filter((n) => n.nodeType === Node.TEXT_NODE)
-		.map((n) => n.textContent?.trim())
-		.filter(Boolean)
-		.join(" ")
-
-	const childSummary =
-		element.children.length > 0
-			? `<!-- ${element.children.length} child elements -->`
-			: ""
-
-	return `${openTag}${directText}${childSummary}</${tagName}>`
+	const clone = element.cloneNode(true) as Element
+	pruneShowInDomDepth(clone, depth)
+	return clone.outerHTML
 }
 
 export function capturePageDom(): string {

@@ -6,7 +6,12 @@ import { classifyAiGatewayError } from "./errors.ts"
 import { MOONSHOT_VIA_GATEWAY_MAX_TOOL_OUTPUT_CHARS } from "./gateway-limits.ts"
 import { SYSTEM_PROMPT } from "./prompt.ts"
 import type { UpdateRule } from "./rules-engine.ts"
-import { createToolContext, executeTool, type ToolContext } from "./tools.ts"
+import {
+	createToolContext,
+	executeTool,
+	SHOW_IN_DOM_DEFAULT_DEPTH,
+	type ToolContext,
+} from "./tools.ts"
 
 export interface AgentResult {
 	rules: UpdateRule[]
@@ -65,30 +70,32 @@ Use this first to understand the page structure. Then use show_in_dom to examine
 			},
 		}),
 		show_in_dom: tool({
-			description: `Returns the full, unprocessed HTML of a specific element from the DOM.
+			description: `Returns HTML for a specific element from the captured DOM.
 
-Use this after get_map_of_dom to examine elements in detail. The element is returned exactly as it appears in the original DOM, with all attributes and children intact.`,
+Depth counts element levels below the matched node: 0 returns only that element (direct text kept; nested elements replaced by <!-- -N children -->). Larger depth includes deeper descendants; default is ${SHOW_IN_DOM_DEFAULT_DEPTH}. Use a higher depth when you need the full subtree.`,
 			inputSchema: z.object({
 				query_selector: z
 					.string()
 					.describe(
 						"CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')",
 					),
-				include_children: z
-					.boolean()
+				depth: z
+					.number()
+					.int()
+					.min(0)
 					.optional()
 					.describe(
-						"If true (default), returns the full element with all children. If false, returns just the element's opening/closing tags and a summary of children.",
+						`Non-negative descendant element levels to include below the match (default ${SHOW_IN_DOM_DEFAULT_DEPTH}).`,
 					),
 			}),
-			execute: async ({ query_selector, include_children }) => {
-				console.log("[VercelAgent] Executing show_in_dom:", query_selector)
-				onProgress?.("Using tool: show_in_dom")
-				return executeTool(
-					"show_in_dom",
-					{ query_selector, include_children },
-					context,
+			execute: async ({ query_selector, depth }) => {
+				console.log(
+					"[VercelAgent] Executing show_in_dom:",
+					query_selector,
+					depth,
 				)
+				onProgress?.("Using tool: show_in_dom")
+				return executeTool("show_in_dom", { query_selector, depth }, context)
 			},
 		}),
 		set_update_rule: tool({
