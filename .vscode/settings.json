@@ -1,4 +1,10 @@
 {
+	"terminal.integrated.env.osx": {
+		"PLAYWRIGHT_BROWSERS_PATH": "${env:HOME}/Library/Caches/ms-playwright"
+	},
+	"terminal.integrated.env.linux": {
+		"PLAYWRIGHT_BROWSERS_PATH": "${env:HOME}/.cache/ms-playwright"
+	},
 	"python.defaultInterpreterPath": "/opt/anaconda3/bin/python",
 	"python.terminal.activateEnvironment": true,
 	"editor.maxTokenizationLineLength": 500000,
