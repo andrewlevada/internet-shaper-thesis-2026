@@ -1,0 +1,284 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import csv
+import shutil
+import sys
+from pathlib import Path
+
+from browser_utils import accept_cookies, wait_post_load
+from playwright.sync_api import Page
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+from playwright.sync_api import ViewportSize
+from playwright.sync_api import sync_playwright
+
+HERE = Path(__file__).resolve().parent
+INPUT_CSV = HERE / "05-smapled-pages.csv"
+SNAPSHOTS_DIR = HERE / "snapshots"
+MANIFEST_CSV = SNAPSHOTS_DIR / "data.csv"
+
+NAV_TIMEOUT_MS = 30_000
+POST_LOAD_WAIT_MS = 6_000
+VIEWPORT: ViewportSize = {"width": 1440, "height": 800}
+FOLDER_WIDTH = 3
+
+MANIFEST_FIELDS = [
+    "folder",
+    "url",
+    "final_url",
+    "seed_domain",
+]
+
+Row = dict[str, str]
+
+
+def main() -> None:
+    if not INPUT_CSV.is_file():
+        print(f"Missing input CSV: {INPUT_CSV}", file=sys.stderr)
+        sys.exit(1)
+
+    input_rows = read_input_rows(INPUT_CSV)
+    SNAPSHOTS_DIR.mkdir(exist_ok=True)
+
+    manifest_rows = read_manifest_rows()
+    next_idx = next_folder_index(manifest_rows)
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-setuid-sandbox"],
+        )
+        context = browser.new_context(
+            viewport=VIEWPORT,
+            user_agent=headless_chromium_user_agent(browser.version),
+            locale="en-US",
+        )
+        tab = context.new_page()
+
+        try:
+            for row in input_rows:
+                folder_name = format_folder_name(next_idx)
+                ok = capture_snapshot(tab, row, folder_name)
+                if not ok:
+                    continue
+
+                manifest_rows.append(
+                    {
+                        "folder": folder_name,
+                        "url": row.get("url", ""),
+                        "final_url": tab.url,
+                        "seed_domain": row.get("seed_domain", ""),
+                    }
+                )
+                write_manifest_rows(manifest_rows)
+                next_idx += 1
+        finally:
+            context.close()
+            browser.close()
+
+    print("Done")
+    print(f"Wrote {MANIFEST_CSV} ({len(manifest_rows)} rows)")
+
+
+def read_input_rows(path: Path) -> list[Row]:
+    with path.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if reader.fieldnames is None:
+            print("CSV has no header", file=sys.stderr)
+            sys.exit(1)
+        return list(reader)
+
+
+def read_manifest_rows() -> list[Row]:
+    if not MANIFEST_CSV.is_file():
+        return []
+
+    with MANIFEST_CSV.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if reader.fieldnames is None:
+            print(f"Warning: {MANIFEST_CSV} has no header; starting a new manifest", file=sys.stderr)
+            return []
+        return list(reader)
+
+
+def next_folder_index(manifest_rows: list[Row]) -> int:
+    indexes: list[int] = []
+
+    for row in manifest_rows:
+        folder = row.get("folder", "")
+        if folder.isdigit():
+            indexes.append(int(folder))
+
+    for child in SNAPSHOTS_DIR.iterdir():
+        if child.is_dir() and child.name.isdigit():
+            indexes.append(int(child.name))
+
+    return max(indexes, default=0) + 1
+
+
+def format_folder_name(index: int) -> str:
+    return str(index).zfill(FOLDER_WIDTH)
+
+
+def headless_chromium_user_agent(chromium_version: str) -> str:
+    return (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        f"AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/{chromium_version} "
+        "Safari/537.36"
+    )
+
+
+def capture_snapshot(tab: Page, row: Row, folder_name: str) -> bool:
+    url = row.get("url", "").strip()
+    if not url:
+        print(f"Warning: skipping row without url: {row}", file=sys.stderr)
+        return False
+
+    final_dir = SNAPSHOTS_DIR / folder_name
+    temp_dir = SNAPSHOTS_DIR / f".{folder_name}.tmp"
+    cleanup_dir(temp_dir)
+
+    try:
+        print(f"Capturing {folder_name}: {url}")
+        temp_dir.mkdir()
+
+        try:
+            tab.goto(url, wait_until="load", timeout=NAV_TIMEOUT_MS)
+        except PlaywrightTimeoutError:
+            print(
+                f"Warning: navigation timed out for {url}; continuing with partially loaded page",
+                file=sys.stderr,
+            )
+
+        try:
+            accept_cookies(tab, post_click_wait_ms=POST_LOAD_WAIT_MS)
+        except Exception as e:
+            print(f"Warning: cookie click failed for {url}: {e}", file=sys.stderr)
+
+        try:
+            wait_post_load(tab, POST_LOAD_WAIT_MS)
+        except Exception as e:
+            print(f"Warning: post-load wait failed for {url}: {e}", file=sys.stderr)
+
+        raw_html = tab.evaluate("() => document.documentElement.outerHTML")
+        visible_html = tab.evaluate(VISIBLE_HTML_CAPTURE_SCRIPT)
+
+        write_text(temp_dir / "raw.html", raw_html)
+        write_text(temp_dir / "visible.html", visible_html)
+        tab.screenshot(path=temp_dir / "screenshot.png")
+
+        if final_dir.exists():
+            raise RuntimeError(f"snapshot folder already exists: {final_dir}")
+        temp_dir.rename(final_dir)
+        return True
+    except Exception as e:
+        print(f"Warning: failed to capture {url}: {e}", file=sys.stderr)
+        cleanup_dir(temp_dir)
+        return False
+
+
+def write_text(path: Path, value: str) -> None:
+    path.write_text(value, encoding="utf-8")
+
+
+def cleanup_dir(path: Path) -> None:
+    if path.exists():
+        shutil.rmtree(path)
+
+
+def write_manifest_rows(rows: list[Row]) -> None:
+    with MANIFEST_CSV.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=MANIFEST_FIELDS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+VISIBLE_HTML_CAPTURE_SCRIPT = r"""
+() => {
+    function computedStyle(el) {
+        const view = el.ownerDocument.defaultView;
+        if (!view) throw new Error("Element has no defaultView for getComputedStyle");
+        return view.getComputedStyle(el);
+    }
+
+    function computedOpacityIsZero(cs) {
+        const raw = cs.opacity?.trim() ?? "";
+        if (raw === "") return false;
+        const n = Number.parseFloat(raw);
+        return Number.isFinite(n) && n === 0;
+    }
+
+    function childNodePathFromRoot(root, node) {
+        const path = [];
+        let current = node;
+
+        while (current && current !== root) {
+            const parent = current.parentNode;
+            if (!parent) return null;
+            path.push([...parent.childNodes].indexOf(current));
+            current = parent;
+        }
+
+        if (current !== root) return null;
+        return path.reverse();
+    }
+
+    function nodeAtChildNodePath(root, path) {
+        let current = root;
+
+        for (const index of path) {
+            current = current.childNodes[index];
+            if (!current) return null;
+        }
+
+        return current;
+    }
+
+    function hiddenStripRootPaths(body) {
+        const paths = [];
+
+        function visit(el, inDisplayNoneSubtree) {
+            const cs = computedStyle(el);
+            const inDisplayNone = inDisplayNoneSubtree || cs.display === "none";
+            const strip =
+                inDisplayNone || cs.visibility === "hidden" || computedOpacityIsZero(cs);
+
+            if (strip) {
+                const path = childNodePathFromRoot(document.documentElement, el);
+                if (path) paths.push(path);
+                return;
+            }
+
+            for (const child of el.children) {
+                visit(child, inDisplayNone);
+            }
+        }
+
+        for (const child of body.children) {
+            visit(child, false);
+        }
+
+        return paths;
+    }
+
+    const htmlEl = document.documentElement;
+    if (!htmlEl) return "";
+    if (!document.body) return htmlEl.outerHTML;
+
+    const clone = htmlEl.cloneNode(true);
+    const stripNodes = hiddenStripRootPaths(document.body)
+        .map((path) => nodeAtChildNodePath(clone, path))
+        .filter(Boolean);
+
+    for (const node of stripNodes) {
+        node.remove();
+    }
+
+    return clone.outerHTML;
+}
+"""
+
+
+if __name__ == "__main__":
+    main()

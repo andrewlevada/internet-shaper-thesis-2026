@@ -1,0 +1,1894 @@
+<html xml:lang="ko" ng-app="mainApp" ng-controller="htmlController" class="ng-scope"><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+		<meta charset="utf-8">
+		<meta http-equiv="X-XSS-Protection" content="1">
+		<meta name="viewport" id="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<!-- for Facebook -->
+		<meta property="og:title" id="ogTitle" content="">
+		<meta property="og:type" content="article">
+		<meta property="og:description" id="ogDesc" content="오늘은 어떤 내용일까요? 지금 확인해보세요!">
+		<meta property="og:image" content="https://ssl.pstatic.net/dicimg/wordbook-mobile-endic/img/enwordbook_icon_20171204.png">
+		<meta property="og:url" id="ogUrl" content="">
+		<!-- for Twitter -->
+		<meta name="twitter:card" content="summary">
+		<meta name="twitter:title" id="twitterTitle" content="">
+		<meta name="twitter:description" id="twitterDesc" content="오늘은 어떤 내용일까요? 지금 확인해보세요!">
+		<meta name="twitter:image" content="https://ssl.pstatic.net/dicimg/wordbook-mobile-endic/img/enwordbook_icon_20171204.png">
+		<meta name="keywords" content="단어장, 영어단어장, 영단어장, 네이버 단어장, 영어사전 단어장, 모바일 단어장, 사전 단어장, 모바일웹 영단어장,모바일웹 단어장, 모바일 영어단어장, 모바일웹 영어단어장, wordbook, English Korean wordbook, Korean English wordbook,English wordbook, Naver English wordbook, English dictionary wordbook, mobile web wordbook, mobile web English wordbook, mobile English dictionary wordbook, mobile wordbook, Naver mobile web wordbook, Naver english wordbook, 单词本, 英语单词本, 手机版单词本,手机版英语单词本, Naver英语单词本, naver手机版英语单词本, 英文单词本, Naver手机版英文单词本, 手机版英文单词本">
+		<title>네이버 오늘의 회화</title>
+		<link rel="stylesheet" type="text/css" href="https://ssl.pstatic.net/dicimg/my-wordbook/style/202203101221/css/gnb.css">
+		<link rel="stylesheet" type="text/css" href="https://ssl.pstatic.net/dicimg/mgnbcommon/style/202104291120/css/side_menu.css">
+		<link rel="stylesheet" type="text/css" href="https://ssl.pstatic.net/dicimg/wmodule/style/202405201454/css/conversation.css">
+    <link rel="shortcut icon" id="shortcutId" href="https://ssl.pstatic.net/dicimg/favicons/my-wordbook/v1/mobile/future/favicon.ico" type="image/x-icon">
+    <!--<link rel="stylesheet" type="text/css" href="https://ssl.pstatic.net/dicimg/banner/banner.m.v2019042300.css">-->
+
+    <script type="text/javascript">
+        window.NaverDict = ["Naver Dictionary JS Namespace"];
+        var cssUrlForJs = "https://ssl.pstatic.net/dicimg/wmodule/style/202405201454/css";
+        var dummyUrlForJs ="20260406170248";
+        var tempSelectedDate = ""; // 캘린더에서 선택한 날짜
+        var tempInsertedDate = ""; // URL에서 직접 입력한 날짜
+        var hasHighlight = false; // 날짜가 하이라이팅 되어있는지 체크
+        var rowNum = 0; // 선택한 날짜가 몇번째 라인인지 체크
+        var tempPeriod = 0; // 날짜 이동한 간격
+        var tempScope = null; // angularjs scope를 담는 필드
+        var attends = null; // 출석정보를 담는 필드
+        var quizAttends = null; // 퀴즈완료 정보 담는 필드
+        var isFisrtAccess = false; // 캘린더 처음 접속한것인지 체크/원래는 필요없는 필드인데  출석 체크를 위해서 추가한것
+        var regionDate = "20260517";
+        window.isTerminationDate = "true";
+        var nuid = "u1e4029e54b76c350c96e7066059efe9be";
+        window.futureCssLink = "https://ssl.pstatic.net/dicimg/wmodule/style/202405201454/css/conversation_platform.css";
+       	
+        window.dummyUrlForHtml = "202410101811";
+        window.jsAggregationMode = true;
+        
+        // app 
+        if (window.naverDictAppNativeApi == undefined) {
+			window.naverDictAppNativeApi = {};
+		}
+		
+		window.naverDictAppNativeApi.baseModule = {};
+		
+		var naverDictAppNativeApiCallbackName = 'naverDictAppNativeApiCallback';
+		if (window[naverDictAppNativeApiCallbackName] == undefined) {
+			window[naverDictAppNativeApiCallbackName] = {};
+		}
+		
+		var naverDictAppNativeApiBaseModuleCallbackName = 'baseModuleCallback';
+		window[naverDictAppNativeApiCallbackName][naverDictAppNativeApiBaseModuleCallbackName] = {};
+		
+		/**
+		 * 获取当前网络状态
+		 * @return {Number} - 0为无网络连接，1为4G,5G连接，2为wifi连接，返回null表示调用失败该方法暂不支持
+		 * 支持该方法的app最低版本号 - NaverDictApp Version : Android 2.8.2, iOS 2.8.2
+		 */
+		window.naverDictAppNativeApi.baseModule.getNetworkStatus = function() {
+			var methodCallObj = {};
+			methodCallObj['moduleName'] = "baseModule";
+			methodCallObj['methodName'] = "getNetworkStatus";
+		
+			return prompt(JSON.stringify(methodCallObj));
+		}
+		
+		/**
+		 * 获取ADID - Android GAID, iOS IDFA
+		 * @return {String} - 获取失败返回空字符串, 返回null表示调用失败该方法暂不支持
+		 * 支持该方法的app最低版本号 - NaverDictApp Version : Android 2.8.5, iOS 2.8.5
+		 */
+		window.naverDictAppNativeApi.baseModule.getADID = function() {
+			var methodCallObj = {};
+			methodCallObj['moduleName'] = "baseModule";
+			methodCallObj['methodName'] = "getADID";
+		
+			return prompt(JSON.stringify(methodCallObj));
+		}
+
+    </script>
+<style name="tip_m" type="text/css">@charset "UTF-8";
+.u_helpdict_module .u_headword .u_btn_headword .u_reference_word:before, .u_helpdict_module .u_pronunciation .u_btn_pronun:before, .u_helpdict_module .u_pronunciation .u_btn_tts:before, .u_helpdict_module .u_definition .u_origin_source .u_icon_blank_page, .u_helpdict_module .u_helpdict_notice .u_ico_notice, .u_helpdict_module .u_btn_helpdict_more .u_helpdict_ico_more, .u_helpdict_module .u_helpdict_close, .is-darkmode .u_type_hanja.green_dot.pc.u_helpdict_module .u_headword .u_btn_wordbook .u_btn_save, .is-darkmode .u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_wordbook .u_btn_save, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun:before, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun.u_active:before, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_tts:before, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_tts.u_active:before, .is-darkmode .u_helpdict_module.green_dot .u_btn_helpdict_more .u_helpdict_ico_more, .is-darkmode .u_helpdict_module.green_dot .u_helpdict_close, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_pronun:before, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_pronun.u_active:before, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts:before, .is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts.u_active:before {
+	background-image: url(https://ssl.pstatic.net/dicimg/tip/7af025f3bf5df8120d7681425d7428a2.png);
+	background-size: 105px 78px;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun:before, .u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun.u_active:before, .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts:before, .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts.u_active:before, .u_helpdict_module.green_dot .u_btn_helpdict_more .u_helpdict_ico_more, .u_helpdict_module.green_dot .u_helpdict_close, .u_helpdict_module.green_dot.u_type_a .u_headword .u_btn_headword .u_reference_word:before,
+.u_helpdict_module.green_dot.u_type_f .u_headword .u_btn_headword .u_reference_word:before, .u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_wordbook .u_btn_save, .u_helpdict_zoom_area.green_dot .u_btn_wrap.u_prev .u_btn_prev:before, .u_helpdict_zoom_area.green_dot .u_btn_wrap.u_next .u_btn_next:before, .u_type_hanja.green_dot.pc.u_helpdict_module .u_headword .u_btn_wordbook .u_btn_save {
+	background-image: url(https://ssl.pstatic.net/dicimg/tip/a46cefffb46af414b4b8766b034d069f.png);
+	background-image: linear-gradient(transparent, transparent), url(https://ssl.pstatic.net/dicimg/tip/2dbe5538f44b8bbee9b74277c3d27ba4.svg);
+	background-size: 98px 94px;
+}
+
+.u_helpdict_module div,
+.u_helpdict_module ul,
+.u_helpdict_module li,
+.u_helpdict_module h2,
+.u_helpdict_module dl,
+.u_helpdict_module dd,
+.u_helpdict_module img,
+.u_helpdict_module p,
+.u_helpdict_module em,
+.u_helpdict_module a,
+.u_helpdict_module span,
+.u_helpdict_module button {
+	float: none;
+	position: static;
+	margin: 0;
+	padding: 0;
+	border-width: 0;
+	border-style: none;
+	border-color: transparent;
+	border-image: none;
+	border-radius: 0;
+	background: transparent;
+	letter-spacing: 0;
+	line-height: normal;
+	text-align: left;
+	text-decoration: none;
+	text-indent: 0;
+	vertical-align: baseline;
+	white-space: normal;
+	list-style: none;
+	list-style-image: none;
+	list-style-type: none;
+	font-style: normal;
+	word-spacing: 0;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+}
+
+.u_helpdict_module button {
+	cursor: pointer;
+}
+
+.u_helpdict_module.u_up_arrow .u_arrow, .u_helpdict_module.u_dn_arrow .u_arrow {
+	width: 0;
+	height: 0;
+	border: 6px solid rgba(41, 41, 41, 0.98);
+	border-right-color: transparent;
+	border-left-color: transparent;
+	content: '';
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_pronun, .u_helpdict_module .u_pronunciation .u_btn_tts, .u_helpdict_module .u_helpdict_close {
+	overflow: hidden;
+	white-space: nowrap;
+	text-indent: 100%;
+	color: transparent;
+}
+
+/* 선택된 단어 */
+.u_word_dic.u_active {
+	background-color: #cdff74;
+	color: #191d0d;
+}
+
+/* 확대 레이어 */
+.u_helpdict_zoom_area {
+	position: absolute;
+	display: inline-block;
+	overflow-x: auto;
+	padding: 3px;
+	background: #797979;
+	z-index: 999;
+}
+
+.u_helpdict_zoom_area .u_helpdict_zoom_frame {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.u_helpdict_zoom_area .u_helpdict_zoom_frame .u_word_zoom {
+	line-height: 29px;
+	padding: 1px 7px 2px;
+	border: none;
+	background-color: transparent;
+	font-size: 26px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+	color: #fff;
+}
+
+.u_helpdict_zoom_area .u_helpdict_zoom_frame .u_word_zoom.u_active {
+	background-color: #000;
+}
+
+/* 보조사전 영역 */
+.u_helpdict_module {
+	position: absolute;
+	left: 0;
+	right: 0;
+	z-index: 30000;
+	/* 서비스에 맞게 수치 조정 */
+	background-color: rgba(41, 41, 41, 0.98);
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_helpdict_tab_area {
+	display: inline-block;
+	max-width: 100%;
+	margin-bottom: -8px;
+	padding: 14px 48px 0 20px;
+	box-sizing: border-box;
+}
+
+.u_helpdict_module .u_helpdict_tab_area .u_tab_wrap {
+	position: relative;
+	display: flex;
+	padding: 3px;
+	border-radius: 22px;
+	border: solid 1px rgba(216, 220, 226, 0.6);
+	background-color: #fff;
+	z-index: 10;
+}
+
+.u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area {
+	overflow: hidden;
+}
+
+.u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area:first-child {
+	flex: none;
+}
+
+.u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area:last-child .u_btn_tab {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area .u_btn_tab {
+	display: block;
+	padding: 8px 14px;
+	color: #666;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	outline: none;
+}
+
+.u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area .u_btn_tab[aria-selected="true"] {
+	color: #fff;
+	border-radius: 22px;
+	box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.05);
+	border: solid 1px rgba(0, 0, 0, 0.05);
+	background-color: #668be5;
+}
+
+.u_helpdict_module button {
+	outline: none;
+}
+
+.u_helpdict_module.u_up_arrow {
+	margin-top: 6px;
+}
+
+.u_helpdict_module.u_up_arrow .u_arrow {
+	position: absolute;
+	top: -6px;
+	border-top-width: 0;
+}
+
+.u_helpdict_module.u_dn_arrow {
+	margin-bottom: 6px;
+}
+
+.u_helpdict_module.u_dn_arrow .u_arrow {
+	position: absolute;
+	bottom: -6px;
+	border-bottom-width: 0;
+}
+
+.u_helpdict_module .u_helpdict_area {
+	padding: 14px 14px 19px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_helpdict_area + .u_helpdict_area {
+	border-top: 1px solid #3c3c3c;
+}
+
+.u_helpdict_module .u_headword {
+	padding: 0 30px 0 0;
+	font-size: 20px;
+	line-height: 25px;
+}
+
+.u_helpdict_module .u_headword .u_btn_headword {
+	font-weight: bold;
+	color: #fff;
+}
+
+.u_helpdict_module .u_headword .u_btn_headword .u_reference_word {
+	display: inline-block;
+	font-size: 16px;
+	line-height: 19px;
+	font-weight: normal;
+	color: #e0e0e0;
+}
+
+.u_helpdict_module .u_headword .u_btn_headword .u_reference_word:before {
+	background-position: -87px -49px;
+	width: 11px;
+	height: 11px;
+	display: inline-block;
+	margin: 4px 5px 0 0;
+	vertical-align: top;
+	content: '';
+}
+
+.u_helpdict_module .u_headword .u_btn_headword .u_sup_item {
+	font-size: 11px;
+	margin: 0 2px 0 3px;
+	vertical-align: top;
+}
+
+.u_helpdict_module .u_headword .u_btn_headword .u_origin_word {
+	display: inline-block;
+	font-family: sans-serif;
+	font-weight: normal;
+	color: #e1e1e1;
+}
+
+.u_helpdict_module .u_headword .u_btn_headword .u_origin_word .u_word_slash {
+	color: #8a8a8a;
+}
+
+.u_helpdict_module .u_pronunciation {
+	margin: 4px -3px 0 0;
+	font-size: 14px;
+	line-height: 20px;
+	color: #bbb;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item {
+	display: inline-block;
+	padding: 0 3px;
+	line-height: 20px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item:first-child {
+	margin: 0;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item .u_by_country {
+	display: inline-block;
+	margin-right: 4px;
+	font-size: 13px;
+	line-height: 20px;
+	vertical-align: middle;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item .u_phonetic_alphabet {
+	margin: 0 3px 0 0;
+	font-size: 14px;
+	line-height: 20px;
+	color: #bbb;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item .u_phonetic_alphabet .u_sup_item {
+	vertical-align: top;
+	position: relative;
+	top: -4px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item .u_phonetic_alphabet[lang="en"] {
+	font-size: 14px;
+}
+
+.u_helpdict_module .u_pronunciation .u_pronunciation_item .u_web_collection {
+	display: inline-block;
+	line-height: 14px;
+	border: 1px solid #444;
+	padding: 2px 3px 0;
+	font-size: 11px;
+	color: #666;
+	vertical-align: middle;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_pronunciation .u_by_country + .u_btn_pronun, .u_helpdict_module .u_pronunciation .u_by_country + .u_btn_tts {
+	margin-left: -4px;
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_pronun {
+	display: inline-block;
+	width: 18px;
+	height: 17px;
+	margin: -1px 0 0;
+	padding: 2px 5px;
+	vertical-align: middle;
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_pronun:before {
+	display: block;
+	background-position: -67px -19px;
+	width: 18px;
+	height: 17px;
+	content: '';
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_pronun.u_active:before {
+	background-position: 0px -61px;
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_tts {
+	display: inline-block;
+	width: 18px;
+	height: 17px;
+	margin: -1px 0 0;
+	padding: 2px 5px;
+	vertical-align: middle;
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_tts:before {
+	display: block;
+	background-position: -67px -38px;
+	width: 18px;
+	height: 17px;
+	content: '';
+}
+
+.u_helpdict_module .u_pronunciation .u_btn_tts.u_active:before {
+	background-position: -67px 0px;
+}
+
+.u_helpdict_module .u_definition {
+	margin-top: 10px;
+}
+
+.u_helpdict_module .u_definition .u_origin_source {
+	display: block;
+	margin-top: 3px;
+	font-size: 13px;
+	line-height: 20px;
+	vertical-align: middle;
+	color: #666;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_definition .u_origin_source .u_icon_blank_page {
+	display: inline-block;
+	background-position: -87px -34px;
+	width: 13px;
+	height: 13px;
+	margin-top: 3px;
+	vertical-align: top;
+}
+
+.u_helpdict_module .u_definition .u_mean_word {
+	font-size: 14px;
+	line-height: 20px;
+	color: #888;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_mean_word_item {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_mean_word_item + .u_mean_word_item {
+	margin-top: 13px;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_word_class {
+	margin-right: 3px;
+	white-space: nowrap;
+	color: #84b6e4;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_hanja_option {
+	display: block;
+	white-space: nowrap;
+	color: #888;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_hanja_option .u_option_item {
+	color: #84b6e4;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_hanja_option .u_option_radical + .u_option_item:before {
+	display: inline-block;
+	width: 1px;
+	height: 12px;
+	margin: 3px 10px 0 5px;
+	background-color: #404040;
+	vertical-align: top;
+	content: '';
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_word_mean {
+	white-space: nowrap;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_word_mean .u_direct_link {
+	white-space: nowrap;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+	color: #888;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_word_mean .u_sup_item {
+	font-size: 11px;
+	margin: 0 3px 0 2px;
+	vertical-align: top;
+}
+
+.u_helpdict_module .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean .u_words_num,
+.u_helpdict_module .u_definition .u_mean_word .u_hanja_option + .u_word_mean .u_words_num {
+	display: inline-block;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_helpdict_notice {
+	padding: 13px 15px 15px;
+	line-height: 19px;
+	border-top: 1px solid #3c3c3c;
+	font-size: 13px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+	color: #777;
+	clear: both;
+	word-break: keep-all;
+	word-wrap: break-word;
+}
+
+.u_helpdict_module .u_helpdict_notice .u_ico_notice {
+	background-position: -87px -18px;
+	width: 14px;
+	height: 14px;
+	display: inline-block;
+	margin: 0 2px 0 0;
+	vertical-align: middle;
+}
+
+.u_helpdict_module .u_helpdict_notice .u_notice_txt {
+	vertical-align: middle;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_helpdict_notice .u_notice_inner {
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_helpdict_notice .u_report_link {
+	margin: 0 0 0 3px;
+	color: #bbb;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_btn_more_wrap {
+	text-align: right;
+	padding: 0 9px;
+}
+
+.u_helpdict_module .u_btn_more_wrap .u_bold_num {
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module .u_btn_helpdict_more {
+	display: inline-block;
+	padding: 0 5px 11px 6px;
+	font-size: 14px;
+	line-height: 21px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+	color: #bbb;
+}
+
+.u_helpdict_module .u_btn_helpdict_more .u_helpdict_ico_more {
+	background-position: -96px -62px;
+	width: 6px;
+	height: 10px;
+	display: inline-block;
+	margin-top: 2px;
+}
+
+.u_helpdict_module .u_helpdict_close {
+	background-position: -35px 0px;
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 100;
+}
+
+.u_helpdict_module.u_type_a .u_headword {
+	font-size: 21px;
+	line-height: 26px;
+}
+
+.u_helpdict_module.u_type_a .u_definition .u_mean_word {
+	font-size: 13px;
+	line-height: 19px;
+}
+
+.u_helpdict_module.u_type_a .u_definition .u_mean_word .u_list .u_word_class {
+	font-size: 14px;
+}
+
+.u_helpdict_module.u_type_f.green_dot {
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.u_helpdict_module.u_type_f.green_dot.pc {
+	margin: 0 auto;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_helpdict_tab_area {
+	padding-bottom: 18px;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_helpdict_tab_area + .u_helpdict_wrap {
+	padding-top: 0;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_helpdict_tab_area + .u_no_data {
+	padding-top: 5px;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_definition {
+	margin-top: 0;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_headword ~ .u_definition {
+	margin-top: 10px;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_helpdict_wrap {
+	overflow: auto;
+	max-height: 386px;
+	padding-top: 18px;
+}
+
+.u_helpdict_module.u_type_f.green_dot .u_helpdict_wrap .u_helpdict_area:first-child {
+	padding-top: 5px;
+}
+
+.u_helpdict_module.u_type_b1 .u_headword {
+	font-size: 21px;
+	line-height: 30px;
+}
+
+.u_helpdict_module.u_type_b2 .u_headword {
+	font-size: 20px;
+	line-height: 25px;
+}
+
+.u_helpdict_module.u_type_b2 .u_pronunciation,
+.u_helpdict_module.u_type_b2 .u_pronunciation .u_pronunciation_item,
+.u_helpdict_module.u_type_b2 .u_pronunciation .u_pronunciation_item .u_origin_source {
+	line-height: 25px;
+}
+
+.u_helpdict_module.u_type_b2 .u_definition .u_mean_word {
+	line-height: 28px;
+}
+
+.u_helpdict_module.u_type_hanja .u_headword {
+	display: table;
+	table-layout: fixed;
+	padding: 0;
+	width: 100%;
+}
+
+.u_helpdict_module.u_type_hanja .u_headword .u_btn_headword {
+	display: table-cell;
+	width: 50px;
+	font-size: 36px;
+	font-weight: normal;
+	vertical-align: top;
+}
+
+.u_helpdict_module.u_type_hanja .u_headword .u_han_mean {
+	display: table-cell;
+	padding: 0 30px 0 0;
+	line-height: 20px;
+	font-size: 16px;
+	color: #e1e1e1;
+	vertical-align: middle;
+}
+
+.u_helpdict_module.u_layout_xdic .u_helpdict_notice .u_notice_txt {
+	line-height: 25px;
+}
+
+.u_helpdict_module.u_layout_xdic .u_btn_helpdict_more {
+	line-height: 28px;
+}
+
+.u_word_dic.u_green_dot_active {
+	background-color: #328bf1;
+	color: #fff;
+}
+
+.u_helpdict_module.green_dot {
+	overflow: hidden;
+	right: 19px;
+	left: 19px;
+	border: 1px solid rgba(0, 120, 255, 0.25);
+	border-radius: 6px;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06);
+	background-color: #fff;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot [lang^='ja']:not(html) {
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Hiragino Sans", YuGothic, Meiryo, "MS Pgothic", "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_word_mean a:link {
+	color: #0000ee;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_word_mean a:visited {
+	color: #551abb;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean {
+	position: relative;
+	overflow: hidden;
+	display: block;
+	margin-top: 5px;
+	white-space: nowrap;
+	padding-left: 17px;
+	text-overflow: ellipsis;
+	line-height: 24px;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean a {
+	white-space: nowrap;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean .u_words_num {
+	position: absolute;
+	top: 1px;
+	left: 0;
+	line-height: 22px;
+	font-size: 15px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module.green_dot .u_helpdict_area {
+	padding: 23px 25px 17px;
+}
+
+.u_helpdict_module.green_dot .u_helpdict_area + .u_helpdict_area {
+	border-color: rgba(232, 232, 232, 0.51);
+}
+
+.u_helpdict_module.green_dot .u_helpdict_notice {
+	position: relative;
+	padding: 13px 15px 15px;
+	border-top: 1px solid rgba(232, 232, 232, 0.51);
+	background-color: #fdfdfd;
+}
+
+.u_helpdict_module.green_dot .u_helpdict_notice .u_notice_txt {
+	position: relative;
+	display: block;
+	padding-right: 50px;
+}
+
+.u_helpdict_module.green_dot .u_helpdict_notice .u_notice_inner {
+	line-height: 18px;
+	word-break: break-all;
+	color: #8f8f8f;
+	letter-spacing: -0.4px;
+}
+
+.u_helpdict_module.green_dot .u_helpdict_notice .u_report_link {
+	position: absolute;
+	right: 0;
+	top: 1px;
+	margin: 0;
+	line-height: 16px;
+	text-decoration: underline;
+	color: #8f8f8f;
+}
+
+.u_helpdict_module.green_dot .u_headword .u_btn_headword {
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+	color: #242424;
+	font-size: 28px;
+	line-height: 34px;
+}
+
+.u_helpdict_module.green_dot .u_headword .u_btn_headword .u_origin_word {
+	margin-top: -6px;
+	color: #666;
+	font-size: 20px;
+	vertical-align: middle;
+}
+
+.u_helpdict_module.green_dot .u_headword .u_btn_headword .u_normal_word {
+	word-break: break-all;
+	font-weight: normal;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+}
+
+.u_helpdict_module.green_dot .u_headword .u_btn_headword .u_sup_item {
+	display: inline-block;
+	margin: -7px 2px 0 3px;
+	font-size: 14px;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_origin_source {
+	margin-top: 5px;
+	color: #8f8f8f;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word {
+	color: #242424;
+	font-size: 15px;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_mean_word_item {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean .u_words_num {
+	padding-right: 5px;
+}
+
+.u_helpdict_module.green_dot .u_definition .u_mean_word .u_word_mean {
+	white-space: normal;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation {
+	color: #666;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun {
+	margin-left: 0;
+	padding: 2px 0;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun:before {
+	display: block;
+	background-position: -4px -73px;
+	width: 17px;
+	height: 17px;
+	content: '';
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun.u_active:before {
+	background-position: -29px -73px;
+	width: 17px;
+	height: 17px;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item {
+	padding: 0 2px;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_phonetic_alphabet {
+	word-break: break-all;
+	margin: 0 4px 0 0;
+	font-size: 15px;
+	color: #666;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_by_country {
+	font-size: 15px;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_web_collection {
+	padding: 0 3px;
+	line-height: 16px;
+	color: #8f8f8f;
+	border-color: #e6e6e6;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_origin_source {
+	color: #8f8f8f;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts {
+	margin-left: 0;
+	padding: 2px 0;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts:before {
+	background-position: -50px -45px;
+	width: 17px;
+	height: 17px;
+}
+
+.u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts.u_active:before {
+	background-position: -77px -4px;
+	width: 17px;
+	height: 17px;
+}
+
+.u_helpdict_module.green_dot .u_btn_more_wrap {
+	padding-right: 17px;
+	border-top: 1px solid rgba(232, 232, 232, 0.51);
+}
+
+.u_helpdict_module.green_dot .u_btn_helpdict_more {
+	color: #8f8f8f;
+	padding: 10px 0 10px 6px;
+}
+
+.u_helpdict_module.green_dot .u_btn_helpdict_more .u_helpdict_ico_more {
+	background-position: -54px -73px;
+	width: 7px;
+	height: 10px;
+	margin: 0 0 -1px;
+}
+
+.u_helpdict_module.green_dot .u_helpdict_close {
+	background-position: -4px -4px;
+	width: 33px;
+	height: 33px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.u_helpdict_module.green_dot.u_type_a .u_headword .u_btn_headword .u_reference_word,
+.u_helpdict_module.green_dot.u_type_f .u_headword .u_btn_headword .u_reference_word {
+	display: inline-block;
+	vertical-align: top;
+	line-height: 26px;
+	margin-top: 3px;
+	font-size: 20px;
+	font-weight: normal;
+	color: #666;
+}
+
+.u_helpdict_module.green_dot.u_type_a .u_headword .u_btn_headword .u_reference_word:before,
+.u_helpdict_module.green_dot.u_type_f .u_headword .u_btn_headword .u_reference_word:before {
+	background-position: -77px -54px;
+	width: 11px;
+	height: 11px;
+	display: inline-block;
+	margin: 7px 5px 0 0;
+	vertical-align: top;
+	content: '';
+}
+
+.u_helpdict_module.green_dot.u_type_a .u_headword .u_btn_headword .u_origin_word,
+.u_helpdict_module.green_dot.u_type_f .u_headword .u_btn_headword .u_origin_word {
+	font-size: 26px;
+}
+
+.u_helpdict_module.green_dot.u_type_b1 .u_headword .u_btn_headword {
+	font-size: 26px;
+	line-height: 42px;
+	word-break: break-all;
+}
+
+.u_helpdict_module.green_dot.u_type_b1 .u_helpdict_area + .u_helpdict_area {
+	padding-top: 13px;
+}
+
+.u_helpdict_module.green_dot.u_type_b2 .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean .u_words_num {
+	top: 3px;
+}
+
+.u_helpdict_module.green_dot.u_type_b2 .u_definition .u_mean_word {
+	font-size: 16px;
+}
+
+.u_helpdict_module.green_dot.u_type_b2 .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean {
+	margin-top: 0;
+	line-height: 26px;
+}
+
+.u_helpdict_module.green_dot.u_type_b2 .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean + .u_word_mean {
+	margin-top: 6px;
+}
+
+.u_helpdict_module.green_dot.u_type_b2 .u_definition .u_mean_word .u_mean_word_item .u_word_mean {
+	line-height: 26px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_helpdict_area {
+	padding-right: 35px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition {
+	margin-right: -10px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_headword {
+	display: inline;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_headword {
+	display: inline;
+	width: auto;
+	font-size: 34px;
+	line-height: 31px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_headword .u_origin_word {
+	display: inline;
+	margin-top: -2px;
+	font-size: 16px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_wordbook {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	visibility: middle;
+	margin: 4px 2px 0;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_wordbook ~ .u_origin_word {
+	display: block;
+	margin-top: 4px;
+	font-size: 15px;
+	color: #666;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_wordbook .u_btn_save {
+	display: inline-block;
+	background-position: -45px -4px;
+	width: 24px;
+	height: 24px;
+	outline: initial;
+	vertical-align: top;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition {
+	margin-top: 4px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option {
+	margin-top: 8px;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option .u_option_item {
+	display: inline-block;
+	line-height: 24px;
+	color: #666;
+	font-size: 15px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option .u_option_stroke {
+	display: inline-block;
+	line-height: 24px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option .u_option_radical {
+	display: inline-block;
+	font-size: 20px;
+	vertical-align: top;
+	line-height: 24px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option .u_option_radical + .u_option_item:before {
+	content: none;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option .u_option_radical + .u_option_item {
+	margin-left: 15px;
+}
+
+.u_helpdict_zoom_area.green_dot {
+	overflow: hidden;
+	height: 34px;
+	background-color: #506da5;
+}
+
+.u_helpdict_zoom_area.green_dot.u_hanja {
+	background-color: #506da5;
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap {
+	position: absolute;
+	top: 0;
+	width: 46px;
+	height: 40px;
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_prev {
+	display: none;
+	left: 0;
+	background-image: linear-gradient(to right, #506da5 67%, rgba(80, 109, 165, 0));
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_prev.u_active {
+	display: block;
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_prev .u_btn_prev {
+	display: block;
+	width: 30px;
+	height: 40px;
+	background-color: transparent;
+	border: 0;
+	outline: none;
+	cursor: pointer;
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_prev .u_btn_prev:before {
+	background-position: -32px -45px;
+	width: 10px;
+	height: 17px;
+	display: block;
+	margin: 0 auto;
+	content: '';
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_next {
+	display: none;
+	right: 0;
+	background-image: linear-gradient(to left, #506da5 67%, rgba(80, 109, 165, 0));
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_next.u_active {
+	display: block;
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_next .u_btn_next {
+	display: block;
+	width: 30px;
+	height: 40px;
+	margin-left: auto;
+	background-color: transparent;
+	border: 0;
+	outline: none;
+	cursor: pointer;
+}
+
+.u_helpdict_zoom_area.green_dot .u_btn_wrap.u_next .u_btn_next:before {
+	background-position: -77px -29px;
+	width: 10px;
+	height: 17px;
+	display: block;
+	margin: 0 auto;
+	content: '';
+}
+
+.u_helpdict_zoom_area.green_dot .u_helpdict_zoom_frame {
+	width: 100%;
+	overflow-x: auto;
+	height: 55px;
+	scroll-behavior: smooth;
+	font-size: 0;
+}
+
+.u_helpdict_zoom_area.green_dot .u_helpdict_zoom_frame .u_word_blank {
+	display: none;
+	vertical-align: top;
+	width: 30px;
+	border: 0;
+	background-color: transparent;
+}
+
+.u_helpdict_zoom_area.green_dot .u_helpdict_zoom_frame .u_word_blank.u_active {
+	display: inline-block;
+}
+
+.u_helpdict_zoom_area.green_dot .u_helpdict_zoom_frame .u_word_zoom {
+	opacity: 0.7;
+	cursor: pointer;
+	outline: none;
+}
+
+.u_helpdict_zoom_area.green_dot .u_helpdict_zoom_frame .u_word_zoom.u_green_dot_active {
+	background-color: #365083;
+	color: #fff;
+	opacity: 1;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 2px;
+}
+
+.u_helpdict_zoom_area {
+	position: absolute;
+	display: inline-block;
+	overflow-x: auto;
+	padding: 3px;
+	background: #797979;
+	z-index: 999;
+}
+
+.u_helpdict_zoom_area .u_helpdict_zoom_frame {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.u_helpdict_zoom_area .u_helpdict_zoom_frame .u_word_zoom {
+	line-height: 29px;
+	padding: 1px 7px 2px;
+	border: none;
+	background-color: transparent;
+	font-size: 26px;
+	font-family: -apple-system, BlinkMacSystemFont, Arial, "Apple SD Gothic Neo", NanumGothic, sans-serif;
+	color: #fff;
+}
+
+.u_helpdict_zoom_area .u_helpdict_zoom_frame .u_word_zoom.u_active {
+	background-color: #000;
+}
+
+.u_helpdict_module.u_type_japan .u_mean_word_item {
+	color: #e0e0e0;
+}
+
+.u_helpdict_module.u_type_japan .u_japan_option .u_read_item {
+	display: inline-block;
+	margin: 5px 15px 0 0;
+	vertical-align: top;
+}
+
+.u_helpdict_module.u_type_japan .u_japan_option .u_read_item + .u_read_item {
+	margin: 5px 0 0 -10px;
+}
+
+.u_helpdict_module.u_type_japan .u_japan_option .u_read_item + .u_read_item:before {
+	float: left;
+	width: 1px;
+	height: 12px;
+	margin: 2px 9px 0 0;
+	background-color: #404040;
+	vertical-align: top;
+	content: '';
+}
+
+.u_helpdict_module.u_type_japan .u_japan_option .u_read_item:after {
+	display: block;
+	clear: both;
+	content: '';
+}
+
+.u_helpdict_module.u_type_japan .u_japan_option .u_read_item .read_item {
+	float: left;
+	margin-right: 4px;
+	color: #84b6e4;
+}
+
+.u_helpdict_module.u_type_japan .u_japan_option .u_read_item .read_text {
+	overflow: hidden;
+	color: #888;
+}
+
+.u_helpdict_module.u_type_japan .u_relate_hanja {
+	padding: 20px 14px 0 15px;
+	margin-bottom: -1px;
+	border-top: 1px solid #575757;
+	line-height: 19px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #e0e0e0;
+}
+
+.u_helpdict_module.u_type_japan .u_helpdict_area.u_hanja {
+	border-color: #575757;
+}
+
+.u_helpdict_module.u_type_japan .u_helpdict_area.u_hanja .u_headword .u_btn_headword {
+	font-size: 36px;
+	font-weight: normal;
+}
+
+.u_helpdict_module.u_type_japan .u_helpdict_area.u_hanja ~ .u_hanja {
+	padding: 14px 0 15px;
+	margin: 0 15px;
+	border-color: #3c3c3c;
+}
+
+.u_helpdict_module.u_type_japan .u_headword .u_btn_headword {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 21px;
+}
+
+.u_helpdict_module.u_type_japan .u_headword .u_btn_headword .u_origin_word {
+	color: #fff;
+}
+
+.u_helpdict_module.u_type_japan .u_han_mean {
+	display: inline-block;
+	padding: 0 30px 0 10px;
+	line-height: 20px;
+	font-size: 14px;
+	color: #e0e0e0;
+	vertical-align: middle;
+}
+
+.u_helpdict_module.u_type_hanja .u_headword .u_btn_headword .u_origin_word {
+	display: none;
+}
+
+.u_helpdict_module.u_type_hanja.green_dot .u_headword .u_han_mean {
+	display: none;
+}
+
+.u_helpdict_module.green_dot.u_type_japan.u_hanja .u_headword .u_btn_headword {
+	font-size: 34px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_definition {
+	margin-top: 9px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_item {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 30px;
+	color: #666;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_stroke {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 30px;
+	font-size: 15px;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_radical {
+	display: inline-block;
+	margin-right: 16px;
+	line-height: 30px;
+	vertical-align: middle;
+	font-size: 20px;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_radical + .u_option_item:before {
+	content: none;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_mean_word_item.list .u_word_mean {
+	margin-top: 4px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_relate_hanja {
+	padding: 23px 25px 0;
+	border-color: #b7d5f7;
+	font-size: 15px;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_helpdict_area {
+	padding-top: 21px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_helpdict_area.u_hanja {
+	margin-right: 4px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_helpdict_area.u_hanja .u_headword .u_btn_headword {
+	margin-right: 2px;
+	font-size: 34px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_helpdict_area.u_hanja ~ .u_hanja {
+	padding: 23px 25px 15px;
+	margin: 0;
+	border-color: #e8e8e8;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_mean_word_item,
+.u_helpdict_module.green_dot.u_type_japan .read_item {
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_han_mean {
+	font-size: 16px;
+	color: #666;
+	padding: 0;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item {
+	margin: 2px 16px 0 0;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item + .u_read_item {
+	margin: 3px 0 0;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item + .u_read_item:before {
+	content: none;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item .read_item {
+	color: #666;
+	line-height: 23px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item .read_text {
+	color: #242424;
+	line-height: 23px;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_headword .u_btn_headword {
+	font-size: 34px;
+	line-height: 42px;
+	color: #242424;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_headword .u_btn_headword .u_origin_word {
+	font-size: 26px;
+	color: #666;
+}
+
+.u_helpdict_module.green_dot.u_type_japan .u_pronunciation .u_pronunciation_item .u_web_collection {
+	color: #666;
+}
+
+.u_helpdict_module.green_dot.pc {
+	width: 360px;
+}
+
+.u_helpdict_module.green_dot.pc .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean .u_words_num {
+	top: 1px;
+}
+
+.u_helpdict_module.green_dot.pc .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean {
+	white-space: normal;
+	max-height: 48px;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.u_helpdict_module.green_dot.pc .u_headword .u_btn_headword {
+	font-size: 20px;
+	line-height: 24px;
+}
+
+.u_helpdict_module.green_dot.pc .u_headword .u_btn_headword .u_origin_word {
+	margin-top: -3px;
+	font-size: 16px;
+}
+
+.u_helpdict_module.green_dot.pc .u_headword .u_btn_headword .u_sup_item {
+	margin: -2px 2px 0 3px;
+	font-size: 13px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_a .u_headword .u_btn_headword .u_reference_word {
+	margin-top: 1px;
+	font-size: 16px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_a .u_headword .u_btn_headword .u_origin_word {
+	font-size: 18px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_b1 .u_headword .u_btn_headword {
+	line-height: 36px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_b1 .u_definition .u_mean_word .u_hanja_option .u_option_radical {
+	font-size: 20px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_hanja .u_definition .u_mean_word .u_hanja_option .u_option_radical {
+	font-size: 22px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_hanja .u_headword .u_btn_headword {
+	font-size: 24px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_hanja .u_headword .u_btn_headword .u_origin_word {
+	font-size: 15px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_japan .u_helpdict_area.u_hanja .u_headword .u_btn_headword {
+	font-size: 24px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_japan .u_han_mean {
+	font-size: 15px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_japan .u_headword .u_btn_headword {
+	font-size: 24px;
+	line-height: 28px;
+}
+
+.u_helpdict_module.green_dot.pc.u_type_japan .u_headword .u_btn_headword .u_origin_word {
+	font-size: 18px;
+}
+
+.u_helpdict_module.green_dot.pc .u_pronunciation .u_pronunciation_item .u_phonetic_alphabet {
+	font-size: 14px;
+}
+
+.u_helpdict_module.green_dot.pc .u_btn_helpdict_more {
+	font-size: 13px;
+}
+
+@media screen and (max-width: 359px) {
+	.u_helpdict_module.green_dot .u_helpdict_notice {
+		font-size: 12px;
+	}
+	.u_helpdict_module.green_dot .u_helpdict_notice .u_report_link {
+		font-size: 12px;
+		top: 1px;
+	}
+}
+
+.u_type_hanja.green_dot.pc.u_helpdict_module .u_definition .u_mean_word .u_word_mean {
+	display: inline-block;
+	margin-top: 4px;
+}
+
+.u_type_hanja.green_dot.pc.u_helpdict_module .u_headword .u_btn_wordbook {
+	margin-top: 2px;
+}
+
+.u_type_hanja.green_dot.pc.u_helpdict_module .u_headword .u_btn_wordbook .u_btn_save {
+	background-position: -4px -45px;
+	width: 20px;
+	height: 20px;
+}
+
+.u_helpdict_module .u_no_data {
+	padding: 26px 26px 22px;
+	font-size: 15px;
+	color: #242424;
+}
+
+.u_type_hanja.green_dot.u_helpdict_module .u_definition .u_mean_word .u_word_mean {
+	display: inline-block;
+	margin-top: 4px;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding-left: 0;
+	white-space: initial;
+}
+
+.u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_mean_word_item.u_list .u_words_num {
+	position: static;
+	padding-right: 0;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_a .u_headword .u_btn_headword .u_reference_word,
+.is-darkmode .u_helpdict_module.green_dot.u_type_f .u_headword .u_btn_headword .u_reference_word {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.is-darkmode .u_type_hanja.green_dot.pc.u_helpdict_module .u_headword .u_btn_wordbook .u_btn_save {
+	background-position: 0px -35px;
+	width: 24px;
+	height: 24px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_hanja .u_definition .u_mean_word .u_hanja_option {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_hanja .u_definition .u_hanja_option .u_option_item {
+	color: #999;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_hanja .u_headword .u_btn_wordbook .u_btn_save {
+	background-position: 0px -35px;
+	width: 24px;
+	height: 24px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_relate_hanja {
+	border-color: #464646;
+	color: #fff;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_pronunciation .u_pronunciation_item .u_web_collection {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_item {
+	color: #999;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_stroke {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_definition .u_mean_word .u_hanja_option .u_option_radical {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item .read_text {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_japan_option .u_read_item .read_item {
+	color: #999;
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_han_mean {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.is-darkmode .u_helpdict_module.green_dot.u_type_japan .u_helpdict_area.u_hanja ~ .u_hanja {
+	border-color: #464646;
+}
+
+.is-darkmode .u_helpdict_module.green_dot {
+	border-color: #464646;
+	background-color: #27282a;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_helpdict_notice {
+	background-color: #27282a;
+	border-color: #464646;
+	color: #999;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_helpdict_notice .u_report_link {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun:before {
+	background-position: -87px 0px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_pronun.u_active:before {
+	background-position: -60px -61px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_tts:before {
+	background-position: -20px -61px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_btn_tts.u_active:before {
+	background-position: -40px -61px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_phonetic_alphabet {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_web_collection {
+	border-color: rgba(217, 217, 217, 0.6);
+	color: #aaa;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_headword .u_btn_headword {
+	color: #fff;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_headword .u_btn_headword .u_sup_item {
+	color: #fff;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_headword .u_btn_headword .u_origin_word {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_btn_more_wrap {
+	border-color: #464646;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_definition .u_mean_word .u_mean_word_item.u_list .u_word_mean {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_definition .u_mean_word .u_word_mean {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_btn_helpdict_more {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_btn_helpdict_more .u_helpdict_ico_more {
+	background-position: -87px -62px;
+	width: 7px;
+	height: 11px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_helpdict_area + .u_helpdict_area {
+	border-color: #464646;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_helpdict_close {
+	background-position: 0px 0px;
+	width: 33px;
+	height: 33px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_pronun:before {
+	background-position: -87px 0px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_pronun.u_active:before {
+	background-position: -60px -61px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts:before {
+	background-position: -20px -61px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module.green_dot .u_pronunciation .u_pronunciation_item .u_btn_tts.u_active:before {
+	background-position: -40px -61px;
+	width: 18px;
+	height: 16px;
+}
+
+.is-darkmode .u_helpdict_module .u_no_data {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module .u_helpdict_tab_area .u_tab_wrap {
+	background-color: #1e1f21;
+	border-color: transparent;
+}
+
+.is-darkmode .u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area .u_btn_tab {
+	color: #d9d9d9;
+}
+
+.is-darkmode .u_helpdict_module .u_helpdict_tab_area .u_tab_wrap .u_btn_area .u_btn_tab[aria-selected="true"] {
+	color: #fff;
+	box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.05);
+	border: solid 1px rgba(0, 0, 0, 0.05);
+	background-color: #0c8ce9;
+}
+</style><link href="https://ssl.pstatic.net/dicimg/wmodule/style/202405201454/css/conversation_platform.css" rel="stylesheet" class="lazyload" charset="utf-8"><script type="text/javascript" charset="utf-8" src="https://ssl.pstatic.net/static.cbox/js/cbox.core.js?v=1482508"></script><style type="text/css" id="_cbox_default_style_"></style><script type="text/javascript" src="https://ssl.pstatic.net/static.cbox/20260513141546/js/cbox.eg.js" charset="utf-8"></script><script type="text/javascript" src="https://ssl.pstatic.net/spi/js/release/ko_KR/splugin.m.js?v=1482508"></script><link id="naver-splugin-css" rel="stylesheet" type="text/css" href="https://ssl.pstatic.net/spi/css/20260304/spi_layer.css"><link type="text/css" rel="stylesheet" href="https://static-feedback.pstatic.net/css/cbox/dic/d2a00ab1-9b3c-4655-a18a-b2acc67d94b3/a36ce3c7-da32-4b6e-9c6f-1ab61b5a4689/comment_conversation_w.css" charset="utf-8"><script type="text/javascript" charset="utf-8" src="https://ssl.pstatic.net/static.cbox/js/cbox.core.js?v=1482508"></script></head>
+<body lang="ko" style="overflow: hidden;">
+    <div id="wrap">
+        <!-- <div data-ui-view="newnotice"></div> -->
+        <!-- uiView: head --><div data-ui-view="head" id="header" class="ng-scope"><div class="header_area ng-scope">
+       <!-- gnb -->
+       <div class="Ngnb" style="will-change: contents;">
+           <span class="Ngnb_logo">
+               <a href="javascript:;" id="_naver_btn" class="Nlogo_link"><span class="Nicon_logo">NAVER</span></a>
+           </span>
+           <div class="Ngnb_service">
+               <!-- [D] 해당 언어에 따라 span.****_wordbook 수정 -->
+               <h1 class="Nservice_item">
+                   <a class="_btn_toCurrent" href="javascript:;"><span class="Nicon_service" lang="ko">오늘의 영어 회화</span></a>
+               </h1>
+           </div>
+           <div class="Ngnb_tool">
+               <a href="javascript:;" id="btn_hamburger_drawer" data-event="click|drawer(.Ndrawer),click|dimmed(.Ndimmed)" class="Ntool_button"><span class="Nicon_drawer">확장영역 열기</span></a>
+           </div>
+       </div>
+       
+   </div>
+<div class="gnb ng-scope">
+	<div class="alarm_area">
+           <button class="btn_alarm ng-binding" type="button" id="_gnb_alarm_btn">알림설정</button>
+       </div>
+	<span class="date_area" id="_date_area">
+		<a href="javascript:;" class="btn_month _btn_month" onclick="clickcr(this, 'tec.viewlist', '', 1)" data-date="20260517">5월 17일<span class="ico_arrow"></span></a>
+		<!--[D] 오늘의 영어 회화 일경우 달력 노출-->
+           <input type="text" id="datepicker" aria-hidden="true" class="blind" placeholder="2021-03-03" aria-label="캘린더" size="8" readonly="" onfocus="this.blur();">
+           <button type="button" class="ui-datepicker-trigger" id="btn_calendar"><img src="https://ssl.pstatic.net/dicimg/wmodule/style/202405201454/img/ico_calendar2.png" alt="날짜 선택"></button>
+          	
+          	
+	</span>
+</div>
+
+<!-- 메뉴 -->
+</div>
+        
+        <div id="hamburger_ui_view"></div>
+        <!-- uiView: content -->
+    </div>
+    <!-- uiView: lyalert --><div data-ui-view="lyalert" class="ng-scope">
+
+
+
+
+
+
+<div class="ly_wrap _expired_conversation_ly_wrap ng-scope" style="">
+    <div class="ly_container">
+        <div class="ly_content">
+            <div class="ly_confirm">
+                <div class="txt_inner">
+                    안녕하세요.<br>
+                    접근하신 오늘의 회화는<br>
+                    컨텐츠 제공자와 계약 기간이 종료되어<br>
+                    <strong>노출이 제한된 컨텐츠</strong>입니다.
+                </div>
+                <div class="txt_inner">
+                    최신 오늘의 회화로 이동하여 계속 <br>
+                    학습하실 수 있습니다.
+                </div>
+                <a href="javascript:;" id="move_today_conversation" class="link on">[최신 오늘의 회화 이동하기]</a>
+                <div class="txt_inner last">
+                    이용에 불편을 드려서 죄송합니다.
+                </div>
+                <div class="btn_area">
+                    <a href="javascript:;" id="blog_detail_btn">자세히 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dimmed"></div>
+</div>
+
+</div>
+     <!-- uiView: calendarwrap --><div data-ui-view="calendarwrap" class="ng-scope"></div>
+
+<!-- <script type="text/javascript" src="/js-all/dict-plugin-all.min.js"></script>
+<script type="text/javascript" src="/js-all/angular-all.min.js"></script>
+<script type="text/javascript" src="/js-all/dict-common-all.min.js"></script>
+<script type="text/javascript" src="/js-all/naverdict-conversation-core1.min.js"></script>
+<script type="text/javascript" src="/js-all/naverdict-conversation-core2.min.js"></script> -->
+
+  <!-- quiz-结果页 -->
+
+<!-- quiz-听写 -->
+
+<!-- quiz-단어 배열하여 문장만들기 -->
+
+<!-- quiz-빈칸 단어입력 -->
+
+<!-- quiz-빈칸 단어선택 -->
+
+<!-- 확인버턴 -->
+
+<!-- 복습결과 -->
+
+<!-- 복습결과 - 출제문장보기 -->
+
+<!-- 회화목록 리스트 -->
+
+<!-- 사용자별 회화목록 리스트 head -->
+
+<!-- 사용자별 회화목록 리스트 content -->
+
+
+
+
+
+
+    <!-- tooltip 需要提前加载才能生效-->
+    
+    <!--<script type="text/javascript" src="https://ssl.pstatic.net/dicimg/banner/banner.common.v2019042000.js"></script>-->
+    
+
+
+        <!--share div-->
+		
+		
+
+		<!--안내 문구-->
+		<!-- lywrap></lywrap -->
+		
+		
+	
+<div id="ui-datepicker-div2" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>
