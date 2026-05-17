@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import shutil
 import sys
@@ -34,6 +35,8 @@ Row = dict[str, str]
 
 
 def main() -> None:
+    args = parse_args()
+
     if not INPUT_CSV.is_file():
         print(f"Missing input CSV: {INPUT_CSV}", file=sys.stderr)
         sys.exit(1)
@@ -42,43 +45,135 @@ def main() -> None:
     SNAPSHOTS_DIR.mkdir(exist_ok=True)
 
     manifest_rows = read_manifest_rows()
-    next_idx = next_folder_index(manifest_rows)
+    manual_patch_folders = parse_manual_patch(args.manual_patch)
+    headless = manual_patch_folders is None
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=True,
+            headless=headless,
             args=["--no-sandbox", "--disable-setuid-sandbox"],
         )
         context = browser.new_context(
             viewport=VIEWPORT,
-            user_agent=headless_chromium_user_agent(browser.version),
+            user_agent=chromium_user_agent(browser.version, headless=headless),
             locale="en-US",
         )
         tab = context.new_page()
 
         try:
-            for row in input_rows:
-                folder_name = format_folder_name(next_idx)
-                ok = capture_snapshot(tab, row, folder_name)
-                if not ok:
-                    continue
-
-                manifest_rows.append(
-                    {
-                        "folder": folder_name,
-                        "url": row.get("url", ""),
-                        "final_url": tab.url,
-                        "seed_domain": row.get("seed_domain", ""),
-                    }
-                )
-                write_manifest_rows(manifest_rows)
-                next_idx += 1
+            if manual_patch_folders is None:
+                capture_new_snapshots(tab, input_rows, manifest_rows)
+            else:
+                patch_snapshots_manually(tab, manifest_rows, manual_patch_folders)
         finally:
             context.close()
             browser.close()
 
     print("Done")
     print(f"Wrote {MANIFEST_CSV} ({len(manifest_rows)} rows)")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Capture HTML and screenshots for sampled pages.",
+    )
+    parser.add_argument(
+        "--manual-patch",
+        metavar="FOLDERS",
+        help=(
+            "Comma-separated snapshot folders to recapture in headed mode, "
+            "for example: --manual-patch 1,5,6,8,30"
+        ),
+    )
+    return parser.parse_args()
+
+
+def parse_manual_patch(value: str | None) -> list[str] | None:
+    if value is None:
+        return None
+
+    folders: list[str] = []
+    seen: set[str] = set()
+
+    for raw_part in value.split(","):
+        part = raw_part.strip()
+        if not part:
+            print(f"Invalid --manual-patch value: {value}", file=sys.stderr)
+            sys.exit(1)
+        if not part.isdigit() or int(part) <= 0:
+            print(f"Invalid snapshot folder number: {part}", file=sys.stderr)
+            sys.exit(1)
+
+        folder_name = format_folder_name(int(part))
+        if folder_name not in seen:
+            folders.append(folder_name)
+            seen.add(folder_name)
+
+    if not folders:
+        print("--manual-patch requires at least one folder number", file=sys.stderr)
+        sys.exit(1)
+
+    return folders
+
+
+def capture_new_snapshots(tab: Page, input_rows: list[Row], manifest_rows: list[Row]) -> None:
+    next_idx = next_folder_index(manifest_rows)
+
+    for row in input_rows:
+        folder_name = format_folder_name(next_idx)
+        ok = capture_snapshot(tab, row, folder_name)
+        if not ok:
+            continue
+
+        manifest_rows.append(
+            {
+                "folder": folder_name,
+                "url": row.get("url", ""),
+                "final_url": tab.url,
+                "seed_domain": row.get("seed_domain", ""),
+            }
+        )
+        write_manifest_rows(manifest_rows)
+        next_idx += 1
+
+
+def patch_snapshots_manually(
+    tab: Page,
+    manifest_rows: list[Row],
+    folder_names: list[str],
+) -> None:
+    rows_by_folder = {row.get("folder", ""): row for row in manifest_rows}
+    missing = [folder_name for folder_name in folder_names if folder_name not in rows_by_folder]
+    if missing:
+        print(
+            f"Cannot patch folders missing from {MANIFEST_CSV}: {', '.join(missing)}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    for folder_name in folder_names:
+        row = rows_by_folder[folder_name]
+        ok = capture_snapshot(
+            tab,
+            row,
+            folder_name,
+            replace_existing=True,
+            manual=True,
+        )
+        if not ok:
+            continue
+
+        replace_manifest_row(
+            manifest_rows,
+            folder_name,
+            {
+                "folder": folder_name,
+                "url": row.get("url", ""),
+                "final_url": tab.url,
+                "seed_domain": row.get("seed_domain", ""),
+            },
+        )
+        write_manifest_rows(manifest_rows)
 
 
 def read_input_rows(path: Path) -> list[Row]:
@@ -121,15 +216,23 @@ def format_folder_name(index: int) -> str:
     return str(index).zfill(FOLDER_WIDTH)
 
 
-def headless_chromium_user_agent(chromium_version: str) -> str:
+def chromium_user_agent(chromium_version: str, *, headless: bool) -> str:
+    chrome_product = "HeadlessChrome" if headless else "Chrome"
     return (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        f"AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/{chromium_version} "
+        f"AppleWebKit/537.36 (KHTML, like Gecko) {chrome_product}/{chromium_version} "
         "Safari/537.36"
     )
 
 
-def capture_snapshot(tab: Page, row: Row, folder_name: str) -> bool:
+def capture_snapshot(
+    tab: Page,
+    row: Row,
+    folder_name: str,
+    *,
+    replace_existing: bool = False,
+    manual: bool = False,
+) -> bool:
     url = row.get("url", "").strip()
     if not url:
         print(f"Warning: skipping row without url: {row}", file=sys.stderr)
@@ -156,6 +259,10 @@ def capture_snapshot(tab: Page, row: Row, folder_name: str) -> bool:
         except Exception as e:
             print(f"Warning: cookie click failed for {url}: {e}", file=sys.stderr)
 
+        if manual and not wait_for_manual_continue(folder_name, url):
+            cleanup_dir(temp_dir)
+            return False
+
         try:
             wait_post_load(tab, POST_LOAD_WAIT_MS)
         except Exception as e:
@@ -169,13 +276,23 @@ def capture_snapshot(tab: Page, row: Row, folder_name: str) -> bool:
         tab.screenshot(path=temp_dir / "screenshot.png")
 
         if final_dir.exists():
-            raise RuntimeError(f"snapshot folder already exists: {final_dir}")
+            if not replace_existing:
+                raise RuntimeError(f"snapshot folder already exists: {final_dir}")
+            cleanup_dir(final_dir)
         temp_dir.rename(final_dir)
         return True
     except Exception as e:
         print(f"Warning: failed to capture {url}: {e}", file=sys.stderr)
         cleanup_dir(temp_dir)
         return False
+
+
+def wait_for_manual_continue(folder_name: str, url: str) -> bool:
+    print()
+    print(f"Manual patch {folder_name}: {url}")
+    print("Solve any CAPTCHA or consent flow in the browser, then press Enter to capture.")
+    response = input("Press Enter to capture, or type s to skip this folder: ").strip().lower()
+    return response not in {"s", "skip"}
 
 
 def write_text(path: Path, value: str) -> None:
@@ -192,6 +309,15 @@ def write_manifest_rows(rows: list[Row]) -> None:
         writer = csv.DictWriter(f, fieldnames=MANIFEST_FIELDS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
+
+
+def replace_manifest_row(rows: list[Row], folder_name: str, replacement: Row) -> None:
+    for index, row in enumerate(rows):
+        if row.get("folder", "") == folder_name:
+            rows[index] = replacement
+            return
+
+    raise RuntimeError(f"manifest row not found for folder {folder_name}")
 
 
 VISIBLE_HTML_CAPTURE_SCRIPT = r"""

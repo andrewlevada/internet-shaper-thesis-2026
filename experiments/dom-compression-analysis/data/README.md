@@ -12,3 +12,6 @@ We also exclude pages:
     a. Legal-related pages (ToS, Pricacy Policy, etc)
     b. Regional variations of the same pages 
     c. Sitemaps
+5. From each website we sample 3 pages in addition to the homepage
+6. We snaphot all these pages (headless + non-headless pass for captchas)
+7. Manual cleaning and reparing of the snapshots
