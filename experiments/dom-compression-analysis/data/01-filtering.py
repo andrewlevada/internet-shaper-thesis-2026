@@ -8,8 +8,8 @@ from pathlib import Path
 
 def main() -> None:
     here = Path(__file__).resolve().parent
-    input_path = here / "top-116-domains-annotation-clustering.csv"
-    output_path = here / "filtered-top-25.csv"
+    input_path = here / "input/top-116-domains-annotation-clustering.csv"
+    output_path = here / "01-filtered-top-25.csv"
 
     top_n = 25
     kept: list[dict[str, str]] = []

@@ -1,1 +1,0 @@
-Manually chnaged search engines + youtubes home pages to a search page. And chnaged wikipendia's home page to the english language home page
