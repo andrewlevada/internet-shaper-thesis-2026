@@ -7,6 +7,7 @@ import csv
 import sys
 from pathlib import Path
 from urllib.parse import urlparse
+import tldextract
 
 from browser_utils import accept_cookies, wait_post_load
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
@@ -19,6 +20,7 @@ DEBUG_DIR = HERE / "debug"
 
 NAV_TIMEOUT_MS = 30_000
 POST_LOAD_WAIT_MS = 6_000
+DOMAIN_EXTRACTOR = tldextract.TLDExtract(suffix_list_urls=(), cache_dir=None)
 
 OUT_FIELDS = [
     "url",
@@ -141,8 +143,10 @@ def homepage_matches_patch_target(
 
     return (
         normalized_target == normalized_homepage
-        or normalize_host(urlparse(normalized_target).hostname)
-        == normalize_host(urlparse(normalized_homepage).hostname)
+        or same_domain(
+            urlparse(normalized_target).hostname,
+            urlparse(normalized_homepage).hostname,
+        )
     )
 
 
@@ -327,7 +331,7 @@ def make_output_meta(
 
 
 def collect_same_host_hrefs(page_url: str, hrefs: list[str]) -> set[str]:
-    page_host = normalize_host(urlparse(page_url).hostname)
+    page_host = urlparse(page_url).hostname
 
     out: set[str] = set()
     for raw in hrefs:
@@ -344,12 +348,28 @@ def collect_same_host_hrefs(page_url: str, hrefs: list[str]) -> set[str]:
         if scheme not in ("http", "https"):
             continue
 
-        if normalize_host(parsed.hostname) != page_host:
+        if not same_domain(parsed.hostname, page_host):
             continue
 
         out.add(parsed.geturl().rstrip("/") or parsed.geturl())
 
     return out
+
+
+def same_domain(host_a: str | None, host_b: str | None) -> bool:
+    return registrable_domain(host_a) == registrable_domain(host_b)
+
+
+def registrable_domain(host: str | None) -> str:
+    normalized = normalize_host(host).rstrip(".")
+    if not normalized:
+        return ""
+
+    parsed = DOMAIN_EXTRACTOR(normalized)
+    if parsed.domain and parsed.suffix:
+        return f"{parsed.domain}.{parsed.suffix}"
+
+    return normalized
 
 
 def normalize_host(host: str | None) -> str:
