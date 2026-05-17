@@ -1,2 +1,2 @@
-debug/
-raw-snapshots/
+**/debug/
+**/raw-snapshots/
