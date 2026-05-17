@@ -1,53 +1,11 @@
-/**
- * Capture-time removal of subtrees that are invisible from computed CSS (body only).
- * Uses ownerDocument.defaultView.getComputedStyle — not inline attributes alone.
- */
+/** Capture-time removal of computed-style-invisible body subtrees. */
 
 const NODE_ELEMENT = 1
-const NODE_TEXT = 3
-const NODE_COMMENT = 8
-
-const VOID_HTML = new Set([
-	"area",
-	"base",
-	"br",
-	"col",
-	"embed",
-	"hr",
-	"img",
-	"input",
-	"link",
-	"meta",
-	"param",
-	"source",
-	"track",
-	"wbr",
-])
-
-const RAW_TEXT_TAGS = new Set(["script", "style", "textarea", "title"])
 
 function computedStyle(el: Element): CSSStyleDeclaration {
 	const view = el.ownerDocument.defaultView
 	if (!view) throw new Error("Element has no defaultView for getComputedStyle")
 	return view.getComputedStyle(el)
-}
-
-function childElements(el: Element): Element[] {
-	if (el.tagName === "TEMPLATE") {
-		const t = el as HTMLTemplateElement
-		return [...t.content.children]
-	}
-	return [...el.children]
-}
-
-/** True if any ancestor of `el` has computed display:none (not `el` itself). */
-function hasDisplayNoneAncestor(el: Element): boolean {
-	let p: Element | null = el.parentElement
-	while (p) {
-		if (computedStyle(p).display === "none") return true
-		p = p.parentElement
-	}
-	return false
 }
 
 function computedOpacityIsZero(cs: CSSStyleDeclaration): boolean {
@@ -57,140 +15,65 @@ function computedOpacityIsZero(cs: CSSStyleDeclaration): boolean {
 	return Number.isFinite(n) && n === 0
 }
 
-/** Walk body subtree; roots of maximal invisible subtrees end up in the set. */
-export function markInvisibleStripRoots(body: HTMLElement): WeakSet<Element> {
-	const stripRoots = new WeakSet<Element>()
+function childNodePathFromRoot(root: Node, node: Node): number[] | null {
+	const path: number[] = []
+	let current: Node | null = node
+
+	while (current && current !== root) {
+		const parent: Node | null = current.parentNode
+		if (!parent) return null
+		path.push([...parent.childNodes].indexOf(current as ChildNode))
+		current = parent
+	}
+
+	if (current !== root) return null
+	return path.reverse()
+}
+
+function nodeAtChildNodePath(root: Node, path: number[]): Node | null {
+	let current: Node | null = root
+
+	for (const index of path) {
+		current = current.childNodes[index] ?? null
+		if (!current) return null
+	}
+
+	return current
+}
+
+function isElementNode(node: Node | null): node is Element {
+	return node?.nodeType === NODE_ELEMENT
+}
+
+function hiddenStripRootPaths(doc: Document, body: HTMLElement): number[][] {
+	const paths: number[][] = []
+	const htmlEl = doc.documentElement
 
 	function visit(el: Element, inDisplayNoneSubtree: boolean): void {
-		if (el === body) {
-			for (const child of childElements(el)) {
-				visit(child, hasDisplayNoneAncestor(child))
-			}
-			return
-		}
-
 		const cs = computedStyle(el)
 		const inDisplayNone = inDisplayNoneSubtree || cs.display === "none"
 		const strip =
 			inDisplayNone || cs.visibility === "hidden" || computedOpacityIsZero(cs)
 
 		if (strip) {
-			stripRoots.add(el)
+			const path = childNodePathFromRoot(htmlEl, el)
+			if (path) paths.push(path)
 			return
 		}
 
-		for (const child of childElements(el)) {
+		for (const child of el.children) {
 			visit(child, inDisplayNone)
 		}
 	}
 
-	visit(body, false)
-	return stripRoots
-}
-
-function escapeAttr(value: string): string {
-	return value
-		.replace(/&/g, "&amp;")
-		.replace(/"/g, "&quot;")
-		.replace(/</g, "&lt;")
-}
-
-function escapeTextData(data: string): string {
-	return data.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-}
-
-function escapeRawTextForElement(tag: string, content: string): string {
-	const re = new RegExp(`</${tag}(?=(\\s|>|/))`, "gi")
-	return content.replace(re, `<\\/${tag}`)
-}
-
-function serializeAttrs(el: Element): string {
-	let s = ""
-	for (const attr of [...el.attributes]) {
-		if (attr.value === "") s += ` ${attr.name}`
-		else s += ` ${attr.name}="${escapeAttr(attr.value)}"`
-	}
-	return s
-}
-
-function serializeOpenTagAttrs(el: Element): string {
-	return serializeAttrs(el)
-}
-
-function serializeNode(node: Node, stripRoots: WeakSet<Element>): string {
-	if (node.nodeType === NODE_TEXT) {
-		const text = (node as Text).data
-		const parent = node.parentElement
-		if (parent && RAW_TEXT_TAGS.has(parent.tagName.toLowerCase())) {
-			return text
-		}
-		return escapeTextData(text)
-	}
-	if (node.nodeType === NODE_COMMENT) {
-		return `<!--${(node as Comment).data}-->`
-	}
-	if (node.nodeType === NODE_ELEMENT) {
-		return serializeElementNode(node as Element, stripRoots)
-	}
-	return ""
-}
-
-function serializeChildNodes(
-	parent: Node,
-	stripRoots: WeakSet<Element>,
-): string {
-	let out = ""
-	for (const child of parent.childNodes) {
-		out += serializeNode(child, stripRoots)
-	}
-	return out
-}
-
-function serializeElementNode(
-	el: Element,
-	stripRoots: WeakSet<Element>,
-): string {
-	if (stripRoots.has(el)) return ""
-
-	const tag = el.tagName.toLowerCase()
-	const attrs = serializeAttrs(el)
-
-	if (tag === "template") {
-		const t = el as HTMLTemplateElement
-		const inner = serializeChildNodes(t.content, stripRoots)
-		return `<template${attrs}>${inner}</template>`
+	for (const child of body.children) {
+		visit(child, false)
 	}
 
-	if (VOID_HTML.has(tag)) {
-		return `<${tag}${attrs}>`
-	}
-
-	if (RAW_TEXT_TAGS.has(tag)) {
-		let raw = ""
-		for (const n of el.childNodes) {
-			if (n.nodeType === NODE_TEXT) raw += (n as Text).data
-			else if (n.nodeType === NODE_COMMENT) {
-				raw += `<!--${(n as Comment).data}-->`
-			} else if (n.nodeType === NODE_ELEMENT) {
-				raw += serializeElementNode(n as Element, stripRoots)
-			}
-		}
-		raw = escapeRawTextForElement(tag, raw)
-		return `<${tag}${attrs}>${raw}</${tag}>`
-	}
-
-	return `<${tag}${attrs}>${serializeChildNodes(el, stripRoots)}</${tag}>`
+	return paths
 }
 
-/** Serializes body’s child nodes, dropping subtrees whose roots are in stripRoots. */
-export function serializeBodyInnerHtml(
-	body: HTMLElement,
-	stripRoots: WeakSet<Element>,
-): string {
-	return serializeChildNodes(body, stripRoots)
-}
-
-/** Full document HTML (no doctype), head verbatim, body visibility-filtered. */
+/** Full document HTML (no doctype), browser-serialized after visibility filtering. */
 export function captureDocumentHtml(doc: Document): string {
 	const htmlEl = doc.documentElement
 	if (!htmlEl) return ""
@@ -200,11 +83,14 @@ export function captureDocumentHtml(doc: Document): string {
 		return htmlEl.outerHTML
 	}
 
-	const stripRoots = markInvisibleStripRoots(body)
-	const bodyInner = serializeBodyInnerHtml(body, stripRoots)
-	const headHtml = doc.head?.outerHTML ?? ""
-	const htmlAttrs = serializeOpenTagAttrs(htmlEl)
-	const bodyAttrs = serializeOpenTagAttrs(body)
+	const clone = htmlEl.cloneNode(true) as Element
+	const stripNodes = hiddenStripRootPaths(doc, body)
+		.map((path) => nodeAtChildNodePath(clone, path))
+		.filter(isElementNode)
 
-	return `<html${htmlAttrs}>${headHtml}<body${bodyAttrs}>${bodyInner}</body></html>`
+	for (const node of stripNodes) {
+		node.remove()
+	}
+
+	return clone.outerHTML
 }
