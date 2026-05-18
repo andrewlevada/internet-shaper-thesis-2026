@@ -75,6 +75,21 @@ def count_tokens(text: str, encoding: tiktoken.Encoding) -> int:
     return len(encoding.encode(text))
 
 
+def count_html_comment_chars(html: str) -> int:
+    total = 0
+    i = 0
+    while i < len(html):
+        start = html.find("<!--", i)
+        if start == -1:
+            break
+        end = html.find("-->", start + 4)
+        if end == -1:
+            break
+        total += end + 3 - start
+        i = end + 3
+    return total
+
+
 def run_dom_map(tool_path: Path, snapshot_path: Path) -> str:
     command = [
         "deno",
@@ -116,6 +131,7 @@ def build_sample_row(
     raw_chars = len(raw_html)
     visible_chars = len(visible_html)
     compressed_visible_chars = len(compressed_visible_dom)
+    compressed_visible_comment_chars = count_html_comment_chars(compressed_visible_dom)
     raw_tokens = count_tokens(raw_html, encoding)
     visible_tokens = count_tokens(visible_html, encoding)
     compressed_visible_tokens = count_tokens(compressed_visible_dom, encoding)
@@ -125,7 +141,8 @@ def build_sample_row(
         "path": str(snapshot_dir.relative_to(data_dir)),
         "raw_chars": raw_chars,
         "visible_chars": visible_chars,
-        "compressed_visible_chars": compressed_visible_chars,        
+        "compressed_visible_chars": compressed_visible_chars,
+        "compressed_visible_comment_chars": compressed_visible_comment_chars,
         "raw_tokens": raw_tokens,
         "visible_tokens": visible_tokens,
         "compressed_visible_tokens": compressed_visible_tokens,
@@ -155,6 +172,10 @@ def build_total_rows(sample_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         ("raw_chars", "raw_chars"),
         ("visible_chars", "visible_chars"),
         ("compressed_visible_chars", "compressed_visible_chars"),
+        (
+            "compressed_visible_comment_chars",
+            "compressed_visible_comment_chars",
+        ),
         ("raw_tokens", "raw_tokens"),
         ("visible_tokens", "visible_tokens"),
         ("compressed_visible_tokens", "compressed_visible_tokens"),
