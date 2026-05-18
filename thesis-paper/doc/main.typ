@@ -20,6 +20,7 @@
 
 #show: thesis.with(
   abstract: lorem(100),
+  font-family: "Times New Roman"
 )
 
 #set par(
@@ -111,6 +112,10 @@ There is a relevant adjacent area of research from which this work draws valuabl
 
 Following @ning_survey_2025's classification of comprehension techniques into text-based (which operates on code rather than natural text), screenshot-based, and multimodal — all approaches have shown promising results. However, since the interaction model relies on the DOM structure to query and modify components, the agent requires textual input, making screenshot-based perception infeasible. This paper focuses on text-based perception; multimodal perception is left for future work.
 
+Some web-agent work relies on the accessibility tree rather than the DOM. The accessibility tree is the browser's parallel representation of a page for assistive technologies such as screen readers. It preserves semantic structure while intentionally stripping away information that is purely visual. This makes it useful for many comprehension tasks, but it is not sufficient for our setting. We expect users to ask for visual adaptations such as changing layout, or hiding visual distractions. The system therefore needs both semantic and visual context, so it uses DOM snapshots rather than the accessibility tree as its primary representation.
+
+Existing approaches to DOM compacting also include pruning only task-relevant elements. For example, Prune4Web @zhang_prune4web_2025 uses programmatic filtering to reduce the candidate DOM elements. Such pruning is highly relevant to future versions of this system, especially when the requested change is localized to a small part of the page. In our case, however, many plausible user requests are not localized: restyling the page, changing the layout of content, or suppressing a broad class of distractions can make a large fraction of the DOM relevant. We therefore do not explore task-specific DOM pruning in this thesis. Instead, we focus on preserving broad page context: hierarchical relationships, visible content, and the overall tree structure.
+
 The primary challenge with textual representation is the size of DOMs. To demonstrate, three unprocessed DOM snapshots were collected from logged-in websites — Instagram, Substack, and YouTube. These DOMs differ in file size, complexity, and underlying technologies:
 
 #align(center)[
@@ -143,13 +148,13 @@ Summarizing the requirements so far:
 - The system must execute that code on the DOM.
 - The system must preserve or re-apply changes on page reload.
 
-An agenetic prompting approach with tools given to the model will serve as the architectural base, as it shows significant performance boosts across a range of tasks @noauthor_tool_nodate.
+We use tool-calling agentic system as the architectural base, as it shows significant performance boosts across a range of tasks @noauthor_tool_nodate relative to LLM-driven systems without tools. Conceptually, these tools define the agent's _action space_: the set of operations through which the model can inspect the page and commit changes.
 
-To avoid context contamination with unnecessary information — which has been shown to decrease LLM performance (*WIP* citation needed) — the agent must receive a drastically limited DOM snapshot initially. However, this risks losing information critical to the user's task. The agent must therefore also have a way to query a portion of the DOM in less compressed form.
+To avoid context bloat with unnecessary information the agent must receive a drastically limited DOM snapshot initially. However, this risks losing information critical to the user's task. The action space must therefore include a way to query a portion of the DOM in less compressed form.
 
 Finally, the agent must be able to record new rules, which are JavaScript functions applied to the page's elements.
 
-This structure maps onto three tools the system was designed around, discussed in depth in the Implementation section — `get_map_of_dom`, `show_in_dom`, and `set_update_rule`.
+This structure maps onto a three-action interface discussed in depth in the Implementation section — `get_map_of_dom`, `show_in_dom`, and `set_update_rule`.
 
 == User Testing Protocol <sec:user-testing-protocol>
 
@@ -204,33 +209,33 @@ To allow different layers of the system to communicate without friction, we buil
 
 We use Anthropic's model harness with their best practices to implement tool use. The loop is: send system prompt + conversation history + tool definitions → receive content blocks → execute any `tool_use` blocks → push `tool_result` → repeat until no tool calls or `stop_reason === "end_turn"`.
 
-=== Tools <sec:tools>
+=== Action Space <sec:action-space>
 
-The agent is given three tools.
+The agent's action space is exposed as three tools.
 
-`get_map_of_dom()` — returns a compact page DOM structure. It aggressively excludes elements likely to have little semantic meaning via lossy DOM compression: it collapses single-child wrappers, repeating sibling elements, and non-semantic attributes.
+`get_map_of_dom()` — returns a compact page DOM structure. It aggressively excludes elements likely to have little semantic meaning via lossy DOM compression: it filters attributes, removes high-frequency classes, collapses single-child wrapper chains, and truncates repeated sibling structures. This action gives the model an overview of the page while preserving hierarchy and broad context.
 
 Prompt caching is applied to the system prompt and the `get_map_of_dom` result (the largest context item), reducing cost on multi-turn conversations.
 
-`show_in_dom(query_selector, include_children)` — returns the full, unprocessed HTML of a specific element from the DOM. Used after `get_map_of_dom()` to examine elements in detail. The element is returned exactly as it appears in the original DOM, with all attributes and children intact.
+`show_in_dom(query_selector, depth)` — returns HTML for a specific element from the captured DOM. The `depth` argument controls how many descendant element levels are included below the matched node; omitted depth defaults to three. This action is used after `get_map_of_dom()` when the model needs more local detail for selector construction or for understanding dynamic content markers. When descendants deeper than the requested depth are omitted, they are replaced with a short comment indicating the number of hidden children.
 
 `set_update_rule(label, query_selector, logic)` — sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. The `logic` parameter is JavaScript code that executes with `element` bound to each matching DOM element. The logic has no access to `window`, `document`, or any global APIs — only the `element` variable is available. The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once.
 
 The system prompt instructs the agent to prefer stable selectors (class names, `data-*` attributes, semantic tags), and to write idempotent logic that sets absolute state rather than toggling or accumulating effects.
 
-Both `get_map_of_dom` and `show_in_dom` operate on a captured snapshot of the DOM (`document.documentElement.outerHTML`) taken at the time the user submits a request. `set_update_rule` does not immediately apply — it appends to a list of rules that are applied to the live page after the agent finishes.
+Both `get_map_of_dom` and `show_in_dom` operate on a captured snapshot of the DOM taken at the time the user submits a request. `set_update_rule` does not immediately apply — it appends to a list of rules that are applied to the live page after the agent finishes.
 
 === Workflow <sec:workflow>
 
 The agent follows a fixed exploration-then-action workflow. It must always begin by calling `get_map_of_dom` to form a structural understanding of the page before taking any other action. From this map it identifies candidate elements relevant to the user's request. When it needs full attribute and children detail for a specific element — for example, to construct a precise selector or inspect dynamic content markers — it calls `show_in_dom`.
 
-Only after this exploration phase does it emit one or more `set_update_rule` calls, each can be see as a set of target quesry selector + JS logic to be applied. The conversation loop continues until the agent produces a reply with no tool calls, or the stop reason is `end_turn`, at which point the collected rules are applied to the live page.
+After this exploration phase the agent emits one or more `set_update_rule` calls, each representing a target query selector and JavaScript logic to apply. The conversation loop continues until the agent produces a reply with no tool calls, or the stop reason is `end_turn`, at which point the collected rules are applied to the live page.
 
 Rules are saved to `localStorage` keyed by `internet-shaper-rules:${hostname}` as an array of `{ label, query_selector, logic, enabled }` objects. On every page load, `app.ts` reads the stored rules and calls `applyRules`, which runs via `executeInMainWorld` so rule logic has access to the real `document`. Inside the main world, rules are merged into `window.__internetShaperRules`, and a `MutationObserver` on `document.body` re-applies rules to any newly added nodes. This is done to handle single-page applications (SPAs) like YouTube and Instagram that load content dynamically without full page reloads.
 
 #example[
 Rule for www.google.com:
-On `.YzCcne` quary selector
+On `.YzCcne` query selector
 Apply `element.style.display = 'none'`
 ]
 
