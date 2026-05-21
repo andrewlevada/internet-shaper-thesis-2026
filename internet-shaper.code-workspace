@@ -9,8 +9,12 @@
 			"name": "internet-shaper"
 		},
 		{
-			"path": "experiments/primary-evaluation",
-			"name": "primary-evaluation"
+			"path": "experiments/primary-evaluation/data/pipeline",
+			"name": "primary-evaluation-pipeline"
+		},
+		{
+			"path": "experiments/primary-evaluation/web-app",
+			"name": "primary-evaluation-web"
 		}
 	],
 	"settings": {}

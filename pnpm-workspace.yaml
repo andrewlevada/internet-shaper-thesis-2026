@@ -1,4 +1,9 @@
 packages:
   - "browser-extension"
   - "playground"
-  - "experiments/primary-evaluation"
+  - "experiments/primary-evaluation/data/pipeline"
+  - "experiments/primary-evaluation/web-app"
+allowBuilds:
+  esbuild: true
+  lefthook: true
+  sharp: true
