@@ -3,11 +3,16 @@
 :root {
   --background: #a09f96;
   --text: #1a1a1a;
+  --accent: #2b521d;
+  --white: #ffffff;
 }
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--text);
+  --color-accent: var(--accent);
+  --color-white: var(--white);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -20,4 +25,8 @@ body {
 
 h1 {
   font-size: 24px;
+}
+
+input, button {
+  cursor: pointer !important;
 }
