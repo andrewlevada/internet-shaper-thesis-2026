@@ -1,3 +1,4 @@
 packages:
   - "browser-extension"
   - "playground"
+  - "experiments/primary-evaluation"

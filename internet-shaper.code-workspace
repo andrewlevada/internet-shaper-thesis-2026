@@ -7,6 +7,10 @@
 		{
 			"path": ".",
 			"name": "internet-shaper"
+		},
+		{
+			"path": "experiments/primary-evaluation",
+			"name": "primary-evaluation"
 		}
 	],
 	"settings": {}
