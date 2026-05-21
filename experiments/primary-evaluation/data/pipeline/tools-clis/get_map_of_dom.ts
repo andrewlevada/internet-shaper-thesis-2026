@@ -229,6 +229,9 @@ function collapseChain(element: Element, doc: Document): number {
 	const deepest = chain[chain.length - 1]
 	const finalContent = [...deepest.childNodes]
 
+	const wrappersClasses = new Set<string>()
+	const wrappersAttributes = new Map<string, string>()
+
 	for (const wrapper of chain) {
 		for (const attr of wrapper.attributes) {
 			if (attr.name === "class") {
@@ -236,10 +239,13 @@ function collapseChain(element: Element, doc: Document): number {
 				const wrapperClasses = getClassName(wrapper)
 					.split(/\s+/)
 					.filter(Boolean)
-				const merged = [...new Set([...parentClasses, ...wrapperClasses])]
-				setClassName(element, merged.join(" "))
+
+				const filtered = wrapperClasses.filter(
+					(cls) => !parentClasses.includes(cls),
+				)
+				for (const cls of filtered) wrappersClasses.add(cls)
 			} else if (!element.hasAttribute(attr.name)) {
-				element.setAttribute(attr.name, attr.value)
+				wrappersAttributes.set(attr.name, attr.value)
 			}
 		}
 	}
@@ -250,7 +256,16 @@ function collapseChain(element: Element, doc: Document): number {
 		element.appendChild(node)
 	}
 
-	const comment = doc.createComment(` -${chain.length} wrappers `)
+	let commentText = ` -${chain.length} wrappers `
+
+	if (wrappersClasses.size > 0) {
+		commentText += ` class="${[...wrappersClasses].join(" ")}"`
+	}
+	if (wrappersAttributes.size > 0) {
+		commentText += ` ${[...wrappersAttributes.entries()].map(([name, value]) => `${name}="${value}"`).join(" ")}`
+	}
+
+	const comment = doc.createComment(commentText)
 	element.insertBefore(comment, element.firstChild)
 
 	return chain.length

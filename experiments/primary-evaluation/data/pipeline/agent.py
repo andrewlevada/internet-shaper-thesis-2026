@@ -24,7 +24,7 @@ from config import (
 from paths import AgentVariantPaths
 
 EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom", "show_in_dom"})
-MUTATION_TOOLS = frozenset({"edit"})
+MUTATION_TOOLS = frozenset({"edit", "set_update_rule"})
 
 AgentBackend = Literal["vercel", "local"]
 
@@ -100,9 +100,11 @@ class ToolDispatcher:
     def _snapshot_for(self, name: str) -> str:
         if name in EXPLORE_TOOLS:
             return str(self.visible_html)
+
         if name in MUTATION_TOOLS:
             return str(self.raw_html)
-        return str(self.raw_html)
+        
+        raise ValueError(f"Unknown tool: {name!r}")
 
     def dispatch(self, name: str, arguments: dict[str, Any]) -> str:
         snapshot = self._snapshot_for(name)
@@ -195,8 +197,7 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "get_dom",
                 "description": (
-                    "Returns work/visible.html (DOM exploration snapshot). "
-                    "Output may be truncated when very large."
+                    "Returns the DOM tree of the page."
                 ),
                 "parameters": {"type": "object", "properties": {}, "required": []},
             },
@@ -206,7 +207,10 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "get_map_of_dom",
                 "description": (
-                    "Returns a compact, truncated map of work/visible.html DOM structure."
+                    "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: "
+                    "1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. "
+                    "2. Repeating sibling elements show only the first with a comment indicating count. "
+                    "3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. "
                 ),
                 "parameters": {"type": "object", "properties": {}, "required": []},
             },
@@ -215,12 +219,25 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "type": "function",
             "function": {
                 "name": "show_in_dom",
-                "description": f"Returns HTML for a specific element (default depth {SHOW_IN_DOM_DEFAULT_DEPTH}).",
+                "description": (
+                    "Returns full HTML for the first element matching the query selector."
+                ),
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "query_selector": {"type": "string"},
-                        "depth": {"type": "integer", "minimum": 0},
+                        "query_selector": {
+                            "type": "string",
+                            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')",
+                        },
+                        "depth": {
+                            "type": "integer",
+                            "description": (
+                                "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. "
+                                "Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. "
+                            ),
+                            "minimum": 0,
+                            "default": SHOW_IN_DOM_DEFAULT_DEPTH,
+                        },
                     },
                     "required": ["query_selector"],
                 },
@@ -231,18 +248,16 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "edit",
                 "description": (
-                    "Apply Aider-style SEARCH/REPLACE blocks to work/raw.html.\n\n"
-                    "When using edit():\n"
-                    "- Pass one or more Aider-style SEARCH/REPLACE blocks in the `patch` argument.\n"
-                    "- Each block must use this exact structure (multiple blocks allowed):\n\n"
+                    "Chnage the page by applying Aider-style SEARCH/REPLACE blocks. \n"
+                    "- Pass one or more SEARCH/REPLACE blocks in the `patch` argument. \n"
+                    "- Each block must use this exact structure (multiple blocks allowed): \n\n"
                     "<<<<<<< SEARCH\n"
                     "exact text copied from the page HTML\n"
                     "=======\n"
                     "replacement HTML\n"
                     ">>>>>>> REPLACE\n\n"
-                    "- SEARCH text must match work/raw.html exactly (including whitespace).\n"
-                    "- Prefer small, targeted hunks over rewriting large sections.\n"
-                    "- After editing, you may call get_dom() again to verify the result."
+                    "- SEARCH text must match the full DOM exactly (including whitespace). \n"
+                    "- Prefer small, targeted hunks over rewriting large sections."
                 ),
                 "parameters": {
                     "type": "object",
@@ -256,34 +271,42 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "set_update_rule",
                 "description": (
-                    "Register a persistent update rule (one rule per call).\n\n"
+                    "Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. \n\n"
+                    "The 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \n"
+                    "The logic has NO access to window, document, or any global APIs - ONLY the 'element' variable is available. \n\n"
+
+                    "Common patterns: \n"
+                    "- element.style.display = 'none' - hide the element \n"
+                    "- element.style.opacity = '0.3' - dim the element \n"
+                    "- element.classList.add('hidden') - add a class \n"
+                    "- element.textContent = '' - clear text content \n\n"
+
                     "When using set_update_rule:\n"
-                    "- label: A short (~3 words) description for rule management UI "
-                    '(e.g., "Hide video ads", "Remove sidebar")\n'
-                    "- query_selector: A CSS selector (e.g., '.ad-slot', '[data-ad]', "
-                    "'ytd-rich-item-renderer')\n"
-                    "- logic: Valid JavaScript with `element` bound to each matching element\n"
-                    "- The logic has NO access to window, document, or any global APIs - "
-                    "ONLY the `element` variable\n"
-                    "- Common operations: element.remove(), element.style.display = 'none', "
-                    "element.textContent = ''\n"
-                    "- Running the same logic on the same element multiple times must produce "
-                    "the same result as running it once.\n"
+                    "- The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once. \n"
                     "- If the rule reads child content (e.g. text, badge values) to decide "
                     "whether to hide the element, it will be re-run after child content loads. "
                     "Write logic that handles an empty/missing value gracefully by doing "
                     "nothing (early return).\n"
                     "- Avoid accumulating side effects: do not append to textContent, do not "
-                    "toggle classes — always set to an absolute value.\n"
+                    "toggle classes — always set to an absolute value. \n"
                     "- Never use element.remove() when a condition check is involved; prefer "
                     "element.style.display = 'none' so the rule can still run again if needed."
                 ),
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "label": {"type": "string"},
-                        "query_selector": {"type": "string"},
-                        "logic": {"type": "string"},
+                        "label": {
+                            "type": "string",
+                            "description": "A short label (~3 words) describing what this rule does, for display in the rule management UI (e.g., 'Hide video ads', 'Remove sidebar', 'Dim suggestions')"
+                        },
+                        "query_selector": {
+                            "type": "string",
+                            "description": "A CSS selector matching elements to modify (e.g., '.ad-container', '[data-ad]', 'ytd-ad-slot-renderer')"
+                        },
+                        "logic": {
+                            "type": "string",
+                            "description": "Valid JavaScript code with access to 'element' variable only."
+                        },
                     },
                     "required": ["label", "query_selector", "logic"],
                 },

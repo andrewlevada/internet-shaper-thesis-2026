@@ -1,7 +1,17 @@
 [
 	{
-		"label": "Hide AI-modus button",
+		"label": "Hide AI mode tab",
 		"query_selector": ".olrp5b",
-		"logic": "element.style.display = 'none'"
+		"logic": "const text = (element.textContent || '').trim();\nif (/ai\\s*[-]?\\s*(mode|modus)/i.test(text)) {\n  element.style.display = 'none';\n}"
+	},
+	{
+		"label": "Hide AI mode listitem",
+		"query_selector": "div[role=\"listitem\"]",
+		"logic": "const text = (element.textContent || '').trim().toLowerCase();\nif (text === 'ai-modus' || text === 'ai mode') {\n  element.style.display = 'none';\n}"
+	},
+	{
+		"label": "Hide AI mode text span",
+		"query_selector": "[jsname=\"KliEFc\"]",
+		"logic": "const text = (element.textContent || '').trim();\nif (!/ai\\s*[-]?\\s*(mode|modus)/i.test(text)) return;\nelement.style.display = 'none';\nlet parent = element.parentElement;\nwhile (parent) {\n  if (parent.classList && parent.classList.contains('olrp5b')) {\n    parent.style.display = 'none';\n    break;\n  }\n  parent = parent.parentElement;\n}"
 	}
 ]

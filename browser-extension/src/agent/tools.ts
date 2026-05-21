@@ -104,7 +104,6 @@ The 'logic' parameter is JavaScript code that executes with 'element' bound to e
 The logic has NO access to window, document, or any global APIs - ONLY the 'element' variable is available.
 
 Common patterns:
-- element.remove() - completely remove the element
 - element.style.display = 'none' - hide the element
 - element.style.opacity = '0.3' - dim the element
 - element.classList.add('hidden') - add a class

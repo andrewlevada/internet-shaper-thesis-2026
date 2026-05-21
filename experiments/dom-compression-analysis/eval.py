@@ -15,7 +15,7 @@ here = Path(__file__).resolve().parent
 REPO_ROOT = here.parents[1]
 DATA_DIR = here / "data/snapshots"
 SNAPSHOT_GLOB = "[0-9][0-9][0-9]"
-TOOL_PATH = REPO_ROOT / "playground/internet-shaper-tools/get_map_of_dom.ts"
+TOOL_PATH = REPO_ROOT / "experiments/primary-evaluation/data/pipeline/tools-clis/get_map_of_dom.ts"
 SAMPLES_CSV = here / "samples.csv"
 TOTAL_CSV = here / "total.csv"
 TOKEN_ENCODING = "o200k_base"
@@ -36,7 +36,10 @@ def main() -> int:
             f"No snapshots matched {SNAPSHOT_GLOB!r} under {data_dir}"
         )
 
+    print("Loading tiktoken...")
     encoding = tiktoken.get_encoding(TOKEN_ENCODING)
+    print("Loaded")
+    
     sample_rows: list[dict[str, Any]] = []
 
     for index, snapshot_dir in enumerate(snapshot_dirs, start=1):
