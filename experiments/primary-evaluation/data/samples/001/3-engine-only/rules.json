@@ -1,0 +1,22 @@
+[
+	{
+		"label": "Hide AI mode button",
+		"query_selector": "[data-testid=\"ai-mode-button\"], [aria-label*=\"AI\"], [aria-label*=\"ai mode\"], [aria-label*=\"AI mode\"], [aria-label*=\"AI Mode\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Remove AI Mode elements",
+		"query_selector": "[data-testid*=\"ai\"], [data-testid*=\"AI\"], .ai-mode, .AI-mode, [aria-label*=\"AI Mode\"], [aria-label*=\"AI mode\"], [aria-label*=\"ai mode\"], [title*=\"AI\"], [title*=\"ai\"]",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Remove AI Mode text elements",
+		"query_selector": "button, div, span, a",
+		"logic": "if (element.textContent && element.textContent.toLowerCase().includes('ai mode')) { element.style.display = 'none'; }"
+	},
+	{
+		"label": "Remove AI Mode text elements",
+		"query_selector": "button, div, span, a",
+		"logic": "if (element.textContent && element.textContent.toLowerCase().includes('ai mode')) { element.style.display = 'none'; }"
+	}
+]
