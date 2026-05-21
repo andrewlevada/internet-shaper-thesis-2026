@@ -9,8 +9,9 @@ import shutil
 import sys
 from pathlib import Path
 
-from agent import AgentBackend, apply_changes, run_agent, write_agent_log
-from config import AGENT_PIPELINE_IDS, PIPELINES, PipelineConfig, build_user_message
+from agent import AgentBackend, apply_changes, run_agent
+from config import AGENT_PIPELINE_IDS, GATEWAY_MODEL_ID, LOCAL_MODEL_ID, PIPELINES, PipelineConfig, build_user_message
+from lib.logs_streamer import AgentLogWriter
 from lib.screenshot import screenshot_variant
 from paths import agent_variant_paths
 
@@ -148,33 +149,44 @@ def run_agent_pipeline(
 
     print(f"[{sample_id}] running {pipeline.id} → {pipeline.folder}")
 
-    run_result = run_agent(
-        pipeline,
-        sample_id=sample_id,
-        user_message=user_message,
-        paths=paths,
-        backend=backend,
-    )
-
-    summary = apply_changes(
-        pipeline,
-        paths=paths,
-        run_result=run_result,
-    )
-
-    write_agent_log(
+    model_id = GATEWAY_MODEL_ID if backend == "vercel" else LOCAL_MODEL_ID
+    log_writer = AgentLogWriter(
         paths.agent_log,
         sample_id=sample_id,
         pipeline=pipeline,
         user_message=user_message,
         paths=paths,
-        run_result=run_result,
-        result_summary=summary,
+        backend=backend,
+        model_id=model_id,
     )
+    try:
+        run_result = run_agent(
+            pipeline,
+            sample_id=sample_id,
+            user_message=user_message,
+            paths=paths,
+            backend=backend,
+            log_writer=log_writer,
+        )
+
+        summary = apply_changes(
+            pipeline,
+            paths=paths,
+            run_result=run_result,
+        )
+
+        log_writer.finalize(run_result=run_result, result_summary=summary)
+    except Exception:
+        log_writer.close()
+        raise
 
 
-def screenshot_sample(sample_id: str, sample_dir: Path) -> None:
-    for cfg in PIPELINES.values():
+def screenshot_sample(
+    sample_id: str,
+    sample_dir: Path,
+    pipelines: list[PipelineConfig],
+) -> None:
+    for cfg in pipelines:
         variant_dir = sample_dir / cfg.folder
         html_path = agent_variant_paths(variant_dir).index_html
 
@@ -193,6 +205,7 @@ def screenshot_sample(sample_id: str, sample_dir: Path) -> None:
 def process_sample(
     sample_id: str,
     agent_pipelines: list[PipelineConfig],
+    screenshot_pipelines: list[PipelineConfig],
     *,
     skip_existing: bool,
     screenshots_only: bool,
@@ -218,18 +231,22 @@ def process_sample(
                 backend=backend,
             )
 
-    screenshot_sample(sample_id, sample_dir)
+    screenshot_sample(sample_id, sample_dir, screenshot_pipelines)
 
 
 def main() -> None:
     args = parse_args()
     seed_ids = list_seed_ids(args.sample)
     agent_pipelines = resolve_agent_pipelines(args.pipeline)
+    screenshot_pipelines = (
+        agent_pipelines if args.pipeline else list(PIPELINES.values())
+    )
 
     for sample_id in seed_ids:
         process_sample(
             sample_id,
             agent_pipelines,
+            screenshot_pipelines,
             skip_existing=args.skip_existing,
             screenshots_only=args.screenshots_only,
             backend=args.backend,

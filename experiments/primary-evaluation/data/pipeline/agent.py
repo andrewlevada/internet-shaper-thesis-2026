@@ -6,14 +6,15 @@ import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
+
+if TYPE_CHECKING:
+    from lib.logs_streamer import AgentLogWriter
 
 from config import (
     GATEWAY_MODEL_ID,
     LOCAL_MODEL_ID,
-    MAX_INPUT_TOKENS,
     MAX_NEW_TOKENS,
     MAX_TOOL_OUTPUT_CHARS,
     MAX_TOOL_ROUNDS,
@@ -25,6 +26,7 @@ from paths import AgentVariantPaths
 
 EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom", "show_in_dom"})
 MUTATION_TOOLS = frozenset({"edit", "set_update_rule"})
+SINGLE_CALL_EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom"})
 
 AgentBackend = Literal["vercel", "local"]
 
@@ -91,11 +93,19 @@ def _apply_update_rules(snapshot: Path, rules: list[dict[str, str]], output: Pat
         Path(rules_path).unlink(missing_ok=True)
 
 
+def _single_call_explore_message(tool_name: str) -> str:
+    return (
+        f"The {tool_name} tool is extremely context-hungry, so it cannot be called again. "
+        "Refer to the result of the previous call."
+    )
+
+
 class ToolDispatcher:
     def __init__(self, *, raw_html: Path, visible_html: Path) -> None:
         self.raw_html = raw_html
         self.visible_html = visible_html
         self.rules: list[dict[str, str]] = []
+        self._single_call_explore_used: set[str] = set()
 
     def _snapshot_for(self, name: str) -> str:
         if name in EXPLORE_TOOLS:
@@ -108,6 +118,11 @@ class ToolDispatcher:
 
     def dispatch(self, name: str, arguments: dict[str, Any]) -> str:
         snapshot = self._snapshot_for(name)
+
+        if name in SINGLE_CALL_EXPLORE_TOOLS:
+            if name in self._single_call_explore_used:
+                return _single_call_explore_message(name)
+            self._single_call_explore_used.add(name)
 
         if name == "get_dom":
             code, out, err = _run_deno("get_dom.ts", ["--snapshot", snapshot])
@@ -138,37 +153,40 @@ class ToolDispatcher:
             return _cap_tool_output(out)
 
         if name == "edit":
-            patch = arguments.get("patch")
-            if not patch:
-                return "error: edit requires patch"
+            try:
+                prepared = _prepare_edit_arguments(arguments)
+            except ValueError as exc:
+                return f"error: {exc}"
+            edits = prepared.get("edits")
+            if not isinstance(edits, list) or not edits:
+                return "error: edit requires a non-empty edits array"
+            edits_payload = json.dumps({"edits": edits}, ensure_ascii=False)
             with tempfile.NamedTemporaryFile(
                 mode="w",
-                suffix=".patch.txt",
+                suffix=".edits.json",
                 delete=False,
                 encoding="utf-8",
-            ) as pf:
-                pf.write(str(patch))
-                patch_path = pf.name
+            ) as ef:
+                ef.write(edits_payload)
+                edits_path = ef.name
             try:
                 code, out, err = _run_deno(
                     "edit.ts",
                     [
                         "--snapshot",
                         snapshot,
-                        "--patch",
-                        patch_path,
+                        "--edits",
+                        edits_path,
                         "--output",
                         snapshot,
                     ],
                 )
                 msg = (out or err or "").strip()
-                if code == 2:
-                    return f"partial apply:\n{msg}"
                 if code != 0:
-                    return f"[exit {code}]\n{msg}"
+                    return msg or "edit failed"
                 return msg or "edit applied"
             finally:
-                Path(patch_path).unlink(missing_ok=True)
+                Path(edits_path).unlink(missing_ok=True)
 
         if name == "set_update_rule":
             label = arguments.get("label")
@@ -197,7 +215,8 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "get_dom",
                 "description": (
-                    "Returns the DOM tree of the page."
+                    "Returns the DOM tree of the page. "
+                    "Can only be called once per session; later calls return the previous result message."
                 ),
                 "parameters": {"type": "object", "properties": {}, "required": []},
             },
@@ -211,6 +230,7 @@ def _tool_schema(name: str) -> dict[str, Any]:
                     "1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. "
                     "2. Repeating sibling elements show only the first with a comment indicating count. "
                     "3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. "
+                    "Can only be called once per session; later calls return the previous result message."
                 ),
                 "parameters": {"type": "object", "properties": {}, "required": []},
             },
@@ -248,21 +268,45 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "edit",
                 "description": (
-                    "Chnage the page by applying Aider-style SEARCH/REPLACE blocks. \n"
-                    "- Pass one or more SEARCH/REPLACE blocks in the `patch` argument. \n"
-                    "- Each block must use this exact structure (multiple blocks allowed): \n\n"
-                    "<<<<<<< SEARCH\n"
-                    "exact text copied from the page HTML\n"
-                    "=======\n"
-                    "replacement HTML\n"
-                    ">>>>>>> REPLACE\n\n"
-                    "- SEARCH text must match the full DOM exactly (including whitespace). \n"
-                    "- Prefer small, targeted hunks over rewriting large sections."
+                    "Edit the page snapshot using text replacement. "
+                    "Whitespace and newlines in oldText do not need to match exactly. "
+                    "Every edits[].oldText must still match a unique, non-overlapping region of the original file. "
+                    "If two changes affect the same block or nearby lines, merge them into one edit instead of "
+                    "emitting overlapping edits. Do not include large unchanged regions just to connect distant changes."
                 ),
                 "parameters": {
                     "type": "object",
-                    "properties": {"patch": {"type": "string"}},
-                    "required": ["patch"],
+                    "properties": {
+                        "edits": {
+                            "type": "array",
+                            "description": (
+                                "One or more targeted replacements. Each edit is matched against the original file, "
+                                "not incrementally. Do not include overlapping or nested edits. If two changes touch "
+                                "the same block or nearby lines, merge them into one edit instead."
+                            ),
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "oldText": {
+                                        "type": "string",
+                                        "description": (
+                                            "Text to replace. Whitespace and newlines may differ from the snapshot; "
+                                            "include enough surrounding HTML to make the match unique and non-overlapping "
+                                            "with other edits in the same call."
+                                        ),
+                                    },
+                                    "newText": {
+                                        "type": "string",
+                                        "description": "Replacement text for this targeted edit.",
+                                    },
+                                },
+                                "required": ["oldText", "newText"],
+                                "additionalProperties": False,
+                            },
+                        },
+                    },
+                    "required": ["edits"],
+                    "additionalProperties": False,
                 },
             },
         },
@@ -357,6 +401,38 @@ def extract_tool_call_info(text: str) -> list[dict[str, Any]]:
     return calls
 
 
+def _prepare_edit_arguments(arguments: dict[str, Any]) -> dict[str, Any]:
+    args = dict(arguments)
+    edits = args.get("edits")
+    if isinstance(edits, str):
+        try:
+            parsed = json.loads(edits)
+            if isinstance(parsed, list):
+                args["edits"] = parsed
+        except json.JSONDecodeError:
+            pass
+
+    old_text = args.get("oldText")
+    new_text = args.get("newText")
+    if isinstance(old_text, str) and isinstance(new_text, str):
+        merged_edits = list(args["edits"]) if isinstance(args.get("edits"), list) else []
+        merged_edits.append({"oldText": old_text, "newText": new_text})
+        args["edits"] = merged_edits
+        args.pop("oldText", None)
+        args.pop("newText", None)
+
+    if not isinstance(args.get("edits"), list) or not args["edits"]:
+        raise ValueError("edit requires a non-empty edits array")
+
+    for index, edit in enumerate(args["edits"]):
+        if not isinstance(edit, dict):
+            raise ValueError(f"edits[{index}] must be an object")
+        if not isinstance(edit.get("oldText"), str) or not isinstance(edit.get("newText"), str):
+            raise ValueError(f"edits[{index}] must include oldText and newText strings")
+
+    return args
+
+
 def _parse_tool_arguments(raw: str) -> dict[str, Any]:
     text = raw.strip()
     if not text:
@@ -367,7 +443,7 @@ def _parse_tool_arguments(raw: str) -> dict[str, Any]:
             return parsed
     except json.JSONDecodeError:
         pass
-    return {"patch": text} if text.startswith("<<<<<<< SEARCH") else {"raw": text}
+    return {"raw": text}
 
 
 def run_agent_local(
@@ -376,6 +452,7 @@ def run_agent_local(
     sample_id: str,
     user_message: str,
     paths: AgentVariantPaths,
+    log_writer: AgentLogWriter | None = None,
 ) -> AgentRunResult:
     del sample_id
     import torch
@@ -410,11 +487,7 @@ def run_agent_local(
         {"role": "user", "content": user_message},
     ]
 
-    model_ctx = getattr(model.config, "max_position_embeddings", MAX_INPUT_TOKENS + MAX_NEW_TOKENS)
-    prompt_token_budget = min(
-        MAX_INPUT_TOKENS,
-        max(model_ctx - MAX_NEW_TOKENS - 128, 512),
-    )
+    model_ctx = getattr(model.config, "max_position_embeddings", 262144)
 
     result = AgentRunResult(model_id=LOCAL_MODEL_ID, backend="local")
     assistant_text = ""
@@ -430,7 +503,7 @@ def run_agent_local(
             prompt_text,
             return_tensors="pt",
             truncation=True,
-            max_length=prompt_token_budget,
+            max_length=model_ctx,
         )
         inputs = {k: v.to(device) for k, v in inputs.items()}
         prompt_len = int(inputs["input_ids"].shape[-1])
@@ -459,9 +532,10 @@ def run_agent_local(
             name = call["function"]["name"]
             args = _parse_tool_arguments(call["function"]["arguments"])
             tool_result = dispatcher.dispatch(name, args)
-            result.tool_calls.append(
-                ToolCallRecord(name=name, arguments=args, result=tool_result)
-            )
+            record = ToolCallRecord(name=name, arguments=args, result=tool_result)
+            result.tool_calls.append(record)
+            if log_writer is not None:
+                log_writer.append_tool_call(record)
             messages.append(
                 {
                     "role": "tool",
@@ -484,6 +558,7 @@ def run_agent(
     user_message: str,
     paths: AgentVariantPaths,
     backend: AgentBackend = "vercel",
+    log_writer: AgentLogWriter | None = None,
 ) -> AgentRunResult:
     if backend == "local":
         return run_agent_local(
@@ -491,6 +566,7 @@ def run_agent(
             sample_id=sample_id,
             user_message=user_message,
             paths=paths,
+            log_writer=log_writer,
         )
     from agent_vercel import run_agent_vercel
 
@@ -499,79 +575,8 @@ def run_agent(
         sample_id=sample_id,
         user_message=user_message,
         paths=paths,
+        log_writer=log_writer,
     )
-
-
-def write_agent_log(
-    path: Path,
-    *,
-    sample_id: str,
-    pipeline: PipelineConfig,
-    user_message: str,
-    paths: AgentVariantPaths,
-    run_result: AgentRunResult,
-    result_summary: str,
-) -> None:
-    timestamp = datetime.now(timezone.utc).isoformat()
-    lines = [
-        f"Timestamp: {timestamp}",
-        f"Sample: {sample_id}",
-        f"Pipeline: {pipeline.id} ({pipeline.folder})",
-        f"Backend: {run_result.backend}",
-        f"Model: {run_result.model_id}",
-        f"Work raw: {paths.raw_html}",
-        f"Work visible: {paths.visible_html}",
-        f"Tools: {', '.join(pipeline.tools)}",
-    ]
-    if run_result.prompt_tokens is not None:
-        lines.append(
-            f"Tokens: {run_result.prompt_tokens} prompt / "
-            f"{run_result.completion_tokens or 0} completion"
-        )
-    lines.extend(
-        [
-            "",
-            "=== Model Request ===",
-            "",
-            "--- System prompt ---",
-            pipeline.system_prompt,
-            "",
-            "--- Tool definitions ---",
-            json.dumps(build_tools(pipeline), ensure_ascii=False, indent=2),
-            "",
-            "=== Agent Chat ===",
-            "",
-        ]
-    )
-    lines.extend(["--- USER ---", user_message, ""])
-
-    for call in run_result.tool_calls:
-        lines.extend(
-            [
-                f"--- TOOL CALL: {call.name} ---",
-                json.dumps(call.arguments, ensure_ascii=False, indent=2)
-                if call.arguments
-                else "(no input)",
-                "",
-                f"--- TOOL RESULT: {call.name} ---",
-                call.result,
-                "",
-            ]
-        )
-
-    if run_result.final_assistant_text.strip():
-        lines.extend(["--- ASSISTANT ---", run_result.final_assistant_text.strip(), ""])
-
-    lines.extend(
-        [
-            "=== Result ===",
-            "",
-            result_summary,
-            "",
-        ]
-    )
-
-    path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def copy_over_the_final(paths: AgentVariantPaths) -> None:

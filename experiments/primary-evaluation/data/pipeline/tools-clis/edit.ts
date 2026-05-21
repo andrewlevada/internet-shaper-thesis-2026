@@ -1,90 +1,124 @@
 #!/usr/bin/env -S deno run -A
 
+import {
+	applyEditsToFileContent,
+	assertEditsHaveNoDomMapPlaceholderComments,
+	type Edit,
+} from "./lib/edit-diff.ts"
 import { parseFlags } from "./lib/parse-flags.ts"
 
-const BLOCK_RE =
-	/<<<<<<< SEARCH\r?\n([\s\S]*?)\r?\n=======\r?\n([\s\S]*?)\r?\n>>>>>>> REPLACE/g
-
-interface HunkResult {
-	index: number
-	applied: boolean
-	reason?: string
+interface EditInput {
+	edits?: Edit[]
+	oldText?: string
+	newText?: string
 }
 
-function applySearchReplaceBlocks(
-	source: string,
-	patchText: string,
-): { text: string; results: HunkResult[] } {
-	const matches = [...patchText.matchAll(BLOCK_RE)]
-	if (matches.length === 0) {
-		throw new Error("No SEARCH/REPLACE blocks found in patch")
-	}
+function usage(): never {
+	console.error(`Usage:
+  deno run -A edit.ts --snapshot <path-to-html> --edits <edits.json> --output <out.html>
 
-	let text = source
-	const results: HunkResult[] = []
-
-	for (const [index, match] of matches.entries()) {
-		const search = match[1]
-		const replace = match[2]
-		const first = text.indexOf(search)
-		if (first === -1) {
-			results.push({
-				index: index + 1,
-				applied: false,
-				reason: "SEARCH text not found (exact match required)",
-			})
-			continue
-		}
-		const second = text.indexOf(search, first + search.length)
-		if (second !== -1) {
-			results.push({
-				index: index + 1,
-				applied: false,
-				reason: "SEARCH text is ambiguous (matched more than once)",
-			})
-			continue
-		}
-		text = text.slice(0, first) + replace + text.slice(first + search.length)
-		results.push({ index: index + 1, applied: true })
-	}
-
-	return { text, results }
+edits.json must be a JSON object:
+  { "edits": [{ "oldText": string, "newText": string }] }
+or a JSON array of edit objects.`)
+	Deno.exit(1)
 }
 
-function summarize(results: HunkResult[]): string {
-	const applied = results.filter((r) => r.applied).length
-	const failed = results.filter((r) => !r.applied)
-	const lines = [`Applied ${applied}/${results.length} hunks.`]
-	for (const fail of failed) {
-		lines.push(`  hunk ${fail.index}: failed — ${fail.reason}`)
+function prepareEditInput(input: EditInput): Edit[] {
+	const args = { ...input }
+
+	if (typeof args.edits === "string") {
+		try {
+			const parsed = JSON.parse(args.edits)
+			if (Array.isArray(parsed)) {
+				args.edits = parsed
+			}
+		} catch {
+			// keep original value; validation below will fail
+		}
 	}
-	return lines.join("\n")
+
+	if (typeof args.oldText === "string" && typeof args.newText === "string") {
+		const edits = Array.isArray(args.edits) ? [...args.edits] : []
+		edits.push({ oldText: args.oldText, newText: args.newText })
+		args.edits = edits
+		delete args.oldText
+		delete args.newText
+	}
+
+	if (!Array.isArray(args.edits) || args.edits.length === 0) {
+		throw new Error(
+			"Edit tool input is invalid. edits must contain at least one replacement.",
+		)
+	}
+
+	for (const [index, edit] of args.edits.entries()) {
+		if (
+			!edit ||
+			typeof edit.oldText !== "string" ||
+			typeof edit.newText !== "string"
+		) {
+			throw new Error(
+				`Edit tool input is invalid. edits[${index}] must include oldText and newText strings.`,
+			)
+		}
+	}
+
+	return args.edits
+}
+
+function parseEditsFile(path: string): EditInput {
+	const raw = Deno.readTextFileSync(path)
+	const parsed = JSON.parse(raw)
+	if (Array.isArray(parsed)) {
+		return { edits: parsed }
+	}
+	if (parsed && typeof parsed === "object") {
+		return parsed as EditInput
+	}
+	throw new Error("edits file must be a JSON object or array of edit objects")
 }
 
 function main(): void {
 	const flags = parseFlags(Deno.args)
 	const snapshot = flags.get("snapshot")
-	const patchPath = flags.get("patch")
+	const editsPath = flags.get("edits")
 	const output = flags.get("output")
-	if (!snapshot || !patchPath || !output) return
+	if (!snapshot || !editsPath || !output) {
+		usage()
+	}
+
+	let editInput: EditInput
+	try {
+		editInput = parseEditsFile(editsPath)
+	} catch (e) {
+		console.error(String(e))
+		Deno.exit(1)
+	}
+
+	let edits: Edit[]
+	try {
+		edits = prepareEditInput(editInput)
+		assertEditsHaveNoDomMapPlaceholderComments(edits)
+	} catch (e) {
+		console.error(e instanceof Error ? e.message : String(e))
+		Deno.exit(1)
+	}
+
+	const displayPath = snapshot.split(/[/\\]/).pop() ?? snapshot
 
 	let source: string
-	let patchText: string
 	try {
 		source = Deno.readTextFileSync(snapshot)
-		patchText = Deno.readTextFileSync(patchPath)
 	} catch (e) {
 		console.error(String(e))
 		Deno.exit(1)
 	}
 
 	let updated: string
-	let results: HunkResult[]
 	try {
-		;({ text: updated, results } = applySearchReplaceBlocks(source, patchText))
+		updated = applyEditsToFileContent(source, edits, displayPath)
 	} catch (e) {
-		const msg = e instanceof Error ? e.message : String(e)
-		console.error(msg)
+		console.error(e instanceof Error ? e.message : String(e))
 		Deno.exit(1)
 	}
 
@@ -95,11 +129,7 @@ function main(): void {
 		Deno.exit(1)
 	}
 
-	console.log(summarize(results))
-	const allApplied = results.every((r) => r.applied)
-	if (!allApplied) {
-		Deno.exit(2)
-	}
+	console.log(`Successfully replaced ${edits.length} block(s).`)
 }
 
 main()

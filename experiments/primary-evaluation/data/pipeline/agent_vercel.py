@@ -9,6 +9,7 @@ from pathlib import Path
 from config import GATEWAY_MODEL_ID, MAX_TOOL_ROUNDS, PipelineConfig
 
 from agent import AgentRunResult, ToolCallRecord, ToolDispatcher, build_tools
+from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
 AI_GATEWAY_BASE_URL = "https://ai-gateway.vercel.sh/v1"
@@ -58,6 +59,7 @@ def run_agent_vercel(
     sample_id: str,
     user_message: str,
     paths: AgentVariantPaths,
+    log_writer: AgentLogWriter | None = None,
 ) -> AgentRunResult:
     del sample_id
     _load_env_files()
@@ -122,9 +124,10 @@ def run_agent_vercel(
             if not isinstance(args, dict):
                 args = {"raw": args}
             tool_result = dispatcher.dispatch(name, args)
-            result.tool_calls.append(
-                ToolCallRecord(name=name, arguments=args, result=tool_result)
-            )
+            record = ToolCallRecord(name=name, arguments=args, result=tool_result)
+            result.tool_calls.append(record)
+            if log_writer is not None:
+                log_writer.append_tool_call(record)
             messages.append(
                 {
                     "role": "tool",

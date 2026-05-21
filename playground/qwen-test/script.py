@@ -326,10 +326,7 @@ model = AutoModelForImageTextToText.from_pretrained(
 model.eval()
 
 model_ctx = getattr(model.config, "max_position_embeddings", MAX_INPUT_TOKENS + max_new_tokens)
-prompt_token_budget = min(
-	MAX_INPUT_TOKENS,
-	max(model_ctx - max_new_tokens - 128, 512),
-)
+prompt_token_budget = min(MAX_INPUT_TOKENS, model_ctx - max_new_tokens)
 
 messages = build_messages(dom_snapshot)
 

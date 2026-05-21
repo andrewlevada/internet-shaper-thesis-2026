@@ -19,10 +19,9 @@ ActionTool = Literal["edit", "set_update_rule"]
 LOCAL_MODEL_ID = "moonshotai/Kimi-K2.6"
 GATEWAY_MODEL_ID = "moonshotai/kimi-k2.6"
 
-MAX_TOOL_ROUNDS = 64
+MAX_TOOL_ROUNDS = 32
 MAX_NEW_TOKENS = 2048
-MAX_INPUT_TOKENS = 2**16  # 65536
-MAX_TOOL_OUTPUT_CHARS = 2**17  # 131072
+MAX_TOOL_OUTPUT_CHARS = 2**17 * 2.5  # 131072 * approx token density
 SHOW_IN_DOM_DEFAULT_DEPTH = 3
 
 TRUNCATION_SUFFIX = "\n\n<!-- truncated: tool output capped -->"
@@ -31,6 +30,24 @@ TRUNCATION_SUFFIX = "\n\n<!-- truncated: tool output capped -->"
 def role() -> str:
     return (
         "You are a browser extension agent that modifies web pages based on user requests."
+    )
+
+
+def read_tools_snapshot_note(explore: ExploreTool, action: ActionTool) -> str:
+    if explore == "get_dom":
+        tools = "get_dom"
+    elif explore == "get_map_of_dom":
+        tools = "get_map_of_dom, show_in_dom"
+
+    if action == "edit":
+        action_tool = "edit"
+    elif action == "set_update_rule":
+        action_tool = "set_update_rule"
+
+    return (
+        f"Read tools ({tools}) always return the original page "
+        f"snapshot. Changes from {action_tool} do not update what read tools "
+        "show on later calls."
     )
 
 
@@ -53,6 +70,14 @@ def workflow(explore: ExploreTool, action: ActionTool) -> str:
     if explore == "get_map_of_dom":
         workflow.append(
             "Use show_in_dom() to examine specific elements if you need more detail",
+        )
+
+    if explore == "get_map_of_dom" and action == "edit":
+        workflow.extend(
+            [
+                "Before each edit(), call show_in_dom() on the target element with enough depth to include all HTML you will change, that is, without `<!-- -n children -->` comments",
+                "Use that show_in_dom output for edits[].oldText verbatim. If the edits[].oldText has comments, the tool call will fail.",
+            ]
         )
 
     if action == "edit":
@@ -126,6 +151,7 @@ def build_pipeline_from_params(base: PipelineConfigBase, explore: ExploreTool, a
         system_prompt="\n\n".join(
             (
                 role(),
+                read_tools_snapshot_note(explore, action),
                 workflow(explore, action),
                 advice(action),
             )
