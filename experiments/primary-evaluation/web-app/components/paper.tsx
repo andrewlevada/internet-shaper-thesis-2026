@@ -7,8 +7,8 @@ export function PaperSheet({
 	children: React.ReactNode
 }>): React.ReactNode {
 	return (
-		<div className="w-[1000px] max-w-full flex flex-col p-[40px] bg-[rgba(240,240,255,0.97)] rounded-[1px] relative">
-			<div className="flex flex-col z-1">{children}</div>
+		<div className="w-[1000px] max-w-full flex flex-col p-[40px] bg-[rgba(240,240,255,0.97)] rounded-[1px] relative overflow-visible">
+			<div className="flex flex-col z-1 overflow-visible">{children}</div>
 
 			<Image
 				src={paper}

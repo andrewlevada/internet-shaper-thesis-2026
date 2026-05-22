@@ -27,7 +27,7 @@ export default function RootLayout({
 			lang="en"
 			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
 		>
-			<body className="min-w-full min-h-full flex flex-row justify-center p-[80px] pb-0">
+			<body className="min-w-full min-h-full flex flex-row justify-center p-[80px] pb-0 overflow-x-visible">
 				<PaperSheet>{children}</PaperSheet>
 			</body>
 		</html>
