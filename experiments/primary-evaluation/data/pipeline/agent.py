@@ -7,12 +7,13 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from lib.logs_streamer import AgentLogWriter
 
 from config import (
+    ANTHROPIC_MODEL_ID,
     GATEWAY_MODEL_ID,
     LOCAL_MODEL_ID,
     MAX_NEW_TOKENS,
@@ -20,6 +21,7 @@ from config import (
     MAX_TOOL_ROUNDS,
     SHOW_IN_DOM_DEFAULT_DEPTH,
     TRUNCATION_SUFFIX,
+    AgentProvider,
     PipelineConfig,
 )
 from paths import AgentVariantPaths
@@ -28,7 +30,7 @@ EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom", "show_in_dom"})
 MUTATION_TOOLS = frozenset({"edit", "set_update_rule"})
 SINGLE_CALL_EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom"})
 
-AgentBackend = Literal["vercel", "local"]
+AgentBackend = AgentProvider
 
 PIPELINE_DIR = Path(__file__).resolve().parent
 TOOLS_DIR = PIPELINE_DIR / "tools-clis"
@@ -551,6 +553,13 @@ def run_agent_local(
     return result
 
 
+def resolve_agent_provider(
+    pipeline: PipelineConfig,
+    backend: AgentBackend,
+) -> AgentProvider:
+    return pipeline.provider or backend
+
+
 def run_agent(
     pipeline: PipelineConfig,
     *,
@@ -560,12 +569,25 @@ def run_agent(
     backend: AgentBackend = "vercel",
     log_writer: AgentLogWriter | None = None,
 ) -> AgentRunResult:
-    if backend == "local":
+    provider = resolve_agent_provider(pipeline, backend)
+
+    if provider == "local":
         return run_agent_local(
             pipeline,
             sample_id=sample_id,
             user_message=user_message,
             paths=paths,
+            log_writer=log_writer,
+        )
+    if provider == "anthropic":
+        from agent_anthropic import run_agent_anthropic
+
+        return run_agent_anthropic(
+            pipeline,
+            sample_id=sample_id,
+            user_message=user_message,
+            paths=paths,
+            model_id=pipeline.model or ANTHROPIC_MODEL_ID,
             log_writer=log_writer,
         )
     from agent_vercel import run_agent_vercel
@@ -575,6 +597,7 @@ def run_agent(
         sample_id=sample_id,
         user_message=user_message,
         paths=paths,
+        model_id=pipeline.model or GATEWAY_MODEL_ID,
         log_writer=log_writer,
     )
 

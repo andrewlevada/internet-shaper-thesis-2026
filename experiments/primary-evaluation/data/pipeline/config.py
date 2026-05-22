@@ -3,14 +3,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-# 5 diffrent pipelines for each sample
+# 6 different pipelines for each sample
 PipelineId = Literal[
     "original",
     "baseline",
     "engine-only",
     "map-only",
     "full",
+    "full-sonnet",
 ]
+
+AgentProvider = Literal["vercel", "anthropic", "local"]
 
 ExploreTool = Literal["get_dom", "get_map_of_dom"]
 ActionTool = Literal["edit", "set_update_rule"]
@@ -18,6 +21,7 @@ ActionTool = Literal["edit", "set_update_rule"]
 # gateway for testing, local for actual eval run
 LOCAL_MODEL_ID = "moonshotai/Kimi-K2.6"
 GATEWAY_MODEL_ID = "moonshotai/kimi-k2.6"
+ANTHROPIC_MODEL_ID = "claude-sonnet-4-6"
 
 MAX_TOOL_ROUNDS = 32
 MAX_NEW_TOKENS = 2048
@@ -129,9 +133,18 @@ class PipelineConfig(PipelineConfigBase):
     uses_rules: bool
     uses_edit: bool
     run_agent: bool
+    model: str | None = None
+    provider: AgentProvider | None = None
 
 
-def build_pipeline_from_params(base: PipelineConfigBase, explore: ExploreTool, action: ActionTool) -> PipelineConfig:
+def build_pipeline_from_params(
+    base: PipelineConfigBase,
+    explore: ExploreTool,
+    action: ActionTool,
+    *,
+    model: str | None = None,
+    provider: AgentProvider | None = None,
+) -> PipelineConfig:
     tools = ()
 
     if explore == "get_dom":
@@ -159,6 +172,8 @@ def build_pipeline_from_params(base: PipelineConfigBase, explore: ExploreTool, a
         uses_rules=(action == "set_update_rule"),
         uses_edit=(action == "edit"),
         run_agent=True,
+        model=model,
+        provider=provider,
     )
 
 
@@ -191,6 +206,13 @@ PIPELINES: dict[PipelineId, PipelineConfig] = {
         PipelineConfigBase(id="full", folder="5-full"),
         "get_map_of_dom",
         "set_update_rule",
+    ),
+    "full-sonnet": build_pipeline_from_params(
+        PipelineConfigBase(id="full-sonnet", folder="6-full-sonnet"),
+        "get_map_of_dom",
+        "set_update_rule",
+        model=ANTHROPIC_MODEL_ID,
+        provider="anthropic",
     ),
 }
 

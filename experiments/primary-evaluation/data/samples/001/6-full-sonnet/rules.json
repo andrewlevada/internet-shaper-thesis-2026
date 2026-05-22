@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Hide AI mode tab",
+		"query_selector": ".beZ0tf[role=\"list\"] [role=\"listitem\"]:first-child",
+		"logic": "\nconst link = element.querySelector('a[href*=\"udm=50\"]');\nif (link) {\n  element.style.display = 'none';\n}\n"
+	}
+]

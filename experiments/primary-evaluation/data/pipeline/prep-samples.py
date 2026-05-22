@@ -9,8 +9,16 @@ import shutil
 import sys
 from pathlib import Path
 
-from agent import AgentBackend, apply_changes, run_agent
-from config import AGENT_PIPELINE_IDS, GATEWAY_MODEL_ID, LOCAL_MODEL_ID, PIPELINES, PipelineConfig, build_user_message
+from agent import AgentBackend, apply_changes, resolve_agent_provider, run_agent
+from config import (
+    AGENT_PIPELINE_IDS,
+    ANTHROPIC_MODEL_ID,
+    GATEWAY_MODEL_ID,
+    LOCAL_MODEL_ID,
+    PIPELINES,
+    PipelineConfig,
+    build_user_message,
+)
 from lib.logs_streamer import AgentLogWriter
 from lib.screenshot import screenshot_variant
 from paths import agent_variant_paths
@@ -47,10 +55,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--backend",
-        choices=["vercel", "local"],
+        choices=["vercel", "anthropic", "local"],
         default="vercel",
         help=(
-            "Agent backend: vercel (Vercel AI Gateway + Kimi K2.6, default for local testing) "
+            "Default agent provider when a pipeline does not set one: vercel "
+            "(Vercel AI Gateway + Kimi K2.6), anthropic (Claude via Anthropic API), "
             "or local (transformers on GPU)."
         ),
     )
@@ -70,6 +79,18 @@ def list_seed_ids(sample_filter: str | None) -> list[str]:
         print(f"No seed samples under {SEED_DIR}", file=sys.stderr)
         sys.exit(1)
     return ids
+
+
+def resolve_model_id(pipeline: PipelineConfig, backend: AgentBackend) -> str:
+    if pipeline.model:
+        return pipeline.model
+
+    provider = resolve_agent_provider(pipeline, backend)
+    if provider == "local":
+        return LOCAL_MODEL_ID
+    if provider == "anthropic":
+        return ANTHROPIC_MODEL_ID
+    return GATEWAY_MODEL_ID
 
 
 def resolve_agent_pipelines(pipeline_filter: str | None) -> list[PipelineConfig]:
@@ -149,14 +170,15 @@ def run_agent_pipeline(
 
     print(f"[{sample_id}] running {pipeline.id} → {pipeline.folder}")
 
-    model_id = GATEWAY_MODEL_ID if backend == "vercel" else LOCAL_MODEL_ID
+    provider = resolve_agent_provider(pipeline, backend)
+    model_id = resolve_model_id(pipeline, backend)
     log_writer = AgentLogWriter(
         paths.agent_log,
         sample_id=sample_id,
         pipeline=pipeline,
         user_message=user_message,
         paths=paths,
-        backend=backend,
+        backend=provider,
         model_id=model_id,
     )
     try:

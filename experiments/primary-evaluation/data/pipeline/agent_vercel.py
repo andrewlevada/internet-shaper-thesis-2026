@@ -59,6 +59,7 @@ def run_agent_vercel(
     sample_id: str,
     user_message: str,
     paths: AgentVariantPaths,
+    model_id: str = GATEWAY_MODEL_ID,
     log_writer: AgentLogWriter | None = None,
 ) -> AgentRunResult:
     del sample_id
@@ -77,12 +78,12 @@ def run_agent_vercel(
         {"role": "user", "content": user_message},
     ]
 
-    result = AgentRunResult(model_id=GATEWAY_MODEL_ID, backend="vercel")
+    result = AgentRunResult(model_id=model_id, backend="vercel")
     final_text = ""
 
     for _round in range(MAX_TOOL_ROUNDS):
         response = client.chat.completions.create(
-            model=GATEWAY_MODEL_ID,
+            model=model_id,
             messages=messages,
             tools=tools,
             tool_choice="auto",
