@@ -1,0 +1,117 @@
+category,sub_category,defect,sample_defect
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Object (screen) keep blinking/ flashing/ flickering
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Unnecessary animation on object (screen)
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Incorrect/ unnecessary use of object icon
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Incorrect/ inconsistent object design
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Inappropriate use of object size
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Missing object
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Unwanted object
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Incorrect/ inconsistent use of object color
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Inappropriate use of color contrast between object and background
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Inappropriate object (screen) resolution
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Object (screen) is truncated/ chopped/ overlapped/ blocked/ cropped
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Object (screen) not persistently display
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Object (screen) looks very bare
+Interface,GUI structure and aesthetics,"Object appearance (icon, menu item, scroll bar, button, favicon etc)",Words/ name on object are not completely visible
+Interface,GUI structure and aesthetics,Object (screen) layout,Improper use of screen width and length
+Interface,GUI structure and aesthetics,Object (screen) layout,Inconsistent margins on screen
+Interface,GUI structure and aesthetics,Object (screen) layout,Limited space for displaying object
+Interface,GUI structure and aesthetics,Object (screen) layout,Inconsistent/ incorrect object (screen) placement
+Interface,GUI structure and aesthetics,Object (screen) layout,Object (screen) not resizable/stretchable
+Interface,GUI structure and aesthetics,Object (screen) layout,Object (screen) do not automatically resize to fit in content
+Interface,GUI structure and aesthetics,Object (screen) layout,Object (screen) is misaligned
+Interface,GUI structure and aesthetics,Object (screen) layout,Unnecessary screen
+Interface,GUI structure and aesthetics,Object (screen) layout,Object (screen) blocking the page
+Interface,GUI structure and aesthetics,Object (screen) layout,Object (screen) cannot reposition/ reordered
+Interface,GUI structure and aesthetics,Object (screen) layout,Incorrect screen maximized/resized behavior
+Interface,GUI structure and aesthetics,Object (screen) layout,Incorrect hidden/ unhidden object (screen) behavior
+Interface,GUI structure and aesthetics,Object (screen) state,Incorrect object (screen) activation and deactivation behavior
+Interface,GUI structure and aesthetics,Object (screen) state,Indistinguishable between active and inactive object (screen)
+Interface,GUI structure and aesthetics,Object (screen) state,Incorrect object (screen) select / deselect behavior
+Interface,GUI structure and aesthetics,Object (screen) state,Incorrect object (screen) visibility behavior
+Interface,GUI structure and aesthetics,Object (screen) state,Incorrect/ unclear current object (screen) state
+Interface,GUI structure and aesthetics,Object (screen) state,Slow object state change
+Interface,GUI structure and aesthetics,Object (screen) state,Slow screen refresh
+Interface,GUI structure and aesthetics,Object (screen) state,Screen do not automatically load content/ refresh
+Interface,GUI structure and aesthetics,Object (screen) state,Cursor loss focus
+Interface,GUI structure and aesthetics,Object (screen) state,Incorrect object (screen) focus
+Interface,GUI structure and aesthetics,Object (screen) state,No visual cue to screen (object) existence
+Interface,GUI structure and aesthetics,Object (screen) state,Object action is not properly set
+Interface,GUI structure and aesthetics,Object (screen) state,Inappropriate/ incorrect screen navigational
+Interface,Information presentation,Data presentation,Missing default data
+Interface,Information presentation,Data presentation,Data not selected
+Interface,Information presentation,Data presentation,Object does not remember last selection
+Interface,Information presentation,Data presentation,Data is not populated in the object (screen)
+Interface,Information presentation,Data presentation,Incorrect data type and format
+Interface,Information presentation,Object (screen) naming and labeling,Misspelled/ mislabeled label
+Interface,Information presentation,Object (screen) naming and labeling,Label name is not intuitive
+Interface,Information presentation,Object (screen) naming and labeling,Incorrect use of labeling standard
+Interface,Information presentation,Object (screen) naming and labeling,Inconsistent menu labeling format
+Interface,Information presentation,Non-message feedback,Missing visual cues
+Interface,Information presentation,Non-message feedback,Misunderstanding of visual cues
+Interface,Information presentation,Non-message feedback,Irritating/ unnecessary animation on the progress bar
+Interface,Information presentation,Non-message feedback,Incorrect/ missing/ non-informative indicator
+Interface,Information presentation,Non-message feedback,No warning indicator in the screen
+Interface,Information presentation,Non-message feedback,Inappropriate use of dialog feedback
+Interface,Information presentation,Error/ notification and feedback message,Inconsistent message
+Interface,Information presentation,Error/ notification and feedback message,Inappropriate/ irrelevant message
+Interface,Information presentation,Error/ notification and feedback message,Incorrect/ misleading/ insufficient message
+Interface,Information presentation,Error/ notification and feedback message,Message is too verbose/ non-informative
+Interface,Information presentation,On screen text and results,Missing/ incomplete/ misleading information
+Interface,Information presentation,On screen text and results,Content is not updated
+Interface,Information presentation,On screen text and results,Unsupported format to display content
+Interface,Information presentation,Menu structure,Irrelevant of main options to sub-options
+Interface,Information presentation,Menu structure,Inappropriate menu option
+Interface,Information presentation,Menu structure,Unorganized menu organization/ structure
+Interface,Information presentation,Menu structure,Obsolete menu option
+Interface,Information presentation,Menu structure,Missing relevant menu option
+Interface,Information presentation,Menu structure,Misplaced menu option
+Interface,Audibleness,Voice and sounds,Inappropriate video/ audio behavior
+Interface,Audibleness,Text/ feedback in speech,NS
+Interaction,Manipulation,Keyboard press,Cursor losses focus when typing
+Interaction,Manipulation,Keyboard press,Duplicate access keys
+Interaction,Manipulation,Keyboard press,Inappropriate use of access keys
+Interaction,Manipulation,Keyboard press,Inconsistent access keys
+Interaction,Manipulation,Keyboard press,Missing/ not working access keys
+Interaction,Manipulation,Keyboard press,Unable to navigate form one field to another using keyboard
+Interaction,Manipulation,Keyboard press,Unable to type
+Interaction,Manipulation,Keyboard press,Unsupported keyboard function
+Interaction,Manipulation,Mouse click,Mouse click not working
+Interaction,Manipulation,Mouse click,Mouse hover does not give focus
+Interaction,Manipulation,Mouse click,Inconsistent mouse click behavior
+Interaction,Manipulation,Mouse click,Too many clicking to perform task
+Interaction,Manipulation,Finger touch,Inappropriate vibrating behavior
+Interaction,Manipulation,Finger touch,Incorrect click event action
+Interaction,Manipulation,Finger touch,Tap did not invoke action bar
+Interaction,Manipulation,Voice control,NS
+Interaction,Manipulation,Scrolling mechanism,Scrolling not working
+Interaction,Manipulation,Scrolling mechanism,Inappropriate scrolling behavior
+Interaction,Manipulation,Scrolling mechanism,Unable to scroll
+Interaction,Manipulation,Scrolling mechanism,In appropriate use of vertical/ horizontal scroll
+Interaction,Manipulation,Scrolling mechanism,Unbreakable scrolling axis lock
+Interaction,Manipulation,Drag and drop,Unable to drag screen (object)
+Interaction,Manipulation,Zooming,Incorrect/ inappropriate zooming behavior
+Interaction,Manipulation,Zooming,Unclear visual cues that an editor is zoomed
+Interaction,Functionality,Functionality,Missing
+Interaction,Functionality,Functionality,Inadequate
+Interaction,Functionality,Functionality,Preference
+Interaction,Functionality,Functionality,Irrelevant
+Interaction,Functionality,Functionality,Misaligned
+Interaction,Functionality,Functionality,Problematic
+Interaction,Functionality,Functionality,Technical deficiency
+Interaction,Task execution,Action,Incorrect action results
+Interaction,Task execution,Action,No action executed
+Interaction,Task execution,Action,Incorrect action executed
+Interaction,Task execution,Action,Too many steps to task completion
+Interaction,Task execution,Action,Unnecessary action to execute task
+Interaction,Task execution,Action,Limited accessibility to execute action
+Interaction,Task execution,Reversibility,Unable to undo action
+Interaction,Task execution,Reversibility,Unclear to perform action reversal
+Interaction,Task execution,Reversibility,Reverting the current action works incorrectly
+Interaction,Task execution,Feedback,Missing notification/ warning/ feedback message
+Interaction,Task execution,Feedback,No summary of task in progress/ completed
+Interaction,Task execution,Feedback,Unnecessary confirmation dialogue box/ indicator/ feedback
+Interaction,Task execution,Feedback,Missing permission request to access other device
+Interaction,Task execution,Feedback,No indicator on the current state of an action in progress
+Interaction,Task execution,Feedback,No indicator on what will be happened when clicking on certain button/ menu/option
+Interaction,Task execution,Feedback,No feedback when performing critical action
