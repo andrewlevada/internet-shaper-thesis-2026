@@ -29,5 +29,6 @@
 	"source-snapshot": "004",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://youtube.com/results?search_query=cats",
-	"final-url": "https://www.youtube.com/results?search_query=cats"
+	"final-url": "https://www.youtube.com/results?search_query=cats",
+	"finalized_at": 1779830870421
 }

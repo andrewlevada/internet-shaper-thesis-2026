@@ -29,5 +29,6 @@
 	"source-snapshot": "033",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://bing.com/search?q=cats",
-	"final-url": "https://www.bing.com/search?q=cats&toWww=1&redig=166FE07F096B48228FF48EB1AE03C166"
+	"final-url": "https://www.bing.com/search?q=cats&toWww=1&redig=166FE07F096B48228FF48EB1AE03C166",
+	"finalized_at": 1779830877222
 }

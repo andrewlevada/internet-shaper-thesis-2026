@@ -29,5 +29,6 @@
 	"source-snapshot": "040",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy",
-	"final-url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy/"
+	"final-url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy/",
+	"finalized_at": 1779830871880
 }

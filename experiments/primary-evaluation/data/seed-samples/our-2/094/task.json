@@ -29,5 +29,6 @@
 	"source-snapshot": "013",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
-	"final-url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026"
+	"final-url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
+	"finalized_at": 1779830882429
 }

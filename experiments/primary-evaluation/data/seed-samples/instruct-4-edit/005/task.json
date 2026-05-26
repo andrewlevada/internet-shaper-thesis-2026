@@ -1,5 +1,6 @@
 {
 	"request-prompt": "Make the current page number in the pagination list significantly more prominent, perhaps with a bolder color and larger text, to easily identify which page the user is on.",
 	"goal": "I want to change how the page looks",
-	"source-id": "sample_918"
+	"source-id": "sample_918",
+	"finalized_at": 1779830867919
 }

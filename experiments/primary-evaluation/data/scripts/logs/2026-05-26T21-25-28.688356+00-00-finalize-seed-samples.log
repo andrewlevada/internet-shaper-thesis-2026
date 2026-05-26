@@ -1,0 +1,22 @@
+Finalize seed samples
+------------------------------------------------
+timestamp (UTC): 2026-05-26T21:25:28.688356+00:00
+script: finalize-seed-samples.py
+seed samples root: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples
+folds: our
+html reserialize: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/reserialize_html.ts
+dry run: False
+
+=== our ===
+samples found: 1
+FAIL our/001: reserialize_html failed for /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our/001/original/raw.html: [0m[1m[31merror[0m: Import "linkedom" not a dependency
+  [0m[36mhint:[0m If you want to use the npm package, try running `deno add npm:linkedom`
+    at [0m[36mfile:///Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/reserialize_html.ts[0m:[0m[33m8[0m:[0m[33m27[0m
+our: folder names already normalized (1 samples)
+
+finalized: 0
+skipped (already finalized or invalid): 0
+renamed folders: 0
+failures: 1
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-26T21-25-28.688356+00-00-finalize-seed-samples.log

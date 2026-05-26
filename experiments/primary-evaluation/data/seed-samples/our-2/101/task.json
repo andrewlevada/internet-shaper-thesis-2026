@@ -29,5 +29,6 @@
 	"source-snapshot": "055",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
-	"final-url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams"
+	"final-url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
+	"finalized_at": 1779830883440
 }

@@ -29,5 +29,6 @@
 	"source-snapshot": "050",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
-	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500"
+	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"finalized_at": 1779830873157
 }

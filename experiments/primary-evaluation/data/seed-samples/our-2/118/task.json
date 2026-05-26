@@ -30,5 +30,6 @@
 	"source-snapshot": "069",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on",
-	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on"
+	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"finalized_at": 1779830885705
 }

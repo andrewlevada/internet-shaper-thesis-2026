@@ -27,5 +27,6 @@
 	"source-snapshot": "052",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://www.pinterest.com/ideas",
-	"final-url": "https://www.pinterest.com/ideas/"
+	"final-url": "https://www.pinterest.com/ideas/",
+	"finalized_at": 1779830877746
 }

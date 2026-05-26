@@ -28,5 +28,6 @@
 	"source-snapshot": "048",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope",
-	"final-url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope"
+	"final-url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope",
+	"finalized_at": 1779830873572
 }

@@ -30,5 +30,6 @@
 	"source-snapshot": "015",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://yahoo.com",
-	"final-url": "https://www.yahoo.com/?guccounter=1"
+	"final-url": "https://www.yahoo.com/?guccounter=1",
+	"finalized_at": 1779830880068
 }

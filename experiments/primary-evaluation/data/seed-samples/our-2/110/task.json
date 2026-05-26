@@ -31,5 +31,6 @@
 	"source-snapshot": "019",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://yandex.ru/search/?text=cats",
-	"final-url": "https://yandex.ru/search/?text=cats&lr=10466"
+	"final-url": "https://yandex.ru/search/?text=cats&lr=10466",
+	"finalized_at": 1779830884676
 }

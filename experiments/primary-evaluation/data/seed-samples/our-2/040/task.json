@@ -28,5 +28,6 @@
 	"source-snapshot": "051",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://pinterest.com/search/pins/?q=cats",
-	"final-url": "https://www.pinterest.com/search/pins/?q=cats"
+	"final-url": "https://www.pinterest.com/search/pins/?q=cats",
+	"finalized_at": 1779830874681
 }

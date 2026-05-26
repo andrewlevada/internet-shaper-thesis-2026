@@ -30,5 +30,6 @@
 	"source-snapshot": "023",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://www.amazon.com/hz/wishlist/ls",
-	"final-url": "https://www.amazon.com/hz/wishlist/intro"
+	"final-url": "https://www.amazon.com/hz/wishlist/intro",
+	"finalized_at": 1779830881301
 }

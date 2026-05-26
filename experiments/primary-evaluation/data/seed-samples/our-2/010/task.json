@@ -31,5 +31,6 @@
 	"source-snapshot": "071",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://globo.com",
-	"final-url": "https://www.globo.com/"
+	"final-url": "https://www.globo.com/",
+	"finalized_at": 1779830869933
 }

@@ -29,5 +29,6 @@
 	"source-snapshot": "002",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://support.google.com/websearch/answer/86640",
-	"final-url": "https://support.google.com/websearch/answer/86640"
+	"final-url": "https://support.google.com/websearch/answer/86640",
+	"finalized_at": 1779830880911
 }

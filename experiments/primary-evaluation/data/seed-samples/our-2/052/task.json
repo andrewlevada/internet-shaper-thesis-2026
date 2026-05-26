@@ -30,5 +30,6 @@
 	"source-snapshot": "007",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://www.youtube.com/feed/you",
-	"final-url": "https://www.youtube.com/feed/you"
+	"final-url": "https://www.youtube.com/feed/you",
+	"finalized_at": 1779830876420
 }

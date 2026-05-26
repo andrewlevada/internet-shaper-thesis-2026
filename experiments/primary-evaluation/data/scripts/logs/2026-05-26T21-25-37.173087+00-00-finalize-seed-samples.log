@@ -1,0 +1,19 @@
+Finalize seed samples
+------------------------------------------------
+timestamp (UTC): 2026-05-26T21:25:37.173087+00:00
+script: finalize-seed-samples.py
+seed samples root: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples
+folds: our
+html reserialize: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/reserialize_html.ts
+dry run: False
+
+=== our ===
+samples found: 1
+skip 001: already finalized
+our: folder names already normalized (1 samples)
+
+finalized: 0
+skipped (already finalized or invalid): 1
+renamed folders: 0
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-26T21-25-37.173087+00-00-finalize-seed-samples.log

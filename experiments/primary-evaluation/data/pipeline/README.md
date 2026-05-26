@@ -7,3 +7,5 @@ python3 prep-samples.py --sample our/001 --skip-existing
 python3 prep-samples.py --sample our/001 --screenshots-only
 python3 prep-samples.py --sample our/001 --backend local
 ```
+
+scripts/finialize-seed-samples.py must be run before processing
