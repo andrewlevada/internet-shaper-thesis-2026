@@ -1,0 +1,31 @@
+{
+	"request-prompt": "Make the 'Trending now' editorial boards at the top of the page much larger, taking up the full width of the screen, to emphasize current viral aesthetics.",
+	"goal": "I am highly motivated by what's popular and trending right now, and I actively seek out global styles and viral aesthetics.",
+	"jobs": [
+		"I want to search for specific ideas, recipes, or style inspiration to help plan a project or activity",
+		"I want to discover what is currently trending to stay up-to-date with modern style and lifestyle trends",
+		"I want to browse ideas by visual categories to explore inspiration related to my specific hobbies or interests",
+		"I want to log in or sign up to Pinterest so I can save ideas and organize them into my own boards"
+	],
+	"preference-pairs": [
+		{
+			"a": "I rely heavily on highly visual platforms to get spontaneous ideas and prefer scrolling through continuous image feeds without a strict agenda.",
+			"b": "I prefer structured search tools and curated, categorized text-based lists when looking for ideas, as unstructured image feeds feel overwhelming."
+		},
+		{
+			"a": "I am highly motivated by what's popular and trending right now, and I actively seek out global styles and viral aesthetics.",
+			"b": "I ignore trends and viral content, preferring to focus strictly on my deeply specific, niche interests and personal, timeless hobbies."
+		},
+		{
+			"a": "I only browse inspiration platforms when I have a specific, actionable project or purchase in mind that I need to plan immediately.",
+			"b": "I use inspiration platforms primarily for casual daydreaming, relaxation, and visual stimulation with no intent to actually buy or build anything."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I am highly motivated by what's popular and trending right now, and I actively seek out global styles and viral aesthetics.",
+	"source-snapshot": "052",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.pinterest.com/ideas",
+	"final-url": "https://www.pinterest.com/ideas/"
+}

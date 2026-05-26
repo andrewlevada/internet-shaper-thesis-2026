@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Hide all individual stream tags from the cards in the main grid to declutter the interface and make casual browsing less distracting.",
+	"goal": "I am a casual viewer who browses broad, general entertainment categories to find whatever is currently trending or easy to watch in the background.",
+	"jobs": [
+		"I want to discover live, non-gaming streams (such as travel, outdoor adventures, or casual chatting) to keep me entertained.",
+		"I want to find streams with specific tags or languages (like 'English', 'Travel', 'Outdoors') that match my current interests.",
+		"I want to check which popular creators in the 'Just Chatting & IRL' category are currently live and how many viewers they have.",
+		"I want to log in or sign up for a Twitch account so I can participate in the chat and interact with the community.",
+		"I want to search for a specific stream topic or creator on the platform.",
+		"I want to check recommended live channels in the sidebar to see if my favorite creators are streaming."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer watching small-to-medium channels where I can actively participate in chat and have a direct connection with the streamer.",
+			"b": "I prefer watching large, highly-viewed streams where I can lurk passively as a spectator in a fast-moving crowd without any expectation to interact."
+		},
+		{
+			"a": "I am highly selective and rely on specific tags and descriptive titles to find niche hobbies or regional content that matches my exact interest.",
+			"b": "I am a casual viewer who browses broad, general entertainment categories to find whatever is currently trending or easy to watch in the background."
+		},
+		{
+			"a": "I choose what to watch based primarily on visual cues, such as live stream thumbnails, previews, and creator avatars.",
+			"b": "I choose what to watch by analyzing textual information and metrics, such as stream titles, tags, and exact viewer counts."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I am a casual viewer who browses broad, general entertainment categories to find whatever is currently trending or easy to watch in the background.",
+	"source-snapshot": "055",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
+	"final-url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams"
+}

@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Remove the 'Need more help? Post to the help community' section at the bottom to focus purely on the self-service steps in the article.",
+	"goal": "I prefer to resolve issues independently using self-service help articles and documentation.",
+	"jobs": [
+		"I want to understand why Google is showing me the 'Unusual traffic from your computer network' warning.",
+		"I want to find a quick solution to get rid of the error message so I can resume using Google Search.",
+		"I want to troubleshoot why the error message keeps reappearing even after I successfully solve the reCAPTCHA.",
+		"I want to determine if my VPN, network settings, or malware is causing Google to block my traffic.",
+		"I want to learn what actions to take as a network administrator to stop Google from blocking our network's users.",
+		"I want to find a way to contact the Google Search Help Community to get further assistance with my specific issue."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer simple, straightforward, and jargon-free instructions when troubleshooting technical issues online.",
+			"b": "I prefer detailed, technical explanations and root-cause analyses when troubleshooting technical issues online."
+		},
+		{
+			"a": "I prefer to resolve issues independently using self-service help articles and documentation.",
+			"b": "I prefer to interact with a community of users or direct support agents to solve my technical issues."
+		},
+		{
+			"a": "I prioritize privacy and security (like using VPNs and strict browser settings) even if it causes browsing friction and errors on websites.",
+			"b": "I prioritize convenience and seamless access, preferring to disable any security or privacy tools that interfere with my web browsing."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I prefer to resolve issues independently using self-service help articles and documentation.",
+	"source-snapshot": "002",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://support.google.com/websearch/answer/86640",
+	"final-url": "https://support.google.com/websearch/answer/86640"
+}

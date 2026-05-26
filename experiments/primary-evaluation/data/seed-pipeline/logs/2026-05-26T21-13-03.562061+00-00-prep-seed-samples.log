@@ -1,0 +1,29 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-05-26T21:13:03.562061+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: (all)
+skip existing: False
+simpler edit requests: True
+dry run: False
+start at snapshot position: 11
+snapshot order seed: 9081436
+excluded snapshots: 008, 009, 010, 011, 024, 026, 027, 028, 032, 041, 042, 043, 044, 045, 046, 065, 066, 067, 073
+next seed sample index: 061
+skipped snapshots (positions 1..10): 047, 071, 004, 040, 050, 048, 051, 070, 007, 033
+snapshots to process: 052
+
+[052] running JTBD session
+  OK our-2/061
+  OK our-2/062
+  OK our-2/063
+  OK our-2/064
+  OK our-2/065
+  OK our-2/066
+[052] wrote seed samples our-2/061..066
+[052] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-13-03.562061+00-00-052-session.log
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-13-03.562061+00-00-prep-seed-samples.log

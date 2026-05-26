@@ -1,0 +1,110 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-05-26T21:15:28.191623+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: (all)
+skip existing: False
+simpler edit requests: True
+dry run: False
+start at snapshot position: 11
+snapshot order seed: 9081436
+excluded snapshots: 008, 009, 010, 011, 024, 026, 027, 028, 032, 041, 042, 043, 044, 045, 046, 065, 066, 067, 073
+next seed sample index: 061
+skipped snapshots (positions 1..10): 047, 071, 004, 040, 050, 048, 051, 070, 007, 033
+snapshots to process: 052, 016, 015, 002, 023, 013, 055, 001, 019, 069
+
+[052] running JTBD session
+  OK our-2/061
+  OK our-2/062
+  OK our-2/063
+  OK our-2/064
+  OK our-2/065
+  OK our-2/066
+[052] wrote seed samples our-2/061..066
+[052] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-052-session.log
+[016] running JTBD session
+  OK our-2/067
+  OK our-2/068
+  OK our-2/069
+  OK our-2/070
+  OK our-2/071
+  OK our-2/072
+[016] wrote seed samples our-2/067..072
+[016] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-016-session.log
+[015] running JTBD session
+  OK our-2/073
+  OK our-2/074
+  OK our-2/075
+  OK our-2/076
+  OK our-2/077
+  OK our-2/078
+[015] wrote seed samples our-2/073..078
+[015] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-015-session.log
+[002] running JTBD session
+  OK our-2/079
+  OK our-2/080
+  OK our-2/081
+  OK our-2/082
+  OK our-2/083
+  OK our-2/084
+[002] wrote seed samples our-2/079..084
+[002] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-002-session.log
+[023] running JTBD session
+  OK our-2/085
+  OK our-2/086
+  OK our-2/087
+  OK our-2/088
+  OK our-2/089
+  OK our-2/090
+[023] wrote seed samples our-2/085..090
+[023] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-023-session.log
+[013] running JTBD session
+  OK our-2/091
+  OK our-2/092
+  OK our-2/093
+  OK our-2/094
+  OK our-2/095
+  OK our-2/096
+[013] wrote seed samples our-2/091..096
+[013] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-013-session.log
+[055] running JTBD session
+  OK our-2/097
+  OK our-2/098
+  OK our-2/099
+  OK our-2/100
+  OK our-2/101
+  OK our-2/102
+[055] wrote seed samples our-2/097..102
+[055] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-055-session.log
+[001] running JTBD session
+  OK our-2/103
+  OK our-2/104
+  OK our-2/105
+  OK our-2/106
+  OK our-2/107
+  OK our-2/108
+[001] wrote seed samples our-2/103..108
+[001] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-001-session.log
+[019] running JTBD session
+  OK our-2/109
+  OK our-2/110
+  OK our-2/111
+  OK our-2/112
+  OK our-2/113
+  OK our-2/114
+[019] wrote seed samples our-2/109..114
+[019] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-019-session.log
+[069] running JTBD session
+  OK our-2/115
+  OK our-2/116
+  OK our-2/117
+  OK our-2/118
+  OK our-2/119
+  OK our-2/120
+[069] wrote seed samples our-2/115..120
+[069] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-069-session.log
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T21-15-28.191623+00-00-prep-seed-samples.log

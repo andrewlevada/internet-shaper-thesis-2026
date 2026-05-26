@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Remove the 'Meer om te vragen' (People also ask) and 'Vind gerelateerde producten' sections to keep the interface clean and focused purely on the main search results.",
+	"goal": "I am a highly focused searcher who only looks for the exact link I had in mind, preferring to ignore supplementary side-panels, recommended queries, and distractions.",
+	"jobs": [
+		"I want to find out when and where the 'Cats' musical is playing in the Netherlands.",
+		"I want to buy tickets online for the 'Cats' musical.",
+		"I want to learn about the history, songs, and members of the Dutch band 'The Cats'.",
+		"I want to look at pictures of cats and learn about what to know before getting a pet cat.",
+		"I want to check the ratings and reviews of the 2019 movie adaptation of 'Cats'.",
+		"I want to watch video trailers and clips related to the 'Cats' musical."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer searching for and consuming content in English because of its global availability, even if it is not my native language.",
+			"b": "I strictly prefer finding localized results in my native language (Dutch) that are highly relevant to my local region, culture, and events."
+		},
+		{
+			"a": "I prefer highly visual layouts with videos, images, and rich media snippets to quickly scan and understand search results.",
+			"b": "I prefer clean, text-heavy search results and deep-dive articles to read through information thoroughly without being distracted by visual media."
+		},
+		{
+			"a": "I love to explore related topics, recommended questions, and unexpected search suggestions to discover new things I wasn't originally searching for.",
+			"b": "I am a highly focused searcher who only looks for the exact link I had in mind, preferring to ignore supplementary side-panels, recommended queries, and distractions."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I am a highly focused searcher who only looks for the exact link I had in mind, preferring to ignore supplementary side-panels, recommended queries, and distractions.",
+	"source-snapshot": "001",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://google.com/search?q=cats",
+	"final-url": "https://www.google.com/search?q=cats&sei=15AJatSgLJCvi-gPjcz0mQ0"
+}

@@ -1,0 +1,34 @@
+{
+	"request-prompt": "Add a brief descriptive subtext under each of the bulleted items (Message Wall, Article Comments, Blogs) at the top of the article to explain what they do.",
+	"goal": "I prefer highly detailed documentation that thoroughly explains the background, features, and implications of a setting before I change it.",
+	"jobs": [
+		"I want to find out how to enable or disable built-in features (like Article Comments, Message Wall, or Blogs) on my Fandom wiki.",
+		"I want to request Fandom support to turn on a restricted extension (such as custom JavaScript, Achievements, or DPL) for my wiki.",
+		"I want to learn how to access the Admin Dashboard to manage my wiki's configuration.",
+		"I want to find instructions for setting up an interlanguage link.",
+		"I want to find related guides on making other structural changes to my wiki, such as changing its URL, closing it, or adding custom fonts.",
+		"I want to search the Fandom Help Center for answers to other administration questions.",
+		"I want to submit a support ticket to get direct help from the Fandom team."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer to configure settings and troubleshoot technical issues on my own using self-service dashboards rather than contacting support.",
+			"b": "I prefer reaching out to customer support to handle configurations and fixes for me so that I do not risk making mistakes."
+		},
+		{
+			"a": "I prefer highly detailed documentation that thoroughly explains the background, features, and implications of a setting before I change it.",
+			"b": "I prefer quick, straight-to-the-point instructions and bulleted lists with minimal explanation so I can get back to my task immediately."
+		},
+		{
+			"a": "I am highly comfortable with advanced technical customization (like custom CSS, JavaScript, and database extensions) and want maximum control over my digital spaces.",
+			"b": "I prefer simple, pre-designed templates and basic toggle switches because writing code or configuring complex modules feels overwhelming to me."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I prefer highly detailed documentation that thoroughly explains the background, features, and implications of a setting before I change it.",
+	"source-snapshot": "069",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on"
+}

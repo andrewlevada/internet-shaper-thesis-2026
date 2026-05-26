@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Enlarge and highlight the header actions at the top right, such as the weather informer, market cart, and favorites buttons, to make them stand out.",
+	"goal": "I appreciate a highly interactive and feature-rich search page that provides tools like instant weather updates, shopping carts, and voice search.",
+	"jobs": [
+		"I want to quickly read factual information about cat behavior, biology, and care without visiting separate websites.",
+		"I want to browse and download the game 'C.A.T.S.: Crash Arena Turbo Stars' based on the top search results.",
+		"I want to find and watch cute or funny cat video compilations.",
+		"I want to find royalty-free or high-resolution cat photos by clicking through to image hosting websites like Pixabay.",
+		"I want to ask the AI assistant a more specific question about cats to narrow down my search.",
+		"I want to switch my search from text-only results to dedicated categories like images, videos, or translation using the main navigation tabs.",
+		"I want to run a new search query using voice input or by uploading a source image.",
+		"I want to compare Yandex's search results for 'cats' with alternative search engines like Google or Bing."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer getting a direct, quick summary from an AI assistant on the search page instead of visiting multiple external websites.",
+			"b": "I do not trust AI-generated content and prefer to browse traditional organic links to read source materials directly."
+		},
+		{
+			"a": "I am a visual browser who prefers engaging with video carousels and image galleries over reading text descriptions.",
+			"b": "I am a text-oriented browser who relies on scanning titles and text snippets to evaluate search result relevance quickly."
+		},
+		{
+			"a": "I appreciate a highly interactive and feature-rich search page that provides tools like instant weather updates, shopping carts, and voice search.",
+			"b": "I prefer a distraction-free, minimalist search interface containing only relevant query results without any extra widgets or portal-like elements."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I appreciate a highly interactive and feature-rich search page that provides tools like instant weather updates, shopping carts, and voice search.",
+	"source-snapshot": "019",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://yandex.ru/search/?text=cats",
+	"final-url": "https://yandex.ru/search/?text=cats&lr=10466"
+}
