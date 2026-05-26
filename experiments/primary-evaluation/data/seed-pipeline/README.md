@@ -4,3 +4,5 @@ python3 prep-seed-samples.py --sample 001
 python3 prep-seed-samples.py --sample 001 --skip-existing
 python3 prep-seed-samples.py --backend vercel
 ```
+
+TODO: add resirializatoin and sample numbering to the script

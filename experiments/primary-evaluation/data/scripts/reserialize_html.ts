@@ -1,7 +1,8 @@
 #!/usr/bin/env -S deno run -A
 /**
  * Round-trip HTML through linkedom's DOMParser so stored snapshots match
- * show_in_dom / get_dom / get_map_of_dom serialization (e.g. void elements).
+ * show_in_dom / get_dom / get_map_of_dom serialization (e.g. void elements),
+ * and strip HTML comment nodes.
  */
 
 import { DOMParser } from "linkedom"
@@ -15,11 +16,25 @@ Reads HTML from --input or stdin and prints linkedom-reserialized HTML.`)
 	Deno.exit(1)
 }
 
+const COMMENT_NODE = 8
+
+function removeCommentNodes(node: Node): void {
+	for (const child of [...node.childNodes]) {
+		if (child.nodeType === COMMENT_NODE) {
+			child.remove()
+		} else {
+			removeCommentNodes(child)
+		}
+	}
+}
+
 function reserializeHtml(html: string): string {
 	const doc = new DOMParser().parseFromString(html, "text/html")
 	if (!doc?.documentElement) {
 		throw new Error("Failed to parse HTML")
 	}
+
+	removeCommentNodes(doc)
 
 	const doctype = doc.doctype
 	const prefix = doctype ? `<!DOCTYPE ${doctype.name}>\n\n` : ""
