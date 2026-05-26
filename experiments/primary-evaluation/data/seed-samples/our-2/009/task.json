@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Add a prominent search bar at the top of the Gift Registries section allowing me to immediately look up a specific friend's registry or wish list by their name.",
+	"goal": "When buying gifts for others, I strictly adhere to their registries and wish lists to ensure I get them exactly what they want.",
+	"jobs": [
+		"I want to sign in to view, edit, and organize my saved shopping lists.",
+		"I want to create a wedding registry to help my wedding guests find and purchase the right gifts.",
+		"I want to set up a baby registry to prepare for the arrival of my new baby.",
+		"I want to create a custom gift list or registry for a milestone other than a wedding or baby.",
+		"I want to manage my Alexa Shopping List so I can add items using my voice-enabled device.",
+		"I want to find help guides or contact customer service to resolve an issue with my list or registry."
+	],
+	"preference-pairs": [
+		{
+			"a": "I am a meticulous planner who relies heavily on lists and registries to organize my future purchases and track deals or price drops.",
+			"b": "I am a spontaneous shopper who prefers to search and buy items on the spot, rarely utilizing lists or pre-planning purchases."
+		},
+		{
+			"a": "When buying gifts for others, I strictly adhere to their registries and wish lists to ensure I get them exactly what they want.",
+			"b": "When buying gifts for others, I prefer to find creative, personalized surprises rather than buying from a pre-determined list."
+		},
+		{
+			"a": "I value collaborative shopping and enjoy sharing my lists or registries with friends and family to make joint planning decisions.",
+			"b": "I keep my shopping lists and event registries strictly private, preferring to manage my plans and purchases completely independently."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "When buying gifts for others, I strictly adhere to their registries and wish lists to ensure I get them exactly what they want.",
+	"source-snapshot": "024",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.amazon.com/hz/wishlist/ls",
+	"final-url": "https://www.amazon.com/hz/wishlist/intro"
+}

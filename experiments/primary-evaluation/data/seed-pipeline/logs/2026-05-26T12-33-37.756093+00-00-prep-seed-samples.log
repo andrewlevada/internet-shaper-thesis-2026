@@ -1,0 +1,34 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-05-26T12:33:37.756093+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: (all)
+skip existing: True
+snapshot order seed: 9081436
+snapshots to process: 008, 050, 037, 049, 039, 042, 074, 063, 071, 024, 035
+
+[008] skip (all 6 seed samples exist)
+[050] skip (all 6 seed samples exist)
+[037] skip (all 6 seed samples exist)
+[049] skip (all 6 seed samples exist)
+[039] running JTBD session
+[039] FAIL: slice indices must be integers or None or have an __index__ method
+[042] skip (all 6 seed samples exist)
+[074] skip (all 6 seed samples exist)
+[063] skip (all 6 seed samples exist)
+[071] skip (all 6 seed samples exist)
+[024] skip (all 6 seed samples exist)
+[035] running JTBD session
+  OK our-2/035-1a
+  OK our-2/035-1b
+  OK our-2/035-2a
+  OK our-2/035-2b
+  OK our-2/035-3a
+  OK our-2/035-3b
+[035] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-33-37.756093+00-00-035-session.log
+
+failures: 1
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-33-37.756093+00-00-prep-seed-samples.log

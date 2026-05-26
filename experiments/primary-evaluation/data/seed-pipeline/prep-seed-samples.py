@@ -34,7 +34,7 @@ SNAPSHOTS_CSV = SNAPSHOTS_DIR / "data.csv"
 SEED_FOLD = DATA_DIR / "seed-samples" / "our-2"
 LOGS_DIR = SCRIPT_DIR / "logs"
 
-SNAPSHOTS_NUMBER = 1
+SNAPSHOTS_NUMBER = 11 # 1 fails
 SNAPSHOT_GLOB = "[0-9][0-9][0-9]"
 SNAPSHOT_ORDER_SEED = 9081436
 SEED_MODEL_ID = "google/gemini-3.5-flash"

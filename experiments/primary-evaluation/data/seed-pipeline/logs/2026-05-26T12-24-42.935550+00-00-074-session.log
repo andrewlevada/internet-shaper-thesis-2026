@@ -1,0 +1,109 @@
+Timestamp: 2026-05-26T12:26:50.363965+00:00
+Snapshot: 074
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><link rel="alternate" hreflang="x-default" href="https://oglobo.globo.com/economia/tecnologia/noticia/2026/05/17/como-a-anthropic-se-tornou-a-principal-empresa-de-ia-do-mundo-entenda-em-cinco-graficos.ghtml"><link rel="alternate" hreflang="pt-BR" href="https://oglobo.globo.com/economia/tecnologia/noticia/2026/05/17/como-a-anthropic-se-tornou-a-principal-empresa-de-ia-do-mundo-entenda-em-cinco-graficos.ghtml"><meta property="og:type" content="article"><meta property="og:description" content="Com um ritmo intenso de lançamentos, foco no mercado corporativo, números superlativos e presença constante e controversa no noticiário, a criadora do Claude se tornou o nome a ser batido"><meta property="og:title" content="Como a Anthropic se tornou a principal empresa de IA do mundo: entenda em cinco gráficos"><meta property="og:locale" content="pt_BR"><meta property="og:site_name" content="O Globo"><meta property="og:image" content="https://s2-oglobo.glbimg.com/bmugMK1-JRH-3NypO8CcKIr0mOg=/4000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_da025474c0c44edd99332dddb09cabe8/internal_photos/bs/2026/P/i/GVXBeJTpO3zcRvNNYILw/455313105.jpg"><meta property="og:image:width" content="1200"><meta property="og:url" content="https://oglobo.globo.com/economia/tecnologia/noticia/2026/05/17/como-a-anthropic-se-tornou-a-principal-empresa-de-ia-do-mundo-entenda-em-cinco-graficos.ghtml"><meta property="fb:pages" content="115230991849922"><meta property="fb:app_id" content="289255557788943"><meta property="twitter:description" content="Com um ritmo intenso de lançamentos, foco no mercado corporativo, números superlativos e presença constante e controversa no noticiário, a criadora do Claude se tornou o nome a ser batido"><meta property="twitter:card" content="summary_large_image"><meta property="twitter:title" content="Como a Anthropic se tornou a principal empresa de IA do mundo: entenda em cinco gráficos"><meta property="twitter:image" content="https://s2-oglobo.glbimg.com
+
+--- ASSISTANT ---
+{
+  "jobs": [
+    "I want to read the article to understand how Anthropic rose to lead the AI market.",
+    "I want to get a quick summary of the news story because I am short on time.",
+    "I want to share this article about Anthropic's market growth with my network on social media or messaging platforms.",
+    "I want to subscribe to the 'IAí?' newsletter to receive regular updates on how artificial intelligence is transforming daily life.",
+    "I want to log in or subscribe to O Globo to bypass the paywall and access the full content.",
+    "I want to search the website for other articles related to technology, AI, or business.",
+    "I want to discover and browse other related news stories in the technology and economy sections."
+  ]
+}
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I value premium journalism and am willing to pay subscription fees to read high-quality, exclusive news articles without limits.",
+      "b": "I refuse to pay for online news and will immediately leave a site or look for a free alternative if I encounter a paywall."
+    },
+    {
+      "a": "I prefer to read complete, detailed articles from start to finish to capture all the context, nuances, and journalistic analysis.",
+      "b": "I prefer short summaries, bullet points, or AI-generated digests to quickly get the main takeaways without reading the full text."
+    },
+    {
+      "a": "I appreciate personalized newsletters, related articles, and sponsored content feeds at the bottom of the page to discover new and interesting topics.",
+      "b": "I prefer a clean, distraction-free reading experience and strongly dislike ads, sponsored widgets, or unrelated article recommendations cluttering the page."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Hide all paywall overlays, 'Exclusivo para assinantes' premium labels, and subscription upgrade banners when I am logged into my active subscriber account."
+    },
+    {
+      "id": "1b",
+      "request": "Allow non-subscribers to bypass the paywall overlay by watching an advertisement or viewing sponsored content instead of locking the article completely."
+    },
+    {
+      "id": "2a",
+      "request": "Remove the 'Continuar Lendo' button that truncates the article and show the entire text content automatically upon page load."
+    },
+    {
+      "id": "2b",
+      "request": "Automatically expand the 'RESUMO' (Summary) block at the top of the article page so I do not have to click the 'CLIQUE E LEIA AQUI O RESUMO' header to see the bullet points."
+    },
+    {
+      "id": "3a",
+      "request": "Show a diverse grid of related articles and trending topics right beneath the main article text, utilizing the empty space on the sides for real-time recommendation feeds."
+    },
+    {
+      "id": "3b",
+      "request": "Completely remove the Taboola sponsored recommendation grid, the bottom newsletter sign-up card, and all sidebar ad banners to provide a minimalist, distraction-free reading layout."
+    }
+  ]
+}
+

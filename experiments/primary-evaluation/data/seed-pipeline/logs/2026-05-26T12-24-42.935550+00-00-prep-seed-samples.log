@@ -1,0 +1,89 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-05-26T12:24:42.935550+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: (all)
+skip existing: False
+snapshot order seed: 9081436
+snapshots to process: 008, 050, 037, 049, 039, 042, 074, 063, 071, 024
+
+[008] running JTBD session
+  OK our-2/008-1a
+  OK our-2/008-1b
+  OK our-2/008-2a
+  OK our-2/008-2b
+  OK our-2/008-3a
+  OK our-2/008-3b
+[008] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-008-session.log
+[050] running JTBD session
+  OK our-2/050-1a
+  OK our-2/050-1b
+  OK our-2/050-2a
+  OK our-2/050-2b
+  OK our-2/050-3a
+  OK our-2/050-3b
+[050] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-050-session.log
+[037] running JTBD session
+  OK our-2/037-1a
+  OK our-2/037-1b
+  OK our-2/037-2a
+  OK our-2/037-2b
+  OK our-2/037-3a
+  OK our-2/037-3b
+[037] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-037-session.log
+[049] running JTBD session
+  OK our-2/049-1a
+  OK our-2/049-1b
+  OK our-2/049-2a
+  OK our-2/049-2b
+  OK our-2/049-3a
+  OK our-2/049-3b
+[049] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-049-session.log
+[039] running JTBD session
+[039] FAIL: slice indices must be integers or None or have an __index__ method
+[042] running JTBD session
+  OK our-2/042-1a
+  OK our-2/042-1b
+  OK our-2/042-2a
+  OK our-2/042-2b
+  OK our-2/042-3a
+  OK our-2/042-3b
+[042] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-042-session.log
+[074] running JTBD session
+  OK our-2/074-1a
+  OK our-2/074-1b
+  OK our-2/074-2a
+  OK our-2/074-2b
+  OK our-2/074-3a
+  OK our-2/074-3b
+[074] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-074-session.log
+[063] running JTBD session
+  OK our-2/063-1a
+  OK our-2/063-1b
+  OK our-2/063-2a
+  OK our-2/063-2b
+  OK our-2/063-3a
+  OK our-2/063-3b
+[063] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-063-session.log
+[071] running JTBD session
+  OK our-2/071-1a
+  OK our-2/071-1b
+  OK our-2/071-2a
+  OK our-2/071-2b
+  OK our-2/071-3a
+  OK our-2/071-3b
+[071] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-071-session.log
+[024] running JTBD session
+  OK our-2/024-1a
+  OK our-2/024-1b
+  OK our-2/024-2a
+  OK our-2/024-2b
+  OK our-2/024-3a
+  OK our-2/024-3b
+[024] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-024-session.log
+
+failures: 1
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-24-42.935550+00-00-prep-seed-samples.log

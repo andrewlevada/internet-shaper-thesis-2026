@@ -1,0 +1,31 @@
+{
+	"request-prompt": "Make the \"Ask anything\" text area much larger and position it at the center of the screen, mimicking a dedicated conversational chat screen while downplaying the scope menu bar at the top.",
+	"goal": "I prefer asking questions in a natural conversational way to get a single, synthesized answer from an AI assistant.",
+	"jobs": [
+		"I want to ask a question or search for a topic using an AI-powered chat interface",
+		"I want to explore recommended search prompts and ideas to find inspiration or learn something new",
+		"I want to sign in to my Microsoft account to track and earn rewards points",
+		"I want to switch to other specialized search categories like Images, Videos, Maps, or News"
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer asking questions in a natural conversational way to get a single, synthesized answer from an AI assistant.",
+			"b": "I prefer entering simple keyword queries and scanning a list of traditional web results to choose which websites to visit myself."
+		},
+		{
+			"a": "I enjoy browsing recommended topics, cards, and visual suggestions to discover new ideas or get inspiration.",
+			"b": "I find homepage recommendations, trends, and visual prompts distracting; I only want a clean search input to type my specific query."
+		},
+		{
+			"a": "I like participating in search rewards programs and logging into my accounts to earn points and customize my experience.",
+			"b": "I prefer searching anonymously and avoiding account sign-ins to protect my privacy, and I have no interest in search-related gamification or rewards."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "a",
+	"preference": "I prefer asking questions in a natural conversational way to get a single, synthesized answer from an AI assistant.",
+	"source-snapshot": "037",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.bing.com/copilotsearch",
+	"final-url": "https://www.bing.com/copilotsearch"
+}

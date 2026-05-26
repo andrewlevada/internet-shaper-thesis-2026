@@ -1,0 +1,17 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-05-26T12:29:39.049738+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: 039
+skip existing: False
+snapshot order seed: (single sample)
+snapshots to process: 039
+
+[039] running JTBD session
+[039] FAIL: slice indices must be integers or None or have an __index__ method
+
+failures: 1
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-29-39.049738+00-00-prep-seed-samples.log

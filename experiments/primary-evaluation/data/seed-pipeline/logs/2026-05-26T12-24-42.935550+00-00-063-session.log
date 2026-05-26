@@ -1,0 +1,82 @@
+Timestamp: 2026-05-26T12:27:12.370996+00:00
+Snapshot: 063
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><title>How To Filter Out AI Images in DuckDuckgo Search Results - DuckDuckGo Help Pages</title><meta name="description" content="Learn how to use filters on DuckDuckGo Private Search to hide AI-generated images in results."><meta name="robots" content="index"><meta name="googlebot" content="index"><meta property="og:title" content="How To Filter Out AI Images in DuckDuckgo Search Results - DuckDuckGo Help Pages"><meta property="og:description" content="Learn how to use filters on DuckDuckGo Private Search to hide AI-generated images in results."><meta property="og:image" content="https://ddg-help-pages-media.s3.us-east-1.amazonaws.com/images/og-images/dax-opengraph-transparent.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="How To Filter Out AI Images in DuckDuckgo Search Results - DuckDuckGo Help Pages"><meta name="twitter:description" content="Learn how to use filters on DuckDuckGo Private Search to hide AI-generated images in results."><meta name="twitter:image" content="https://ddg-help-pages-media.s3.us-east-1.amazonaws.com/images/og-images/dax-opengraph-transparent.png"></head><body><header class="sidenav_sideNav__PGOgt" data-pagefind-ignore="all"><div class="sidenav_siteTitle__B4Tj9" data-pagefind-ignore="true"><a aria-label="DuckDuckGo - Home" href="/"><svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="sidenav_dax__LeWog" width="36" height="36"><clippath id="logo_v109_svg__a"><path d="M0 0h120v120H0z" /></clippath><g clip-path="url(#logo_v109_svg__a)"><path clip-rule="evenodd" d="M60 120c33.137 0 60-26.863 60-60S93.137 0 60 0 0 26.863 0 60s26.863 60 60 60z" fill="#de5833" fill-rule="evenodd" /><path clip-rule="evenodd" d="M68.438 104.766c0-.469.114-.576-1.376-3.546-3.96-7.93-7.94-19.11-6.13-26.32.33-1.31-3.73-48.51-6.6-50.03-3.19-1.7-7.114-4.397-10.704-4.997-1.822-.291-4.21-.153-6.077.098-.332.045-.346.641-.029.749 1.226.415 2.715 1.136 3.592 2.226.166.206-.057.531-.32
+
+--- ASSISTANT ---
+```json
+{
+  "jobs": [
+    "I want to learn how to hide AI-generated images in DuckDuckGo image search results",
+    "I want to access a search page that completely removes all AI features, answers, and prompts",
+    "I want to understand how DuckDuckGo detects and filters out AI-generated images",
+    "I want to navigate to other help pages to learn how to customize my search results (e.g., blocking websites or sorting by date)",
+    "I want to search the help center to find solutions to other questions about DuckDuckGo"
+  ]
+}
+```
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I actively dislike AI-generated content in my daily life and want to permanently opt out of all AI elements, including images, assistants, and prompts, from my online experience.",
+      "b": "I find AI tools and content useful in some contexts and prefer to filter them out only selectively or temporarily depending on my current task."
+    },
+    {
+      "a": "I care about the technical implementation details of my tools, preferring to know exactly which blocklists, algorithms, or sources are used to filter my data.",
+      "b": "I do not care about the technical details or open-source blocklists behind a feature; I just want the toggle to work effortlessly and accurately."
+    },
+    {
+      "a": "I prefer a highly minimalist, traditional search engine layout that only shows standard web pages without modern widgets, sidebars, or AI assistance.",
+      "b": "I appreciate feature-rich search environments that incorporate modern interactive elements like Instant Answers, translation tools, and quick settings toggles."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+--- ASSISTANT ---
+{"edit_requests": [{"id": "1a", "request": "Add a prominent, single-click button at the very top of the help article that lets me immediately apply the 'noai' sub-domain setting to all my current and future searches on this device."}, {"id": "1b", "request": "Add an interactive preview or mock search bar within the article that lets me toggle the AI images filter on and off to see how search results change dynamically."}, {"id": "2a", "request": "Expand the technical explanation section to include a direct link to the latest commit of the GitHub blocklist being used, along with an indicator showing when DuckDuckGo last synchronized its filters with it."}, {"id": "2b", "request": "Remove the technical explanation paragraph about the open-source blocklist 'uBlockOrigin & uBlacklist Huge AI Blocklist' to keep the help article short and focused entirely on the user instructions."}, {"id": "3a", "request": "Remove the entire left sidebar navigation and the 'Learn More' bottom menu completely, allowing the main article content to take up the full width of the screen without distracting links."}, {"id": "3b", "request": "Add a 'Related Features' widget in the sidebar that lists other search customization tools alongside the core article, with interactive checkboxes to enable them directly from the help page."}]}
+

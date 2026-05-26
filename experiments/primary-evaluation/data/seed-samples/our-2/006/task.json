@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Add a filter tab near the top (alongside Web, Images, and Videos) to specifically prioritize technical, developer, or official international English resources like GitHub.",
+	"goal": "I am highly comfortable with bilingual results and often actively look for original English sources, developer documentation, or international game pages.",
+	"jobs": [
+		"I want to look up the translation, meaning, and grammatical forms of the English word 'cats'.",
+		"I want to listen to the audio pronunciation of 'cats' in British or American English to learn how to say it.",
+		"I want to understand the common collocations, idioms, and usage rules for the word 'cats' (e.g., 'rain cats and dogs').",
+		"I want to find information about the famous musical 'Cats' by Andrew Lloyd Webber, including its storyline and background.",
+		"I want to find and download the mobile game 'C.A.T.S.: Crash Arena Turbo Stars'.",
+		"I want to locate the Scala functional programming library 'Cats' on GitHub.",
+		"I want to learn about the Korean pop group named 'CATS'.",
+		"I want to see what other related queries or topics people are searching for when they search for 'cats'."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer to get instant, parsed answers and interactive widgets directly on the search results page without needing to click and open external websites.",
+			"b": "I prefer to ignore search page widgets and summaries, choosing instead to click through directly to authoritative primary source links to read the full content in its original context."
+		},
+		{
+			"a": "I enjoy a visually rich, media-heavy interface featuring videos, pronunciation audios, and expandable sections that make browsing highly interactive.",
+			"b": "I prefer a clean, minimalist, text-focused interface with minimal graphics, as extra visual blocks and media widgets clutter my screen and distract me."
+		},
+		{
+			"a": "I prefer to search for and consume content strictly in my native language, avoiding foreign-language results or technical English resources.",
+			"b": "I am highly comfortable with bilingual results and often actively look for original English sources, developer documentation, or international game pages."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I am highly comfortable with bilingual results and often actively look for original English sources, developer documentation, or international game pages.",
+	"source-snapshot": "008",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://baidu.com/s?wd=cats",
+	"final-url": "https://www.baidu.com/s?wd=cats"
+}

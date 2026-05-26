@@ -1,0 +1,95 @@
+Timestamp: 2026-05-26T12:33:39.843573+00:00
+Snapshot: 035
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><title>microsoft - Search</title><meta name="referrer" content="origin-when-cross-origin"><meta property="og:description" content="Check out what I just created on Bing Image Creator"><meta property="og:site_name" content="Bing"><meta property="og:title" content="microsoft - Bing"><meta property="og:url" content="https://www.bing.com/search?q=microsoft&rdr=1&rdrig=A1E47FF1BB0040A682CD1D2088D758A4"><meta property="fb:app_id" content="3732605936979161"><meta property="og:image" content="http://www.bing.com/sa/simg/facebook_sharing_5.png"><meta property="og:type" content="website"><meta property="og:image:width" content="600"><meta property="og:image:height" content="315"></head><body class="b_respl b_norr b_sbText"><header id="b_header" role="banner"><a id="b_skip_to_content" data-priority="2" href="#" role="button" tabindex="0"><div class="text-back"><div class="text" href="#">Skip to content</div></div></a><a id="b_a11y_feedback" data-priority="2" href="#" role="button" tabindex="0"><div class="text-back"><div class="text" href="#">Accessibility Feedback</div></div></a><form action="/search" id="sb_form" class="hassbi"><a class="b_logoArea" target="" href="/?FORM=Z9FD1" h="ID=SERP,5039.1"><h1 class="b_logo" title="Back to Bing search" data-bm="1"></h1></a><div class="b_searchboxForm" role="search" data-bm="2"><div id="sb_search"><div id="sb_go_par" data-sbtip="Search the web"><div id="b_icon_spyglass" class="sb_icon"></div><input type="submit" class="b_searchboxSubmit" id="sb_form_go" tabindex="0" name="go" value="Search"></div></div><input class="b_searchbox" id="sb_form_q" name="q" aria-autocomplete="both" aria-label="Enter your search here - Search suggestions will show as you type" type="search" value="microsoft" maxlength="1000" dir="" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"><div id="sbiarea" data-idprefix="sb" data-ptn=""><div id="sb_sbip" data-sbtip="Search using an image" data-lgdgevt="0"><div id="sb_sbi" tabi
+
+--- ASSISTANT ---
+{
+  "jobs": [
+    "I want to navigate to the official Microsoft website to browse and learn about their products.",
+    "I want to log in to my Microsoft, Office 365, or Outlook account to access my emails and files.",
+    "I want to find customer support or troubleshooting guides for a Microsoft product.",
+    "I want to read background information, facts, or history about Microsoft on Wikipedia.",
+    "I want to filter these search results to specifically view images, videos, maps, or news about Microsoft.",
+    "I want to ask Copilot a follow-up question to get AI-generated information about Microsoft.",
+    "I want to perform a completely new search by typing in the search box.",
+    "I want to check or manage my Microsoft Rewards points."
+  ]
+}
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{"preference_pairs":[{"a":"I prefer to find information by scanning traditional, reliable blue links and exploring websites myself.","b":"I prefer using AI-powered chat systems and summaries to directly answer my questions without needing to click through websites."},{"a":"I like to stay signed in and use search engine reward programs and ecosystem integrations to maximize points and coordinate my accounts.","b":"I avoid signing in or joining rewards programs on search portals because I value privacy and prefer to keep my search activity decoupled from my accounts."},{"a":"I prefer a comprehensive search page with diverse widgets, sidebar summaries, and related tools so I can see everything at a glance.","b":"I prefer a highly minimalist and uncluttered search interface that focuses strictly on the text results without extra visual noise."}]}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Completely remove the collapsible Copilot search chat bar at the bottom and any AI features, leaving only the standard list of web search results."
+    },
+    {
+      "id": "1b",
+      "request": "Place a fully expanded Copilot chat interface at the very top of the page above the search results, so I can immediately interact with the AI assistant instead of scrolling past links."
+    },
+    {
+      "id": "2a",
+      "request": "Enlarge the Rewards medallion widget in the top right header and display my active reward point balance and daily quest status directly on the search bar."
+    },
+    {
+      "id": "2b",
+      "request": "Completely hide the Rewards medallion and the profile/sign-in avatar button from the top right corner of the header to prevent tracking reminders."
+    },
+    {
+      "id": "3a",
+      "request": "Add a rich knowledge graph sidebar on the right side of the main results column containing key facts, images, and social profiles related to the search query."
+    },
+    {
+      "id": "3b",
+      "request": "Remove the scopebar navigation links, site favicons, and metadata strings beneath search results, presenting only plain text titles and clean URLs on a distraction-free white background."
+    }
+  ]
+}
+

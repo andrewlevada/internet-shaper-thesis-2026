@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Completely remove the 'Sponsored Content' Taboola grid and all sidebar advertisement placeholders to make the page load faster and look completely clean.",
+	"goal": "I am highly distracted by sponsored links and recommended content widgets, and I actively avoid websites that contain dense grids of ad-heavy clickbait.",
+	"jobs": [
+		"I want to watch the video about weird exoplanets to learn about NASA's recent space discoveries",
+		"I want to share this space science video with friends or family who are interested in astronomy",
+		"I want to look up the local weather forecast or radar for a specific location using the search bar",
+		"I want to browse other trending weather videos and news categories to stay informed on recent events",
+		"I want to read seasonal home and garden advice, such as guides on termite season, to protect my property",
+		"I want to sign in to my account to access personalized weather preferences and settings"
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer watching short-form videos to learn about science and news topics because I find them more engaging and digestible than long-form articles.",
+			"b": "I prefer reading comprehensive text articles rather than watching videos because I can skim the text at my own pace and don't have to worry about playing audio."
+		},
+		{
+			"a": "I only use weather websites to quickly check the local forecast or radar and tend to ignore off-topic science, space, or lifestyle articles.",
+			"b": "I enjoy browsing diverse science, space, and general curiosity articles on digital media portals and use them as a source of casual entertainment."
+		},
+		{
+			"a": "I am highly distracted by sponsored links and recommended content widgets, and I actively avoid websites that contain dense grids of ad-heavy clickbait.",
+			"b": "I am highly tolerant of sponsored content and frequently click on recommended articles from around the web to find quirky stories or products."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I am highly distracted by sponsored links and recommended content widgets, and I actively avoid websites that contain dense grids of ad-heavy clickbait.",
+	"source-snapshot": "049",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope",
+	"final-url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope"
+}

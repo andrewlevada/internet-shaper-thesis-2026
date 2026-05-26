@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Add a rich knowledge graph sidebar on the right side of the main results column containing key facts, images, and social profiles related to the search query.",
+	"goal": "I prefer a comprehensive search page with diverse widgets, sidebar summaries, and related tools so I can see everything at a glance.",
+	"jobs": [
+		"I want to navigate to the official Microsoft website to browse and learn about their products.",
+		"I want to log in to my Microsoft, Office 365, or Outlook account to access my emails and files.",
+		"I want to find customer support or troubleshooting guides for a Microsoft product.",
+		"I want to read background information, facts, or history about Microsoft on Wikipedia.",
+		"I want to filter these search results to specifically view images, videos, maps, or news about Microsoft.",
+		"I want to ask Copilot a follow-up question to get AI-generated information about Microsoft.",
+		"I want to perform a completely new search by typing in the search box.",
+		"I want to check or manage my Microsoft Rewards points."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer to find information by scanning traditional, reliable blue links and exploring websites myself.",
+			"b": "I prefer using AI-powered chat systems and summaries to directly answer my questions without needing to click through websites."
+		},
+		{
+			"a": "I like to stay signed in and use search engine reward programs and ecosystem integrations to maximize points and coordinate my accounts.",
+			"b": "I avoid signing in or joining rewards programs on search portals because I value privacy and prefer to keep my search activity decoupled from my accounts."
+		},
+		{
+			"a": "I prefer a comprehensive search page with diverse widgets, sidebar summaries, and related tools so I can see everything at a glance.",
+			"b": "I prefer a highly minimalist and uncluttered search interface that focuses strictly on the text results without extra visual noise."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I prefer a comprehensive search page with diverse widgets, sidebar summaries, and related tools so I can see everything at a glance.",
+	"source-snapshot": "035",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.bing.com/ck/a",
+	"final-url": "https://www.bing.com/search?q=microsoft&rdr=1&rdrig=A1E47FF1BB0040A682CD1D2088D758A4"
+}

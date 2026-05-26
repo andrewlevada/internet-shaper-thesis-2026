@@ -1,0 +1,32 @@
+{
+	"request-prompt": "Add a prominent, single-click button at the very top of the help article that lets me immediately apply the 'noai' sub-domain setting to all my current and future searches on this device.",
+	"goal": "I actively dislike AI-generated content in my daily life and want to permanently opt out of all AI elements, including images, assistants, and prompts, from my online experience.",
+	"jobs": [
+		"I want to learn how to hide AI-generated images in DuckDuckGo image search results",
+		"I want to access a search page that completely removes all AI features, answers, and prompts",
+		"I want to understand how DuckDuckGo detects and filters out AI-generated images",
+		"I want to navigate to other help pages to learn how to customize my search results (e.g., blocking websites or sorting by date)",
+		"I want to search the help center to find solutions to other questions about DuckDuckGo"
+	],
+	"preference-pairs": [
+		{
+			"a": "I actively dislike AI-generated content in my daily life and want to permanently opt out of all AI elements, including images, assistants, and prompts, from my online experience.",
+			"b": "I find AI tools and content useful in some contexts and prefer to filter them out only selectively or temporarily depending on my current task."
+		},
+		{
+			"a": "I care about the technical implementation details of my tools, preferring to know exactly which blocklists, algorithms, or sources are used to filter my data.",
+			"b": "I do not care about the technical details or open-source blocklists behind a feature; I just want the toggle to work effortlessly and accurately."
+		},
+		{
+			"a": "I prefer a highly minimalist, traditional search engine layout that only shows standard web pages without modern widgets, sidebars, or AI assistance.",
+			"b": "I appreciate feature-rich search environments that incorporate modern interactive elements like Instant Answers, translation tools, and quick settings toggles."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "a",
+	"preference": "I actively dislike AI-generated content in my daily life and want to permanently opt out of all AI elements, including images, assistants, and prompts, from my online experience.",
+	"source-snapshot": "063",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://duckduckgo.com/duckduckgo-help-pages/results/how-to-filter-out-ai-images-in-duckduckgo-search-results",
+	"final-url": "https://duckduckgo.com/duckduckgo-help-pages/results/how-to-filter-out-ai-images-in-duckduckgo-search-results"
+}

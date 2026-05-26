@@ -1,0 +1,34 @@
+{
+	"request-prompt": "Hide all paywall overlays, 'Exclusivo para assinantes' premium labels, and subscription upgrade banners when I am logged into my active subscriber account.",
+	"goal": "I value premium journalism and am willing to pay subscription fees to read high-quality, exclusive news articles without limits.",
+	"jobs": [
+		"I want to read the article to understand how Anthropic rose to lead the AI market.",
+		"I want to get a quick summary of the news story because I am short on time.",
+		"I want to share this article about Anthropic's market growth with my network on social media or messaging platforms.",
+		"I want to subscribe to the 'IAí?' newsletter to receive regular updates on how artificial intelligence is transforming daily life.",
+		"I want to log in or subscribe to O Globo to bypass the paywall and access the full content.",
+		"I want to search the website for other articles related to technology, AI, or business.",
+		"I want to discover and browse other related news stories in the technology and economy sections."
+	],
+	"preference-pairs": [
+		{
+			"a": "I value premium journalism and am willing to pay subscription fees to read high-quality, exclusive news articles without limits.",
+			"b": "I refuse to pay for online news and will immediately leave a site or look for a free alternative if I encounter a paywall."
+		},
+		{
+			"a": "I prefer to read complete, detailed articles from start to finish to capture all the context, nuances, and journalistic analysis.",
+			"b": "I prefer short summaries, bullet points, or AI-generated digests to quickly get the main takeaways without reading the full text."
+		},
+		{
+			"a": "I appreciate personalized newsletters, related articles, and sponsored content feeds at the bottom of the page to discover new and interesting topics.",
+			"b": "I prefer a clean, distraction-free reading experience and strongly dislike ads, sponsored widgets, or unrelated article recommendations cluttering the page."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "a",
+	"preference": "I value premium journalism and am willing to pay subscription fees to read high-quality, exclusive news articles without limits.",
+	"source-snapshot": "074",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://oglobo.globo.com/economia/tecnologia/noticia/2026/05/17/como-a-anthropic-se-tornou-a-principal-empresa-de-ia-do-mundo-entenda-em-cinco-graficos.ghtml",
+	"final-url": "https://oglobo.globo.com/economia/tecnologia/noticia/2026/05/17/como-a-anthropic-se-tornou-a-principal-empresa-de-ia-do-mundo-entenda-em-cinco-graficos.ghtml"
+}

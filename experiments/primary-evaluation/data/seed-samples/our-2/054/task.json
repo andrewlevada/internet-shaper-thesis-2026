@@ -1,0 +1,34 @@
+{
+	"request-prompt": "Remove the theme-switch moon icons from the sticky header and top navigation to declutter the interface and maintain the wiki's default light styling consistently.",
+	"goal": "I prefer using light mode for maximum readability and contrast under normal lighting, and I usually stick with whatever default aesthetic a site provides.",
+	"jobs": [
+		"I want to learn how to sign up and register for a new Fandom user account",
+		"I want to find the direct registration link to create a Fandom account",
+		"I want to understand how to customize my viewing preferences, such as switching between dark and light themes",
+		"I want to find out how to adjust my Fandom account settings and text size on mobile devices",
+		"I want to access other beginner guides to learn how to contribute to wikis and join community discussions",
+		"I want to read comments from other users or ask a question about getting started on Fandom",
+		"I want to sign in to my existing Fandom account"
+	],
+	"preference-pairs": [
+		{
+			"a": "I am a passive consumer (lurker) who prefers to read wiki content anonymously and rarely registers an account or configures settings.",
+			"b": "I am an active contributor who loves setting up personalized profiles, configuring preferences, and editing wikis to feel fully integrated into the community."
+		},
+		{
+			"a": "I prefer simple, highly-visual guides with screenshots and gallery walkthroughs to quickly learn how to navigate a new interface.",
+			"b": "I prefer reading comprehensive, text-dense documentation with deep-dive links to understand the complete technical details of how a system works."
+		},
+		{
+			"a": "I strictly prefer dark mode across all websites I use to reduce eye strain and expect a quick, prominent way to toggle themes on any page.",
+			"b": "I prefer using light mode for maximum readability and contrast under normal lighting, and I usually stick with whatever default aesthetic a site provides."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I prefer using light mode for maximum readability and contrast under normal lighting, and I usually stick with whatever default aesthetic a site provides.",
+	"source-snapshot": "071",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
+	"final-url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization"
+}

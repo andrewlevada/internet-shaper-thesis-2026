@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Increase the size of the infinite scrolling recommendation feed ('feed-card' sections) and remove the header categories menu since I rely entirely on personalized feed recommendations anyway.",
+	"goal": "I love relying on the platform's personalized homepage recommendations and algorithmic feeds to passively discover new and interesting content.",
+	"jobs": [
+		"I want to discover and watch recommended videos to entertain myself during my free time",
+		"I want to search for a specific video, topic, or content creator using keywords",
+		"I want to watch live-streamed content, such as esports matches or gaming streams",
+		"I want to browse specific entertainment categories like anime, movies, documentaries, or games",
+		"I want to log into my account to access my viewing history, saved favorites, and private messages",
+		"I want to upload my own videos to share them with the Bilibili community",
+		"I want to check the trending list to see what topics and videos are popular right now",
+		"I want to view the latest updates and posts from the content creators I follow"
+	],
+	"preference-pairs": [
+		{
+			"a": "I enjoy a highly interactive and social viewing experience, actively participating in bullet chats (danmaku), comment sections, and community forums.",
+			"b": "I prefer a clean, distraction-free viewing experience, usually disabling bullet comments and ignoring social features to focus purely on the video content itself."
+		},
+		{
+			"a": "I love relying on the platform's personalized homepage recommendations and algorithmic feeds to passively discover new and interesting content.",
+			"b": "I prefer having direct control over my navigation, always using search engines or specific category menus to find exactly what I have in mind."
+		},
+		{
+			"a": "I view video platforms as a creative outlet and a place to upload my own content, build a fanbase, and manage my creative metrics.",
+			"b": "I treat video platforms purely as a consumption tool, with absolutely no interest in creating, uploading, or managing content of my own."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I love relying on the platform's personalized homepage recommendations and algorithmic feeds to passively discover new and interesting content.",
+	"source-snapshot": "042",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://bilibili.com",
+	"final-url": "https://www.bilibili.com/"
+}

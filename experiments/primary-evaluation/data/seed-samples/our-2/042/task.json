@@ -1,0 +1,34 @@
+{
+	"request-prompt": "Automatically trigger the GPS locate function to center the map on my precise location instantly upon page load, and display a prominent 'Saved Locations' bar directly above the map for quick switching.",
+	"goal": "I prioritize seamless convenience, so I readily enable location tracking, accept cookies, and sign in to get highly personalized local content automatically.",
+	"jobs": [
+		"I want to track current and upcoming precipitation in my area by viewing the interactive radar map",
+		"I want to see how a storm is moving over time by playing the radar timeline animation",
+		"I want to check the weather radar for a different city or zip code using the search bar",
+		"I want to customize the weather map layers to view specific conditions like wind speed, temperature, or UV index",
+		"I want to monitor active severe weather threats such as hurricanes, lightning, or storm warnings on the map",
+		"I want to quickly find out when rain or snow is expected to start in my current location",
+		"I want to switch the map's visual style, such as to satellite or dark mode, to better visualize the weather patterns"
+	],
+	"preference-pairs": [
+		{
+			"a": "I am a data-driven user who likes to dive deep into complex, customizable data visualizations and maps to analyze details and draw my own conclusions.",
+			"b": "I prefer simple, straightforward text-based summaries and pre-made reports over interactive maps that require manual configuration."
+		},
+		{
+			"a": "I prefer dark-themed interfaces and high-detail satellite imagery across all apps and sites to minimize eye strain and view realistic textures.",
+			"b": "I prefer light-themed interfaces and clean, high-contrast, simplified maps because they are easier for me to read quickly."
+		},
+		{
+			"a": "I am highly protective of my digital privacy, so I strictly reject tracking, cookies, and geolocation prompts, and avoid signing in to websites.",
+			"b": "I prioritize seamless convenience, so I readily enable location tracking, accept cookies, and sign in to get highly personalized local content automatically."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I prioritize seamless convenience, so I readily enable location tracking, accept cookies, and sign in to get highly personalized local content automatically.",
+	"source-snapshot": "050",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://weather.com/weather/radar/interactive/l/96e1c7f17a291a7ee64cda75a7bca6b6b8a31fa3cc9e0baf3c7c2f04dd3c1020",
+	"final-url": "https://weather.com/weather/radar/interactive/l/96e1c7f17a291a7ee64cda75a7bca6b6b8a31fa3cc9e0baf3c7c2f04dd3c1020"
+}
