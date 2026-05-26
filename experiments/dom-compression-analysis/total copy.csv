@@ -1,8 +1,0 @@
-metric,mean,median,min,max
-raw_chars,937528.01,735180,50097,4411456
-visible_chars,417214.43,289292,21212,2353194
-compressed_visible_chars,38703.32,24371,1814,333411
-compressed_visible_comment_chars,1987.83,1287,161,9466
-raw_tokens,334510.51,240987,18490,1338122
-visible_tokens,160711.11,109063,7188,1028594
-compressed_visible_tokens,12150.2,8041,507,108008

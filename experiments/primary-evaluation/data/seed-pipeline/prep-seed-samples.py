@@ -3,7 +3,7 @@
 
 For each snapshot, runs a 3-turn Gemini session (get_dom with --with-seo, then
 jobs → preference pairs → edit requests) and writes 6 seed samples to
-seed-samples/our-2/{snapshot}-{pair}{side}/.
+seed-samples/our-2/{001,002,...}/ with a unified incrementing counter.
 
 Usage:
   python3 prep-seed-samples.py
@@ -34,13 +34,18 @@ SNAPSHOTS_CSV = SNAPSHOTS_DIR / "data.csv"
 SEED_FOLD = DATA_DIR / "seed-samples" / "our-2"
 LOGS_DIR = SCRIPT_DIR / "logs"
 
-SNAPSHOTS_NUMBER = 11 # 1 fails
+SNAPSHOTS_NUMBER = 10
 SNAPSHOT_GLOB = "[0-9][0-9][0-9]"
 SNAPSHOT_ORDER_SEED = 9081436
 SEED_MODEL_ID = "google/gemini-3.5-flash"
 MAX_TOOL_ROUNDS = 8
 PREFERENCE_SIDES = ("a", "b")
+PREFERENCE_PAIR_INDICES = (1, 2, 3)
 EXPECTED_EDIT_IDS = ("1a", "1b", "2a", "2b", "3a", "3b")
+SEED_SAMPLE_WIDTH = 3
+
+EXCLUDE_SNAPSHOTS = [8, 9, 10, 11, 24, 26, 27, 28, 32, 41, 42, 43, 44, 45, 46, 65, 66, 67, 73]
+EXCLUDED_SNAPSHOT_IDS = {f"{snapshot_id:03d}" for snapshot_id in EXCLUDE_SNAPSHOTS}
 
 sys.path.insert(0, str(PIPELINE_DIR))
 
@@ -265,26 +270,86 @@ def list_snapshot_ids(sample_filter: str | None) -> list[str]:
     ids = sorted(
         path.name
         for path in SNAPSHOTS_DIR.glob(SNAPSHOT_GLOB)
-        if path.is_dir()
+        if path.is_dir() and path.name not in EXCLUDED_SNAPSHOT_IDS
     )
-    
+
     if not ids:
         print(f"No snapshots under {SNAPSHOTS_DIR}", file=sys.stderr)
+        sys.exit(1)
+    if len(ids) < SNAPSHOTS_NUMBER:
+        print(
+            f"Only {len(ids)} snapshots available after exclusions "
+            f"(need {SNAPSHOTS_NUMBER})",
+            file=sys.stderr,
+        )
         sys.exit(1)
     random.Random(SNAPSHOT_ORDER_SEED).shuffle(ids)
 
     return ids[:SNAPSHOTS_NUMBER]
 
 
-def expected_sample_ids(snapshot_id: str) -> list[str]:
-    return [f"{snapshot_id}-{pair}{side}" for pair in (1, 2, 3) for side in PREFERENCE_SIDES]
+def sample_folder_name(index: int) -> str:
+    return f"{index:0{SEED_SAMPLE_WIDTH}d}"
+
+
+def expected_preference_slots() -> set[tuple[int, str]]:
+    return {
+        (pair_index, side)
+        for pair_index in PREFERENCE_PAIR_INDICES
+        for side in PREFERENCE_SIDES
+    }
+
+
+def read_task_json(task_path: Path) -> dict[str, Any] | None:
+    try:
+        task = json.loads(task_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return task if isinstance(task, dict) else None
+
+
+def seed_samples_for_snapshot(snapshot_id: str) -> list[Path]:
+    if not SEED_FOLD.is_dir():
+        return []
+
+    sample_dirs: list[Path] = []
+    for sample_dir in SEED_FOLD.iterdir():
+        if not sample_dir.is_dir():
+            continue
+        task = read_task_json(sample_dir / "task.json")
+        if task and task.get("source-snapshot") == snapshot_id:
+            sample_dirs.append(sample_dir)
+    return sorted(sample_dirs, key=lambda path: path.name)
 
 
 def snapshot_complete(snapshot_id: str) -> bool:
-    return all(
-        (SEED_FOLD / sample_id / "task.json").is_file()
-        for sample_id in expected_sample_ids(snapshot_id)
-    )
+    found: set[tuple[int, str]] = set()
+    for sample_dir in seed_samples_for_snapshot(snapshot_id):
+        task = read_task_json(sample_dir / "task.json")
+        if not task:
+            continue
+        pair_index = task.get("preference-pair-index")
+        side = task.get("preference-side")
+        if isinstance(pair_index, int) and side in PREFERENCE_SIDES:
+            found.add((pair_index, side))
+    return found == expected_preference_slots()
+
+
+def next_seed_sample_index() -> int:
+    if not SEED_FOLD.is_dir():
+        return 1
+
+    indices = [
+        int(path.name)
+        for path in SEED_FOLD.iterdir()
+        if path.is_dir() and path.name.isdigit()
+    ]
+    return max(indices, default=0) + 1
+
+
+def remove_seed_samples_for_snapshot(snapshot_id: str) -> None:
+    for sample_dir in seed_samples_for_snapshot(snapshot_id):
+        shutil.rmtree(sample_dir)
 
 
 def parse_json_response(text: str) -> dict[str, Any]:
@@ -579,12 +644,15 @@ def write_seed_samples(
     session: SessionResult,
     meta: SnapshotMeta | None,
     log_lines: list[str],
-) -> None:
+    *,
+    start_index: int,
+) -> int:
     SEED_FOLD.mkdir(parents=True, exist_ok=True)
 
+    index = start_index
     for pair_index, pair in enumerate(session.preference_pairs, start=1):
         for side in PREFERENCE_SIDES:
-            sample_id = f"{snapshot_id}-{pair_index}{side}"
+            sample_id = sample_folder_name(index)
             sample_dir = SEED_FOLD / sample_id
             original_dir = sample_dir / "original"
             sample_dir.mkdir(parents=True, exist_ok=True)
@@ -610,6 +678,9 @@ def write_seed_samples(
             )
             copy_snapshot_assets(snapshot_dir, original_dir)
             log_lines.append(f"  OK our-2/{sample_id}")
+            index += 1
+
+    return index
 
 
 def process_snapshot(
@@ -631,6 +702,9 @@ def process_snapshot(
         log_lines.append(f"[{snapshot_id}] skip (all 6 seed samples exist)")
         return
 
+    remove_seed_samples_for_snapshot(snapshot_id)
+    start_index = next_seed_sample_index()
+
     log_lines.append(f"[{snapshot_id}] running JTBD session")
     session_log: list[str] = [
         f"Timestamp: {datetime.now(timezone.utc).isoformat()}",
@@ -641,7 +715,19 @@ def process_snapshot(
 
     session = run_session(snapshot_dir, session_log)
     meta = meta_by_folder.get(snapshot_id)
-    write_seed_samples(snapshot_id, snapshot_dir, session, meta, log_lines)
+    first_sample_id = sample_folder_name(start_index)
+    end_index = write_seed_samples(
+        snapshot_id,
+        snapshot_dir,
+        session,
+        meta,
+        log_lines,
+        start_index=start_index,
+    )
+    last_sample_id = sample_folder_name(end_index - 1)
+    log_lines.append(
+        f"[{snapshot_id}] wrote seed samples our-2/{first_sample_id}..{last_sample_id}",
+    )
 
     session_log_path.write_text("\n".join(session_log) + "\n", encoding="utf-8")
     log_lines.append(f"[{snapshot_id}] session log: {session_log_path}")
@@ -676,7 +762,9 @@ def main() -> None:
         f"snapshot filter: {args.sample or '(all)'}",
         f"skip existing: {args.skip_existing}",
         f"snapshot order seed: {SNAPSHOT_ORDER_SEED if not args.sample else '(single sample)'}",
+        f"excluded snapshots: {', '.join(sorted(EXCLUDED_SNAPSHOT_IDS)) if not args.sample else '(single sample)'}",
         f"snapshots to process: {', '.join(snapshot_ids)}",
+        f"next seed sample index: {sample_folder_name(next_seed_sample_index())}",
         "",
     ]
 

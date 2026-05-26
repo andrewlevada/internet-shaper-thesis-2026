@@ -1,35 +1,33 @@
 {
-	"request-prompt": "Completely hide the Rewards medallion and the profile/sign-in avatar button from the top right corner of the header to prevent tracking reminders.",
-	"goal": "I avoid signing in or joining rewards programs on search portals because I value privacy and prefer to keep my search activity decoupled from my accounts.",
+	"request-prompt": "Add a visual tag (like 'Subscribed') on search result cards from channels I already follow, and provide a 'Subscribed Only' filter checkbox in the 'Filters' dropdown menu.",
+	"goal": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations.",
 	"jobs": [
-		"I want to navigate to the official Microsoft website to browse and learn about their products.",
-		"I want to log in to my Microsoft, Office 365, or Outlook account to access my emails and files.",
-		"I want to find customer support or troubleshooting guides for a Microsoft product.",
-		"I want to read background information, facts, or history about Microsoft on Wikipedia.",
-		"I want to filter these search results to specifically view images, videos, maps, or news about Microsoft.",
-		"I want to ask Copilot a follow-up question to get AI-generated information about Microsoft.",
-		"I want to perform a completely new search by typing in the search box.",
-		"I want to check or manage my Microsoft Rewards points."
+		"I want to watch funny or cute cat compilations to improve my mood.",
+		"I want to browse and watch short, vertical cat videos (Shorts) for quick entertainment.",
+		"I want to filter the cat video results by criteria like 'Unwatched' or 'Recently uploaded' to discover fresh content.",
+		"I want to find a live cat stream to see live feline activities in real-time.",
+		"I want to search for a more specific cat topic using the search box if the general results aren't what I need.",
+		"I want to sign in to my YouTube account to save interesting cat videos to my library or subscribe to the channels."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer to find information by scanning traditional, reliable blue links and exploring websites myself.",
-			"b": "I prefer using AI-powered chat systems and summaries to directly answer my questions without needing to click through websites."
+			"a": "I prefer short-form, bite-sized vertical video content (like Shorts) for quick bursts of entertainment throughout my day.",
+			"b": "I prefer long-form, horizontal videos and compilations that I can lean back and watch on a larger screen."
 		},
 		{
-			"a": "I like to stay signed in and use search engine reward programs and ecosystem integrations to maximize points and coordinate my accounts.",
-			"b": "I avoid signing in or joining rewards programs on search portals because I value privacy and prefer to keep my search activity decoupled from my accounts."
+			"a": "I love exploring and discovering new creators through search results and algorithmic recommendations.",
+			"b": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations."
 		},
 		{
-			"a": "I prefer a comprehensive search page with diverse widgets, sidebar summaries, and related tools so I can see everything at a glance.",
-			"b": "I prefer a highly minimalist and uncluttered search interface that focuses strictly on the text results without extra visual noise."
+			"a": "I prefer to use video platforms while logged into an account so I can customize my feed, like, comment, and build a search history.",
+			"b": "I prefer to watch content completely anonymously and passively, avoiding signing in or leaving any digital footprint on the platform."
 		}
 	],
 	"preference-pair-index": 2,
 	"preference-side": "b",
-	"preference": "I avoid signing in or joining rewards programs on search portals because I value privacy and prefer to keep my search activity decoupled from my accounts.",
-	"source-snapshot": "035",
+	"preference": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations.",
+	"source-snapshot": "004",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.bing.com/ck/a",
-	"final-url": "https://www.bing.com/search?q=microsoft&rdr=1&rdrig=A1E47FF1BB0040A682CD1D2088D758A4"
+	"url": "https://youtube.com/results?search_query=cats",
+	"final-url": "https://www.youtube.com/results?search_query=cats"
 }

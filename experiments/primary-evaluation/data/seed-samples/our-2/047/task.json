@@ -1,32 +1,32 @@
 {
-	"request-prompt": "Remove the entire left sidebar navigation and the 'Learn More' bottom menu completely, allowing the main article content to take up the full width of the screen without distracting links.",
-	"goal": "I prefer a highly minimalist, traditional search engine layout that only shows standard web pages without modern widgets, sidebars, or AI assistance.",
+	"request-prompt": "Completely remove the intrusive 'Sign In' and 'Register' buttons from the top navigation header and hide the anonymous comments section at the bottom.",
+	"goal": "I am a passive consumer who uses online platforms strictly to read information without ever registering an account or participating in discussions.",
 	"jobs": [
-		"I want to learn how to hide AI-generated images in DuckDuckGo image search results",
-		"I want to access a search page that completely removes all AI features, answers, and prompts",
-		"I want to understand how DuckDuckGo detects and filters out AI-generated images",
-		"I want to navigate to other help pages to learn how to customize my search results (e.g., blocking websites or sorting by date)",
-		"I want to search the help center to find solutions to other questions about DuckDuckGo"
+		"I want to learn how to sign up for a new Fandom account on both desktop and mobile devices",
+		"I want to find out how to customize my viewing experience, such as switching between light and dark themes",
+		"I want to learn how to adjust my text size and other preferences specifically on the mobile interface",
+		"I want to discover the next steps to get involved in the Fandom community, such as contributing to wikis or joining discussions",
+		"I want to ask a question or share feedback about the registration process by leaving a comment on this guide"
 	],
 	"preference-pairs": [
 		{
-			"a": "I actively dislike AI-generated content in my daily life and want to permanently opt out of all AI elements, including images, assistants, and prompts, from my online experience.",
-			"b": "I find AI tools and content useful in some contexts and prefer to filter them out only selectively or temporarily depending on my current task."
+			"a": "I learn new systems best through visual screenshots and step-by-step image guides rather than reading long text descriptions.",
+			"b": "I prefer to read quick, concise text-based bullet points and find large screenshot galleries distracting and slow to scroll through."
 		},
 		{
-			"a": "I care about the technical implementation details of my tools, preferring to know exactly which blocklists, algorithms, or sources are used to filter my data.",
-			"b": "I do not care about the technical details or open-source blocklists behind a feature; I just want the toggle to work effortlessly and accurately."
+			"a": "I always search for dark mode on every website I visit because bright white backgrounds cause me severe eye strain.",
+			"b": "I prefer standard light themes across all websites because I find dark interfaces harder to read and less aesthetically pleasing."
 		},
 		{
-			"a": "I prefer a highly minimalist, traditional search engine layout that only shows standard web pages without modern widgets, sidebars, or AI assistance.",
-			"b": "I appreciate feature-rich search environments that incorporate modern interactive elements like Instant Answers, translation tools, and quick settings toggles."
+			"a": "I am a passive consumer who uses online platforms strictly to read information without ever registering an account or participating in discussions.",
+			"b": "I am an active community member who likes to set up personalized profiles, customize settings, and interact with other users on platforms I visit."
 		}
 	],
 	"preference-pair-index": 3,
 	"preference-side": "a",
-	"preference": "I prefer a highly minimalist, traditional search engine layout that only shows standard web pages without modern widgets, sidebars, or AI assistance.",
-	"source-snapshot": "063",
+	"preference": "I am a passive consumer who uses online platforms strictly to read information without ever registering an account or participating in discussions.",
+	"source-snapshot": "070",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://duckduckgo.com/duckduckgo-help-pages/results/how-to-filter-out-ai-images-in-duckduckgo-search-results",
-	"final-url": "https://duckduckgo.com/duckduckgo-help-pages/results/how-to-filter-out-ai-images-in-duckduckgo-search-results"
+	"url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
+	"final-url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization"
 }

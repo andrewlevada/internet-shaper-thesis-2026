@@ -1,35 +1,33 @@
 {
-	"request-prompt": "Completely remove the upload ('投稿') and creative center ('创作中心') buttons from the top right navigation bar to streamline the header exclusively for watching videos.",
-	"goal": "I treat video platforms purely as a consumption tool, with absolutely no interest in creating, uploading, or managing content of my own.",
+	"request-prompt": "Place a bulleted 'Quick Summary' box right below the article headline, and move the key weather infographic/forecast image to the top of the article body above the main text.",
+	"goal": "I prefer quick, visual summaries, bullet points, and quick infographics so I can understand the news in under thirty seconds.",
 	"jobs": [
-		"I want to discover and watch recommended videos to entertain myself during my free time",
-		"I want to search for a specific video, topic, or content creator using keywords",
-		"I want to watch live-streamed content, such as esports matches or gaming streams",
-		"I want to browse specific entertainment categories like anime, movies, documentaries, or games",
-		"I want to log into my account to access my viewing history, saved favorites, and private messages",
-		"I want to upload my own videos to share them with the Bilibili community",
-		"I want to check the trending list to see what topics and videos are popular right now",
-		"I want to view the latest updates and posts from the content creators I follow"
+		"I want to find out when and how the rescheduled Indy 500 qualifying session will take place.",
+		"I want to check the weather forecast for Indianapolis on Sunday to see if rain will delay the events again.",
+		"I want to access the official rules and draw document for the condensed Sunday qualifying session.",
+		"I want to share this news update with fellow racing fans who are following the Indy 500.",
+		"I want to see what other fans are saying about the weather delay and join the discussion.",
+		"I want to look up the current weather forecast for my local area using the search function."
 	],
 	"preference-pairs": [
 		{
-			"a": "I enjoy a highly interactive and social viewing experience, actively participating in bullet chats (danmaku), comment sections, and community forums.",
-			"b": "I prefer a clean, distraction-free viewing experience, usually disabling bullet comments and ignoring social features to focus purely on the video content itself."
+			"a": "I am a dedicated sports fan who primarily seeks out weather websites to see how atmospheric conditions directly impact upcoming races and outdoor sporting events.",
+			"b": "I am a general weather observer who only cares about daily forecasts and severe weather warnings, and I have no interest in sports-related weather delays."
 		},
 		{
-			"a": "I love relying on the platform's personalized homepage recommendations and algorithmic feeds to passively discover new and interesting content.",
-			"b": "I prefer having direct control over my navigation, always using search engines or specific category menus to find exactly what I have in mind."
+			"a": "I love interacting with online communities, so I always scroll down to read and participate in the comment section of news articles.",
+			"b": "I find comment sections and online forums toxic or distracting, so I strictly read the main article content and ignore community discussions entirely."
 		},
 		{
-			"a": "I view video platforms as a creative outlet and a place to upload my own content, build a fanbase, and manage my creative metrics.",
-			"b": "I treat video platforms purely as a consumption tool, with absolutely no interest in creating, uploading, or managing content of my own."
+			"a": "I prefer highly detailed, text-heavy articles that link to official PDFs and external source documents so I can thoroughly research a topic.",
+			"b": "I prefer quick, visual summaries, bullet points, and quick infographics so I can understand the news in under thirty seconds."
 		}
 	],
 	"preference-pair-index": 3,
 	"preference-side": "b",
-	"preference": "I treat video platforms purely as a consumption tool, with absolutely no interest in creating, uploading, or managing content of my own.",
-	"source-snapshot": "042",
+	"preference": "I prefer quick, visual summaries, bullet points, and quick infographics so I can understand the news in under thirty seconds.",
+	"source-snapshot": "050",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://bilibili.com",
-	"final-url": "https://www.bilibili.com/"
+	"url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500"
 }

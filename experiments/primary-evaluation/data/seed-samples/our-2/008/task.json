@@ -1,33 +1,35 @@
 {
-	"request-prompt": "Replace the large 'Your Lists' banner and benefits text with a section showcasing immediate checkout deals and direct product grids to facilitate quick, on-the-spot purchasing.",
-	"goal": "I am a spontaneous shopper who prefers to search and buy items on the spot, rarely utilizing lists or pre-planning purchases.",
+	"request-prompt": "Move the 'Entretenimento' and 'Receitas' sections to the top of the homepage, and hide the main politics headline ('Fim da taxa das blusinhas') and any tragic news reports.",
+	"goal": "I use web portals primarily for lightweight entertainment, celebrity gossip, and lifestyle tips, finding political and tragic news draining.",
 	"jobs": [
-		"I want to sign in to view, edit, and organize my saved shopping lists.",
-		"I want to create a wedding registry to help my wedding guests find and purchase the right gifts.",
-		"I want to set up a baby registry to prepare for the arrival of my new baby.",
-		"I want to create a custom gift list or registry for a milestone other than a wedding or baby.",
-		"I want to manage my Alexa Shopping List so I can add items using my voice-enabled device.",
-		"I want to find help guides or contact customer service to resolve an issue with my list or registry."
+		"I want to catch up on the most important news of the day in Brazil and the world.",
+		"I want to check the latest results, standings, and upcoming match schedules for the Brazilian football league.",
+		"I want to see what is playing on TV Globo right now and check the schedule for the rest of the day.",
+		"I want to check the current weather and forecast for my city to plan my day.",
+		"I want to read the latest celebrity gossip and entertainment news to stay up to date with pop culture.",
+		"I want to check my daily horoscope to see what the astrological prediction is for my sign.",
+		"I want to find cooking recipes and meal ideas for what to make today.",
+		"I want to explore subscription plans for streaming services like Globoplay, Premiere, or Telecine to watch live TV, movies, and sports."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am a meticulous planner who relies heavily on lists and registries to organize my future purchases and track deals or price drops.",
-			"b": "I am a spontaneous shopper who prefers to search and buy items on the spot, rarely utilizing lists or pre-planning purchases."
+			"a": "I am only interested in serious journalism, politics, and economy, and I actively avoid sensationalism, gossip, and entertainment content.",
+			"b": "I use web portals primarily for lightweight entertainment, celebrity gossip, and lifestyle tips, finding political and tragic news draining."
 		},
 		{
-			"a": "When buying gifts for others, I strictly adhere to their registries and wish lists to ensure I get them exactly what they want.",
-			"b": "When buying gifts for others, I prefer to find creative, personalized surprises rather than buying from a pre-determined list."
+			"a": "I prefer to quickly scan text headlines and read articles at my own pace, finding auto-playing videos and multimedia carousels distracting.",
+			"b": "I prefer consuming news and stories through video clips, live TV streams, and visual media, and I rarely read long-form text articles."
 		},
 		{
-			"a": "I value collaborative shopping and enjoy sharing my lists or registries with friends and family to make joint planning decisions.",
-			"b": "I keep my shopping lists and event registries strictly private, preferring to manage my plans and purchases completely independently."
+			"a": "I am a die-hard sports fan who closely tracks football tables, match analysis, and team rosters whenever I browse a portal.",
+			"b": "I am completely indifferent to sports and find soccer tables, match schedules, and athletic news irrelevant to my browsing experience."
 		}
 	],
 	"preference-pair-index": 1,
 	"preference-side": "b",
-	"preference": "I am a spontaneous shopper who prefers to search and buy items on the spot, rarely utilizing lists or pre-planning purchases.",
-	"source-snapshot": "024",
+	"preference": "I use web portals primarily for lightweight entertainment, celebrity gossip, and lifestyle tips, finding political and tragic news draining.",
+	"source-snapshot": "071",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.amazon.com/hz/wishlist/ls",
-	"final-url": "https://www.amazon.com/hz/wishlist/intro"
+	"url": "https://globo.com",
+	"final-url": "https://www.globo.com/"
 }

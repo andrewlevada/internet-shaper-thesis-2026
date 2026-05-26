@@ -1,31 +1,33 @@
 {
-	"request-prompt": "Replace the conversational \"Ask anything\" text area with a traditional single-line search bar that has a dedicated \"Search\" button, and make the \"All\" (Web search) tab active by default.",
-	"goal": "I prefer entering simple keyword queries and scanning a list of traditional web results to choose which websites to visit myself.",
+	"request-prompt": "Replace the technical specifications overview with an interactive 'Help Me Choose' wizard that recommends a model based on simple daily tasks like studying, office work, or creative projects.",
+	"goal": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine.",
 	"jobs": [
-		"I want to ask a question or search for a topic using an AI-powered chat interface",
-		"I want to explore recommended search prompts and ideas to find inspiration or learn something new",
-		"I want to sign in to my Microsoft account to track and earn rewards points",
-		"I want to switch to other specialized search categories like Images, Videos, Maps, or News"
+		"I want to purchase a new Samsung Galaxy Book6 laptop.",
+		"I want to compare the specifications of the Galaxy Book6 Ultra and the Galaxy Book6 Pro to decide which model is right for me.",
+		"I want to learn about the new Galaxy AI features, battery life, and performance capabilities of the Galaxy Book6 series.",
+		"I want to customize the processor, RAM, storage, and color options of a Galaxy Book6 laptop to see the total price.",
+		"I want to check if there are any trade-in deals, discounts, or promotional offers available when buying this laptop.",
+		"I want to find out the delivery times, shipping costs, and return policies for the Galaxy Book6 series."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer asking questions in a natural conversational way to get a single, synthesized answer from an AI assistant.",
-			"b": "I prefer entering simple keyword queries and scanning a list of traditional web results to choose which websites to visit myself."
+			"a": "I am a tech enthusiast who makes purchase decisions based on detailed hardware specifications, performance benchmarks, and in-depth component breakdowns.",
+			"b": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine."
 		},
 		{
-			"a": "I enjoy browsing recommended topics, cards, and visual suggestions to discover new ideas or get inspiration.",
-			"b": "I find homepage recommendations, trends, and visual prompts distracting; I only want a clean search input to type my specific query."
+			"a": "I strongly prefer staying loyal to one brand ecosystem (like Samsung Galaxy) so all my devices connect and sync together effortlessly.",
+			"b": "I am brand-agnostic and always choose the absolute best standalone value for my budget, even if it means mixing different device ecosystems."
 		},
 		{
-			"a": "I like participating in search rewards programs and logging into my accounts to earn points and customize my experience.",
-			"b": "I prefer searching anonymously and avoiding account sign-ins to protect my privacy, and I have no interest in search-related gamification or rewards."
+			"a": "I prefer purchasing expensive electronics directly from the official brand's website because I trust their official customer service and exclusive trade-in deals more.",
+			"b": "I rarely buy high-end electronics online without trying them out in a physical store first to feel the build quality, keyboard, and screen in person."
 		}
 	],
 	"preference-pair-index": 1,
 	"preference-side": "b",
-	"preference": "I prefer entering simple keyword queries and scanning a list of traditional web results to choose which websites to visit myself.",
-	"source-snapshot": "037",
+	"preference": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine.",
+	"source-snapshot": "040",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.bing.com/copilotsearch",
-	"final-url": "https://www.bing.com/copilotsearch"
+	"url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy",
+	"final-url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy/"
 }

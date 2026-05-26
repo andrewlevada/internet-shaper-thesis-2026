@@ -1,0 +1,109 @@
+Timestamp: 2026-05-26T16:37:13.210563+00:00
+Snapshot: 051
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><meta content="origin" name="referrer"><meta content="274266067164" property="fb:app_id"><meta content="Pinterest" property="og:site_name"><title>Pinterest</title><meta content="Discover recipes, home ideas, style inspiration and other ideas to try." data-app="true" name="description" property="description"><meta content="Discover recipes, home ideas, style inspiration and other ideas to try." data-app="true" name="og:description" property="og:description"><meta content="https://s.pinimg.com/images/facebook_share_image.png" data-app="true" name="og:image" property="og:image"><meta content="Pinterest" data-app="true" name="og:title" property="og:title"><meta content="website" data-app="true" name="og:type" property="og:type"><meta content="https://www.pinterest.com/search/pins/" data-app="true" name="og:url" property="og:url"><meta content="com.pinterest" data-app="true" name="twitter:app:android" property="twitter:app:android"><meta content="429047995" data-app="true" name="twitter:app:id:ipad" property="twitter:app:id:ipad"><meta content="429047995" data-app="true" name="twitter:app:id:iphone" property="twitter:app:id:iphone"><meta content="pinterest://search/?q=cats" data-app="true" name="twitter:app:url:googleplay" property="twitter:app:url:googleplay"><meta content="pinterest://search/pins/?q=cats" data-app="true" name="twitter:app:url:ipad" property="twitter:app:url:ipad"><meta content="pinterest://search/pins/?q=cats" data-app="true" name="twitter:app:url:iphone" property="twitter:app:url:iphone"><meta content="summary_large_image" data-app="true" name="twitter:card" property="twitter:card"><meta content="@pinterest" data-app="true" name="twitter:site" property="twitter:site"><link href="https://www.pinterest.com/search/pins/" rel="canonical"><link href="https://ar.pinterest.com/search/pins/" rel="alternate" hreflang="es-AR"><link href="https://at.pinterest.com/search/pins/" rel="alternate" hreflang="de-AT"><link href="https://au.pinterest.com/sear
+
+--- ASSISTANT ---
+```json
+{
+  "jobs": [
+    "I want to browse through cute and funny cat pictures to get visual inspiration or entertainment.",
+    "I want to refine my search using suggested topic pills (like 'aesthetic', 'wallpaper', or 'meme') to find a specific style of cat image.",
+    "I want to search for another topic, interest, or idea using the main search bar.",
+    "I want to log in or create an account so I can save my favorite cat images to curated boards.",
+    "I want to click on an appealing cat image to view its full details, larger size, or original source."
+  ]
+}
+```
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I love saving and organizing digital content into highly curated collections so I can easily reference them later.",
+      "b": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them."
+    },
+    {
+      "a": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
+      "b": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from."
+    },
+    {
+      "a": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
+      "b": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Add a prominent, one-click 'Save to Board' button directly on each pin thumbnail in the search grid so I do not have to hover or open the pin to save it."
+    },
+    {
+      "id": "1b",
+      "request": "Remove the bottom-right sign-in pop-up and all login/signup prompts entirely to allow a distraction-free, casual browsing experience of the image grid."
+    },
+    {
+      "id": "2a",
+      "request": "Hide all text overlays, website attributions, and creator tags beneath the pins in the search grid to create a clean, borderless display of pure images."
+    },
+    {
+      "id": "2b",
+      "request": "Show a brief description and the domain name directly under each pin thumbnail in the grid so I can understand the context and origin of each image before clicking it."
+    },
+    {
+      "id": "3a",
+      "request": "Remove the horizontal list of suggestion pills (like 'Eye nails', 'Black', 'Meme') beneath the search header to keep the interface focused solely on my exact search query."
+    },
+    {
+      "id": "3b",
+      "request": "Make the horizontal suggestion pills larger and place them at the very top of the page with interactive preview icons, inviting me to explore related subcategories."
+    }
+  ]
+}
+

@@ -1,34 +1,34 @@
 {
-	"request-prompt": "Add a prominent floating toggle switch for Dark/Light mode on the main body sidebar next to the expand button so I can easily override the light page template without needing to open the header tools.",
-	"goal": "I strictly prefer dark mode across all websites I use to reduce eye strain and expect a quick, prominent way to toggle themes on any page.",
+	"request-prompt": "Remove the large decorative icon, promotional text, and background card from the center of the page, leaving only a simple, distraction-free sign-in button.",
+	"goal": "I prefer a clean, minimal interface that focuses solely on my content, and I find promotional banners and sign-in prompts highly distracting.",
 	"jobs": [
-		"I want to learn how to sign up and register for a new Fandom user account",
-		"I want to find the direct registration link to create a Fandom account",
-		"I want to understand how to customize my viewing preferences, such as switching between dark and light themes",
-		"I want to find out how to adjust my Fandom account settings and text size on mobile devices",
-		"I want to access other beginner guides to learn how to contribute to wikis and join community discussions",
-		"I want to read comments from other users or ask a question about getting started on Fandom",
-		"I want to sign in to my existing Fandom account"
+		"I want to sign in to my YouTube account to access my personalized library of saved videos.",
+		"I want to look up a video I recently watched by checking my watch history.",
+		"I want to access my 'Watch Later' list to watch the videos I saved for my leisure time.",
+		"I want to browse my custom playlists to watch or listen to my curated collections.",
+		"I want to see the list of videos I have liked in the past to find a specific video again.",
+		"I want to search for a video or topic using the top search bar.",
+		"I want to navigate to other areas of YouTube, such as Home, Shorts, or Subscriptions, using the side menu."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am a passive consumer (lurker) who prefers to read wiki content anonymously and rarely registers an account or configures settings.",
-			"b": "I am an active contributor who loves setting up personalized profiles, configuring preferences, and editing wikis to feel fully integrated into the community."
+			"a": "I always stay logged in to my accounts to ensure my history, preferences, and curated playlists are seamlessly synced across all my devices.",
+			"b": "I prefer to browse websites signed out or in private modes because I highly value my privacy and do not want platforms tracking my personal viewing habits."
 		},
 		{
-			"a": "I prefer simple, highly-visual guides with screenshots and gallery walkthroughs to quickly learn how to navigate a new interface.",
-			"b": "I prefer reading comprehensive, text-dense documentation with deep-dive links to understand the complete technical details of how a system works."
+			"a": "I like to actively organize and manage my content by saving videos to custom playlists and Watch Later lists so I can systematically watch them later.",
+			"b": "I rarely save content or curate playlists; I prefer to search for what I want on the spot or rely on instant algorithmic recommendations."
 		},
 		{
-			"a": "I strictly prefer dark mode across all websites I use to reduce eye strain and expect a quick, prominent way to toggle themes on any page.",
-			"b": "I prefer using light mode for maximum readability and contrast under normal lighting, and I usually stick with whatever default aesthetic a site provides."
+			"a": "I prefer a clean, minimal interface that focuses solely on my content, and I find promotional banners and sign-in prompts highly distracting.",
+			"b": "I do not mind promotional banners and call-to-action prompts occupying screen space, as I am used to standard layouts and easily look past them to find what I need."
 		}
 	],
 	"preference-pair-index": 3,
 	"preference-side": "a",
-	"preference": "I strictly prefer dark mode across all websites I use to reduce eye strain and expect a quick, prominent way to toggle themes on any page.",
-	"source-snapshot": "071",
+	"preference": "I prefer a clean, minimal interface that focuses solely on my content, and I find promotional banners and sign-in prompts highly distracting.",
+	"source-snapshot": "007",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
-	"final-url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization"
+	"url": "https://www.youtube.com/feed/you",
+	"final-url": "https://www.youtube.com/feed/you"
 }

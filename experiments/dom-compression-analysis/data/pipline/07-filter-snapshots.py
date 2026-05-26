@@ -8,7 +8,9 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SNAPSHOTS_DIR = HERE / "snapshots"
+RAW_SNAPSHOTS_DIR = HERE.parent / "raw-snapshots"
+SNAPSHOTS_DIR = HERE.parent / "snapshots"
+RAW_MANIFEST_CSV = RAW_SNAPSHOTS_DIR / "data.csv"
 MANIFEST_CSV = SNAPSHOTS_DIR / "data.csv"
 FOLDER_WIDTH = 3
 
@@ -30,15 +32,18 @@ EXCLUDED_URLS = {
     "https://www.pinterest.com/pin/65654107064590364",
     "https://s.iwan.qq.com/opengame/tenvideo/index.html",
     "https://www.fandom.com/topics/tv",
+    "https://en.wikipedia.org/w/index.php"
 }
 
 Row = dict[str, str]
 
 
 def main() -> None:
-    if not MANIFEST_CSV.is_file():
-        print(f"Missing manifest CSV: {MANIFEST_CSV}", file=sys.stderr)
+    if not RAW_MANIFEST_CSV.is_file():
+        print(f"Missing manifest CSV: {RAW_MANIFEST_CSV}", file=sys.stderr)
         sys.exit(1)
+
+    clone_raw_snapshots()
 
     rows = read_manifest_rows()
     validate_manifest(rows)
@@ -73,6 +78,18 @@ def main() -> None:
     if orphan_count:
         print(f"Removed {orphan_count} unmanifested numeric folders")
     print(f"Wrote {MANIFEST_CSV}")
+
+
+def clone_raw_snapshots() -> None:
+    if not RAW_SNAPSHOTS_DIR.is_dir():
+        print(f"Missing raw snapshots directory: {RAW_SNAPSHOTS_DIR}", file=sys.stderr)
+        sys.exit(1)
+
+    if SNAPSHOTS_DIR.exists():
+        shutil.rmtree(SNAPSHOTS_DIR)
+
+    shutil.copytree(RAW_SNAPSHOTS_DIR, SNAPSHOTS_DIR)
+    print(f"Cloned {RAW_SNAPSHOTS_DIR.name} -> {SNAPSHOTS_DIR.name}")
 
 
 def read_manifest_rows() -> list[Row]:

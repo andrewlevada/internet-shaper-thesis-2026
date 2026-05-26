@@ -16,7 +16,7 @@ from playwright.sync_api import sync_playwright
 
 HERE = Path(__file__).resolve().parent
 INPUT_CSV = HERE / "05-smapled-pages.csv"
-SNAPSHOTS_DIR = HERE / "raw-snapshots"
+SNAPSHOTS_DIR = HERE.parent / "raw-snapshots"
 MANIFEST_CSV = SNAPSHOTS_DIR / "data.csv"
 
 NAV_TIMEOUT_MS = 30_000

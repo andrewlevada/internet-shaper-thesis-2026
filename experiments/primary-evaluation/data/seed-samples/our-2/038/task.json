@@ -1,34 +1,32 @@
 {
-	"request-prompt": "Enlarge the text-based forecast summary banner ('Rain likely around 1:30 pm.') and position it at the very top of the page, while shrinking the interactive map to a smaller, static visual representation below it.",
-	"goal": "I prefer simple, straightforward text-based summaries and pre-made reports over interactive maps that require manual configuration.",
+	"request-prompt": "Remove the bottom-right sign-in pop-up and all login/signup prompts entirely to allow a distraction-free, casual browsing experience of the image grid.",
+	"goal": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them.",
 	"jobs": [
-		"I want to track current and upcoming precipitation in my area by viewing the interactive radar map",
-		"I want to see how a storm is moving over time by playing the radar timeline animation",
-		"I want to check the weather radar for a different city or zip code using the search bar",
-		"I want to customize the weather map layers to view specific conditions like wind speed, temperature, or UV index",
-		"I want to monitor active severe weather threats such as hurricanes, lightning, or storm warnings on the map",
-		"I want to quickly find out when rain or snow is expected to start in my current location",
-		"I want to switch the map's visual style, such as to satellite or dark mode, to better visualize the weather patterns"
+		"I want to browse through cute and funny cat pictures to get visual inspiration or entertainment.",
+		"I want to refine my search using suggested topic pills (like 'aesthetic', 'wallpaper', or 'meme') to find a specific style of cat image.",
+		"I want to search for another topic, interest, or idea using the main search bar.",
+		"I want to log in or create an account so I can save my favorite cat images to curated boards.",
+		"I want to click on an appealing cat image to view its full details, larger size, or original source."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am a data-driven user who likes to dive deep into complex, customizable data visualizations and maps to analyze details and draw my own conclusions.",
-			"b": "I prefer simple, straightforward text-based summaries and pre-made reports over interactive maps that require manual configuration."
+			"a": "I love saving and organizing digital content into highly curated collections so I can easily reference them later.",
+			"b": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them."
 		},
 		{
-			"a": "I prefer dark-themed interfaces and high-detail satellite imagery across all apps and sites to minimize eye strain and view realistic textures.",
-			"b": "I prefer light-themed interfaces and clean, high-contrast, simplified maps because they are easier for me to read quickly."
+			"a": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
+			"b": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from."
 		},
 		{
-			"a": "I am highly protective of my digital privacy, so I strictly reject tracking, cookies, and geolocation prompts, and avoid signing in to websites.",
-			"b": "I prioritize seamless convenience, so I readily enable location tracking, accept cookies, and sign in to get highly personalized local content automatically."
+			"a": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
+			"b": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches."
 		}
 	],
 	"preference-pair-index": 1,
 	"preference-side": "b",
-	"preference": "I prefer simple, straightforward text-based summaries and pre-made reports over interactive maps that require manual configuration.",
-	"source-snapshot": "050",
+	"preference": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them.",
+	"source-snapshot": "051",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://weather.com/weather/radar/interactive/l/96e1c7f17a291a7ee64cda75a7bca6b6b8a31fa3cc9e0baf3c7c2f04dd3c1020",
-	"final-url": "https://weather.com/weather/radar/interactive/l/96e1c7f17a291a7ee64cda75a7bca6b6b8a31fa3cc9e0baf3c7c2f04dd3c1020"
+	"url": "https://pinterest.com/search/pins/?q=cats",
+	"final-url": "https://www.pinterest.com/search/pins/?q=cats"
 }
