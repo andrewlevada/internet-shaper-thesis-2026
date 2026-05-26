@@ -75,8 +75,18 @@ class AgentLogWriter:
         *,
         run_result: AgentRunResult,
         result_summary: str,
+        context_overflow: str | None = None,
     ) -> None:
         lines: list[str] = []
+        if context_overflow:
+            lines.extend(
+                [
+                    "=== Context overflow ===",
+                    "",
+                    context_overflow,
+                    "",
+                ]
+            )
         if run_result.final_assistant_text.strip():
             lines.extend(["--- ASSISTANT ---", run_result.final_assistant_text.strip(), ""])
         if run_result.prompt_tokens is not None:

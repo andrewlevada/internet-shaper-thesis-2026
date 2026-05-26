@@ -9,6 +9,7 @@ from pathlib import Path
 from config import GATEWAY_MODEL_ID, MAX_TOOL_ROUNDS, PipelineConfig
 
 from agent import AgentRunResult, ToolCallRecord, ToolDispatcher, build_tools, openai_tool_result_message
+from errors import ContextOverflowError, is_context_overflow_error
 from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
@@ -82,12 +83,19 @@ def run_agent_vercel(
     final_text = ""
 
     for _round in range(MAX_TOOL_ROUNDS):
-        response = client.chat.completions.create(
-            model=model_id,
-            messages=messages,
-            tools=tools,
-            tool_choice="auto",
-        )
+        try:
+            response = client.chat.completions.create(
+                model=model_id,
+                messages=messages,
+                tools=tools,
+                tool_choice="auto",
+            )
+        except Exception as exc:
+            if is_context_overflow_error(exc):
+                result.rules = dispatcher.rules
+                result.final_assistant_text = final_text
+                raise ContextOverflowError(str(exc), run_result=result) from exc
+            raise
         choice = response.choices[0]
         message = choice.message
 

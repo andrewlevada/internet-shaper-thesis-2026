@@ -160,11 +160,11 @@ function getNotFoundError(
 ): Error {
 	if (totalEdits === 1) {
 		return new Error(
-			`Could not find the text. Make sure the oldText is exactly matches the source DOM`,
+			`Could not find the text. Make sure the oldText is exactly matches the target text`,
 		)
 	}
 	return new Error(
-		`Could not find edits[${editIndex}]. Make sure the oldText is exactly matches the source DOM`,
+		`Could not find edits[${editIndex}]. Make sure the oldText is exactly matches the target text`,
 	)
 }
 

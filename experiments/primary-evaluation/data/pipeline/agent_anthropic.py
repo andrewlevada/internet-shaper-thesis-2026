@@ -16,6 +16,7 @@ from agent import (
     anthropic_tool_result_content,
     build_tools,
 )
+from errors import ContextOverflowError, is_context_overflow_error
 from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
@@ -120,19 +121,26 @@ def run_agent_anthropic(
     final_text = ""
 
     for _round in range(MAX_TOOL_ROUNDS):
-        response = client.messages.create(
-            model=model_id,
-            max_tokens=MAX_RESPONSE_TOKENS,
-            system=[
-                {
-                    "type": "text",
-                    "text": pipeline.system_prompt,
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ],
-            tools=tools,
-            messages=messages,
-        )
+        try:
+            response = client.messages.create(
+                model=model_id,
+                max_tokens=MAX_RESPONSE_TOKENS,
+                system=[
+                    {
+                        "type": "text",
+                        "text": pipeline.system_prompt,
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
+                tools=tools,
+                messages=messages,
+            )
+        except Exception as exc:
+            if is_context_overflow_error(exc):
+                result.rules = dispatcher.rules
+                result.final_assistant_text = final_text
+                raise ContextOverflowError(str(exc), run_result=result) from exc
+            raise
 
         if response.usage:
             result.prompt_tokens = response.usage.input_tokens

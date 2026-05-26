@@ -19,6 +19,7 @@ from config import (
     PipelineConfig,
     build_user_message,
 )
+from errors import ContextOverflowError
 from lib.logs_streamer import AgentLogWriter
 from lib.screenshot import screenshot_variant
 from paths import agent_variant_paths
@@ -223,6 +224,26 @@ def run_agent_pipeline(
         )
 
         log_writer.finalize(run_result=run_result, result_summary=summary)
+    except ContextOverflowError as exc:
+        run_result = exc.run_result
+        summary = apply_changes(
+            pipeline,
+            paths=paths,
+            run_result=run_result,
+        )
+        overflow_note = (
+            "Context overflow: model context was full; pipeline stopped early. "
+            "Saved the latest edit snapshot as index.html."
+        )
+        print(
+            f"[{sample_id}] context overflow in {pipeline.folder}; "
+            "saved latest edit snapshot"
+        )
+        log_writer.finalize(
+            run_result=run_result,
+            result_summary=f"{overflow_note}\n\n{summary}",
+            context_overflow=str(exc),
+        )
     except Exception:
         log_writer.close()
         raise

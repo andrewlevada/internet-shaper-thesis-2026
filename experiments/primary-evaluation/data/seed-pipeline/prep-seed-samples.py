@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import random
 import re
 import shutil
 import sys
@@ -33,7 +34,9 @@ SNAPSHOTS_CSV = SNAPSHOTS_DIR / "data.csv"
 SEED_FOLD = DATA_DIR / "seed-samples" / "our-2"
 LOGS_DIR = SCRIPT_DIR / "logs"
 
+SNAPSHOTS_NUMBER = 1
 SNAPSHOT_GLOB = "[0-9][0-9][0-9]"
+SNAPSHOT_ORDER_SEED = 9081436
 SEED_MODEL_ID = "google/gemini-3.5-flash"
 MAX_TOOL_ROUNDS = 8
 PREFERENCE_SIDES = ("a", "b")
@@ -264,10 +267,13 @@ def list_snapshot_ids(sample_filter: str | None) -> list[str]:
         for path in SNAPSHOTS_DIR.glob(SNAPSHOT_GLOB)
         if path.is_dir()
     )
+    
     if not ids:
         print(f"No snapshots under {SNAPSHOTS_DIR}", file=sys.stderr)
         sys.exit(1)
-    return ids
+    random.Random(SNAPSHOT_ORDER_SEED).shuffle(ids)
+
+    return ids[:SNAPSHOTS_NUMBER]
 
 
 def expected_sample_ids(snapshot_id: str) -> list[str]:
@@ -660,7 +666,7 @@ def main() -> None:
 
     log_lines = [
         "Prep seed samples from dom-compression snapshots",
-        "-" * 48,
+        "---"
         f"timestamp (UTC): {timestamp}",
         f"script: {Path(__file__).name}",
         f"model: {SEED_MODEL_ID}",
@@ -669,6 +675,7 @@ def main() -> None:
         f"output fold: {SEED_FOLD}",
         f"snapshot filter: {args.sample or '(all)'}",
         f"skip existing: {args.skip_existing}",
+        f"snapshot order seed: {SNAPSHOT_ORDER_SEED if not args.sample else '(single sample)'}",
         f"snapshots to process: {', '.join(snapshot_ids)}",
         "",
     ]
