@@ -77,13 +77,15 @@ class AgentLogWriter:
         message_count: int,
         payload_chars: int,
         model_id: str,
+        cache_mode: str | None = None,
     ) -> None:
+        cache_part = f" cache={cache_mode}" if cache_mode else ""
         self._write_lines(
             [
                 f"--- API REQUEST round {round_index} ---",
                 (
                     f"model={model_id} messages={message_count} "
-                    f"payload_chars={payload_chars:,}"
+                    f"payload_chars={payload_chars:,}{cache_part}"
                 ),
                 "",
             ]
@@ -96,17 +98,33 @@ class AgentLogWriter:
         elapsed_s: float,
         prompt_tokens: int | None,
         completion_tokens: int | None,
+        cached_tokens: int | None = None,
+        cache_creation_tokens: int | None = None,
+        prompt_tokens_details: dict[str, object] | None = None,
         tool_calls: list[str] | None,
         finish_reason: str | None,
     ) -> None:
         tools = ", ".join(tool_calls) if tool_calls else "(none)"
+        cache_parts: list[str] = []
+        if cached_tokens is not None:
+            cache_parts.append(f"cached_tokens={cached_tokens}")
+        if cache_creation_tokens is not None:
+            cache_parts.append(f"cache_creation_tokens={cache_creation_tokens}")
+        cache_part = f" {' '.join(cache_parts)}" if cache_parts else ""
+        details_part = ""
+        if prompt_tokens_details:
+            details_part = (
+                f" prompt_tokens_details="
+                f"{json.dumps(prompt_tokens_details, ensure_ascii=False)}"
+            )
         self._write_lines(
             [
                 f"--- API RESPONSE round {round_index} ---",
                 (
                     f"elapsed_s={elapsed_s:.1f} "
                     f"prompt_tokens={prompt_tokens} "
-                    f"completion_tokens={completion_tokens} "
+                    f"completion_tokens={completion_tokens}"
+                    f"{cache_part}{details_part} "
                     f"finish_reason={finish_reason} tool_calls=[{tools}]"
                 ),
                 "",

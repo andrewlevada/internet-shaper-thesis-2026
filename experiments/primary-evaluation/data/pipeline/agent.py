@@ -16,6 +16,7 @@ from config import (
     ANTHROPIC_MODEL_ID,
     GATEWAY_MODEL_ID,
     LOCAL_MODEL_ID,
+    OPENROUTER_MODEL_ID,
     MAX_NEW_TOKENS,
     MAX_TOOL_OUTPUT_CHARS,
     MAX_TOOL_ROUNDS,
@@ -23,6 +24,7 @@ from config import (
     TRUNCATION_SUFFIX,
     AgentProvider,
     PipelineConfig,
+    gateway_uses_explicit_cache,
 )
 from paths import AgentVariantPaths
 
@@ -31,10 +33,163 @@ MUTATION_TOOLS = frozenset({"edit", "set_update_rule"})
 SINGLE_CALL_EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom"})
 
 CACHE_CONTROL_EPHEMERAL: dict[str, str] = {"type": "ephemeral"}
+# Alibaba explicit cache minimum; explore tool output exceeds this by far.
+EXPLICIT_CACHE_MIN_TEXT_CHARS = 1024
 
 
 def should_cache_tool_result(name: str) -> bool:
     return name in SINGLE_CALL_EXPLORE_TOOLS
+
+
+def _message_text_content(message: dict[str, Any]) -> str:
+    content = message.get("content")
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, dict):
+                text = block.get("text")
+                if isinstance(text, str):
+                    parts.append(text)
+        return "".join(parts)
+    return ""
+
+
+def _wrap_text_as_cached_content(text: str) -> list[dict[str, Any]]:
+    return openai_cached_text_content(text)
+
+
+def openai_cached_text_content(text: str) -> list[dict[str, Any]]:
+    return [
+        {
+            "type": "text",
+            "text": text,
+            "cache_control": CACHE_CONTROL_EPHEMERAL,
+        }
+    ]
+
+
+def openai_system_message(content: str) -> dict[str, Any]:
+    return {"role": "system", "content": content}
+
+
+def openai_clear_cache_controls(messages: list[dict[str, Any]]) -> None:
+    for message in messages:
+        message.pop("cache_control", None)
+        content = message.get("content")
+        if not isinstance(content, list):
+            continue
+        for block in content:
+            if isinstance(block, dict):
+                block.pop("cache_control", None)
+
+
+def openai_clear_tool_cache_controls(tools: list[dict[str, Any]]) -> None:
+    for tool in tools:
+        function = tool.get("function")
+        if isinstance(function, dict):
+            function.pop("cache_control", None)
+
+
+def openai_cache_last_tool_definition(tools: list[dict[str, Any]]) -> None:
+    openai_clear_tool_cache_controls(tools)
+    if not tools:
+        return
+    function = tools[-1].get("function")
+    if isinstance(function, dict):
+        function["cache_control"] = dict(CACHE_CONTROL_EPHEMERAL)
+
+
+def openai_mark_large_tool_results(messages: list[dict[str, Any]]) -> None:
+    for message in messages:
+        if message.get("role") != "tool":
+            continue
+        text = _message_text_content(message)
+        if len(text) < EXPLICIT_CACHE_MIN_TEXT_CHARS:
+            continue
+        message["content"] = _wrap_text_as_cached_content(text)
+
+
+def openai_set_trailing_cache_breakpoint(messages: list[dict[str, Any]]) -> bool:
+    for message in reversed(messages):
+        content = message.get("content")
+        if isinstance(content, str):
+            message["content"] = openai_cached_text_content(content)
+            return True
+        if isinstance(content, list):
+            for block in reversed(content):
+                if isinstance(block, dict) and block.get("type") == "text":
+                    block["cache_control"] = dict(CACHE_CONTROL_EPHEMERAL)
+                    return True
+    return False
+
+
+def openai_ensure_text_blocks(message: dict[str, Any]) -> None:
+    """Convert string content to array blocks (required for Alibaba cache markers)."""
+    content = message.get("content")
+    if isinstance(content, str):
+        message["content"] = [{"type": "text", "text": content}]
+        return
+    if content is None:
+        message["content"] = [{"type": "text", "text": ""}]
+
+
+def openai_set_message_cache_marker(message: dict[str, Any]) -> None:
+    openai_ensure_text_blocks(message)
+    content = message.get("content")
+    if not isinstance(content, list):
+        return
+    for block in reversed(content):
+        if isinstance(block, dict) and block.get("type") == "text":
+            block["cache_control"] = dict(CACHE_CONTROL_EPHEMERAL)
+            return
+
+
+def openai_prepare_alibaba_explicit_cache(
+    messages: list[dict[str, Any]],
+    *,
+    round_index: int,
+) -> str:
+    """Apply Alibaba/Qwen explicit caching: marker on last message, array content only."""
+    del round_index
+    openai_clear_cache_controls(messages)
+    if not messages:
+        return "explicit"
+    openai_set_message_cache_marker(messages[-1])
+    return "explicit"
+
+
+def openai_prepare_explicit_cache(
+    messages: list[dict[str, Any]],
+    tools: list[dict[str, Any]],
+    *,
+    round_index: int,
+) -> str:
+    """Apply explicit cache_control markers (OpenCode / Cline pattern for Qwen)."""
+    openai_clear_cache_controls(messages)
+    openai_clear_tool_cache_controls(tools)
+    openai_mark_large_tool_results(messages)
+    openai_cache_last_tool_definition(tools)
+    if round_index >= 1:
+        openai_set_trailing_cache_breakpoint(messages)
+    return "explicit"
+
+
+def openai_prepare_gateway_cache(
+    messages: list[dict[str, Any]],
+    tools: list[dict[str, Any]],
+    *,
+    model_id: str,
+    round_index: int,
+) -> str:
+    """Apply provider-appropriate prompt caching markers before an API call."""
+    if not gateway_uses_explicit_cache(model_id):
+        openai_clear_cache_controls(messages)
+        openai_clear_tool_cache_controls(tools)
+        return "implicit"
+
+    return openai_prepare_explicit_cache(messages, tools, round_index=round_index)
 
 
 def anthropic_cached_tool_result_content(result: str) -> list[dict[str, Any]]:
@@ -59,14 +214,12 @@ def openai_tool_result_message(
     name: str,
     content: str,
 ) -> dict[str, Any]:
-    message: dict[str, Any] = {
+    del name
+    return {
         "role": "tool",
         "tool_call_id": tool_call_id,
         "content": content,
     }
-    if should_cache_tool_result(name):
-        message["cache_control"] = CACHE_CONTROL_EPHEMERAL
-    return message
 
 AgentBackend = AgentProvider
 
@@ -638,6 +791,17 @@ def run_agent(
             user_message=user_message,
             paths=paths,
             model_id=pipeline.model or ANTHROPIC_MODEL_ID,
+            log_writer=log_writer,
+        )
+    if provider == "openrouter":
+        from agent_openrouter import run_agent_openrouter
+
+        return run_agent_openrouter(
+            pipeline,
+            sample_id=sample_id,
+            user_message=user_message,
+            paths=paths,
+            model_id=pipeline.model or OPENROUTER_MODEL_ID,
             log_writer=log_writer,
         )
     from agent_vercel import run_agent_vercel

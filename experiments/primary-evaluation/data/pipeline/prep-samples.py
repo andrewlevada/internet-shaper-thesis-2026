@@ -15,6 +15,7 @@ from config import (
     ANTHROPIC_MODEL_ID,
     GATEWAY_MODEL_ID,
     LOCAL_MODEL_ID,
+    OPENROUTER_MODEL_ID,
     PIPELINES,
     PipelineConfig,
     build_user_message,
@@ -56,11 +57,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--backend",
-        choices=["vercel", "anthropic", "local"],
+        choices=["vercel", "openrouter", "anthropic", "local"],
         default="vercel",
         help=(
             "Default agent provider when a pipeline does not set one: vercel "
-            "(Vercel AI Gateway + Qwen3.6-27B), anthropic (Claude via Anthropic API), "
+            "(Vercel AI Gateway + Qwen3.6-27B), openrouter (OpenRouter + qwen/qwen3.6-27b "
+            "via wandb/fp8), anthropic (Claude via Anthropic API), "
             "or local (Qwen/Qwen3.6-27B via transformers on GPU)."
         ),
     )
@@ -116,6 +118,8 @@ def resolve_model_id(pipeline: PipelineConfig, backend: AgentBackend) -> str:
         return LOCAL_MODEL_ID
     if provider == "anthropic":
         return ANTHROPIC_MODEL_ID
+    if provider == "openrouter":
+        return OPENROUTER_MODEL_ID
     return GATEWAY_MODEL_ID
 
 

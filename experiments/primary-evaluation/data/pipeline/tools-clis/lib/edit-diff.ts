@@ -29,7 +29,65 @@ export function normalizeForFuzzyMatch(text: string): string {
 		.replace(/[\u201C\u201D\u201E\u201F]/g, '"')
 		.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, "-")
 		.replace(/[\u00A0\u2002-\u200A\u202F\u205F\u3000]/g, " ")
-		.replace(/\s+/g, " ")
+		.replace(/\s+/g, "")
+}
+
+function isWhitespace(char: string): boolean {
+	return /\s/.test(char)
+}
+
+function fuzzyCharsEqual(a: string, b: string): boolean {
+	return normalizeForFuzzyMatch(a) === normalizeForFuzzyMatch(b)
+}
+
+function tryFuzzyMatchAt(
+	content: string,
+	start: number,
+	oldText: string,
+): number | null {
+	let contentIndex = start
+	let oldTextIndex = 0
+
+	while (oldTextIndex < oldText.length) {
+		while (
+			oldTextIndex < oldText.length &&
+			isWhitespace(oldText[oldTextIndex])
+		) {
+			oldTextIndex++
+		}
+		if (oldTextIndex >= oldText.length) break
+
+		while (
+			contentIndex < content.length &&
+			isWhitespace(content[contentIndex])
+		) {
+			contentIndex++
+		}
+		if (contentIndex >= content.length) return null
+
+		if (!fuzzyCharsEqual(content[contentIndex], oldText[oldTextIndex])) {
+			return null
+		}
+
+		contentIndex++
+		oldTextIndex++
+	}
+
+	return contentIndex
+}
+
+function findFuzzyMatchSpan(
+	content: string,
+	oldText: string,
+	searchFrom = 0,
+): { start: number; end: number } | null {
+	for (let start = searchFrom; start < content.length; start++) {
+		const end = tryFuzzyMatchAt(content, start, oldText)
+		if (end !== null) {
+			return { start, end }
+		}
+	}
+	return null
 }
 
 export interface FuzzyMatchResult {
@@ -118,11 +176,8 @@ export function fuzzyFindText(
 		}
 	}
 
-	const fuzzyContent = normalizeForFuzzyMatch(content)
-	const fuzzyOldText = normalizeForFuzzyMatch(oldText)
-	const fuzzyIndex = fuzzyContent.indexOf(fuzzyOldText)
-
-	if (fuzzyIndex === -1) {
+	const span = findFuzzyMatchSpan(content, oldText)
+	if (!span) {
 		return {
 			found: false,
 			index: -1,
@@ -134,10 +189,10 @@ export function fuzzyFindText(
 
 	return {
 		found: true,
-		index: fuzzyIndex,
-		matchLength: fuzzyOldText.length,
+		index: span.start,
+		matchLength: span.end - span.start,
 		usedFuzzyMatch: true,
-		contentForReplacement: fuzzyContent,
+		contentForReplacement: content,
 	}
 }
 
@@ -148,9 +203,15 @@ export function stripBom(content: string): { bom: string; text: string } {
 }
 
 function countOccurrences(content: string, oldText: string): number {
-	const fuzzyContent = normalizeForFuzzyMatch(content)
-	const fuzzyOldText = normalizeForFuzzyMatch(oldText)
-	return fuzzyContent.split(fuzzyOldText).length - 1
+	let count = 0
+	let searchFrom = 0
+	while (searchFrom < content.length) {
+		const span = findFuzzyMatchSpan(content, oldText, searchFrom)
+		if (!span) break
+		count++
+		searchFrom = span.end
+	}
+	return count
 }
 
 function getNotFoundError(
@@ -222,12 +283,7 @@ export function applyEditsToNormalizedContent(
 		}
 	}
 
-	const initialMatches = normalizedEdits.map((edit) =>
-		fuzzyFindText(normalizedContent, edit.oldText),
-	)
-	const baseContent = initialMatches.some((match) => match.usedFuzzyMatch)
-		? normalizeForFuzzyMatch(normalizedContent)
-		: normalizedContent
+	const baseContent = normalizedContent
 
 	const matchedEdits: MatchedEdit[] = []
 	for (let i = 0; i < normalizedEdits.length; i++) {

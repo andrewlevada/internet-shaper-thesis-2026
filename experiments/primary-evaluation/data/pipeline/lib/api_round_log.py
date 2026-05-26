@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -10,18 +11,75 @@ if TYPE_CHECKING:
 API_REQUEST_TIMEOUT_S = 120.0
 
 
+@dataclass(frozen=True)
+class OpenAICacheUsage:
+    cached_tokens: int | None = None
+    cache_creation_tokens: int | None = None
+    prompt_tokens_details: dict[str, Any] | None = None
+
+
+def extract_openai_prompt_tokens_details(usage: Any) -> dict[str, Any] | None:
+    if usage is None:
+        return None
+
+    raw = usage.model_dump() if hasattr(usage, "model_dump") else usage
+    if not isinstance(raw, dict):
+        return None
+
+    details = raw.get("prompt_tokens_details")
+    return details if isinstance(details, dict) else None
+
+
 def estimate_openai_messages_chars(messages: list[dict[str, Any]]) -> int:
     total = 0
     for message in messages:
         content = message.get("content")
         if isinstance(content, str):
             total += len(content)
+        elif isinstance(content, list):
+            for block in content:
+                if isinstance(block, dict):
+                    text = block.get("text")
+                    if isinstance(text, str):
+                        total += len(text)
+                else:
+                    total += len(json.dumps(block, ensure_ascii=False))
         elif content is not None:
             total += len(json.dumps(content, ensure_ascii=False))
         tool_calls = message.get("tool_calls")
         if tool_calls is not None:
             total += len(json.dumps(tool_calls, ensure_ascii=False))
     return total
+
+
+def extract_openai_cache_usage(usage: Any) -> OpenAICacheUsage:
+    if usage is None:
+        return OpenAICacheUsage()
+
+    raw = usage.model_dump() if hasattr(usage, "model_dump") else usage
+    if not isinstance(raw, dict):
+        return OpenAICacheUsage()
+
+    details = extract_openai_prompt_tokens_details(usage)
+    if details is None:
+        details = {}
+
+    cached = (
+        details.get("cached_tokens")
+        or raw.get("cached_tokens")
+        or raw.get("cached_content_token_count")
+    )
+    created = (
+        details.get("cache_creation_input_tokens")
+        or details.get("cache_write_tokens")
+        or raw.get("cache_creation_input_tokens")
+        or raw.get("cache_write_tokens")
+    )
+    return OpenAICacheUsage(
+        cached_tokens=int(cached) if cached is not None else None,
+        cache_creation_tokens=int(created) if created is not None else None,
+        prompt_tokens_details=details or None,
+    )
 
 
 def estimate_anthropic_messages_chars(
@@ -43,11 +101,13 @@ def log_api_request(
     model_id: str,
     message_count: int,
     payload_chars: int,
+    cache_mode: str | None = None,
     log_writer: AgentLogWriter | None,
 ) -> None:
+    cache_label = f", cache={cache_mode}" if cache_mode else ""
     line = (
         f"[{pipeline_id} round {round_index}] API request → "
-        f"{model_id} ({message_count} msgs, {payload_chars:,} chars)"
+        f"{model_id} ({message_count} msgs, {payload_chars:,} chars{cache_label})"
     )
     print(line, flush=True)
     if log_writer is not None:
@@ -56,6 +116,7 @@ def log_api_request(
             message_count=message_count,
             payload_chars=payload_chars,
             model_id=model_id,
+            cache_mode=cache_mode,
         )
 
 
@@ -66,15 +127,29 @@ def log_api_response(
     elapsed_s: float,
     prompt_tokens: int | None,
     completion_tokens: int | None,
+    cached_tokens: int | None = None,
+    cache_creation_tokens: int | None = None,
+    prompt_tokens_details: dict[str, Any] | None = None,
     finish_reason: str | None,
     tool_calls: list[str] | None,
     log_writer: AgentLogWriter | None,
 ) -> None:
     tools_label = ", ".join(tool_calls) if tool_calls else "none"
+    cache_parts: list[str] = []
+    if cached_tokens is not None:
+        cache_parts.append(f"cached_tokens={cached_tokens}")
+    if cache_creation_tokens is not None:
+        cache_parts.append(f"cache_creation_tokens={cache_creation_tokens}")
+    cache_label = f", {', '.join(cache_parts)}" if cache_parts else ""
+    details_label = ""
+    if prompt_tokens_details:
+        details_label = (
+            f", prompt_tokens_details={json.dumps(prompt_tokens_details, ensure_ascii=False)}"
+        )
     line = (
         f"[{pipeline_id} round {round_index}] API response ← {elapsed_s:.1f}s, "
         f"finish={finish_reason}, tools=[{tools_label}], "
-        f"tokens={prompt_tokens}/{completion_tokens}"
+        f"tokens={prompt_tokens}/{completion_tokens}{cache_label}{details_label}"
     )
     print(line, flush=True)
     if log_writer is not None:
@@ -83,6 +158,9 @@ def log_api_response(
             elapsed_s=elapsed_s,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
+            cached_tokens=cached_tokens,
+            cache_creation_tokens=cache_creation_tokens,
+            prompt_tokens_details=prompt_tokens_details,
             tool_calls=tool_calls,
             finish_reason=finish_reason,
         )

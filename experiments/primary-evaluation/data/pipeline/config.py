@@ -13,15 +13,49 @@ PipelineId = Literal[
     "full-sonnet",
 ]
 
-AgentProvider = Literal["vercel", "anthropic", "local"]
+AgentProvider = Literal["vercel", "openrouter", "anthropic", "local"]
 
 ExploreTool = Literal["get_dom", "get_map_of_dom"]
 ActionTool = Literal["edit", "set_update_rule"]
 
 # gateway for testing, local for actual eval run
 LOCAL_MODEL_ID = "Qwen/Qwen3.6-27B"
+# qwen3.6-27b is not on Alibaba's context-cache model list; use qwen3.6-plus when
+# you need prompt caching via the gateway (explicit cache, verified by Cline/OpenCode).
 GATEWAY_MODEL_ID = "alibaba/qwen3.6-27b"
+GATEWAY_CACHE_MODEL_ID = "alibaba/qwen3.6-plus"
+OPENROUTER_MODEL_ID = "qwen/qwen3.6-27b"
+OPENROUTER_PROVIDER_SLUG = "wandb/fp8"
+OPENROUTER_SEED = 42
 ANTHROPIC_MODEL_ID = "claude-sonnet-4-6"
+
+# Models where explicit cache_control markers disable implicit caching and are ignored.
+GATEWAY_IMPLICIT_CACHE_ONLY_MODELS = frozenset(
+    {
+        GATEWAY_MODEL_ID,
+    }
+)
+
+
+def gateway_uses_explicit_cache(model_id: str) -> bool:
+    if model_id in GATEWAY_IMPLICIT_CACHE_ONLY_MODELS:
+        return False
+    slug = model_id.rsplit("/", 1)[-1].lower()
+    if slug.endswith("-27b") or slug.endswith("27b"):
+        return False
+    if slug.startswith("qwen3-max") or slug == "qwen-max":
+        return False
+    return any(
+        token in slug
+        for token in (
+            "plus",
+            "flash",
+            "coder",
+            "qwen3.6-plus",
+            "qwen3.5-plus",
+            "qwen3.5-flash",
+        )
+    )
 
 QWEN_MODEL_CONTEXT = 262144
 
@@ -37,6 +71,25 @@ GATEWAY_CHAT_COMPLETION_KWARGS: dict[str, object] = {
     "extra_body": {
         "top_k": 20,
         "chat_template_kwargs": {"preserve_thinking": True},
+    },
+}
+
+# OpenRouter via wandb/fp8: Alibaba explicit caching needs array message content and a
+# cache_control marker on the last message each turn (not on tools[]).
+# https://openrouter.ai/docs/guides/best-practices/prompt-caching
+# https://www.alibabacloud.com/help/en/model-studio/explicit-cache-best-practice
+OPENROUTER_CHAT_COMPLETION_KWARGS: dict[str, object] = {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "max_tokens": MAX_NEW_TOKENS,
+    "seed": OPENROUTER_SEED,
+    "extra_body": {
+        "top_k": 20,
+        "chat_template_kwargs": {"preserve_thinking": True},
+        "provider": {
+            "order": [OPENROUTER_PROVIDER_SLUG],
+            "allow_fallbacks": False,
+        },
     },
 }
 SHOW_IN_DOM_DEFAULT_DEPTH = 3

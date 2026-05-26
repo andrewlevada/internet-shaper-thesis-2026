@@ -1,4 +1,4 @@
-"""Thin Vercel AI Gateway agent loop (shared tools live in agent.py)."""
+"""OpenRouter agent loop (shared tools live in agent.py)."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ import time
 from pathlib import Path
 
 from config import (
-    GATEWAY_CHAT_COMPLETION_KWARGS,
-    GATEWAY_MODEL_ID,
+    OPENROUTER_CHAT_COMPLETION_KWARGS,
+    OPENROUTER_MODEL_ID,
     MAX_TOOL_ROUNDS,
     PipelineConfig,
 )
@@ -19,8 +19,7 @@ from agent import (
     ToolCallRecord,
     ToolDispatcher,
     build_tools,
-    openai_prepare_gateway_cache,
-    openai_system_message,
+    openai_prepare_alibaba_explicit_cache,
     openai_tool_result_message,
 )
 from errors import ContextOverflowError, is_context_overflow_error
@@ -35,7 +34,7 @@ from lib.api_round_log import (
 from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
-AI_GATEWAY_BASE_URL = "https://ai-gateway.vercel.sh/v1"
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 _PIPELINE_DIR = Path(__file__).resolve().parent
 
 
@@ -64,25 +63,19 @@ def _load_env_files() -> None:
 
 
 def _resolve_api_key() -> str:
-    key = (
-        os.environ.get("AI_GATEWAY_API_KEY")
-        or os.environ.get("VERCEL_AI_GATEWAY_API_KEY")
-        or os.environ.get("OPENAI_API_KEY")
-    )
+    key = os.environ.get("OPEN_ROUTER_API_KEY") or os.environ.get("OPENROUTER_API_KEY")
     if not key:
-        raise RuntimeError(
-            "Missing API key. Set AI_GATEWAY_API_KEY, VERCEL_AI_GATEWAY_API_KEY, or OPENAI_API_KEY."
-        )
+        raise RuntimeError("Missing API key. Set OPEN_ROUTER_API_KEY.")
     return key
 
 
-def run_agent_vercel(
+def run_agent_openrouter(
     pipeline: PipelineConfig,
     *,
     sample_id: str,
     user_message: str,
     paths: AgentVariantPaths,
-    model_id: str = GATEWAY_MODEL_ID,
+    model_id: str = OPENROUTER_MODEL_ID,
     log_writer: AgentLogWriter | None = None,
 ) -> AgentRunResult:
     del sample_id
@@ -91,7 +84,7 @@ def run_agent_vercel(
     from openai import OpenAI
 
     client = OpenAI(
-        base_url=AI_GATEWAY_BASE_URL,
+        base_url=OPENROUTER_BASE_URL,
         api_key=_resolve_api_key(),
         timeout=API_REQUEST_TIMEOUT_S,
     )
@@ -102,18 +95,19 @@ def run_agent_vercel(
     )
     tools = build_tools(pipeline)
     messages: list[dict] = [
-        openai_system_message(pipeline.system_prompt),
-        {"role": "user", "content": user_message},
+        {
+            "role": "system",
+            "content": [{"type": "text", "text": pipeline.system_prompt}],
+        },
+        {"role": "user", "content": [{"type": "text", "text": user_message}]},
     ]
 
-    result = AgentRunResult(model_id=model_id, backend="vercel")
+    result = AgentRunResult(model_id=model_id, backend="openrouter")
     final_text = ""
 
     for round_index in range(MAX_TOOL_ROUNDS):
-        cache_mode = openai_prepare_gateway_cache(
+        cache_mode = openai_prepare_alibaba_explicit_cache(
             messages,
-            tools,
-            model_id=model_id,
             round_index=round_index,
         )
         payload_chars = estimate_openai_messages_chars(messages)
@@ -135,7 +129,7 @@ def run_agent_vercel(
                 tools=tools,
                 tool_choice="auto",
                 timeout=API_REQUEST_TIMEOUT_S,
-                **GATEWAY_CHAT_COMPLETION_KWARGS,
+                **OPENROUTER_CHAT_COMPLETION_KWARGS,
             )
         except Exception as exc:
             elapsed = time.monotonic() - started
@@ -166,6 +160,7 @@ def run_agent_vercel(
             completion_tokens=response.usage.completion_tokens if response.usage else None,
             cached_tokens=cache_usage.cached_tokens,
             cache_creation_tokens=cache_usage.cache_creation_tokens,
+            prompt_tokens_details=cache_usage.prompt_tokens_details,
             finish_reason=choice.finish_reason,
             tool_calls=tool_names or None,
             log_writer=log_writer,
