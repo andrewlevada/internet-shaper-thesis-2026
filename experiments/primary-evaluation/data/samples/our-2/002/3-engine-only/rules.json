@@ -1,0 +1,62 @@
+[
+	{
+		"label": "Enlarge video play icons",
+		"query_selector": ".MediaObject--mediaIcon--wFOkX .Icon--icon--ySD-o, .ContentMedia--listItemIcon--VR34i",
+		"logic": "element.style.transform = 'scale(1.6)';\nelement.style.transformOrigin = 'center center';\nelement.style.display = 'inline-block';"
+	},
+	{
+		"label": "Enlarge news card text",
+		"query_selector": ".MediaObject--mediaTitle--vW+Kk, .ContentMedia--listItemTitle--mvOyq",
+		"logic": "element.style.fontSize = '18px';\nelement.style.lineHeight = '1.4';\nelement.style.fontWeight = '600';"
+	},
+	{
+		"label": "Promote first video to primary",
+		"query_selector": "section[aria-label=\"TOP STORY\"]",
+		"logic": "var section = element.closest('section[aria-label=\"TOP STORY\"]');\nif (!section) return;\n\nvar primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (!primaryItem) return;\n\nvar videoItems = secondaryContainer.querySelectorAll('.mediaListItem');\nvar firstVideoItem = null;\nfor (var i = 0; i < videoItems.length; i++) {\n  if (videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {\n    firstVideoItem = videoItems[i];\n    break;\n  }\n}\n\nif (!firstVideoItem) return;\n\nprimaryItem.style.display = 'none';\n\nvar clone = firstVideoItem.cloneNode(true);\nclone.style.order = '-1';\nsecondaryContainer.insertBefore(clone, secondaryContainer.firstChild);"
+	},
+	{
+		"label": "Auto-play video elements",
+		"query_selector": "video",
+		"logic": "if (element.hasAttribute('autoplay')) return;\nelement.setAttribute('autoplay', '');\nelement.setAttribute('muted', '');\nelement.setAttribute('playsinline', '');\nelement.autoplay = true;\nelement.muted = true;"
+	},
+	{
+		"label": "Promote first video to primary",
+		"query_selector": "section[aria-label=\"TOP STORY\"]",
+		"logic": "var section = element.closest('section[aria-label=\"TOP STORY\"]');\nif (!section) return;\n\nvar primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\n// Hide the primary static image\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (primaryItem) {\n  primaryItem.style.display = 'none';\n}\n\n// Make secondary container use flex order to put video first\nsecondaryContainer.style.display = 'flex';\nsecondaryContainer.style.flexWrap = 'wrap';\n\nvar videoItems = secondaryContainer.querySelectorAll('.mediaListItem');\nfor (var i = 0; i < videoItems.length; i++) {\n  var hasVideoIcon = videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX');\n  if (hasVideoIcon && i > 0) {\n    videoItems[i].style.order = '-1';\n  }\n}"
+	},
+	{
+		"label": "Enlarge video icon containers",
+		"query_selector": ".MediaObject--mediaIcon--wFOkX",
+		"logic": "element.style.width = '60px';\nelement.style.height = '60px';"
+	},
+	{
+		"label": "Enlarge list item video icons",
+		"query_selector": ".ContentMedia--listItemIcon--VR34i",
+		"logic": "element.style.width = '40px';\nelement.style.height = '40px';"
+	},
+	{
+		"label": "Replace static with video primary",
+		"query_selector": "section[aria-label=\"TOP STORY\"]",
+		"logic": "var section = element.closest('section[aria-label=\"TOP STORY\"]');\nif (!section) return;\n\nvar primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\n// Find the first video item in secondary\nvar videoItems = secondaryContainer.querySelectorAll('.mediaListItem');\nvar firstVideoItem = null;\nfor (var i = 0; i < videoItems.length; i++) {\n  if (videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {\n    firstVideoItem = videoItems[i];\n    break;\n  }\n}\n\nif (!firstVideoItem) return;\n\n// Hide the static primary item\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (primaryItem) {\n  primaryItem.style.display = 'none';\n}\n\n// Clone the video item and insert it into the primary container\nvar clone = firstVideoItem.cloneNode(true);\nclone.classList.remove('smallMedia', 'MediaObject--smallMedia--ttgFl', 'ContentMedia--smallMedia--EjVsJ');\nclone.classList.add('fullMedia', 'MediaObject--fullMedia--F7neI', 'ContentMedia--fullMedia--k52SL');\n\n// Clear existing content in primary and add the video\nprimaryContainer.innerHTML = '';\nprimaryContainer.appendChild(clone);"
+	},
+	{
+		"label": "Enlarge video play icons",
+		"query_selector": ".MediaObject--mediaIcon--wFOkX svg",
+		"logic": "element.style.width = '50px';\nelement.style.height = '50px';"
+	},
+	{
+		"label": "Enlarge list video icons",
+		"query_selector": ".ContentMedia--listItemIcon--VR34i",
+		"logic": "element.style.width = '40px';\nelement.style.height = '40px';"
+	},
+	{
+		"label": "Enlarge news card titles",
+		"query_selector": ".MediaObject--mediaTitle--vW+Kk span, .ContentMedia--listItemTitle--mvOyq",
+		"logic": "element.style.fontSize = '18px';\nelement.style.lineHeight = '1.4';"
+	},
+	{
+		"label": "Swap primary to video autoplay",
+		"query_selector": "section[aria-label=\"TOP STORY\"]",
+		"logic": "if (element.dataset.videoSwapped) return;\nelement.dataset.videoSwapped = 'true';\n\nvar primaryContainer = element.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = element.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\nvar secondaryItems = secondaryContainer.querySelectorAll('.mediaListItem');\nvar videoItem = null;\nfor (var i = 0; i < secondaryItems.length; i++) {\n  if (secondaryItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {\n    videoItem = secondaryItems[i];\n    break;\n  }\n}\n\nif (!videoItem) return;\n\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (primaryItem) {\n  primaryItem.style.display = 'none';\n}\n\nvar clone = videoItem.cloneNode(true);\nvar cloneLink = clone.querySelector('.mediaLink');\nif (cloneLink) {\n  cloneLink.classList.remove('smallMedia', 'MediaObject--smallMedia--ttgFl', 'ContentMedia--smallMedia--EjVsJ');\n  cloneLink.classList.add('fullMedia', 'MediaObject--fullMedia--F7neI', 'ContentMedia--fullMedia--k52SL');\n}\nprimaryContainer.innerHTML = '';\nprimaryContainer.appendChild(clone);\n\nvar img = clone.querySelector('img');\nif (img) {\n  img.style.width = '100%';\n  img.style.height = '100%';\n  img.style.objectFit = 'cover';\n}"
+	}
+]

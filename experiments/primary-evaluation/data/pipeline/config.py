@@ -19,15 +19,26 @@ ExploreTool = Literal["get_dom", "get_map_of_dom"]
 ActionTool = Literal["edit", "set_update_rule"]
 
 # gateway for testing, local for actual eval run
-LOCAL_MODEL_ID = "moonshotai/Kimi-K2.6"
-GATEWAY_MODEL_ID = "moonshotai/kimi-k2.6"
+LOCAL_MODEL_ID = "Qwen/Qwen3.6-27B"
+GATEWAY_MODEL_ID = "alibaba/qwen3.6-27b"
 ANTHROPIC_MODEL_ID = "claude-sonnet-4-6"
 
-KIMI_MODEL_CONTEXT = 262144
+QWEN_MODEL_CONTEXT = 262144
 
 MAX_TOOL_ROUNDS = 32
 MAX_NEW_TOKENS = 2**12
-MAX_TOOL_OUTPUT_CHARS = int(KIMI_MODEL_CONTEXT * 0.5 * 2.4)  # half of model context size
+MAX_TOOL_OUTPUT_CHARS = int(QWEN_MODEL_CONTEXT * 0.5 * 2.4)  # half of model context size
+
+# Qwen3.6 thinking mode for precise coding / WebDev (see model card)
+GATEWAY_CHAT_COMPLETION_KWARGS: dict[str, object] = {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "max_tokens": MAX_NEW_TOKENS,
+    "extra_body": {
+        "top_k": 20,
+        "chat_template_kwargs": {"preserve_thinking": True},
+    },
+}
 SHOW_IN_DOM_DEFAULT_DEPTH = 3
 
 TRUNCATION_SUFFIX = "\n\n<!-- truncated: tool output capped. there is no way to see more -->"

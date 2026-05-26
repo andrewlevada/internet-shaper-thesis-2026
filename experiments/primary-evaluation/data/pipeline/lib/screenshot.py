@@ -8,7 +8,7 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, Viewport
 from playwright.sync_api import sync_playwright
 
 VIEWPORT = ViewportSize(width=1440, height=800)
-SET_CONTENT_TIMEOUT_MS = 30_000
+SET_CONTENT_TIMEOUT_MS = 20_000
 
 
 def _default_playwright_browsers_path() -> Path:
@@ -80,11 +80,17 @@ def capture_screenshot(html: str, output_path: Path) -> None:
                     f"Warning: networkidle timeout for {output_path.name}; falling back to load",
                     file=sys.stderr,
                 )
-                page.set_content(
-                    html,
-                    wait_until="load",
-                    timeout=SET_CONTENT_TIMEOUT_MS,
-                )
+                try:
+                    page.set_content(
+                        html,
+                        wait_until="load",
+                        timeout=SET_CONTENT_TIMEOUT_MS,
+                    )
+                except PlaywrightTimeoutError:
+                    print(
+                        f"Warning: load timeout for {output_path.name}; capturing screenshot anyway",
+                        file=sys.stderr,
+                    )
             page.screenshot(path=str(output_path), full_page=False)
             context.close()
         finally:

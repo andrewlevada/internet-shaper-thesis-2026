@@ -60,8 +60,8 @@ def parse_args() -> argparse.Namespace:
         default="vercel",
         help=(
             "Default agent provider when a pipeline does not set one: vercel "
-            "(Vercel AI Gateway + Kimi K2.6), anthropic (Claude via Anthropic API), "
-            "or local (transformers on GPU)."
+            "(Vercel AI Gateway + Qwen3.6-27B), anthropic (Claude via Anthropic API), "
+            "or local (Qwen/Qwen3.6-27B via transformers on GPU)."
         ),
     )
     return parser.parse_args()

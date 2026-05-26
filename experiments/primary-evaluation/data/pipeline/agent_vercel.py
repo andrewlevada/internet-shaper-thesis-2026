@@ -7,7 +7,12 @@ import os
 import time
 from pathlib import Path
 
-from config import GATEWAY_MODEL_ID, MAX_TOOL_ROUNDS, PipelineConfig
+from config import (
+    GATEWAY_CHAT_COMPLETION_KWARGS,
+    GATEWAY_MODEL_ID,
+    MAX_TOOL_ROUNDS,
+    PipelineConfig,
+)
 
 from agent import AgentRunResult, ToolCallRecord, ToolDispatcher, build_tools, openai_tool_result_message
 from errors import ContextOverflowError, is_context_overflow_error
@@ -114,6 +119,7 @@ def run_agent_vercel(
                 tools=tools,
                 tool_choice="auto",
                 timeout=API_REQUEST_TIMEOUT_S,
+                **GATEWAY_CHAT_COMPLETION_KWARGS,
             )
         except Exception as exc:
             elapsed = time.monotonic() - started

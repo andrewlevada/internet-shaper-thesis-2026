@@ -1,0 +1,40 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-05-26T20:51:55.478644+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: (all)
+skip existing: False
+simpler edit requests: True
+dry run: True
+start at snapshot position: 11
+snapshot order seed: 9081436
+excluded snapshots: 008, 009, 010, 011, 024, 026, 027, 028, 032, 041, 042, 043, 044, 045, 046, 065, 066, 067, 073
+next seed sample index: 061
+skipped snapshots (positions 1..10): 047, 071, 004, 040, 050, 048, 051, 070, 007, 033
+snapshots to process: 052, 016, 015, 002, 023, 013, 055, 001, 019, 069
+
+[052] dry-run: would run JTBD session (simpler=True)
+[052] dry-run: would write seed samples our-2/061..066
+[016] dry-run: would run JTBD session (simpler=True)
+[016] dry-run: would write seed samples our-2/061..066
+[015] dry-run: would run JTBD session (simpler=True)
+[015] dry-run: would write seed samples our-2/061..066
+[002] dry-run: would run JTBD session (simpler=True)
+[002] dry-run: would write seed samples our-2/061..066
+[023] dry-run: would run JTBD session (simpler=True)
+[023] dry-run: would write seed samples our-2/061..066
+[013] dry-run: would run JTBD session (simpler=True)
+[013] dry-run: would write seed samples our-2/061..066
+[055] dry-run: would run JTBD session (simpler=True)
+[055] dry-run: would write seed samples our-2/061..066
+[001] dry-run: would run JTBD session (simpler=True)
+[001] dry-run: would write seed samples our-2/061..066
+[019] dry-run: would run JTBD session (simpler=True)
+[019] dry-run: would write seed samples our-2/061..066
+[069] dry-run: would run JTBD session (simpler=True)
+[069] dry-run: would write seed samples our-2/061..066
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T20-51-55.478644+00-00-prep-seed-samples.log

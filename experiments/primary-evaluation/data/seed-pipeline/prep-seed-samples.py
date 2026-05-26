@@ -9,6 +9,7 @@ Usage:
   python3 prep-seed-samples.py
   python3 prep-seed-samples.py --sample 001
   python3 prep-seed-samples.py --sample 001 --skip-existing
+  python3 prep-seed-samples.py --start-at 11 --simpler --dry-run
 """
 
 from __future__ import annotations
@@ -34,7 +35,7 @@ SNAPSHOTS_CSV = SNAPSHOTS_DIR / "data.csv"
 SEED_FOLD = DATA_DIR / "seed-samples" / "our-2"
 LOGS_DIR = SCRIPT_DIR / "logs"
 
-SNAPSHOTS_NUMBER = 10
+SNAPSHOTS_NUMBER = 1
 SNAPSHOT_GLOB = "[0-9][0-9][0-9]"
 SNAPSHOT_ORDER_SEED = 9081436
 SEED_MODEL_ID = "google/gemini-3.5-flash"
@@ -109,6 +110,14 @@ Example mapping to the example above:
 3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
 
 Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)"""
+
+PROMPT_EDIT_REQUESTS_SIMPLER_SUFFIX = """
+
+SCOPE OF REQUESTS:
+- requests must be simple and easy
+- focus on edits to what is already on the page instead of creating whole new parts of the UI
+- there is no way for us to magically display new info that is not on the page — the edits have to be grounded in what content is available on the page
+- focus your changes on elements at the top of the page, because they are easier for us to evaluate"""
 
 PREFERENCE_PAIR_SCHEMA = {
     "type": "object",
@@ -222,7 +231,32 @@ def parse_args() -> argparse.Namespace:
             "(Vercel AI Gateway + Gemini)."
         ),
     )
+    parser.add_argument(
+        "--simpler",
+        action="store_true",
+        help="Add simpler-scope guidance when generating edit requests.",
+    )
+    parser.add_argument(
+        "--start-at",
+        type=int,
+        metavar="N",
+        help=(
+            "1-based position in the seeded snapshot order. Skips the first N-1 "
+            "snapshots (already processed) and continues with the next batch."
+        ),
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print planned work only; do not call the LLM or write seed samples.",
+    )
     return parser.parse_args()
+
+
+def edit_requests_prompt(*, simpler: bool) -> str:
+    if simpler:
+        return PROMPT_EDIT_REQUESTS + PROMPT_EDIT_REQUESTS_SIMPLER_SUFFIX
+    return PROMPT_EDIT_REQUESTS
 
 
 @dataclass
@@ -259,7 +293,7 @@ def load_snapshot_metadata() -> dict[str, SnapshotMeta]:
     return meta
 
 
-def list_snapshot_ids(sample_filter: str | None) -> list[str]:
+def ordered_snapshot_ids(sample_filter: str | None) -> list[str]:
     if sample_filter:
         snapshot_path = SNAPSHOTS_DIR / sample_filter
         if not snapshot_path.is_dir():
@@ -276,6 +310,37 @@ def list_snapshot_ids(sample_filter: str | None) -> list[str]:
     if not ids:
         print(f"No snapshots under {SNAPSHOTS_DIR}", file=sys.stderr)
         sys.exit(1)
+
+    random.Random(SNAPSHOT_ORDER_SEED).shuffle(ids)
+    return ids
+
+
+def list_snapshot_ids(sample_filter: str | None, *, start_at: int | None = None) -> list[str]:
+    ids = ordered_snapshot_ids(sample_filter)
+    if sample_filter:
+        return ids
+
+    if start_at is not None:
+        if start_at < 1:
+            print("--start-at must be >= 1", file=sys.stderr)
+            sys.exit(1)
+        skip_count = start_at - 1
+        if skip_count >= len(ids):
+            print(
+                f"--start-at {start_at} skips all {len(ids)} eligible snapshots",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        end = skip_count + SNAPSHOTS_NUMBER
+        if end > len(ids):
+            print(
+                f"Only {len(ids) - skip_count} snapshots remain after skipping "
+                f"the first {skip_count} (need {SNAPSHOTS_NUMBER})",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        return ids[skip_count:end]
+
     if len(ids) < SNAPSHOTS_NUMBER:
         print(
             f"Only {len(ids)} snapshots available after exclusions "
@@ -283,9 +348,12 @@ def list_snapshot_ids(sample_filter: str | None) -> list[str]:
             file=sys.stderr,
         )
         sys.exit(1)
-    random.Random(SNAPSHOT_ORDER_SEED).shuffle(ids)
-
     return ids[:SNAPSHOTS_NUMBER]
+
+
+def skipped_snapshot_ids(*, start_at: int) -> list[str]:
+    ids = ordered_snapshot_ids(None)
+    return ids[: start_at - 1]
 
 
 def sample_folder_name(index: int) -> str:
@@ -556,7 +624,12 @@ def validate_edit_requests(requests: Any) -> dict[str, str]:
     return {entry_id: by_id[entry_id] for entry_id in EXPECTED_EDIT_IDS}
 
 
-def run_session(snapshot_dir: Path, session_log: list[str]) -> SessionResult:
+def run_session(
+    snapshot_dir: Path,
+    session_log: list[str],
+    *,
+    simpler: bool = False,
+) -> SessionResult:
     visible_html = snapshot_dir / "visible.html"
     if not visible_html.is_file():
         raise FileNotFoundError(f"Missing visible.html: {visible_html}")
@@ -581,10 +654,11 @@ def run_session(snapshot_dir: Path, session_log: list[str]) -> SessionResult:
     )
     preference_pairs = validate_preference_pairs(prefs_payload.get("preference_pairs"))
 
+    edit_prompt = edit_requests_prompt(simpler=simpler)
     edits_payload = run_json_turn(
         client,
         messages,
-        PROMPT_EDIT_REQUESTS,
+        edit_prompt,
         "edit_requests",
         session_log,
         EDIT_REQUESTS_RESPONSE_FORMAT,
@@ -688,9 +762,12 @@ def process_snapshot(
     meta_by_folder: dict[str, SnapshotMeta],
     *,
     skip_existing: bool,
+    simpler: bool,
+    dry_run: bool,
+    start_index: int,
     session_log_path: Path,
     log_lines: list[str],
-) -> None:
+) -> int:
     snapshot_dir = SNAPSHOTS_DIR / snapshot_id
     raw_html = snapshot_dir / "raw.html"
     visible_html = snapshot_dir / "visible.html"
@@ -700,10 +777,23 @@ def process_snapshot(
 
     if skip_existing and snapshot_complete(snapshot_id):
         log_lines.append(f"[{snapshot_id}] skip (all 6 seed samples exist)")
-        return
+        return start_index
+
+    first_sample_id = sample_folder_name(start_index)
+    last_sample_id = sample_folder_name(start_index + len(EXPECTED_EDIT_IDS) - 1)
+
+    if dry_run:
+        log_lines.append(
+            f"[{snapshot_id}] dry-run: would run JTBD session "
+            f"(simpler={simpler})",
+        )
+        log_lines.append(
+            f"[{snapshot_id}] dry-run: would write seed samples "
+            f"our-2/{first_sample_id}..{last_sample_id}",
+        )
+        return start_index + len(EXPECTED_EDIT_IDS)
 
     remove_seed_samples_for_snapshot(snapshot_id)
-    start_index = next_seed_sample_index()
 
     log_lines.append(f"[{snapshot_id}] running JTBD session")
     session_log: list[str] = [
@@ -713,9 +803,8 @@ def process_snapshot(
         "",
     ]
 
-    session = run_session(snapshot_dir, session_log)
+    session = run_session(snapshot_dir, session_log, simpler=simpler)
     meta = meta_by_folder.get(snapshot_id)
-    first_sample_id = sample_folder_name(start_index)
     end_index = write_seed_samples(
         snapshot_id,
         snapshot_dir,
@@ -731,6 +820,7 @@ def process_snapshot(
 
     session_log_path.write_text("\n".join(session_log) + "\n", encoding="utf-8")
     log_lines.append(f"[{snapshot_id}] session log: {session_log_path}")
+    return end_index
 
 
 def main() -> None:
@@ -742,8 +832,11 @@ def main() -> None:
             file=sys.stderr,
         )
         sys.exit(1)
+    if args.start_at is not None and args.sample:
+        print("--start-at cannot be combined with --sample", file=sys.stderr)
+        sys.exit(1)
 
-    snapshot_ids = list_snapshot_ids(args.sample)
+    snapshot_ids = list_snapshot_ids(args.sample, start_at=args.start_at)
     meta_by_folder = load_snapshot_metadata()
     timestamp = datetime.now(timezone.utc).isoformat()
     file_ts = timestamp.replace(":", "-")
@@ -761,21 +854,33 @@ def main() -> None:
         f"output fold: {SEED_FOLD}",
         f"snapshot filter: {args.sample or '(all)'}",
         f"skip existing: {args.skip_existing}",
+        f"simpler edit requests: {args.simpler}",
+        f"dry run: {args.dry_run}",
+        f"start at snapshot position: {args.start_at or '(from start)'}",
         f"snapshot order seed: {SNAPSHOT_ORDER_SEED if not args.sample else '(single sample)'}",
         f"excluded snapshots: {', '.join(sorted(EXCLUDED_SNAPSHOT_IDS)) if not args.sample else '(single sample)'}",
-        f"snapshots to process: {', '.join(snapshot_ids)}",
         f"next seed sample index: {sample_folder_name(next_seed_sample_index())}",
-        "",
     ]
+    if args.start_at is not None:
+        skipped = skipped_snapshot_ids(start_at=args.start_at)
+        log_lines.append(f"skipped snapshots (positions 1..{args.start_at - 1}): {', '.join(skipped)}")
+    log_lines.extend([
+        f"snapshots to process: {', '.join(snapshot_ids)}",
+        "",
+    ])
 
     failures: list[str] = []
+    next_index = next_seed_sample_index()
     for snapshot_id in snapshot_ids:
         session_log_path = LOGS_DIR / f"{file_ts}-{snapshot_id}-session.log"
         try:
-            process_snapshot(
+            next_index = process_snapshot(
                 snapshot_id,
                 meta_by_folder,
                 skip_existing=args.skip_existing,
+                simpler=args.simpler,
+                dry_run=args.dry_run,
+                start_index=next_index,
                 session_log_path=session_log_path,
                 log_lines=log_lines,
             )

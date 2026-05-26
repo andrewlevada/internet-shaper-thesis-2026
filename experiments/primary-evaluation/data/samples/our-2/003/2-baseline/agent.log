@@ -1,8 +1,8 @@
-Timestamp: 2026-05-26T17:41:02.261360+00:00
+Timestamp: 2026-05-26T20:29:03.811645+00:00
 Sample: our-2/003
 Pipeline: baseline (2-baseline)
 Backend: vercel
-Model: moonshotai/kimi-k2.6
+Model: alibaba/qwen3.6-27b
 Work raw: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/003/2-baseline/work/raw.html
 Work visible: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/003/2-baseline/work/visible.html
 Tools: get_dom, edit
@@ -81,10 +81,10 @@ Be thorough - if there are multiple variations of elements matching the user's r
 Hide all non-weather sections, including 'Sponsored Content', 'Product Reviews & Deals', and 'Lonely Planet', leaving only the search bar and the main current conditions display.
 
 --- API REQUEST round 0 ---
-model=moonshotai/kimi-k2.6 messages=2 payload_chars=685
+model=alibaba/qwen3.6-27b messages=2 payload_chars=685
 
 --- API RESPONSE round 0 ---
-elapsed_s=2.3 prompt_tokens=423 completion_tokens=68 finish_reason=tool_calls tool_calls=[get_dom]
+elapsed_s=4.5 prompt_tokens=706 completion_tokens=108 finish_reason=tool_calls tool_calls=[get_dom]
 
 --- TOOL CALL: get_dom ---
 (no input)
@@ -530,5 +530,74 @@ elapsed_s=2.3 prompt_tokens=423 completion_tokens=68 finish_reason=tool_calls to
 <!-- truncated: tool output capped. there is no way to see more -->
 
 --- API REQUEST round 1 ---
-model=moonshotai/kimi-k2.6 messages=4 payload_chars=315,419
+model=alibaba/qwen3.6-27b messages=4 payload_chars=315,439
+
+--- API RESPONSE round 1 ---
+elapsed_s=79.3 prompt_tokens=162703 completion_tokens=1122 finish_reason=tool_calls tool_calls=[edit]
+
+--- TOOL CALL: edit ---
+{
+  "edits": [
+    {
+      "newText": "<div id=\"Taboola-main-f6ca0247-5836-4cb0-a1f4-a2d9e3cf15bf\" class=\"removeIfEmpty\" style=\"display:none;\">",
+      "oldText": "<div id=\"Taboola-main-f6ca0247-5836-4cb0-a1f4-a2d9e3cf15bf\" class=\"removeIfEmpty\">"
+    },
+    {
+      "newText": "<div id=\"WxuContentMedia-main-93e78c6f-fbe9-47e1-ae14-07a7ca30cac0\" class=\"removeIfEmpty\" style=\"display:none;\">",
+      "oldText": "<div id=\"WxuContentMedia-main-93e78c6f-fbe9-47e1-ae14-07a7ca30cac0\" class=\"removeIfEmpty\">"
+    },
+    {
+      "newText": "<div id=\"WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45\" class=\"removeIfEmpty\" style=\"display:none;\">",
+      "oldText": "<div id=\"WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45\" class=\"removeIfEmpty\">"
+    }
+  ]
+}
+
+--- TOOL RESULT: edit ---
+Could not find edits[0]. Make sure the oldText is exactly matches the target text
+
+--- API REQUEST round 2 ---
+model=alibaba/qwen3.6-27b messages=6 payload_chars=316,453
+
+--- API RESPONSE round 2 ---
+elapsed_s=22.9 prompt_tokens=163093 completion_tokens=1156 finish_reason=tool_calls tool_calls=[edit]
+
+--- TOOL CALL: edit ---
+{
+  "edits": [
+    {
+      "newText": "<style>\n#Taboola-main-f6ca0247-5836-4cb0-a1f4-a2d9e3cf15bf,\n#WxuContentMedia-main-93e78c6f-fbe9-47e1-ae14-07a7ca30cac0,\n#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45,\n#WxuContentMedia-main-8e6eec31-8272-410f-94b7-dc3c262ec5d2,\n#WxuContentMedia-main-7a64efde-4532-4374-acd9-6061b0a92b95,\n#WxuContentMedia-main-bf4ee11b-1686-4fe2-b1ff-dbdeb84aacab,\n#WxuAd-main-6ec6a613-6078-498e-92b3-efb8a9c40adf,\n#WxuAd-main-e0ab3ad1-2034-4075-a98f-b3d272a18bd5,\n#WxuAd-main-617de16a-5b28-4ea6-8a32-d3e81ec478dc,\n#WxuAd-contentBottom-cb63b42d-d07c-48d9-a6a4-5f0b1dbc58bf,\n#WxuAd-combinedTopAds-425f392e-14ee-4059-8218-451bb2b284c0,\n#WxuAd-combinedTopAds-f7bcfbae-bf4e-497f-a5a4-b1d06c6d27d7,\n#WxuAd-combinedTopAds-53dce052-5465-4609-a555-c3a20ab64ab0,\n#WxuAd-combinedTopAds-d2ec6be1-08ec-4be9-b2d3-9df78d6b0d32,\n#WxuAd-sidebar-2216c858-71f6-472b-a087-375ed6aa08a2,\n#WxuAd-sidebar-81ea6ebf-1b62-4f2a-932e-5ccabf976a1e,\n#WxuAd-sidebar-fbb14727-c8f1-4a09-a56b-b840a24681c4,\n#WxuContentMedia-sidebar-bd88006a-fed4-498d-8241-e7c6050fac3f,\n#WxuContentMedia-sidebar-6ddd57b9-182e-426c-9a91-c93d825cb4e5,\n#WxuContentMedia-sidebar-c0cdff4e-ec2c-4f92-98d3-3cb37bacf3e4,\n#WxuPromoDriver-sidebar-721f1a1a-460a-422c-a0db-db83a582b227,\n.region-sidebar,\n.region-contentBottom,\n.region-footer,\n.combinedTopAdsSectionWrapper,\n#labBG,\n#wx-hero-content {\n  display: none !important;\n}\n</style>\n<body ",
+      "oldText": "<body "
+    }
+  ]
+}
+
+--- TOOL RESULT: edit ---
+Successfully replaced 1 block(s).
+
+--- API REQUEST round 3 ---
+model=alibaba/qwen3.6-27b messages=8 payload_chars=318,102
+
+--- API RESPONSE round 3 ---
+elapsed_s=11.7 prompt_tokens=164048 completion_tokens=384 finish_reason=stop tool_calls=[(none)]
+
+--- ASSISTANT ---
+Done! I've hidden all non-weather sections from the page. Specifically, I've concealed:
+
+- **Sponsored Content** (Taboola ads section)
+- **Product Reviews & Deals** (sidebar section)
+- **Lonely Planet** section
+- All advertisement blocks (top, mid-content, sidebar, and bottom ads)
+- News/media content sections (Top Stories, Trending, Weather Today Across the Country)
+- The entire sidebar region
+- The footer
+- The content bottom area
+
+The **search bar** in the header and the **main current conditions display** remain visible, giving you a clean, weather-focused view.
+
+Tokens: 164048 prompt / 384 completion
+
+=== Result ===
+
+(edited raw.html → index.html)
 

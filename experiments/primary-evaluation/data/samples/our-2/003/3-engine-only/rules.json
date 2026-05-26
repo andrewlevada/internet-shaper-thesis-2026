@@ -1,0 +1,72 @@
+[
+	{
+		"label": "Hide Sponsored Content",
+		"query_selector": "section[aria-label=\"Sponsored Content\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Product Reviews & Deals",
+		"query_selector": "section[aria-label=\"Product Reviews & Deals\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Lonely Planet",
+		"query_selector": "section[aria-label=\"Lonely Planet\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Top Stories",
+		"query_selector": "section[aria-label=\"TOP STORY\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Trending section",
+		"query_selector": "section[aria-label=\"Trending\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Weather Across Country",
+		"query_selector": "section[aria-label=\"Weather Today Across the Country\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Editors Pick",
+		"query_selector": "section[aria-label=\"Editor's Pick\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Seasonal Tips",
+		"query_selector": "section[aria-label=\"Seasonal Tips\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Keeping You Healthy",
+		"query_selector": "section[aria-label=\"Keeping You Healthy\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Stay Safe",
+		"query_selector": "section[aria-label=\"Stay Safe\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide all ads",
+		"query_selector": ".adContainer",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide sidebar",
+		"query_selector": ".region-sidebar",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide bottom ads",
+		"query_selector": ".region-contentBottom",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide top ads",
+		"query_selector": ".combinedTopAdsSectionWrapper",
+		"logic": "element.style.display = 'none'"
+	}
+]

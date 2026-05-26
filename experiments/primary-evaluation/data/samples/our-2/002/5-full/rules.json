@@ -1,0 +1,17 @@
+[
+	{
+		"label": "Enlarge video play icons on news cards",
+		"query_selector": "svg[name=\"video-stroke\"], svg[name=\"video\"]",
+		"logic": "element.style.width = '32px';\nelement.style.height = '32px';\nelement.style.minWidth = '32px';\nelement.style.minHeight = '32px';"
+	},
+	{
+		"label": "Enlarge text on news cards",
+		"query_selector": ".ContentMedia--mediaTitle--LSjxi, .ContentMedia--listItemTitle--mvOyq, .MediaObject--mediaTitle--vW+Kk",
+		"logic": "element.style.fontSize = '1.2em';\nelement.style.lineHeight = '1.4';"
+	},
+	{
+		"label": "Hide static map in Weather Today section",
+		"query_selector": ".MediaObject--noTitleMedia--u9sFT",
+		"logic": "if (element.closest('[aria-label=\"Weather Today Across the Country\"]')) {\n  element.style.display = 'none';\n}"
+	}
+]

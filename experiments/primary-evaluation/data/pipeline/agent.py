@@ -515,7 +515,7 @@ def run_agent_local(
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-        print("Using CPU for local Kimi inference (slow).")
+        print("Using CPU for local Qwen inference (slow).")
 
     dtype = torch.float16 if device.type in ("mps", "cuda") else torch.float32
     print(f"Loading {LOCAL_MODEL_ID} on {device}…")

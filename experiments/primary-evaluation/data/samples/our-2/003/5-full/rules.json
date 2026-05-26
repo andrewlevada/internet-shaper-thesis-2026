@@ -1,0 +1,52 @@
+[
+	{
+		"label": "Hide sidebar navigation",
+		"query_selector": ".region-sidebarNavigation",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide top ads section",
+		"query_selector": ".combinedTopAdsSectionWrapper",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide all content media modules",
+		"query_selector": "[data-testid=\"ContentMediaModule\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide all ad containers",
+		"query_selector": ".adContainer",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide Sponsored Content (Taboola)",
+		"query_selector": ".Taboola--taboolaWrapper--6ruE8",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide sidebar",
+		"query_selector": ".region-sidebar",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide content bottom ads",
+		"query_selector": ".region-contentBottom",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide footer",
+		"query_selector": ".region-footer",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide promo driver modules",
+		"query_selector": "[data-testid=\"promoDriverModule\"]",
+		"logic": "element.style.display = 'none'"
+	},
+	{
+		"label": "Hide branded background ads",
+		"query_selector": ".js-branded-background-ads",
+		"logic": "element.style.display = 'none'"
+	}
+]

@@ -1,0 +1,32 @@
+[
+	{
+		"label": "Enlarge thumbnail play icons",
+		"query_selector": ".MediaObject--mediaIcon--wFOkX",
+		"logic": "\n// Scale up the icon wrapper and SVG inside card thumbnails\nelement.style.transform = 'scale(1.9)';\nelement.style.transformOrigin = 'center center';\n// Also make the wrapper not clip the scaled icon\nelement.style.overflow = 'visible';\n"
+	},
+	{
+		"label": "Enlarge list video icons",
+		"query_selector": ".ContentMedia--listItemIcon--VR34i",
+		"logic": "\n// Make the stroke video icons in the list items bigger\nelement.style.width = '26px';\nelement.style.height = '26px';\nelement.style.minWidth = '26px';\nelement.style.minHeight = '26px';\n"
+	},
+	{
+		"label": "Enlarge list item text",
+		"query_selector": ".ContentMedia--listItemTitle--mvOyq",
+		"logic": "\nelement.style.fontSize = '1.05rem';\nelement.style.fontWeight = '600';\nelement.style.lineHeight = '1.4';\n"
+	},
+	{
+		"label": "Enlarge list item row height",
+		"query_selector": ".ContentMedia--listItem--mbZwr",
+		"logic": "\nelement.style.gap = '10px';\nelement.style.padding = '10px 0';\nelement.style.alignItems = 'center';\n"
+	},
+	{
+		"label": "Autoplay Top Stories video",
+		"query_selector": "[data-testid=\"ContentMediaModule\"][aria-label=\"TOP STORY\"] .ContentMedia--primaryContainer--m5y1v",
+		"logic": "\n// Only inject once\nif (element.dataset.videoInjected === 'true') return;\n\n// Find the headline link to get the video slug\nconst titleLink = element.closest('[data-testid=\"ContentMediaModule\"]').querySelector('.Header--impactTitleHref--vvfgD');\nif (!titleLink) return;\n\nconst href = titleLink.getAttribute('href') || '';\n\n// The primary link inside the primary container\nconst primaryLink = element.querySelector('a.mediaLink');\nif (!primaryLink) return;\n\nconst imgWrapper = element.querySelector('.Image--intrinsicRatioRoot--L7BRj');\nif (!imgWrapper) return;\n\n// Build a responsive autoplay video iframe using Weather Channel's embed pattern.\n// Use the story href to construct a generic video embed.\n// We embed an iframe pointing to the story page itself as a preview iframe,\n// or construct an HTML5 video overlay using a public .mp4 preview URL pattern.\n// Instead, we'll build a clean autoplay YouTube-style iframe placeholder using\n// the Weather Channel's own video embed endpoint.\n\n// Extract the video path slug for the embed URL\n// Weather.com video URLs follow: /category/video/slug or /category/news/video/slug\nconst slugMatch = href.match(/\\/video\\/([^/?#]+)/);\nconst videoSlug = slugMatch ? slugMatch[1] : null;\n\n// Create a container that matches the existing 16:9 ratio wrapper\nconst container = document.createElement('div');\ncontainer.style.cssText = 'position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000;';\n\nif (videoSlug) {\n  // Use weather.com's standard embed iframe\n  const iframe = document.createElement('iframe');\n  iframe.src = 'https://weather.com/embed/video/' + videoSlug + '?autoplay=true&mute=1';\n  iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';\n  iframe.setAttribute('allowfullscreen', 'true');\n  iframe.setAttribute('allow', 'autoplay; fullscreen');\n  iframe.setAttribute('title', 'Top Story Video');\n  container.appendChild(iframe);\n} else {\n  // Fallback: embed the story page as a video preview via the existing image but add a play overlay\n  const img = imgWrapper.querySelector('img');\n  const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';\n\n  const fallbackImg = document.createElement('img');\n  fallbackImg.src = imgSrc.replace('width=320','width=800');\n  fallbackImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';\n  container.appendChild(fallbackImg);\n\n  const playBtn = document.createElement('div');\n  playBtn.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;background:rgba(0,0,0,0.65);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;';\n  playBtn.innerHTML = '<svg viewBox=\"0 0 24 24\" width=\"38\" height=\"38\" fill=\"white\"><path d=\"M8 5v14l11-7z\"/></svg>';\n  playBtn.onclick = () => { window.open('https://weather.com' + href, '_self'); };\n  container.appendChild(playBtn);\n}\n\n// Replace the existing image root with our video container\nimgWrapper.style.display = 'none';\nconst mediaImgDiv = imgWrapper.closest('[data-testid=\"ContentMediaImage\"]');\nif (mediaImgDiv && !mediaImgDiv.querySelector('.custom-video-container')) {\n  container.classList.add('custom-video-container');\n  mediaImgDiv.appendChild(container);\n}\n\nelement.dataset.videoInjected = 'true';\n"
+	},
+	{
+		"label": "Replace static map with video",
+		"query_selector": "[data-testid=\"ContentMediaModule\"][aria-label=\"Weather Today Across the Country\"] .ContentMedia--primaryContainer--m5y1v",
+		"logic": "\nif (element.dataset.mapVideoInjected === 'true') return;\n\nconst imgWrapper = element.querySelector('.Image--intrinsicRatioRoot--L7BRj');\nif (!imgWrapper) return;\n\n// Create a 16:9 responsive container\nconst container = document.createElement('div');\ncontainer.classList.add('custom-map-video-container');\ncontainer.style.cssText = 'position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000;';\n\n// Embed weather.com's national radar/weather video\nconst iframe = document.createElement('iframe');\n// Use weather.com's animated national weather map page embedded as iframe\niframe.src = 'https://weather.com/embed/video/national-weather-forecast-today?autoplay=true&mute=1';\niframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';\niframe.setAttribute('allowfullscreen', 'true');\niframe.setAttribute('allow', 'autoplay; fullscreen');\niframe.setAttribute('title', 'National Weather Today Video');\ncontainer.appendChild(iframe);\n\nimgWrapper.style.display = 'none';\nconst mediaImgDiv = imgWrapper.closest('[data-testid=\"ContentMediaImage\"]');\nif (mediaImgDiv && !mediaImgDiv.querySelector('.custom-map-video-container')) {\n  mediaImgDiv.appendChild(container);\n}\n\nelement.dataset.mapVideoInjected = 'true';\n"
+	}
+]
