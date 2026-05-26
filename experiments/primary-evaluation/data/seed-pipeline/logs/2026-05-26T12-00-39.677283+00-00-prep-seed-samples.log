@@ -1,0 +1,22 @@
+Prep seed samples from dom-compression snapshots
+------------------------------------------------
+timestamp (UTC): 2026-05-26T12:00:39.677283+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: 001
+skip existing: False
+snapshots to process: 001
+
+[001] running JTBD session
+  OK our-2/001-1a
+  OK our-2/001-1b
+  OK our-2/001-2a
+  OK our-2/001-2b
+  OK our-2/001-3a
+  OK our-2/001-3b
+[001] session log: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-00-39.677283+00-00-001-session.log
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T12-00-39.677283+00-00-prep-seed-samples.log

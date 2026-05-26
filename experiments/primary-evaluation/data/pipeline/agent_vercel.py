@@ -8,7 +8,7 @@ from pathlib import Path
 
 from config import GATEWAY_MODEL_ID, MAX_TOOL_ROUNDS, PipelineConfig
 
-from agent import AgentRunResult, ToolCallRecord, ToolDispatcher, build_tools
+from agent import AgentRunResult, ToolCallRecord, ToolDispatcher, build_tools, openai_tool_result_message
 from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
@@ -130,11 +130,11 @@ def run_agent_vercel(
             if log_writer is not None:
                 log_writer.append_tool_call(record)
             messages.append(
-                {
-                    "role": "tool",
-                    "tool_call_id": tc.id,
-                    "content": tool_result,
-                }
+                openai_tool_result_message(
+                    tool_call_id=tc.id,
+                    name=name,
+                    content=tool_result,
+                )
             )
 
     result.rules = dispatcher.rules

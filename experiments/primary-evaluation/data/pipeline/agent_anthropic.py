@@ -11,9 +11,9 @@ from config import MAX_TOOL_ROUNDS, ANTHROPIC_MODEL_ID, PipelineConfig
 
 from agent import (
     AgentRunResult,
-    SINGLE_CALL_EXPLORE_TOOLS,
     ToolCallRecord,
     ToolDispatcher,
+    anthropic_tool_result_content,
     build_tools,
 )
 from lib.logs_streamer import AgentLogWriter
@@ -92,24 +92,6 @@ def build_anthropic_tools(pipeline: PipelineConfig) -> list[dict[str, Any]]:
             }
         )
     return tools
-
-
-def _cached_tool_result_content(result: str) -> list[dict[str, Any]]:
-    return [
-        {
-            "type": "text",
-            "text": result,
-            "cache_control": {"type": "ephemeral"},
-        }
-    ]
-
-
-def _tool_result_content(name: str, result: str) -> str | list[dict[str, Any]]:
-    # Large static DOM reads (get_dom / get_map_of_dom) — same pattern as
-    # browser-extension/src/agent/index.ts for get_map_of_dom.
-    if name in SINGLE_CALL_EXPLORE_TOOLS:
-        return _cached_tool_result_content(result)
-    return result
 
 
 def run_agent_anthropic(
@@ -192,7 +174,7 @@ def run_agent_anthropic(
                 {
                     "type": "tool_result",
                     "tool_use_id": block.id,
-                    "content": _tool_result_content(name, tool_result),
+                    "content": anthropic_tool_result_content(name, tool_result),
                 }
             )
 

@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Always auto-apply the English language settings and prioritize international links like IMDb over local Dutch theater ticketing sites.",
+	"goal": "I lean towards global English-language platforms and databases (like IMDb or international blogs) because they usually offer higher quality and more comprehensive information.",
+	"jobs": [
+		"I want to find out where and when the 'Cats' musical is playing in the Netherlands.",
+		"I want to purchase tickets for the upcoming 2026 production of the 'Cats' musical.",
+		"I want to research the history, albums, and members of the Dutch pop group 'The Cats' from Volendam.",
+		"I want to watch promotional videos, trailers, or past performances of the 'Cats' musical.",
+		"I want to check the cast, characters, and song list of Andrew Lloyd Webber's musical 'Cats'.",
+		"I want to browse and download cute images of cats (the animal).",
+		"I want to see reviews and ratings for the 2019 movie adaptation of 'Cats' to decide if it is worth watching.",
+		"I want to explore other famous musicals written by the same composer, such as 'The Phantom of the Opera' or 'Starlight Express'."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer quick, visual, and interactive media formats like YouTube trailers, image grids, and teaser videos to understand a topic.",
+			"b": "I prefer reading structured, text-heavy encyclopedic content and official overviews (like Wikipedia or Britannica) to get detailed facts."
+		},
+		{
+			"a": "I prioritize finding local, regional results and content in my native language, even if the query is a common English word.",
+			"b": "I lean towards global English-language platforms and databases (like IMDb or international blogs) because they usually offer higher quality and more comprehensive information."
+		},
+		{
+			"a": "I like to start with broad search terms and use search engine suggestions, related questions, and knowledge panels to browse and discover new aspects of a topic.",
+			"b": "I prefer typing highly specific, precise queries from the start and find mixed, ambiguous search result pages frustrating to navigate."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I lean towards global English-language platforms and databases (like IMDb or international blogs) because they usually offer higher quality and more comprehensive information.",
+	"source-snapshot": "001",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://google.com/search?q=cats",
+	"final-url": "https://www.google.com/search?q=cats&sei=15AJatSgLJCvi-gPjcz0mQ0"
+}

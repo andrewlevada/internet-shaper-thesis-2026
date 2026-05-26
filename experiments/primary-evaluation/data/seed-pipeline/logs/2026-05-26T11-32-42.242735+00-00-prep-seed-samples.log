@@ -1,0 +1,17 @@
+Prep seed samples from dom-compression snapshots
+------------------------------------------------
+timestamp (UTC): 2026-05-26T11:32:42.242735+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.1-flash-lite
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-2
+snapshot filter: 001
+skip existing: False
+snapshots to process: 001
+
+[001] running JTBD session
+[001] FAIL: No module named 'openai'
+
+failures: 1
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-05-26T11-32-42.242735+00-00-prep-seed-samples.log

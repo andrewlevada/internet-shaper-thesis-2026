@@ -1,0 +1,110 @@
+Timestamp: 2026-05-26T11:49:06.601308+00:00
+Snapshot: 001
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><meta content="origin" name="referrer"><title>cats - Google Zoeken</title></head><body jsmodel="hspDDf JfINdf" class="srp" jscontroller="Eox39d" marginheight="3" topmargin="3" jsaction="rcuQ6b:npT2md;xjhTIf:.CLIENT;O2vyse:.CLIENT;IVKTfe:.CLIENT;Ez7VMc:.CLIENT;R6Slyc:.CLIENT;zbW2Cf:.CLIENT;OZ3M7e:.CLIENT;szjOR:.CLIENT;gZgazf:.CLIENT;ydZCDf:.CLIENT" id="gsr"><noscript><style>table,div,span,p{display:none}</style><meta content="0;url=/httpservice/retry/enablejs?sei=3ZAJasXQGJmXi-gP7qPlgAg" http-equiv="refresh"><div style="display:block">Klik <a href="/httpservice/retry/enablejs?sei=3ZAJasXQGJmXi-gP7qPlgAg">hier</a> als je niet binnen enkele seconden wordt omgeleid.</div></noscript><div jscontroller="EufiNb" class="wYq63b" jsaction="GT1hbd:a0Q7Qd" data-ved="0ahUKEwiFs9m1h8CUAxWZywIHHe5RGYAQ7LoDCAQ"><div class="S6VXfe"><a jsname="BKxS1e" class="gyPpGe" role="link" tabindex="0" jsaction="i3viod;focus:a0Q7Qd" data-ved="0ahUKEwiFs9m1h8CUAxWZywIHHe5RGYAQ67oDCAU">Naar hoofdcontent</a><a jsname="KI37ad" class="gyPpGe" href="https://support.google.com/websearch/answer/181196?hl=nl" jsaction="focus:a0Q7Qd" data-ved="0ahUKEwiFs9m1h8CUAxWZywIHHe5RGYAQwcMDCAY" ping="/url?sa=t&source=web&rct=j&url=https://support.google.com/websearch/answer/181196%3Fhl%3Dnl&ved=0ahUKEwiFs9m1h8CUAxWZywIHHe5RGYAQwcMDCAY&opi=89978449">Hulp bij toegankelijkheid</a><div data-async-context="async_id:duf3-78;authority:0;card_id:;entry_point:0;feature_id:;ftoe:0;header:0;is_jobs_spam_form:0;open:0;preselect_answer_index:-1;suggestions:;suggestions_subtypes:;suggestions_types:;surface:0;title:;type:78"><div id="duf3-78" data-jiis="up" data-async-type="duffy3" data-async-context-required="type,open,feature_id,async_id,entry_point,authority,card_id,ftoe,title,header,suggestions,surface,suggestions_types,suggestions_subtypes,preselect_answer_index,is_jobs_spam_form" class="yp" data-ved="0ahUKEwiFs9m1h8CUAxWZywIHHe5RGYAQ-0EIBw"></div><a jscontroller="XCToU" jsname="JUypV" class="gyPpGe" data-async-tr
+
+--- ASSISTANT ---
+{
+  "jobs": [
+    "I want to book tickets for the 'Cats' musical performing in Dutch theaters",
+    "I want to check the ratings and reviews for the 2019 'Cats' movie adaptation",
+    "I want to learn more about the musical 'Cats', such as its composer, characters, and songs",
+    "I want to research the history and discography of the Dutch pop band 'The Cats' from Volendam",
+    "I want to watch trailers and promotional video clips of the 'Cats' musical",
+    "I want to browse and view high-quality images of cats",
+    "I want to find advice and guides on how to prepare before adopting a pet cat",
+    "I want to refine my search with related search queries to find more specific information about cats"
+  ]
+}
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I prefer to quickly find and scan visual media like photos, videos, and trailers rather than reading long texts.",
+      "b": "I prefer reading comprehensive, written text articles like Wikipedia or Britannica to deeply understand a topic."
+    },
+    {
+      "a": "I like highly interactive search pages with direct answer cards, widgets, and suggested questions so I can find information without leaving the page.",
+      "b": "I prefer simple, clean search result lists with standard links and description snippets without any distracting widgets or visual blocks."
+    },
+    {
+      "a": "I always prefer searching and reading results in my native language to ensure comfort and ease of reading.",
+      "b": "I prefer searching and reading in English because the information available is usually more up-to-date, diverse, and comprehensive."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. They are not related to the exact content of the page and will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up
+2a. Add a button to go to the store page
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Prioritize and display visual media layouts, such as image grids and video sliders, at the top of the search results page by default."
+    },
+    {
+      "id": "1b",
+      "request": "Move comprehensive text articles, text-heavy organic links, and detailed encyclopedia panels to the top of the page while minimizing media previews."
+    },
+    {
+      "id": "2a",
+      "request": "Expand interactive elements like 'People also ask' accordions and direct knowledge panels by default so that more information is directly visible without clicking away."
+    },
+    {
+      "id": "2b",
+      "request": "Collapse or completely hide interactive panels, query widgets, and related search carousels to present a clean, distraction-free list of standard text results."
+    },
+    {
+      "id": "3a",
+      "request": "Strictly filter search results to the selected native language and completely hide prompts or recommendations that suggest switching to English."
+    },
+    {
+      "id": "3b",
+      "request": "Provide a prominent, permanent language toggle button right next to the search bar to instantly switch the interface language and search parameters to English."
+    }
+  ]
+}
+

@@ -30,6 +30,44 @@ EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom", "show_in_dom"})
 MUTATION_TOOLS = frozenset({"edit", "set_update_rule"})
 SINGLE_CALL_EXPLORE_TOOLS = frozenset({"get_dom", "get_map_of_dom"})
 
+CACHE_CONTROL_EPHEMERAL: dict[str, str] = {"type": "ephemeral"}
+
+
+def should_cache_tool_result(name: str) -> bool:
+    return name in SINGLE_CALL_EXPLORE_TOOLS
+
+
+def anthropic_cached_tool_result_content(result: str) -> list[dict[str, Any]]:
+    return [
+        {
+            "type": "text",
+            "text": result,
+            "cache_control": CACHE_CONTROL_EPHEMERAL,
+        }
+    ]
+
+
+def anthropic_tool_result_content(name: str, result: str) -> str | list[dict[str, Any]]:
+    if should_cache_tool_result(name):
+        return anthropic_cached_tool_result_content(result)
+    return result
+
+
+def openai_tool_result_message(
+    *,
+    tool_call_id: str,
+    name: str,
+    content: str,
+) -> dict[str, Any]:
+    message: dict[str, Any] = {
+        "role": "tool",
+        "tool_call_id": tool_call_id,
+        "content": content,
+    }
+    if should_cache_tool_result(name):
+        message["cache_control"] = CACHE_CONTROL_EPHEMERAL
+    return message
+
 AgentBackend = AgentProvider
 
 PIPELINE_DIR = Path(__file__).resolve().parent
