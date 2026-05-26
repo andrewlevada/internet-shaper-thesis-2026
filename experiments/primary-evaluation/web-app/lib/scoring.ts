@@ -7,7 +7,7 @@ export function ratingToScores(rating: Rating): {
 } {
 	switch (rating) {
 		case "left_better":
-			return { left: 3, right: 0 }
+			return { left: 1, right: 0 }
 		case "left_slightly":
 			return { left: 1, right: 0 }
 		case "similar":
@@ -15,7 +15,7 @@ export function ratingToScores(rating: Rating): {
 		case "right_slightly":
 			return { left: 0, right: 1 }
 		case "right_better":
-			return { left: 0, right: 3 }
+			return { left: 0, right: 1 }
 	}
 }
 

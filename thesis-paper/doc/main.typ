@@ -31,17 +31,18 @@
 
 == Background
 
-Gray and dark patterns systematically misalign system and user goals. This happens when business and user goal diverge, and interface ends up being less helpful and more intrusive. We call such interfaces hostile. (*WIP*: citation needed here – not a full lit review, because this is not an actual point we study, but instead a motivation for the research to be done, the reason why it matters)
-
-(*WIP*: in what way are they usually misaligned? categorization here, or is it too much out of focus? – bench requires categorization)
-
-Prior HCI research shows that user interfaces can be made adaptive, generative, and even malleable by end users. (*WIP*: citation needed here for general overview of adaptive or customizable interfaces; the generative once will be thoroughly explored in the related works section)
-
-However, we lack a conceptual and empirical example of how user-controlled adaptations of existing interfaces can function as a response to gray patterns.
+We build User Interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user (*WIP*: citation needed), but here come 2 problems:
+- intrinsically, designers can not feasibly plan interfaces for every single user's specific needs and jobs. with constrained resources, even good interfaces are usually not perfect for each user. For example
+- on the other more bleak side are the. Gray and dark patterns systematically misalign system and user goals. This happens when business and user goal diverge, and interface ends up being less helpful and more intrusive (*WIP*: citation needed). 
+These 2 problems make interfaces misaligned with the users needs — undermining the core of design practice. This is the problem we begin to tackle with this thesis.
 
 This motivates the _Research Question_ — How can adaptive generative interfaces counteract hostile UIs by re‑aligning the interface with a user's articulated goal?
 
-We propose a _Solution_ — a browser extension that uses large language models (LLMs) to adapt existing web user interfaces to a user-defined goal. This prototype takes a user request in a form of prompt as an input. It then generates edits to be applied to the currently opened web page. These edits get applied to the wab page every session the user opens it.
+Prior HCI research extensivly shows that user interfaces can be made adaptive and customizable. (*WIP*: A bunch of citations needed) These approaches however are not the focus of our thesis, as they requre the developer/designer to implement them. As we see in the industry, this is understandably hardly ever a priority (*WIP*: citation needed).
+
+Few works take a diffrent approach and try to make interfaces malleable by end users. In this thesis we build upon the ideas they introduce. We want to implement the vision of individually tailored user interfaces, shared by many UX practitioners, made possible my recient advaces in LLM's capabilities. We build and evaluate an agentic system that shows how user-controlled adaptations of existing web interfaces can function as a way for users to activly realign UIs they use with their needs and interests.
+
+A _Solution_ we propose is an agentic system wrapped in a browser extension that uses large language models (LLMs) to adapt existing web user interfaces to a user-defined goal. This prototype takes a user request in a form of prompt as an input. It then generates edits to be applied to the currently opened web page. These edits get applied to the web page every session the user opens it.
 
 == Key contributions
 

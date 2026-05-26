@@ -1,4 +1,44 @@
-import type { ComparisonItem, ParsedSample } from "./types"
+import type { ComparisonItem, ParsedSample, PipelineId } from "./types"
+
+const COMPARISON_PAIRS: [PipelineId, PipelineId][] = [
+	// task completion vs original
+	["original", "baseline"],
+	["original", "full"],
+	["original", "full-sonnet"],
+
+	// relative task completion success
+	["baseline", "full"],
+	["full", "full-sonnet"],
+
+	// component contribution
+	["baseline", "engine-only"],
+	["baseline", "map-only"],
+	["engine-only", "full"],
+	["map-only", "full"],
+]
+
+function resolvePipelineFolder(
+	pipelines: ParsedSample["pipelines"],
+	id: PipelineId,
+): string | undefined {
+	return Object.keys(pipelines).find((folder) => folder.endsWith(`-${id}`))
+}
+
+function buildSamplePairs(
+	pipelines: ParsedSample["pipelines"],
+): [string, string][] {
+	const pairs: [string, string][] = []
+
+	for (const [leftId, rightId] of COMPARISON_PAIRS) {
+		const left = resolvePipelineFolder(pipelines, leftId)
+		const right = resolvePipelineFolder(pipelines, rightId)
+		if (left && right) {
+			pairs.push([left, right])
+		}
+	}
+
+	return pairs
+}
 
 export function createPrng(seed: number): () => number {
 	let state = seed >>> 0
@@ -19,21 +59,12 @@ export function shuffle<T>(array: T[], random: () => number): T[] {
 	return result
 }
 
-export function allPairs<T>(items: T[]): [T, T][] {
-	const pairs: [T, T][] = []
-	for (let i = 0; i < items.length; i++) {
-		for (let j = i + 1; j < items.length; j++) {
-			pairs.push([items[i], items[j]])
-		}
-	}
-	return pairs
-}
-
 export function randomHex(length: number, random: () => number): string {
 	const bytes = new Uint8Array(length)
 	for (let i = 0; i < length; i++) {
 		bytes[i] = Math.floor(random() * 256)
 	}
+
 	return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("")
 }
 
@@ -59,8 +90,7 @@ export function buildComparisonQueue(
 	const items: ComparisonItem[] = []
 
 	for (const sample of orderedSamples) {
-		const pipelineNames = Object.keys(sample.pipelines).sort()
-		const pairs = shuffle(allPairs(pipelineNames), random)
+		const pairs = shuffle(buildSamplePairs(sample.pipelines), random)
 
 		for (const [a, b] of pairs) {
 			const swap = random() < 0.5

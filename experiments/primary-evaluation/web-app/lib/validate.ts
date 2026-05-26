@@ -66,14 +66,6 @@ function getPipelineFolders(paths: string[], sampleRoot: string): string[] {
 	return [...folders].sort()
 }
 
-function hasScreenshot(
-	files: Map<string, Uint8Array>,
-	sampleRoot: string,
-	pipeline: string,
-): boolean {
-	return files.has(`${sampleRoot}/${pipeline}/screenshot.png`)
-}
-
 export function parseSamplesFromZip(
 	files: Map<string, Uint8Array>,
 ): ParsedSample[] {
@@ -109,7 +101,7 @@ export function parseSamplesFromZip(
 	const samples: ParsedSample[] = []
 
 	for (const sampleRoot of sampleRoots) {
-		const sampleId = sampleRoot.split("/").pop() ?? sampleRoot
+		const sampleId = sampleRoot
 		const taskPath = `${sampleRoot}/task.json`
 		const taskData = files.get(taskPath)
 

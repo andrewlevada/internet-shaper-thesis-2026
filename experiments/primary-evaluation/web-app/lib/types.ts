@@ -1,3 +1,11 @@
+export type PipelineId =
+	| "original"
+	| "baseline"
+	| "engine-only"
+	| "map-only"
+	| "full"
+	| "full-sonnet"
+
 export type Rating =
 	| "left_better"
 	| "left_slightly"

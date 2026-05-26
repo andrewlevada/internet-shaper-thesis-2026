@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare primary evaluation samples from seed-samples/."""
+"""Prepare primary evaluation samples from seed-samples/{fold}/{id}/."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--sample",
         metavar="ID",
-        help="Process a single seed sample id (e.g. 001). Default: all seeds.",
+        help="Process fold/id (e.g. our/001) or all samples in a fold (e.g. our). Default: all seeds.",
     )
     parser.add_argument(
         "--pipeline",
@@ -66,15 +66,40 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def is_seed_sample(path: Path) -> bool:
+    return path.is_dir() and (path / "task.json").is_file()
+
+
+def list_samples_in_fold(fold_dir: Path, fold_name: str) -> list[str]:
+    return sorted(
+        f"{fold_name}/{sample_dir.name}"
+        for sample_dir in fold_dir.iterdir()
+        if is_seed_sample(sample_dir)
+    )
+
+
 def list_seed_ids(sample_filter: str | None) -> list[str]:
     if sample_filter:
         seed_path = SEED_DIR / sample_filter
         if not seed_path.is_dir():
             print(f"Seed sample not found: {seed_path}", file=sys.stderr)
             sys.exit(1)
-        return [sample_filter]
 
-    ids = sorted(p.name for p in SEED_DIR.iterdir() if p.is_dir())
+        if is_seed_sample(seed_path):
+            return [sample_filter]
+
+        ids = list_samples_in_fold(seed_path, sample_filter)
+        if not ids:
+            print(f"No seed samples under {seed_path}", file=sys.stderr)
+            sys.exit(1)
+        return ids
+
+    ids: list[str] = []
+    for fold_dir in sorted(SEED_DIR.iterdir()):
+        if not fold_dir.is_dir():
+            continue
+        ids.extend(list_samples_in_fold(fold_dir, fold_dir.name))
+
     if not ids:
         print(f"No seed samples under {SEED_DIR}", file=sys.stderr)
         sys.exit(1)
