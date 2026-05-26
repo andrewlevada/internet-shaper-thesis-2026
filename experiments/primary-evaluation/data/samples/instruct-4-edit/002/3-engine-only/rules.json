@@ -1,0 +1,12 @@
+[
+	{
+		"label": "Darken nav background",
+		"query_selector": "#access",
+		"logic": "element.style.backgroundColor = 'rgba(45, 150, 190, 0.9)'"
+	},
+	{
+		"label": "Darken submenu background",
+		"query_selector": "#access ul li ul",
+		"logic": "element.style.backgroundColor = 'rgba(45, 150, 190, 0.9)'"
+	}
+]

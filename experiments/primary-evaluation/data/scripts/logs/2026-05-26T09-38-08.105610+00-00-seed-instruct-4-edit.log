@@ -1,0 +1,31 @@
+Seed instruct-4-edit from Instruct4Edit benchmark
+------------------------------------------------
+timestamp (UTC): 2026-05-26T09:38:08.105610+00:00
+script: seed-instruct-4-edit.py
+sample count: 10
+rng seed (mulberry32): 83947801
+dataset repo: dangtruong01/Instruct4Edit
+dataset path: data/datasets/instruction_tuning_data.json
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/instruct-4-edit
+html reserialize: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/pipeline/tools-clis/reserialize_html.ts
+screenshots: deferred to prep-samples.py
+dry run: False
+
+dataset source: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/cache/instruction_tuning_data.json
+dataset commit sha: 55a6fe0dd45e678bfcd76d866bf1fdd1789db016
+total entries: 1150
+eligible entries: 1150
+picked ids: sample_391, sample_171, sample_786, sample_120, sample_918, sample_435, sample_58, sample_880, sample_1134, sample_1137
+
+OK instruct-4-edit/001 ← sample_391 (10857 chars)
+OK instruct-4-edit/002 ← sample_171 (21873 chars)
+OK instruct-4-edit/003 ← sample_786 (17921 chars)
+OK instruct-4-edit/004 ← sample_120 (22642 chars)
+OK instruct-4-edit/005 ← sample_918 (10300 chars)
+OK instruct-4-edit/006 ← sample_435 (22 chars)
+OK instruct-4-edit/007 ← sample_58 (14587 chars)
+OK instruct-4-edit/008 ← sample_880 (15776 chars)
+OK instruct-4-edit/009 ← sample_1134 (10520 chars)
+OK instruct-4-edit/010 ← sample_1137 (12214 chars)
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-26T09-38-08.105610+00-00-seed-instruct-4-edit.log

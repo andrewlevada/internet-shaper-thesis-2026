@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Increase logo-search spacing",
+		"query_selector": ".header > .y_width",
+		"logic": "element.style.display = 'flex';\nelement.style.justifyContent = 'space-between';\nelement.style.alignItems = 'center';\nelement.style.gap = '40px';\n"
+	}
+]

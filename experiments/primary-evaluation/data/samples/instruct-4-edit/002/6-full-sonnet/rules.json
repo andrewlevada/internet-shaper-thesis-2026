@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Darken nav bar blue",
+		"query_selector": "#access",
+		"logic": "element.style.filter = 'brightness(0.8)';"
+	}
+]

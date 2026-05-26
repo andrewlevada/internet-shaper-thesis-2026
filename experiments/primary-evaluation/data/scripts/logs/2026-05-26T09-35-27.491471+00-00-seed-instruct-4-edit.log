@@ -1,0 +1,28 @@
+Seed instruct-4-edit from Instruct4Edit benchmark
+------------------------------------------------
+timestamp (UTC): 2026-05-26T09:35:27.491471+00:00
+script: seed-instruct-4-edit.py
+sample count: 1
+rng seed (mulberry32): 83947801
+dataset repo: dangtruong01/Instruct4Edit
+dataset path: data/datasets/instruction_tuning_data.json
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/instruct-4-edit
+html reserialize: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/pipeline/tools-clis/reserialize_html.ts
+screenshots: deferred to prep-samples.py
+dry run: False
+
+dataset source: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/cache/instruction_tuning_data.json
+dataset commit sha: 55a6fe0dd45e678bfcd76d866bf1fdd1789db016
+total entries: 1150
+eligible entries: 1150
+picked ids: sample_391
+
+FAIL instruct-4-edit/001 (sample_391): reserialize_html failed: [0m[1m[31merror[0m: Uncaught (in promise) TypeError: Deno.readAllSync is not a function
+		html = new TextDecoder().decode(Deno.readAllSync(Deno.stdin))
+[0m[31m		                                     ^[0m
+    at [0m[1m[3mmain[0m ([0m[2m[38;5;245mfile:///Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/pipeline/[0m[0m[36mtools-clis/reserialize_html.ts[0m:[0m[33m42[0m:[0m[33m40[0m)
+    at [0m[2m[38;5;245mfile:///Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/pipeline/[0m[0m[36mtools-clis/reserialize_html.ts[0m:[0m[33m59[0m:[0m[33m1[0m
+
+failures: 1
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-26T09-35-27.491471+00-00-seed-instruct-4-edit.log

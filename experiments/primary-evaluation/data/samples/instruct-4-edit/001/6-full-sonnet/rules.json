@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Increase logo-search spacing",
+		"query_selector": ".min_search",
+		"logic": "element.style.marginLeft = '80px';"
+	}
+]

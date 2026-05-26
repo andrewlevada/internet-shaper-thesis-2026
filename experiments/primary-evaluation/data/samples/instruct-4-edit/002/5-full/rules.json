@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Darken nav background",
+		"query_selector": "#access",
+		"logic": "element.style.backgroundColor = '#2c5aa0';"
+	}
+]

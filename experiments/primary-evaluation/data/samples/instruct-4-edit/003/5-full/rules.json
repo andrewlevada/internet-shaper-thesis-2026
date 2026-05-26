@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Increase heading margin",
+		"query_selector": "h1.wp-block-post-title",
+		"logic": "element.style.marginBottom = '4rem'"
+	}
+]

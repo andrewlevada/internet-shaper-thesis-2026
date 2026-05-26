@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Increase logo-search spacing",
+		"query_selector": ".min_logo",
+		"logic": "element.style.marginRight = '100px'"
+	}
+]

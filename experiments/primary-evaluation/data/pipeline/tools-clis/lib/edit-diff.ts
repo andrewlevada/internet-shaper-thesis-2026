@@ -160,11 +160,11 @@ function getNotFoundError(
 ): Error {
 	if (totalEdits === 1) {
 		return new Error(
-			`Could not find the text. Provide enough surrounding HTML to make oldText unique.`,
+			`Could not find the text. Make sure the oldText is exactly matches the source DOM`,
 		)
 	}
 	return new Error(
-		`Could not find edits[${editIndex}]. Provide enough surrounding HTML to make oldText unique.`,
+		`Could not find edits[${editIndex}]. Make sure the oldText is exactly matches the source DOM`,
 	)
 }
 
@@ -176,11 +176,11 @@ function getDuplicateError(
 ): Error {
 	if (totalEdits === 1) {
 		return new Error(
-			`Found ${occurrences} occurrences of the text. The text must be unique. Please provide more context to make it unique.`,
+			`Found ${occurrences} occurrences of the text. Provide enough surrounding HTML to make oldText unique.`,
 		)
 	}
 	return new Error(
-		`Found ${occurrences} occurrences of edits[${editIndex}]. Each oldText must be unique. Please provide more context to make it unique.`,
+		`Found ${occurrences} occurrences of edits[${editIndex}]. Provide enough surrounding HTML to make oldText unique.`,
 	)
 }
 
