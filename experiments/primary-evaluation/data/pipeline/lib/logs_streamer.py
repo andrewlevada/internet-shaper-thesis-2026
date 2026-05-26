@@ -70,6 +70,64 @@ class AgentLogWriter:
             ]
         )
 
+    def append_api_request(
+        self,
+        *,
+        round_index: int,
+        message_count: int,
+        payload_chars: int,
+        model_id: str,
+    ) -> None:
+        self._write_lines(
+            [
+                f"--- API REQUEST round {round_index} ---",
+                (
+                    f"model={model_id} messages={message_count} "
+                    f"payload_chars={payload_chars:,}"
+                ),
+                "",
+            ]
+        )
+
+    def append_api_response(
+        self,
+        *,
+        round_index: int,
+        elapsed_s: float,
+        prompt_tokens: int | None,
+        completion_tokens: int | None,
+        tool_calls: list[str] | None,
+        finish_reason: str | None,
+    ) -> None:
+        tools = ", ".join(tool_calls) if tool_calls else "(none)"
+        self._write_lines(
+            [
+                f"--- API RESPONSE round {round_index} ---",
+                (
+                    f"elapsed_s={elapsed_s:.1f} "
+                    f"prompt_tokens={prompt_tokens} "
+                    f"completion_tokens={completion_tokens} "
+                    f"finish_reason={finish_reason} tool_calls=[{tools}]"
+                ),
+                "",
+            ]
+        )
+
+    def append_api_error(
+        self,
+        *,
+        round_index: int,
+        elapsed_s: float,
+        error: BaseException,
+    ) -> None:
+        self._write_lines(
+            [
+                f"--- API ERROR round {round_index} ---",
+                f"elapsed_s={elapsed_s:.1f} {type(error).__name__}: {error}",
+                "",
+            ]
+        )
+
     def finalize(
         self,
         *,

@@ -33,15 +33,20 @@ function activeRules(rules: UpdateRule[]): UpdateRule[] {
 	return rules.filter((rule) => rule.enabled !== false)
 }
 
-function compileRuleLogic(logic: string): (element: Element) => void {
-	return new Function("element", `"use strict";\n${logic}`) as (
+function compileRuleLogic(
+	logic: string,
+): (element: Element, document: Document) => void {
+	// Pass document explicitly so offline validation matches browser runtime
+	// (Function bodies can use globals in the page, but not in Deno/linkedom).
+	return new Function("element", "document", `"use strict";\n${logic}`) as (
 		element: Element,
+		document: Document,
 	) => void
 }
 
 function validateRulesOnDocument(doc: Document, rules: UpdateRule[]): void {
 	for (const rule of rules) {
-		let fn: (element: Element) => void
+		let fn: (element: Element, document: Document) => void
 		try {
 			fn = compileRuleLogic(rule.logic)
 		} catch (e) {
@@ -52,7 +57,7 @@ function validateRulesOnDocument(doc: Document, rules: UpdateRule[]): void {
 		const matches = [...doc.querySelectorAll(rule.query_selector)]
 		for (const el of matches) {
 			try {
-				fn(el)
+				fn(el, doc)
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : String(e)
 				throw new Error(`Rule "${rule.label}" failed on element: ${msg}`)
@@ -63,7 +68,7 @@ function validateRulesOnDocument(doc: Document, rules: UpdateRule[]): void {
 
 function buildRulesScript(rules: UpdateRule[]): string {
 	const payload = JSON.stringify(rules)
-	return `<script id="${EVAL_RULES_SCRIPT_ID}">(function(){const rules=${payload};function apply(){for(const rule of rules){const fn=new Function("element",'"use strict";\\n'+rule.logic);for(const el of document.querySelectorAll(rule.query_selector)){fn(el);}}}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",apply);}else{apply();}})();</script>`
+	return `<script id="${EVAL_RULES_SCRIPT_ID}">(function(){const rules=${payload};function apply(){for(const rule of rules){const fn=new Function("element","document",'"use strict";\\n'+rule.logic);for(const el of document.querySelectorAll(rule.query_selector)){fn(el,document);}}}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",apply);}else{apply();}})();</script>`
 }
 
 function stripExistingRulesScript(html: string): string {

@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Increase the size of the video play icons and text on news cards, and auto-play the primary 'Top Stories' video at the top of the feed instead of showing static map graphics.",
+	"goal": "I prefer consuming information through short video clips and narrative summaries rather than analyzing complex charts, numbers, and interactive maps.",
+	"jobs": [
+		"I want to search for a specific city or zip code to check its current temperature and forecast.",
+		"I want to check the hourly or 10-day forecast to plan my upcoming activities and decide what to wear.",
+		"I want to view the interactive radar map to see if rain or storms are heading toward my current location.",
+		"I want to read weather-related news and watch top story videos to stay informed about extreme weather events.",
+		"I want to get safety tips and information on seasonal health concerns, such as tick safety or high-heat warnings, to protect my well-being.",
+		"I want to read product reviews and deals for weather-appropriate gear, such as sunscreen or sun shirts, to make an informed purchase."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer raw data, interactive charts, and highly detailed technical metrics over articles or narrative summaries when searching for information.",
+			"b": "I prefer consuming information through short video clips and narrative summaries rather than analyzing complex charts, numbers, and interactive maps."
+		},
+		{
+			"a": "I am strictly task-focused when using utility websites; I look for the specific information I need, get out quickly, and ignore all peripheral articles or lifestyle pieces.",
+			"b": "I enjoy browsing peripheral content, lifestyle tips, and trending stories, often staying on a website to read other articles even when I came for a quick, specific update."
+		},
+		{
+			"a": "I actively avoid and ignore sponsored content recommendations and native advertising because I find them highly distracting and untrustworthy.",
+			"b": "I am open to clicking on sponsored content recommendation widgets, often finding the recommended listicles, product deals, and external articles interesting to read."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "b",
+	"preference": "I prefer consuming information through short video clips and narrative summaries rather than analyzing complex charts, numbers, and interactive maps.",
+	"source-snapshot": "047",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://weather.com",
+	"final-url": "https://weather.com/?Goto=Redirected"
+}

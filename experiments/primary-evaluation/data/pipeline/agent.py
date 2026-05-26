@@ -95,6 +95,7 @@ class AgentRunResult:
 def _cap_tool_output(text: str) -> str:
     if len(text) <= MAX_TOOL_OUTPUT_CHARS:
         return text
+        
     return text[:MAX_TOOL_OUTPUT_CHARS] + TRUNCATION_SUFFIX
 
 
@@ -141,14 +142,23 @@ def _single_call_explore_message(tool_name: str) -> str:
 
 
 class ToolDispatcher:
-    def __init__(self, *, raw_html: Path, visible_html: Path) -> None:
+    def __init__(
+        self,
+        *,
+        raw_html: Path,
+        visible_html: Path,
+        explore_uses_raw: bool = False,
+    ) -> None:
         self.raw_html = raw_html
         self.visible_html = visible_html
+        self.explore_uses_raw = explore_uses_raw
         self.rules: list[dict[str, str]] = []
         self._single_call_explore_used: set[str] = set()
 
     def _snapshot_for(self, name: str) -> str:
         if name in EXPLORE_TOOLS:
+            if self.explore_uses_raw:
+                return str(self.raw_html)
             return str(self.visible_html)
 
         if name in MUTATION_TOOLS:
@@ -357,7 +367,8 @@ def _tool_schema(name: str) -> dict[str, Any]:
                 "description": (
                     "Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. \n\n"
                     "The 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \n"
-                    "The logic has NO access to window, document, or any global APIs - ONLY the 'element' variable is available. \n\n"
+                    "The page's 'document' is also available for DOM construction (e.g. document.createElement). \n"
+                    "Global APIs like window are not avaliable. \n\n"
 
                     "Common patterns: \n"
                     "- element.style.display = 'none' - hide the element \n"
@@ -521,6 +532,7 @@ def run_agent_local(
     dispatcher = ToolDispatcher(
         raw_html=paths.raw_html,
         visible_html=paths.visible_html,
+        explore_uses_raw=pipeline.uses_edit,
     )
     messages: list[dict[str, Any]] = [
         {"role": "system", "content": pipeline.system_prompt},

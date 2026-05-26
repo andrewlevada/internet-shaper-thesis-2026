@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import os
+import time
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,13 @@ from agent import (
     build_tools,
 )
 from errors import ContextOverflowError, is_context_overflow_error
+from lib.api_round_log import (
+    API_REQUEST_TIMEOUT_S,
+    estimate_anthropic_messages_chars,
+    log_api_error,
+    log_api_request,
+    log_api_response,
+)
 from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
@@ -109,10 +117,14 @@ def run_agent_anthropic(
 
     from anthropic import Anthropic
 
-    client = Anthropic(api_key=_resolve_api_key())
+    client = Anthropic(
+        api_key=_resolve_api_key(),
+        timeout=API_REQUEST_TIMEOUT_S,
+    )
     dispatcher = ToolDispatcher(
         raw_html=paths.raw_html,
         visible_html=paths.visible_html,
+        explore_uses_raw=pipeline.uses_edit,
     )
     tools = build_anthropic_tools(pipeline)
     messages: list[dict[str, Any]] = [{"role": "user", "content": user_message}]
@@ -120,7 +132,22 @@ def run_agent_anthropic(
     result = AgentRunResult(model_id=model_id, backend="anthropic")
     final_text = ""
 
-    for _round in range(MAX_TOOL_ROUNDS):
+    for round_index in range(MAX_TOOL_ROUNDS):
+        payload_chars = estimate_anthropic_messages_chars(
+            messages,
+            system_prompt=pipeline.system_prompt,
+            tools=tools,
+        )
+        log_api_request(
+            pipeline_id=pipeline.id,
+            round_index=round_index,
+            model_id=model_id,
+            message_count=len(messages),
+            payload_chars=payload_chars,
+            log_writer=log_writer,
+        )
+
+        started = time.monotonic()
         try:
             response = client.messages.create(
                 model=model_id,
@@ -134,13 +161,24 @@ def run_agent_anthropic(
                 ],
                 tools=tools,
                 messages=messages,
+                timeout=API_REQUEST_TIMEOUT_S,
             )
         except Exception as exc:
+            elapsed = time.monotonic() - started
+            log_api_error(
+                pipeline_id=pipeline.id,
+                round_index=round_index,
+                elapsed_s=elapsed,
+                error=exc,
+                log_writer=log_writer,
+            )
             if is_context_overflow_error(exc):
                 result.rules = dispatcher.rules
                 result.final_assistant_text = final_text
                 raise ContextOverflowError(str(exc), run_result=result) from exc
             raise
+
+        elapsed = time.monotonic() - started
 
         if response.usage:
             result.prompt_tokens = response.usage.input_tokens
@@ -163,6 +201,17 @@ def run_agent_anthropic(
                         "input": block.input,
                     }
                 )
+
+        log_api_response(
+            pipeline_id=pipeline.id,
+            round_index=round_index,
+            elapsed_s=elapsed,
+            prompt_tokens=response.usage.input_tokens if response.usage else None,
+            completion_tokens=response.usage.output_tokens if response.usage else None,
+            finish_reason=response.stop_reason,
+            tool_calls=[block.name for block in tool_use_blocks] or None,
+            log_writer=log_writer,
+        )
 
         messages.append({"role": "assistant", "content": assistant_content})
 

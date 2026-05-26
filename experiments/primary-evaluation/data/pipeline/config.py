@@ -23,12 +23,14 @@ LOCAL_MODEL_ID = "moonshotai/Kimi-K2.6"
 GATEWAY_MODEL_ID = "moonshotai/kimi-k2.6"
 ANTHROPIC_MODEL_ID = "claude-sonnet-4-6"
 
+KIMI_MODEL_CONTEXT = 262144
+
 MAX_TOOL_ROUNDS = 32
-MAX_NEW_TOKENS = 2048
-MAX_TOOL_OUTPUT_CHARS = 2**17 * 2.5  # 131072 * approx token density
+MAX_NEW_TOKENS = 2**12
+MAX_TOOL_OUTPUT_CHARS = int(KIMI_MODEL_CONTEXT * 0.5 * 2.4)  # half of model context size
 SHOW_IN_DOM_DEFAULT_DEPTH = 3
 
-TRUNCATION_SUFFIX = "\n\n<!-- truncated: tool output capped -->"
+TRUNCATION_SUFFIX = "\n\n<!-- truncated: tool output capped. there is no way to see more -->"
 
 
 def role() -> str:

@@ -4,12 +4,20 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from pathlib import Path
 
 from config import GATEWAY_MODEL_ID, MAX_TOOL_ROUNDS, PipelineConfig
 
 from agent import AgentRunResult, ToolCallRecord, ToolDispatcher, build_tools, openai_tool_result_message
 from errors import ContextOverflowError, is_context_overflow_error
+from lib.api_round_log import (
+    API_REQUEST_TIMEOUT_S,
+    estimate_openai_messages_chars,
+    log_api_error,
+    log_api_request,
+    log_api_response,
+)
 from lib.logs_streamer import AgentLogWriter
 from paths import AgentVariantPaths
 
@@ -68,10 +76,15 @@ def run_agent_vercel(
 
     from openai import OpenAI
 
-    client = OpenAI(base_url=AI_GATEWAY_BASE_URL, api_key=_resolve_api_key())
+    client = OpenAI(
+        base_url=AI_GATEWAY_BASE_URL,
+        api_key=_resolve_api_key(),
+        timeout=API_REQUEST_TIMEOUT_S,
+    )
     dispatcher = ToolDispatcher(
         raw_html=paths.raw_html,
         visible_html=paths.visible_html,
+        explore_uses_raw=pipeline.uses_edit,
     )
     tools = build_tools(pipeline)
     messages: list[dict] = [
@@ -82,22 +95,56 @@ def run_agent_vercel(
     result = AgentRunResult(model_id=model_id, backend="vercel")
     final_text = ""
 
-    for _round in range(MAX_TOOL_ROUNDS):
+    for round_index in range(MAX_TOOL_ROUNDS):
+        payload_chars = estimate_openai_messages_chars(messages)
+        log_api_request(
+            pipeline_id=pipeline.id,
+            round_index=round_index,
+            model_id=model_id,
+            message_count=len(messages),
+            payload_chars=payload_chars,
+            log_writer=log_writer,
+        )
+
+        started = time.monotonic()
         try:
             response = client.chat.completions.create(
                 model=model_id,
                 messages=messages,
                 tools=tools,
                 tool_choice="auto",
+                timeout=API_REQUEST_TIMEOUT_S,
             )
         except Exception as exc:
+            elapsed = time.monotonic() - started
+            log_api_error(
+                pipeline_id=pipeline.id,
+                round_index=round_index,
+                elapsed_s=elapsed,
+                error=exc,
+                log_writer=log_writer,
+            )
             if is_context_overflow_error(exc):
                 result.rules = dispatcher.rules
                 result.final_assistant_text = final_text
                 raise ContextOverflowError(str(exc), run_result=result) from exc
             raise
+
+        elapsed = time.monotonic() - started
         choice = response.choices[0]
         message = choice.message
+        tool_names = [tc.function.name for tc in (message.tool_calls or [])]
+
+        log_api_response(
+            pipeline_id=pipeline.id,
+            round_index=round_index,
+            elapsed_s=elapsed,
+            prompt_tokens=response.usage.prompt_tokens if response.usage else None,
+            completion_tokens=response.usage.completion_tokens if response.usage else None,
+            finish_reason=choice.finish_reason,
+            tool_calls=tool_names or None,
+            log_writer=log_writer,
+        )
 
         if response.usage:
             result.prompt_tokens = response.usage.prompt_tokens
