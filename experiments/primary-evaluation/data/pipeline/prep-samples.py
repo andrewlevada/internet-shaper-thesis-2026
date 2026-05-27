@@ -56,6 +56,11 @@ def parse_args() -> argparse.Namespace:
         help="Only regenerate screenshots for existing variant folders.",
     )
     parser.add_argument(
+        "--force-screenshots",
+        action="store_true",
+        help="Regenerate screenshots even when screenshot.png already exists.",
+    )
+    parser.add_argument(
         "--backend",
         choices=["vercel", "openrouter", "anthropic", "local"],
         default="vercel",
@@ -275,11 +280,31 @@ def run_agent_pipeline(
         raise
 
 
+def resolve_screenshot_document_url(sample_dir: Path) -> str | None:
+    task_path = sample_dir / "task.json"
+    if not task_path.is_file():
+        return None
+
+    task = json.loads(task_path.read_text(encoding="utf-8"))
+    approach = task.get("render-approach")
+    if approach not in ("set-content-url", "set-content-url+refresh-assets-from-live"):
+        return None
+
+    return (
+        task.get("render-document-url")
+        or task.get("final-url")
+        or task.get("url")
+    )
+
+
 def screenshot_sample(
     sample_id: str,
     sample_dir: Path,
     pipelines: list[PipelineConfig],
+    *,
+    force: bool = False,
 ) -> None:
+    document_url = resolve_screenshot_document_url(sample_dir)
     for cfg in pipelines:
         variant_dir = sample_dir / cfg.folder
         html_path = agent_variant_paths(variant_dir).index_html
@@ -289,7 +314,7 @@ def screenshot_sample(
             continue
         
         output_path = variant_dir / "screenshot.png"
-        if output_path.is_file():
+        if output_path.is_file() and not force:
             print(f"[{sample_id}] skip screenshot {cfg.folder} (already exists)")
             continue
 
@@ -298,6 +323,7 @@ def screenshot_sample(
             screenshot_variant(
                 html_path=html_path,
                 output_path=output_path,
+                document_url=document_url,
             )
         except Exception as exc:
             print(
@@ -313,6 +339,7 @@ def process_sample(
     *,
     skip_existing: bool,
     screenshots_only: bool,
+    force_screenshots: bool,
     backend: AgentBackend,
 ) -> None:
     seed_dir = SEED_DIR / sample_id
@@ -322,7 +349,10 @@ def process_sample(
         print(f"Missing seed dir: {seed_dir}", file=sys.stderr)
         return
 
-    copy_original_variant(sample_dir, seed_dir)
+    if not screenshots_only:
+        copy_original_variant(sample_dir, seed_dir)
+    elif not (sample_dir / "task.json").is_file():
+        copy_original_variant(sample_dir, seed_dir)
 
     if not screenshots_only:
         for pipeline in agent_pipelines:
@@ -335,7 +365,12 @@ def process_sample(
                 backend=backend,
             )
 
-    screenshot_sample(sample_id, sample_dir, screenshot_pipelines)
+    screenshot_sample(
+        sample_id,
+        sample_dir,
+        screenshot_pipelines,
+        force=force_screenshots,
+    )
 
 
 def main() -> None:
@@ -353,6 +388,7 @@ def main() -> None:
             screenshot_pipelines,
             skip_existing=args.skip_existing,
             screenshots_only=args.screenshots_only,
+            force_screenshots=args.force_screenshots,
             backend=args.backend,
         )
 

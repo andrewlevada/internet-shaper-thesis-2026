@@ -1,0 +1,13 @@
+Patch sample rendering
+sample: our-2/004
+approach: base-href
+dry-run: False
+
+base href: https://www.youtube.com/results?search_query=cats
+  1-original/index.html: inserted base, protocol-relative→https×1
+  2-baseline/index.html: replaced base
+  3-engine-only/index.html: replaced base
+  4-map-only/index.html: replaced base
+  5-full/index.html: replaced base
+  6-full-sonnet/index.html: replaced base
+  task.json: render-approach=base-href

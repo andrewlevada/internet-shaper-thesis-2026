@@ -1,0 +1,13 @@
+Patch sample rendering
+sample: our-2/006
+approach: refresh-assets-from-live
+dry-run: False
+
+refresh-assets-from-live: fetching https://www.youtube.com/results?search_query=cats
+  1-original/index.html: ytmainappweb ss×1, ytmainappweb js×1, player hash×64, desktop hash×18
+  2-baseline/index.html: ytmainappweb ss×1, ytmainappweb js×1, player hash×64, desktop hash×18
+  3-engine-only/index.html: ytmainappweb ss×1, ytmainappweb js×1, player hash×64, desktop hash×18
+  4-map-only/index.html: ytmainappweb ss×1, ytmainappweb js×1, player hash×64, desktop hash×18, protocol-relative→https×1
+  5-full/index.html: ytmainappweb ss×1, ytmainappweb js×1, player hash×64, desktop hash×18, protocol-relative→https×1
+  6-full-sonnet/index.html: ytmainappweb ss×1, ytmainappweb js×1, player hash×64, desktop hash×18, protocol-relative→https×1
+  task.json: render-approach=refresh-assets-from-live

@@ -1,0 +1,8 @@
+Patch sample rendering
+sample: our-2/004
+approach: set-content-url
+dry-run: False
+
+set-content-url: HTML unchanged; screenshot replay uses Playwright route+goto at final-url
+  document url: https://www.youtube.com/results?search_query=cats
+  task.json: render-approach=set-content-url
