@@ -27,19 +27,17 @@
 
 == Background <sec:background>
 
-We build User Interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user (*WIP*: citation needed), but here come 2 problems:
+We build User Interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user @hancock_hedonomics_2005 @yusop_revised_2020, but here come 2 problems:
 - intrinsically, designers can not feasibly plan interfaces for every single user's specific needs and jobs. with constrained resources, even good interfaces are usually not perfect for each user. For example
-- on the other more bleak side are the. Gray and dark patterns systematically misalign system and user goals. This happens when business and user goal diverge, and interface ends up being less helpful and more intrusive (*WIP*: citation needed). 
+- on the other more bleak side are the. Gray and dark patterns systematically misalign system and user goals. This happens when business and user goal diverge, and interface ends up being less helpful and more intrusive @timms_all_2025 @baroni_deceptive_2024 @potel-saville_dark_2023.
 
 These 2 problems make interfaces misaligned with the users needs — undermining the core of design practice. This is the problem we begin to tackle with this thesis.
 
-Prior HCI research extensivly shows that user interfaces can be made adaptive and customizable. (*WIP*: A bunch of citations needed) These approaches requre the developer/designer to implement them. As we see in the industry, this is understandably hardly ever a priority (*WIP*: citation needed) except for select adaptivity dimentions — ios and android apps commonly react to the dynamic type accesability settings by changing the layout of the app to better display the content with larger text. Or how websites are almost always made responsive to screen sizes. But as a way of mitigating misaligned interfaces, the adaptive-interface approach is not really used.
+Prior HCI research extensivly shows that user interfaces can be made adaptive and customizable @lee_towards_nodate (*WIP: cite an old adaptivity and customization meta a anlysys*). These approaches requre the developer/designer to implement them. As we see in the industry, these methods are not widly adpoted except for select adaptivity dimentions — ios and android apps commonly react to the dynamic type accesability settings by changing the layout of the app to better display the content with larger text. Or how websites are almost always made responsive to screen sizes. But as a way of mitigating misaligned interfaces, the adaptive-interface approach is not really used.
 
-Few works take a diffrent approach and try to make interfaces malleable by end users. In this thesis we build upon the ideas they introduce. We want to implement into really this vision of individually tailored user interfaces, shared by many UX practitioners, made possible my recient advaces in LLM's capabilities.
+Few works take a diffrent approach and try to make interfaces malleable by end users @litt_end-user_2020 @katongo_towards_2021. In this thesis we build upon the ideas they introduce. We want to implement into really this vision of individually tailored user interfaces, shared by many UX practitioners @nng_generative_nodate @noauthor_introducing_nodate, made possible my recient advaces in LLM's capabilities.
 
 == Internet Shaper <sec:internet-shaper-intro>
-
-(*WIP*: Shaper demo image)
 
 We design, build and evaluate Internet Shaper — an agentic system wrapped in a browser extension that can change web pages from natural language requests. It works directly on the page in the users browser and does not need access to source code of the website. These changes are persistent across sessions and are powerfull enough to restyle, hide, change elements and while layouts or even bring new, althogh limited, functionality to the website 
 
@@ -53,15 +51,29 @@ Our contributions are as follows:
 
 = Related work <sec:related-work>
 
-There is a longstanding interest of the HCI field practitionerrs in making UIs better by adapting them to the user or giving the user ways to customuze interface for them. Theare have been a number of prominent papers…
+HCI practitioners have long pursued interfaces that adapt to individual users or give users direct control over customization. @lee_towards_nodate reviews 127 generative-UI publications and argues the field is shifting from designer-only tooling toward interfaces generated or reshaped around individual tasks. @nng_generative_nodate makes a similar case in industry terms, describing generative UI as a move from designing for many users to tailoring outcomes for one.
 
-They all however are limited by the design-time application. The the devs don’t include the method there is nothing users can do
+We distinguish two adaptation regimes along when and who initiates change. In _design-time_ adaptation, developers plan and implement adaptive or customizable behavior while the application is still being built; at use time the shipped product either adapts on its own or offers customization the developers designed into it. In _just-in-time_ adaptation, the user encounters a fixed interface — typically a third-party page that was not built to change — and initiates modification in response to an articulated goal. Internet Shaper targets the second regime.
 
-For papers that are user-side, so propose building the interface for the user’s task (maluable ui paper) 
+The clearest design-time adaptation method example is ReLay @kim_-situ_2026, a browser probe that infers browsing intent and automatically adjusts information hierarchy, granularity, and session ordering while the user reads. In a two-phase study, participants accepted these in-situ changes when they remained transparent, consistent, and easily reversible. ReLay shows that intent-responsive layout can improve browsing, but it still depends on a researcher-built adaptive shell.
 
-There are a lot less papers that explore the idea of an end-user interface adpatation / customization. These are the closest to our thesis — give the users tools to adapt the UI.
+That design-time constraint is the central limitation of existing methods. If developers never implement adaptive or customizable behavior, end users cannot change the interface at all. In practice, such features are rarely prioritized outside a few well-resourced dimensions such as responsive layout or platform accessibility settings @lu_ai_2024. Adaptive interfaces therefore do little to help users realign hostile or misaligned third-party sites they already depend on.
 
-Curent method are however extremely limited — chabges are not percistend, rearly apply to logic. Like these papers we use a browser extension wrapper and read DOM — we then improve processing
+A second line of work lets users reshape interfaces around their tasks, but still inside systems researchers or product authors control. @min_malleable_2025 introduces malleable overview–detail interfaces: end users can change content, composition, and layout of a common UI pattern, including AI-assisted attribute manipulation between views. The paper demonstrates demand for task-aligned presentation, but the customization machinery is built into author-controlled design probes, not retrofitted onto opaque third-party DOM. @cao_generative_2025 generates interfaces from task-driven data models that users can extend through natural language and direct manipulation. It shares our interest in interfaces that follow the user's task, but requires authors to implement the generative data-model layer up front.
+
+@wang_enabling_2023 shows that a single LLM, with prompting alone, can support diverse conversational interactions with mobile UIs without task-specific training datasets. It establishes NL as a viable UI control channel, but targets mobile applications with developer-provided screen representations rather than arbitrary web pages accessed through a browser extension. @tanner_poirot_2019 gives designers a graphical web inspector that lowers the cost of style edits compared to browser developer tools. It improves professional design workflows during creation, not end-user just-in-time adaptation of live third-party sites at use time. @long_portfoliomentor_2023 presents an IDE-embedded AI companion that helps students build interactive portfolio UIs from natural-language prompts. It shows generative reshaping from articulated intent, but in an authoring environment the user controls rather than on websites they merely visit. @jeong_canvas_2025 benchmarks vision-language models that operate design tools through sequential tool invocations. It evaluates model capacity to manipulate UI design files, which is orthogonal to transforming rendered third-party pages in the user's browser.
+
+A related malleable-web lineage treats live pages as editable data rather than fixed surfaces. @litt_end-user_2020 introduces Wildcard, a browser extension that syncs a spreadsheet-like table to scraped website data so end-user table edits propagate back to the live page. It is foundational evidence that production websites can be customized without source access, but its spreadsheet-and-formula model is narrower than open-ended natural-language goals and does not provide our cross-session rules engine. @katongo_joker_2021 unifies web extraction and augmentation in one spreadsheet formula language with programming-by-demonstration on DOM elements. It reduces the separation between reading and changing a page, yet still asks users to think in formulas rather than goals and lacks persistent selector-bound JavaScript rules. @katongo_towards_2021 lets end users create, extend, and repair site adapters by demonstration instead of relying on pre-built programmer-written adapters. That direction is directly relevant to reducing manual wrapper authorship; Internet Shaper replaces demonstrated adapters with LLM perception over a compressed DOM. @lin_end_user_2009 presents Vegemite, which combines spreadsheet programming and demonstration to let end users build cross-site web mashups. It established early malleable-web programming, but targets mashup composition across sites rather than durable transformation of one page the user returns to repeatedly.
+
+Far fewer systems give end users tools to adapt existing web interfaces they do not own. This end-user web adaptation literature is the closest prior work to Internet Shaper.
+
+@huynh_enabling_2006 presents Sifter, a browser extension that auto-scrapes list data and adds in-page sort and filter controls as if they were native site features. It demonstrates the scrape-then-augment pattern on live DOM, but limits scope to list filtering and does not support open-ended natural-language goals or persistent rules. @diaz_language_2013 defines Sticklet, a declarative JavaScript grammar for end-user web augmentation aimed at both producers and consumers of modifications. It addresses the same browser-side augmentation problem we face, but relies on manually authored augmentation scripts rather than LLM-generated rules.
+
+@diaz_web_2016 describes WebMakeup, a Chrome extension that lets users attach widgets to clicked DOM nodes and rearrange page fragments visually. It shows direct page modding without natural language, but its visual editing model is fragile on changing sites and does not support conditional logic over runtime content. @aldalur_mawa_2021 presents MAWA, a mobile Firefox extension with a visual DSL for removing and moving page content to improve mobile reading. It confirms that extension-based DOM rewriting is practical on real sites, but focuses on layout-oriented mobile augmentation rather than goal-driven NL adaptation with logic rules. @nebeling_crowdadapt_2013 enables crowdsourced web page adaptation through direct manipulation of layout — moving, resizing, hiding blocks, and changing typography — for individual viewing conditions. It supports layout personalization without scripting, but produces shared crowd variants rather than private, hostname-scoped rules the individual user owns. @santana_continuous_2019 personalizes websites continuously using selector–template pairs: regex-like selectors over interaction logs paired with JavaScript template skeletons, validated in a long-term field study. 
+
+@kim_stylette_2022 presents Stylette, a browser extension that maps natural-language styling goals to CSS property palettes using an LLM and a large web-component corpus. It is our closest contemporary peer because it combines extension deployment, live DOM access, natural language, and an LLM; however, it focuses on CSS appearance, does not persist behavioral rules across reloads in the way our engine does, and cannot express conditional logic such as hiding items based on parsed page content. We then, build upon the limitations this paper acknowledges.
+
+Current end-user adaptation methods remain limited relative to our goals. Changes are often ephemeral, scoped to appearance or layout, or tied to manually authored adapters rather than open-ended user goals @kim_stylette_2022 @nebeling_crowdadapt_2013 @huynh_enabling_2006 @santana_continuous_2019. Like this prior work, Internet Shaper is deployed as a browser extension that reads the live DOM. We extend the paradigm with LLM-driven perception over compressed page structure and a rules engine that persists selector-bound JavaScript, including conditional logic that CSS-only or one-shot edits cannot express.
 
 = Implementation <sec:implementation>
 (*Section status: Very nice and accurate!*)
@@ -72,7 +84,7 @@ This section describes how we designed and built the agentic system at the core 
 
 As introduced above, interfaces are rarely perfect for every user. Even well-designed products leave gaps between a person's actual tasks and what the UI optimizes for. In the worst cases, gray and dark patterns deliberately misalign business incentives with user goals, making the interface harder to use for the tasks the user actually cares about.
 
-Most adaptive interface research assumes the application or its developers implement customization hooks. Our approach is different: it is _user-sided_. The user adapts software they already use, without any cooperation from the people who built it. The system operates on pages that were not designed to be modified.
+Most adaptive interface research assumes developers build adaptive or customizable behavior into the application itself. Our approach is different: it is _user-sided_. The user adapts software they already use, without any cooperation from the people who built it. The system operates on pages that were not designed to be modified.
 
 To reach those pages, we host the prototype in a browser extension. Extensions are uniqly positioned to read and write the DOM of any open tab. The page's structure and content are available to the system as HTML — the same representation the browser uses to render what the user sees. This gives us freedom that is miles ahead of other platforms.
 
@@ -103,7 +115,7 @@ DOM snapshots from real websites are far larger than model context windows allow
   ) <tab:dom-snapshot-sizes>
 ]
 
-It is widly knows that over-saturated contexts produce worse results in general task performance on LLMs (*WIP*: citation needed). Passing the full DOM on every request is therefore not viable: many pages would not fit, and those that do consume most of the context budget before any reasoning begins.
+It is widly knows that over-saturated contexts produce worse results in general task performance on LLMs @sridhar_hierarchical_2023 @zheng_synapse_2024 @enomoto_read_2026. Passing the full DOM on every request is therefore not viable: many pages would not fit, and those that do consume most of the context budget before any reasoning begins.
 
 Even when a DOM fits, most of its HTML carries no information relevant to a given adaptation request — build-tool comments, framework wrapper elements, repeated list items, and design-system class tokens. A baseline that reads everything forces the model to filter noise on every turn.
 
@@ -194,7 +206,7 @@ This complements the map in two ways. First, it restores attributes and child st
 
 === Alternatives <sec:perception-alternatives>
 
-We also considered alternative comprehension strategies from the web-agent literature. Following @ning_survey_2025's classification into text-based, screenshot-based, and multimodal approaches, screenshot-only input is incompatible with our action model, which targets elements via CSS selectors and JavaScript. The accessibility tree preserves semantics for assistive technologies but strips layout detail users often want to change. Task-specific DOM pruning — as in Prune4Web @zhang_prune4web_2025 — suits localized edits, but many adaptation requests are global: restyling a feed, suppressing a class of distractions, or restructuring layout. We therefore compress the full visible page structurally rather than pruning to a task-specific subset. We believe a combined aproach of DOM compresssion tigether with pruning might work best, but this is out of scope for this thesis
+We also considered alternative comprehension strategies from the web-agent literature. Following @ning_survey_2025's classification into text-based, screenshot-based, and multimodal approaches, screenshot-only input is incompatible with our action model, which targets elements via CSS selectors and JavaScript. The accessibility tree preserves semantics for assistive technologies but strips layout detail users often want to change @enomoto_read_2026. Task-specific DOM pruning — as in Prune4Web @zhang_prune4web_2026 and related DOM-aware summarization methods @huang_lightweight_2025 — suits localized edits, but many adaptation requests are global: restyling a feed, suppressing a class of distractions, or restructuring layout. Hierarchical observation summarization @sridhar_hierarchical_2023 and trajectory-based prompting @zheng_synapse_2024 similarly optimize for navigation episodes rather than durable UI transformation. We therefore compress the full visible page structurally rather than pruning to a task-specific subset. We believe a combined aproach of DOM compresssion tigether with pruning might work best, but this is out of scope for this thesis
 
 == Action <sec:action>
 
@@ -206,7 +218,7 @@ An ideal action interface must meet two criteria that one-shot DOM edits cannot 
 "Show only videos that are longer than 40 min" on a YouTube playlist page. A persistent rule must read duration text from each item and conditionally hide non-matching entries — logic that CSS and one-shot text replacements cannot express.
 ]
 
-We considered a custom transformation language and generated CSS before settling on JavaScript. Frontier models already generate JS reliably for DOM manipulation, and JS covers the conditional logic CSS cannot. A custom language would add parsing cost without clear benefit.
+We considered a custom transformation language and generated CSS before settling on JavaScript. Frontier models already generate JS reliably for DOM manipulation @zan_large_2023, and JS covers the conditional logic CSS cannot. A custom language would add parsing cost without clear benefit.
 
 === Rules Engine <sec:rules-engine>
 
@@ -235,7 +247,7 @@ From the model's perspective, a rule is therefore a declarative target (`query_s
 
 == Agent Workflow <sec:agent-workflow>
 
-The system prompt enforces a strict perception-before-action sequence on every user request. When the agent loop starts, the extension captures a DOM snapshot (`document.documentElement.outerHTML`) and passes it to the tool executor; all perception tools read from this frozen copy rather than the live page. The model then follows this sequence:
+The system prompt enforces a strict perception-before-action sequence on every user request, following the tool-use agent pattern now common in LLM systems @noauthor_tool_nodate. When the agent loop starts, the extension captures a DOM snapshot (`document.documentElement.outerHTML`) and passes it to the tool executor; all perception tools read from this frozen copy rather than the live page. The model then follows this sequence:
 
 + Call `get_map_of_dom()` before any other tool.
 + Identify candidate elements relevant to the user's request from the returned map.
@@ -270,7 +282,7 @@ To move from anecdotal DOM sizes to measurable compression, we assembled a corpu
 
 === Source and filtering <sec:corpus-source>
 
-We started from the top-domain list in the web-unpacked study, which annotates 116 high-traffic sites. We filtered out login- or payment-gated services and adult-industry domains, because manual evaluation might later involve inspecting page screenshots. We kept the top 25 remaining domains by rank.
+We started from the top-domain list in the web-unpacked study @xavier_web_2024, which annotates 116 high-traffic sites. We filtered out login- or payment-gated services and adult-industry domains, because manual evaluation might later involve inspecting page screenshots. We kept the top 25 remaining domains by rank. Commercial top-site lists can miss frequently visited pages and bias language-specific research @alby_analyzing_2022, but the web-unpacked corpus offers richer metadata than rank-only lists for our sampling goals.
 
 Several homepages needed manual URL adjustment before crawling: search engines and YouTube were pointed at result pages rather than landing pages, Wikipedia at the English homepage, and Pinterest at a browsable feed. We then crawled same-domain links from each seed URL using a headed browser, semi-automatically accepting cookie banners and manually passing captchas where required.
 
@@ -314,7 +326,7 @@ Visible capture alone cuts median size by roughly half; the compressed map reduc
 
 == Task Synthesis <sec:evaluation-task-synthesis>
 
-Compression metrics alone do not define adaptation tasks. To evaluate the full agent, we synthesized user requests from the snapshot corpus using a Jobs-to-be-Done (JTBD) pipeline.
+Compression metrics alone do not define adaptation tasks. To evaluate the full agent, we synthesized user requests from the snapshot corpus using a Jobs-to-be-Done (JTBD) pipeline. This mirrors recent work on synthesizing NL edit datasets for web pages @dang_envisioning_2025, but targets user-side adaptation prompts grounded in personas and jobs rather than developer-time HTML source edits.
 
 We selected 10 snapshots from the corpus with a fixed random seed, excluding pages that failed quality checks. For each snapshot, a separate LLM session (Gemini 3.5 Flash) inspected the page DOM and produced, in three turns:
 
@@ -349,11 +361,11 @@ To isolate the perception and action components, we run six agent configurations
 
 Baseline and map-only swap perception strategy while keeping a one-shot edit action. Engine-only and full swap persistence while keeping full-DOM or compact perception respectively. The full pipeline matches the production prototype; results are reported in the Results section.
 
-(*WIP: how the test was run, the pairvise test stand the ststaistical test used for eval*)
+Pairwise preference judgments were analyzed with Bradley–Terry models fit via MM algorithms @hunter_mm_2004.
 
 == AI Usage Disclosure <sec:ai-usage-disclosure>
 
-AI agents via Cursor Editor and Claude Code CLI were used in writing the prototype code. All generated code was fully reviewed and verified manually, and all architectural decisions were made explicitly by the authors.
+AI agents via Cursor Editor and Claude Code CLI were used in writing the prototype code. All generated code was fully reviewed and verified manually, and all architectural decisions were made explicitly by the authors. We used proprietary frontier models in the prototype evaluation; following @palmer_using_2024, we treat this as justified because the contribution is the adaptation system rather than a model benchmark.
 
 = Results <sec:results>
 
