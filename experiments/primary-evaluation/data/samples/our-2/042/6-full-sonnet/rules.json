@@ -1,0 +1,17 @@
+[
+	{
+		"label": "Hide intro paragraph 1",
+		"query_selector": ".article-body > p:first-child",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide first UL (admin features)",
+		"query_selector": ".article-body > ul:first-of-type",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide intro paragraphs 2–6",
+		"query_selector": ".article-body > p:nth-child(n+2):nth-child(-n+6)",
+		"logic": "element.style.display = 'none';"
+	}
+]

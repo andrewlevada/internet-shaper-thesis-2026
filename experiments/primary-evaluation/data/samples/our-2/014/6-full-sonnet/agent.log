@@ -1,0 +1,227 @@
+Timestamp: 2026-05-27T09:01:00.653556+00:00
+Sample: our-2/014
+Pipeline: full-sonnet (6-full-sonnet)
+Backend: anthropic
+Model: claude-sonnet-4-6
+Work raw: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/014/6-full-sonnet/work/raw.html
+Work visible: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/014/6-full-sonnet/work/visible.html
+Tools: get_map_of_dom, show_in_dom, set_update_rule
+
+=== Model Request ===
+
+--- System prompt ---
+You are a browser extension agent that modifies web pages based on user requests.
+
+Read tools (get_map_of_dom, show_in_dom) always return the original page snapshot. Changes from set_update_rule do not update what read tools show on later calls.
+
+Workflow:
+1. Call get_map_of_dom() to get an overview of the page structure
+2. Identify candidate elements for the user's request
+3. Use show_in_dom() to examine specific elements if you need more detail
+4. Create update rules with specific selectors (prefer class names, data attributes, or tag names over structural paths)
+
+Rules must be idempotent and deterministic:
+- Running the same logic on the same element multiple times must produce the same result as running it once.
+- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
+- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
+- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
+
+Be thorough - if there are multiple variations of elements matching the user's request, create rules for each variation.
+
+--- Tool definitions ---
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_map_of_dom",
+      "description": "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: 1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. 2. Repeating sibling elements show only the first with a comment indicating count. 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. Can only be called once per session; later calls return the previous result message.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "show_in_dom",
+      "description": "Returns full HTML for the first element matching the query selector.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_selector": {
+            "type": "string",
+            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')"
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. ",
+            "minimum": 0,
+            "default": 3
+          }
+        },
+        "required": [
+          "query_selector"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_update_rule",
+      "description": "Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. \n\nThe 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \nThe page's 'document' is also available for DOM construction (e.g. document.createElement). \nGlobal APIs like window are not avaliable. \n\nCommon patterns: \n- element.style.display = 'none' - hide the element \n- element.style.opacity = '0.3' - dim the element \n- element.classList.add('hidden') - add a class \n- element.textContent = '' - clear text content \n\nWhen using set_update_rule:\n- The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once. \n- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. Write logic that handles an empty/missing value gracefully by doing nothing (early return).\n- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value. \n- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "A short label (~3 words) describing what this rule does, for display in the rule management UI (e.g., 'Hide video ads', 'Remove sidebar', 'Dim suggestions')"
+          },
+          "query_selector": {
+            "type": "string",
+            "description": "A CSS selector matching elements to modify (e.g., '.ad-container', '[data-ad]', 'ytd-ad-slot-renderer')"
+          },
+          "logic": {
+            "type": "string",
+            "description": "Valid JavaScript code with access to 'element' variable only."
+          }
+        },
+        "required": [
+          "label",
+          "query_selector",
+          "logic"
+        ]
+      }
+    }
+  }
+]
+
+=== Agent Chat ===
+
+--- USER ---
+Remove the large decorative icon, promotional text, and background card from the center of the page, leaving only a simple, distraction-free sign-in button.
+
+--- API REQUEST round 0 ---
+model=claude-sonnet-4-6 messages=1 payload_chars=4,894
+
+--- API RESPONSE round 0 ---
+elapsed_s=2.3 prompt_tokens=357 completion_tokens=58 finish_reason=tool_use tool_calls=[get_map_of_dom]
+
+--- TOOL CALL: get_map_of_dom ---
+(no input)
+
+--- TOOL RESULT: get_map_of_dom ---
+<body><ytd-app><yt-guide-manager id="guide-service"></yt-guide-manager><yt-mdx-manager></yt-mdx-manager><yt-playlist-manager></yt-playlist-manager><yt-hotkey-manager></yt-hotkey-manager><div id="content"><div id="masthead-container"><!-- -1 wrappers  class="masthead-finish" role="banner"--><div id="ticker"></div><div id="interstitial"></div><div id="background"></div><div id="container"><div id="start"><yt-icon-button id="guide-button"><button id="button" class="yt-icon-button" aria-label="Guide"><!-- -3 wrappers --><svg /></button><yt-interaction id="interaction" class="circular yt-icon-button"></yt-interaction></yt-icon-button><ytd-topbar-logo-renderer id="logo"><a class="yt-simple-endpoint ytd-topbar-logo-renderer" id="logo" title="YouTube Home"><!-- -5 wrappers  class="ytd-logo"--><svg id="yt-ringo2-svg_yt18" /></a><span id="country-code" class="ytd-topbar-logo-renderer"> NL </span></ytd-topbar-logo-renderer><div id="skip-navigation"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextTonal ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Skip navigation"--><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Skip navigation</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></div></div><div id="center"><yt-searchbox role="search" class="ytSearchboxComponentHost ytSearchboxComponentDesktop"><!-- -1 wrappers  class="ytSearchboxComponentInputContainer"--><div class="ytSearchboxComponentInputBox"><!-- -1 wrappers  class="ytSearchboxComponentSearchForm"--><input class="ytSearchboxComponentInput yt-searchbox-input title" name="search_query" type="text" role="combobox" placeholder="Search"></div><button aria-label="Search" class="ytSearchboxComponentSearchButton" title="Search"><!-- -3 wrappers  class="ytIconWrapperHost"--><svg /></button></yt-searchbox><div id="voice-search-button"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconOnlyDefault ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Search with your voice"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip role="tooltip" aria-label="tooltip"></tp-yt-paper-tooltip></div></div><div id="end"><!-- -1 wrappers --><ytd-topbar-menu-button-renderer class="style-default"><!-- -3 wrappers  class="ytd-topbar-menu-button-renderer yt-simple-endpoint" id="button"--><button id="button" class="yt-icon-button" aria-label="Settings"><!-- -3 wrappers  class="ytd-topbar-menu-button-renderer"--><svg /></button><yt-interaction id="interaction" class="circular yt-icon-button"></yt-interaction></ytd-topbar-menu-button-renderer><ytd-button-renderer><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextOutline ytSpecButtonShapeNextCallToAction ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconLeading ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Sign in"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost"--><svg /></div><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Sign in</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></ytd-button-renderer></div></div></div><tp-yt-app-drawer id="guide" role="navigation"><!-- -2 wrappers  class="tp-yt-app-drawer"--><div id="guide-spacer"></div><div id="guide-content"><!-- -2 wrappers --><div id="sections" class="ytd-guide-renderer"><ytd-guide-section-renderer class="ytd-guide-renderer"><!-- -1 wrappers  id="items"--><ytd-guide-entry-renderer><a id="endpoint" class="yt-simple-endpoint" role="link" title="Home"><!-- -1 wrappers --><yt-icon class="guide-icon"><!-- -2 wrappers --><svg /></yt-icon><yt-formatted-string class="title">Home</yt-formatted-string></a><yt-interaction></yt-interaction></ytd-guide-entry-renderer><!-- -4 siblings --></ytd-guide-section-renderer><ytd-guide-signin-promo-renderer class="ytd-guide-renderer"><yt-formatted-string class="ytd-guide-signin-promo-renderer">Sign in to like videos, comment, and subscribe.</yt-formatted-string><ytd-button-renderer id="sign-in-button" class="ytd-guide-signin-promo-renderer"><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextOutline ytSpecButtonShapeNextCallToAction ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconLeading ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Sign in"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost"--><svg /></div><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Sign in</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></ytd-button-renderer></ytd-guide-signin-promo-renderer><ytd-guide-section-renderer class="ytd-guide-renderer"><h3><yt-formatted-string id="guide-section-title">Explore</yt-formatted-string></h3><div id="items"><ytd-guide-entry-renderer><a id="endpoint" class="yt-simple-endpoint" role="link" title="Music"><!-- -1 wrappers --><yt-icon class="guide-icon"><!-- -2 wrappers --><svg /></yt-icon><yt-formatted-string class="title">Music</yt-formatted-string></a><yt-interaction></yt-interaction></ytd-guide-entry-renderer><!-- -2 siblings --><ytd-guide-collapsible-entry-renderer><!-- -1 wrappers  class="ytd-guide-collapsible-entry-renderer" id="expander-item" role="button"--><a id="endpoint" class="yt-simple-endpoint" role="link" title="Show more"><!-- -1 wrappers --><yt-icon class="guide-icon"><!-- -2 wrappers --><svg /></yt-icon><yt-formatted-string class="title">Show more</yt-formatted-string></a><yt-interaction></yt-interaction></ytd-guide-collapsible-entry-renderer></div></ytd-guide-section-renderer><ytd-guide-section-renderer class="ytd-guide-renderer"><h3><yt-formatted-string id="guide-section-title">More from YouTube</yt-formatted-string></h3><div id="items"><ytd-guide-entry-renderer><a id="endpoint" class="yt-simple-endpoint" role="link" title="YouTube Premium"><!-- -1 wrappers --><yt-icon class="guide-icon"><!-- -2 wrappers --><svg /></yt-icon><yt-formatted-string class="title">YouTube Premium</yt-formatted-string></a><yt-interaction></yt-interaction></ytd-guide-entry-renderer><ytd-guide-entry-renderer><a id="endpoint" class="yt-simple-endpoint" role="link" title="YouTube Kids"><!-- -1 wrappers --><yt-icon class="guide-icon"><!-- -2 wrappers --><svg /></yt-icon><yt-formatted-string class="title">YouTube Kids</yt-formatted-string></a><yt-interaction></yt-interaction></ytd-guide-entry-renderer></div></ytd-guide-section-renderer><ytd-guide-section-renderer class="ytd-guide-renderer"><!-- -2 wrappers  id="items"--><a id="endpoint" class="yt-simple-endpoint" role="link" title="Report history"><!-- -1 wrappers --><yt-icon class="guide-icon"><!-- -2 wrappers --><svg /></yt-icon><yt-formatted-string class="title">Report history</yt-formatted-string></a><yt-interaction></yt-interaction></ytd-guide-section-renderer></div><div id="footer" class="ytd-guide-renderer"><div id="guide-links-primary" class="ytd-guide-renderer"><a>About</a><!-- -6 siblings --></div><div id="guide-links-secondary" class="ytd-guide-renderer"><a>Terms</a><!-- -4 siblings --></div><div id="copyright"><div>© 2026 Google LLC</div><div> YouTube, a Google company</div></div></div></div></tp-yt-app-drawer><ytd-page-manager id="page-manager"><!-- -1 wrappers  class="ytd-page-manager" role="main"--><div id="alert-banner" class="ytd-browse"></div><div id="personal-greeting" class="ytd-browse"></div><div id="masthead-ad" class="ytd-browse"></div><div id="header" class="ytd-browse"></div><div id="alerts" class="ytd-browse"></div><ytd-two-column-browse-results-renderer class="ytd-browse grid grid-5-columns"><div id="primary" class="ytd-two-column-browse-results-renderer"><!-- -1 wrappers --><div id="header-container" class="ytd-section-list-renderer"><div id="header" class="ytd-section-list-renderer"></div><div id="sub-menu" class="ytd-section-list-renderer"></div></div><div id="contents" class="ytd-section-list-renderer"><!-- -1 wrappers --><div id="header" class="ytd-item-section-renderer"></div><div id="spinner-container" class="ytd-item-section-renderer"></div><div id="contents" class="ytd-item-section-renderer"><!-- -1 wrappers --><yt-icon class="image ytd-background-promo-renderer"><!-- -2 wrappers --><svg /></yt-icon><div class="promo-message ytd-background-promo-renderer"><div class="promo-title ytd-background-promo-renderer">Enjoy your favorite videos</div><yt-formatted-string class="promo-body-text ytd-background-promo-renderer">Sign in to access videos that you’ve liked or saved</yt-formatted-string></div><div id="buttons" class="ytd-background-promo-renderer"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextOutline ytSpecButtonShapeNextCallToAction ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconLeading ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Sign in"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost"--><svg /></div><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Sign in</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></div></div><div id="continuations" class="ytd-item-section-renderer"></div></div><div id="continuations" class="ytd-section-list-renderer"></div></div><div id="secondary" class="ytd-two-column-browse-results-renderer"></div></ytd-two-column-browse-results-renderer><div id="survey" class="ytd-browse"></div><div id="metadata" class="ytd-browse"></div><div id="footer" class="ytd-browse"></div></ytd-page-manager></div><ytd-permission-role-bottom-bar-renderer></ytd-permission-role-bottom-bar-renderer><ytd-popup-container></ytd-popup-container><ytd-third-party-manager></ytd-third-party-manager><snackbar-container class="ytSnackbarContainerHost"></snackbar-container><div id="video-preview"><ytd-video-preview-loader class="ytdVideoPreviewLoaderHost"></ytd-video-preview-loader></div><yt-ephemeral-actions class="ytEphemeralActionsHost"></yt-ephemeral-actions><yt-tooltip class="ytTooltipContainerHost"></yt-tooltip></ytd-app><svg /></body>
+
+<!-- Stats: 91 wrappers collapsed, 16 list items truncated -->
+
+
+--- API REQUEST round 1 ---
+model=claude-sonnet-4-6 messages=3 payload_chars=17,146
+
+--- API RESPONSE round 1 ---
+elapsed_s=3.1 prompt_tokens=1 completion_tokens=116 finish_reason=tool_use tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-background-promo-renderer",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<ytd-background-promo-renderer class="style-scope ytd-item-section-renderer" icon-name="yt-icons:VIDEO_LIBRARY_WHITE" renderer-style="full-height" has-body-text=""><yt-icon class="image style-scope ytd-background-promo-renderer"><span class="yt-icon-shape style-scope yt-icon ytSpecIconShapeHost"><div style="width: 100%; height: 100%; display: block; fill: currentcolor;"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" style="pointer-events: none; display: inherit; width: 100%; height: 100%;"><!-- -1 children --></svg></div></span></yt-icon>
+
+<div class="promo-message style-scope ytd-background-promo-renderer">
+  <div class="promo-title style-scope ytd-background-promo-renderer">Enjoy your favorite videos</div>
+  <yt-formatted-string class="promo-body-text style-scope ytd-background-promo-renderer" split-lines="">Sign in to access videos that you’ve liked or saved</yt-formatted-string>
+</div>
+<div id="buttons" class="style-scope ytd-background-promo-renderer"><ytd-button-renderer class="style-scope ytd-background-promo-renderer" button-renderer="" button-next=""><yt-button-shape><a href="https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3D%252Ffeed%252Flibrary&hl=en" rel="nofollow" class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextOutline ytSpecButtonShapeNextCallToAction ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconLeading ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-haspopup="false" force-new-state="true" aria-label="Sign in" aria-current="false"><!-- -3 children --></a></yt-button-shape><tp-yt-paper-tooltip offset="8" disable-upgrade=""></tp-yt-paper-tooltip></ytd-button-renderer></div>
+</ytd-background-promo-renderer>
+
+
+--- API REQUEST round 2 ---
+model=claude-sonnet-4-6 messages=5 payload_chars=19,583
+
+--- API RESPONSE round 2 ---
+elapsed_s=5.2 prompt_tokens=773 completion_tokens=223 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "ytd-background-promo-renderer yt-icon.image",
+  "label": "Hide decorative promo icon",
+  "logic": "element.style.display = 'none';"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#1): "Hide decorative promo icon" - selector="ytd-background-promo-renderer yt-icon.image"
+
+--- API REQUEST round 3 ---
+model=claude-sonnet-4-6 messages=7 payload_chars=20,528
+
+--- API RESPONSE round 3 ---
+elapsed_s=2.8 prompt_tokens=164 completion_tokens=117 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "ytd-background-promo-renderer .promo-message",
+  "label": "Hide promo message text",
+  "logic": "element.style.display = 'none';"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#2): "Hide promo message text" - selector="ytd-background-promo-renderer .promo-message"
+
+--- API REQUEST round 4 ---
+model=claude-sonnet-4-6 messages=9 payload_chars=21,039
+
+--- API RESPONSE round 4 ---
+elapsed_s=3.5 prompt_tokens=323 completion_tokens=195 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "ytd-background-promo-renderer",
+  "label": "Remove promo card background",
+  "logic": "element.style.background = 'none';\nelement.style.boxShadow = 'none';\nelement.style.border = 'none';\nelement.style.padding = '0';\nelement.style.margin = '0 auto';\nelement.style.display = 'flex';\nelement.style.justifyContent = 'center';\nelement.style.alignItems = 'center';"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#3): "Remove promo card background" - selector="ytd-background-promo-renderer"
+
+--- API REQUEST round 5 ---
+model=claude-sonnet-4-6 messages=11 payload_chars=21,777
+
+--- API RESPONSE round 5 ---
+elapsed_s=7.1 prompt_tokens=274 completion_tokens=170 finish_reason=end_turn tool_calls=[(none)]
+
+--- ASSISTANT ---
+All three rules are now active. Here's what was done:
+
+1. **🎨 Decorative icon hidden** — The large `yt-icon` (video library icon) above the card text is now invisible.
+2. **📝 Promotional text removed** — Both the title *"Enjoy your favorite videos"* and the body text *"Sign in to access videos that you've liked or saved"* are hidden.
+3. **🃏 Background card stripped** — The card's background fill, shadow, border, and padding are all cleared, leaving a clean, transparent container centered on the page.
+
+The **Sign in button** remains fully functional and is now the sole element displayed in the center of the page — clean and distraction-free.
+
+Tokens: 274 prompt / 170 completion
+
+=== Result ===
+
+
+
+3 rule(s):
+[1] Hide decorative promo icon — ytd-background-promo-renderer yt-icon.image
+    element.style.display = 'none';
+[2] Hide promo message text — ytd-background-promo-renderer .promo-message
+    element.style.display = 'none';
+[3] Remove promo card background — ytd-background-promo-renderer
+    element.style.background = 'none';
+element.style.boxShadow = 'none';
+element.style.border = 'none';
+element.style.padding = '0';
+element.style.margin = '0 auto';
+element.style.display = 'flex';
+element.style.justifyContent = 'center';
+element.style.alignItems = 'center';
+

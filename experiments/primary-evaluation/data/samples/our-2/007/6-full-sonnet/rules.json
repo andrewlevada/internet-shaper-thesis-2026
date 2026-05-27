@@ -1,0 +1,27 @@
+[
+	{
+		"label": "Hide comments section",
+		"query_selector": "#comments-section",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide OpenWeb comments block",
+		"query_selector": "#openweb-comments",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide reactions widget",
+		"query_selector": "[data-spotim-app=\"reactions\"]",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide Start Conversation button",
+		"query_selector": "[aria-label=\"Sign in to comment\"]",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide OpenWeb floating bell",
+		"query_selector": "[data-spot-im-shadow-host=\"floating-bell\"]",
+		"logic": "element.style.display = 'none';"
+	}
+]

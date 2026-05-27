@@ -1,0 +1,12 @@
+[
+	{
+		"label": "Hide Trending thumbnails",
+		"query_selector": "#trending-search ol li img.chromatic-ignore.rounded",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Collapse Trending thumb wrapper",
+		"query_selector": "#trending-search ol li div.relative.shrink-0",
+		"logic": "element.style.display = 'none';"
+	}
+]

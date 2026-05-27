@@ -1,0 +1,17 @@
+[
+	{
+		"label": "Hide decorative promo icon",
+		"query_selector": "ytd-background-promo-renderer yt-icon.image",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide promo message text",
+		"query_selector": "ytd-background-promo-renderer .promo-message",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Remove promo card background",
+		"query_selector": "ytd-background-promo-renderer",
+		"logic": "element.style.background = 'none';\nelement.style.boxShadow = 'none';\nelement.style.border = 'none';\nelement.style.padding = '0';\nelement.style.margin = '0 auto';\nelement.style.display = 'flex';\nelement.style.justifyContent = 'center';\nelement.style.alignItems = 'center';"
+	}
+]

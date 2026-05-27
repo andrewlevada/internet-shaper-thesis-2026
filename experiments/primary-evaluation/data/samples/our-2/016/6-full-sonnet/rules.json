@@ -1,0 +1,37 @@
+[
+	{
+		"label": "Move image panels to top",
+		"query_selector": "#b_results",
+		"logic": "\n// Move both image panels to the very top of #b_results\nconst imagesOfCats = element.querySelector('li.b_ans.b_imgansacf');\nconst aside = document.querySelector('aside[aria-label=\"Additional Results\"]');\nconst explorePanel = aside ? aside.querySelector('li.b_ans.b_imgexpansacf') : null;\n\nif (imagesOfCats && element.children[0] !== imagesOfCats) {\n  element.insertBefore(imagesOfCats, element.firstChild);\n}\n\n// Clone the \"Explore with images\" panel into b_results right after \"Images of Cats\"\nconst existingClone = element.querySelector('li.b_imgexpansacf-clone');\nif (explorePanel && !existingClone) {\n  const clone = explorePanel.cloneNode(true);\n  clone.classList.add('b_imgexpansacf-clone');\n  clone.style.display = 'block';\n  // Insert after imagesOfCats\n  if (imagesOfCats && imagesOfCats.nextSibling) {\n    element.insertBefore(clone, imagesOfCats.nextSibling);\n  } else {\n    element.appendChild(clone);\n  }\n  // Hide the original aside panel to avoid duplication\n  if (aside) aside.style.display = 'none';\n}\n"
+	},
+	{
+		"label": "Larger Images of Cats thumbnails",
+		"query_selector": "li.b_ans.b_imgansacf .iacf_plan",
+		"logic": "\n// Scale up all image items within the masonry plan — double the height\nconst items = element.querySelectorAll('.iacfmit');\nconst currentHeight = parseInt(element.style.height, 10);\nif (currentHeight && !element.dataset.enlarged) {\n  element.style.height = (currentHeight * 1.8) + 'px';\n  element.dataset.enlarged = '1';\n  items.forEach(item => {\n    const top = parseFloat(item.style.top);\n    const height = parseFloat(item.style.height);\n    const left = item.style.left;\n    const width = item.style.width;\n    if (!item.dataset.enlarged) {\n      item.style.height = (height * 1.8) + 'px';\n      if (top > 0) item.style.top = (top * 1.8) + 'px';\n      item.dataset.enlarged = '1';\n    }\n  });\n}\n"
+	},
+	{
+		"label": "Enlarge Images of Cats img",
+		"query_selector": "li.b_ans.b_imgansacf .iacfmit img",
+		"logic": "\nelement.style.width = '100%';\nelement.style.height = '100%';\nelement.style.objectFit = 'cover';\nelement.style.minHeight = '180px';\n"
+	},
+	{
+		"label": "Shrink Images of Cats captions",
+		"query_selector": "li.b_ans.b_imgansacf .imgInfo",
+		"logic": "\nelement.style.fontSize = '10px';\nelement.style.lineHeight = '1.2';\nelement.style.padding = '2px 3px';\nelement.style.overflow = 'hidden';\nelement.style.maxHeight = '2.4em';\n"
+	},
+	{
+		"label": "Enlarge Explore with images thumbs",
+		"query_selector": ".mmiea .cico, li.b_imgexpansacf-clone .cico",
+		"logic": "\nelement.style.width = '140px';\nelement.style.height = '140px';\nelement.style.minWidth = '140px';\nelement.style.minHeight = '140px';\nconst img = element.querySelector('img');\nif (img) {\n  img.style.width = '140px';\n  img.style.height = '140px';\n  img.setAttribute('width', '140');\n  img.setAttribute('height', '140');\n}\n"
+	},
+	{
+		"label": "Shrink Explore with images text",
+		"query_selector": ".mmiea .iacf_info, li.b_imgexpansacf-clone .iacf_info",
+		"logic": "\nelement.style.fontSize = '10px';\nelement.style.lineHeight = '1.2';\nelement.style.padding = '2px 3px';\nelement.style.overflow = 'hidden';\nelement.style.maxHeight = '2.6em';\n"
+	},
+	{
+		"label": "Style moved panels top border",
+		"query_selector": "li.b_ans.b_imgansacf, li.b_imgexpansacf-clone",
+		"logic": "\nelement.style.marginBottom = '16px';\nelement.style.borderBottom = '1px solid #e5e5e5';\nelement.style.paddingBottom = '12px';\n"
+	}
+]

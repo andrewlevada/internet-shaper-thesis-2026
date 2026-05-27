@@ -1,0 +1,394 @@
+Timestamp: 2026-05-27T09:05:37.970094+00:00
+Sample: our-2/020
+Pipeline: full-sonnet (6-full-sonnet)
+Backend: anthropic
+Model: claude-sonnet-4-6
+Work raw: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/020/6-full-sonnet/work/raw.html
+Work visible: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/020/6-full-sonnet/work/visible.html
+Tools: get_map_of_dom, show_in_dom, set_update_rule
+
+=== Model Request ===
+
+--- System prompt ---
+You are a browser extension agent that modifies web pages based on user requests.
+
+Read tools (get_map_of_dom, show_in_dom) always return the original page snapshot. Changes from set_update_rule do not update what read tools show on later calls.
+
+Workflow:
+1. Call get_map_of_dom() to get an overview of the page structure
+2. Identify candidate elements for the user's request
+3. Use show_in_dom() to examine specific elements if you need more detail
+4. Create update rules with specific selectors (prefer class names, data attributes, or tag names over structural paths)
+
+Rules must be idempotent and deterministic:
+- Running the same logic on the same element multiple times must produce the same result as running it once.
+- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
+- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
+- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
+
+Be thorough - if there are multiple variations of elements matching the user's request, create rules for each variation.
+
+--- Tool definitions ---
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_map_of_dom",
+      "description": "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: 1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. 2. Repeating sibling elements show only the first with a comment indicating count. 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. Can only be called once per session; later calls return the previous result message.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "show_in_dom",
+      "description": "Returns full HTML for the first element matching the query selector.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_selector": {
+            "type": "string",
+            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')"
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. ",
+            "minimum": 0,
+            "default": 3
+          }
+        },
+        "required": [
+          "query_selector"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_update_rule",
+      "description": "Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. \n\nThe 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \nThe page's 'document' is also available for DOM construction (e.g. document.createElement). \nGlobal APIs like window are not avaliable. \n\nCommon patterns: \n- element.style.display = 'none' - hide the element \n- element.style.opacity = '0.3' - dim the element \n- element.classList.add('hidden') - add a class \n- element.textContent = '' - clear text content \n\nWhen using set_update_rule:\n- The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once. \n- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. Write logic that handles an empty/missing value gracefully by doing nothing (early return).\n- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value. \n- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "A short label (~3 words) describing what this rule does, for display in the rule management UI (e.g., 'Hide video ads', 'Remove sidebar', 'Dim suggestions')"
+          },
+          "query_selector": {
+            "type": "string",
+            "description": "A CSS selector matching elements to modify (e.g., '.ad-container', '[data-ad]', 'ytd-ad-slot-renderer')"
+          },
+          "logic": {
+            "type": "string",
+            "description": "Valid JavaScript code with access to 'element' variable only."
+          }
+        },
+        "required": [
+          "label",
+          "query_selector",
+          "logic"
+        ]
+      }
+    }
+  }
+]
+
+=== Agent Chat ===
+
+--- USER ---
+Make the utility shortcuts in the header (like Mail, Finance, Sports, and Weather) much larger and more visually prominent so I can jump to other portals instantly.
+
+--- API REQUEST round 0 ---
+model=claude-sonnet-4-6 messages=1 payload_chars=4,902
+
+--- API RESPONSE round 0 ---
+elapsed_s=2.3 prompt_tokens=358 completion_tokens=57 finish_reason=tool_use tool_calls=[get_map_of_dom]
+
+--- TOOL CALL: get_map_of_dom ---
+(no input)
+
+--- TOOL RESULT: get_map_of_dom ---
+<body class="__variable_b8938d __variable_8e7273 __variable_6d623b bg-secondary font-yahoosans" id="news-content-app"><div id="benji-dashboard-root"></div><div class="grid min-h-dvh grid-cols-1 grid-rows-[auto_1fr_auto] nca-homepage-en-US narrow-page z-1 bg-secondary"><header id="module-uh" data-version="1.1.63" class="font-yahoosans top-0 z-20 inline-flex items-start bg-uds-primary-light dark:bg-uds-primary-dark md:items-center [transition:background-color_0.12s_ease,_box-shadow_0.12s_ease] dark:duration-300 md:bg-secondary dark:md:bg-secondary sticky"><!-- -2 wrappers  class="py-2.5 md:py-[9px] px-5 md:px-6 lg:px-8 gap-2.5 max-w-uh-custom justify-around"--><a data-ylk="elm:logo;itc:0;sec:ybar;slk:frontpage;subsec:logo;" data-yga="{&quot;yLinkText&quot;:&quot;frontpage&quot;,&quot;yLinkElement&quot;:&quot;logo&quot;,&quot;ySection&quot;:&quot;logo&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" class="focus-visible:rounded-[4px] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-8 md:mr-6 focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)]" data-rapid_p="80" data-y-link-id="18seotd1cbw90w0r3h8e" data-v9y="1"><svg aria-label="Yahoo" class="fill-uh-purple dark:fill-white h-6" role="img" /></a><div class="z-10 h-10 caret-purple-700 backdrop-blur-0 md:block md:h-[46px] md:mr-8 lg:mr-10 hidden max-w-[702px]"><!-- -1 wrappers  class="gap-1 justify-start py-1 pl-6 outline [transition:height_.2s_ease-in-out] md:inline-flex dark:caret-sky pr-1 [transition:outline_.3s_ease-in-out] hover:outline-2 hover:drop-shadow-md md:rounded-[100px] md:bg-marshmallow dark:md:bg-uds-secondary-dark outline-2 outline-offset-[-2px] hover:shadow-elevation-3 outline-[rgb(70_31_140/60%)] hover:outline-[rgb(70_31_140/80%)] dark:outline-[#464e56] dark:hover:outline-uds-brand-dark" role="search"--><div class="z-1 h-14 shrink grow basis-0 justify-start md:h-5 md:gap-1"><input class="bg-transparent text-gray-800 dark:text-grey-hair shrink grow basis-0 border-none text-base font-normal leading-tight !shadow-none outline-none [transition:margin-left_.2s_ease-in-out] placeholder:text-battleship focus-visible:outline-none dark:placeholder:text-bob [&::-webkit-search-cancel-button]:hidden md:h-[46px]" data-lpignore="true" id="uh-sbq" placeholder="Search the web" type="search" data-rapid_p="82" data-v9y="1"><button class="focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:outline focus-visible:outline-4 bg-[#ededed] hover:bg-[#ededed] dark:bg-white/10 dark:hover:bg-white/15 focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark hidden justify-center rounded-[25px] md:flex h-10 px-3 focus-visible:rounded-full" aria-label="Search with Yahoo Scout" type="button" data-ylk="elm:search;elmt:icon;itc:0;sec:ybar;slk:scout-btn;subsec:searchbox;tar:scout.yahoo.com;" data-rapid_p="84" data-y-link-id="1572p390x3fktv1ykg23" data-v9y="1"><svg class="dark:hidden" /></button></div><div class="rounded-tr-[26px] bg-transparent -mr-px"><!-- -1 wrappers  class="focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:outline focus-visible:outline-4 rapid-noclick-resp hidden justify-center rounded-[26px] md:flex w-[60px] bg-uh-purple dark:bg-uds-brand-dark hover:bg-[#5409b2] dark:hover:bg-[#7c49fc] h-[40px]" aria-label="Search the web" data-ylk="elm:search;elmt:icon;itc:0;sec:ybar;slk:websrch;subsec:searchbox;tar:search.yahoo.com;" data-rapid_p="85" data-y-link-id="1j5nxsp0qfotao0xahjo" data-v9y="1"--><svg class="fill-white dark:fill-midnight" /></div></div><ul><li><a data-ylk="sec:ybar;" class="focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] absolute left-[-10000px] size-px text-nowrap rounded-xl bg-uh-purple p-1 text-white focus:left-1 focus:top-1 focus-visible:z-50 focus-visible:block focus-visible:size-auto focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-0" data-rapid_p="86" data-y-link-id="0cwan0n05dx58a1ds5f7">Skip to features bar</a></li><!-- -3 siblings --></ul><div id="ybar-l1-nav" class="ml-2 mr-8 hidden justify-start lg:flex gap-7"><div class="justify-start gap-1 rounded-[4px]"><a data-ylk="elm:navcat;itc:0;pkgt:top;sec:ybar;slk:news;subsec:navrail;" data-yga="{&quot;yLinkText&quot;:&quot;news&quot;,&quot;yLinkElement&quot;:&quot;navcat&quot;,&quot;ySection&quot;:&quot;primary-nav&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" class="hover:text-grape-jelly dark:hover:text-uds-brand-dark focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark py-0.5 text-center focus-visible:rounded-[1px] focus-visible:outline focus-visible:outline-4 text-sm font-bold text-gray-800 dark:text-grey-hair focus-visible:outline-offset-[12px]" data-rapid_p="90" data-y-link-id="1n8fdtt1l3ytg21wvj4z" data-v9y="1">News</a></div><!-- -2 siblings --><div id="ybar-l1-more-menu" class="justify-start gap-1 rounded-[4px] pb-1 pt-[0.3rem]"><!-- -1 wrappers  class="focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark font-medium tracking-tight focus-visible:outline-offset-[12px] text-sm text-battleship dark:text-bob top-0 text-center leading-none focus-visible:rounded-[1px] focus-visible:outline focus-visible:outline-4 group-hover:text-grape-jelly dark:group-hover:text-uds-brand-dark" data-rapid_p="93" data-y-link-id="08ba1ib1oaqa1e09k3vs" data-v9y="1"-->More<svg class="group relative left-1 fill-current group-hover:fill-grape-jelly dark:group-hover:fill-uds-brand-dark group-hover:top-px top-[0.075rem]" /></div></div><div class="min-w-min min-h-8 md:min-h-10 shrink grow basis-0 justify-end md:gap-2"><div class="hidden min-w-20 justify-end md:flex"><!-- -2 wrappers  class="focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] z-1 h-10 w-auto min-w-10 justify-center rounded-[100px] text-sm font-medium [transition:all_.06s_ease-in] hover:cursor-pointer hover:[box-shadow:0_4px_8px_0_rgb(0_0_0/10%),_0_0_1px_0_rgb(0_0_0/10%)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-1 bg-white dark:bg-uds-secondary-dark text-uh-purple dark:text-uds-brand-dark hover:text-grape-jelly outline !outline-2 outline-offset-[-2px] outline-[rgb(70_31_140/60%)] dark:outline-[#b09ffc] hover:shadow-elevation-3 hover:outline-[rgb(70_31_140/80%)] dark:hover:outline-[#7c49fc] gap-1.5 px-4 group-hover:text-grape-jelly dark:group-hover:text-[#7c49fc]" data-ylk="elm:btn;itc:0;sec:ybar;slk:Mail;subsec:mailprev;tar:mail.yahoo.com;" aria-label="Check your mail" data-rapid_p="165" data-y-link-id="1gq4r7j1d5psou0qc8be" data-v9y="1"--><svg class="fill-[#7d2eff] dark:fill-uds-brand-dark" /><span class="min-w-[26px] leading-tight">Mail</span></div><a data-ylk="elm:signin;itc:0;sec:ybar;slk:sign-in;subsec:settings;tar:login.yahoo.com;" data-yga="{&quot;yLinkText&quot;:&quot;sign-in&quot;,&quot;yLinkElement&quot;:&quot;signin&quot;,&quot;ySection&quot;:&quot;account&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" class="hover:text-grape-jelly dark:hover:text-uds-brand-dark bg-white dark:bg-uds-secondary-dark focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark text-batcave dark:text-grey-hair block max-w-fit overflow-hidden rounded-3xl border border-dirty-seagull px-3 py-[3px] text-sm transition-[background-color,box-shadow,color,width] duration-[.06s] ease-in hover:bg-white hover:[box-shadow:0_4px_8px_0_rgb(0_0_0/10%),_0_0_1px_0_rgb(0_0_0/10%)] md:my-0 md:flex md:items-center md:justify-center md:border-2 md:px-[15px] md:py-1.5 dark:hover:bg-uds-secondary-dark font-medium focus-visible:outline focus-visible:outline-4 focus-visible:-outline-offset-1 focus-visible:transition-none transition-[background-color,box-shadow,color] md:h-10" data-rapid_p="166" data-y-link-id="0b5oybd1ei2eoe1s3wsb" data-v9y="1"><div class="leading-5">Sign in</div></a></div></header><div><!-- -1 wrappers --><div class="border-y border-y-tertiary bg-always-black/5 dark:bg-always-black/33 overflow-x-hidden"><!-- -3 wrappers  class="z-0 justify-center mx-auto my-0 ad-container" id="google_ads_iframe_/22888152279/us/yhp/main/dt/us_yhp_main_dt_top_center_0__container__" data-google-query-id="CIqUweOAwJQDFYehgwcddAwWMQ"--><iframe id="google_ads_iframe_/22888152279/us/yhp/main/dt/us_yhp_main_dt_top_center_0" title="3rd party ad content" data-is-safeframe="true" aria-label="Advertisement" data-google-container-id="1" data-load-complete="true"></iframe></div><div class="pt-0" id="nca-homepage"><!-- -1 wrappers  class="md:mb-8"--><div><!-- -1 wrappers  class="mt-3 h-[5.75rem] scroll-mt-[4.75rem]" aria-label="Features bar" id="convenience-bar"--><div class="h-[5.75rem] lg:mx-auto lg:max-w-[1000px] lg:px-6 xl:max-w-[var(--xl-page-max-width)] xl:px-8"><!-- -1 wrappers  class="shimmer_fade-in__HCyIx no-scrollbar gap-2 overflow-x-scroll px-4 pb-3 md:px-6 lg:px-0" id="conbar-content"--><div class="transition-all duration-[450ms] ease-in-out hover:duration-150 bg-primary border border-transparent hover:border-accent hover:shadow-elevation-3 h-20 w-fit rounded-xl px-3 py-[0.5625rem]"><div><a data-ylk="cpos:1;ll1:original_both;mpos:0;sec:convenience-bar;subsec:horoscope;elm:readmore;itc:0;slk:Taurus;" data-yga="{&quot;yLinkElement&quot;:&quot;readmore&quot;,&quot;yLinkPosition&quot;:1,&quot;yLinkText&quot;:&quot;Taurus&quot;}" class="stretched-box" data-y-link-id="1elvyap0kadzxf0gsky8" data-rapid_p="19" data-v9y="1"><!-- -1 wrappers  class="gap-y-1 max-w-[8.75rem]"--><p class="line-clamp-1 text-muted label-xs-regular"><span>Horoscope</span><span><span class="px-1">·</span>Taurus</span></p><h3 class="display-s-emphasized line-clamp-2">You worry about that one friend a little. They're acting kind of strangely. But take a second look, because it may be you who's out of sorts today. Try to take it easy for now. </h3></a><div class="ml-4"><svg class="size-[3.75rem]" /></div></div><div class="z-10 -mr-1.5 ml-1 size-6 cursor-pointer self-center" data-tooltip-id="horoscope-dropdown" data-tooltip-content="Change sign" data-tooltip-place="top"><select aria-label="Horoscope" class="absolute left-0 top-0 cursor-pointer appearance-none rounded-lg bg-transparent text-transparent outline-none focus-within:ring-2 focus-within:ring-indigo-8"><option value="Capricorn">Capricorn</option><!-- -11 siblings --></select><div class="pointer-events-none absolute inset-0 justify-center active:bg-carbon-2 group-hover:rounded-full group-hover:bg-carbon-0"><svg class="size-3 text-carbon-9 group-hover:text-primary" /></div></div></div><div class="transition-all duration-[450ms] ease-in-out hover:duration-150 bg-primary border border-transparent hover:border-accent hover:shadow-elevation-3 h-20 w-fit rounded-xl px-3 py-[0.5625rem]"><a data-ylk="cpos:2;elm:search;itc:0;ll1:original_both;mpos:0;sec:convenience-bar;slk:Faces of Death;subsec:what-to-watch;" class="stretched-box" data-y-link-id="1yoswqr1e2xz431q8a6n" data-rapid_p="20" data-v9y="1"><!-- -1 wrappers  class="gap-y-1 max-w-[13.75rem]"--><p class="line-clamp-1 text-muted label-xs-regular"><span>What to Watch</span></p><div class="gap-y-0.5"><h3 class="display-s-emphasized line-clamp-1">Faces of Death</h3><p class="line-clamp-1 display-s-regular"><span>2026</span><span><span class="px-1">·</span><span class="capitalize">horror</span></span></p></div></a><div class="ml-4"><img data-nimg="1" class="h-[3.75rem] w-auto rounded-[.25rem]"></div></div><div class="md:flex hidden"><!-- -1 wrappers  class="transition-all duration-[450ms] ease-in-out hover:duration-150 bg-primary border border-transparent hover:border-accent hover:shadow-elevation-3 h-20 w-fit rounded-xl px-3 py-[0.5625rem]"--><div class="gap-y-1 max-w-[8.75rem]"><p class="line-clamp-1 text-muted label-xs-regular"><span>Today in History</span></p><h3 class="display-s-emphasized line-clamp-2">"Wizard of Oz" published</h3></div><div class="ml-4"><!-- -1 wrappers  class="size-[3.75rem] justify-center rounded-md bg-blue-2 dark:bg-always-white/15"--><div class="box-border h-14 w-[3.25rem] origin-center rotate-12 border border-x-[0.5px] border-b-[3px] border-t-[0.5px] border-always-black bg-always-white"></div><img data-nimg="1" class="absolute left-1/2 top-1.5 aspect-[46/41] translate-x-[-48.5%] rotate-12"></div></div><div class="transition-all duration-[450ms] ease-in-out hover:duration-150 bg-primary border border-transparent hover:border-accent hover:shadow-elevation-3 h-20 w-fit rounded-xl px-3 py-[0.5625rem]"><div><!-- -1 wrappers  class="gap-y-1 max-w-[8.75rem]"--><p class="line-clamp-1 text-muted label-xs-regular"><span>Featured</span></p><div class="h-[2.125rem]"><h3 class="display-s-emphasized line-clamp-2">No games scheduled today</h3></div></div><div class="z-10 -mr-1.5 ml-1 size-6 cursor-pointer self-center" data-tooltip-id="sports-dropdown" data-tooltip-content="Change league" data-tooltip-place="top"><select aria-label="Select a league" class="absolute left-0 top-0 cursor-pointer appearance-none rounded-lg bg-transparent text-transparent outline-none focus-within:ring-2 focus-within:ring-indigo-8"><option>Featured</option><!-- -13 siblings --></select><div class="pointer-events-none absolute inset-0 justify-center active:bg-carbon-2 group-hover:rounded-full group-hover:bg-carbon-0"><svg class="size-3 text-carbon-9 group-hover:text-primary" /></div></div></div><div class="transition-all duration-[450ms] ease-in-out hover:duration-150 bg-primary border border-transparent hover:border-accent hover:shadow-elevation-3 h-20 w-fit rounded-xl px-3 py-[0.5625rem]"><!-- -2 wrappers  class="stretched-box gap-y-1 max-w-[8.75rem]" data-ylk="cpos:5;elm:qte;itc:0;ll1:original_both;mpos:0;sec:convenience-bar;slk:quotes;subsec:quotes;" data-y-link-id="1lxwkj91h5cu0s1pu1ds" data-rapid_p="21" data-v9y="1"--><p class="line-clamp-1 text-muted label-xs-regular"><span>Major Markets</span></p><div class="gap-y-0.5"><div class="justify-between"><h3 class="display-s-emphasized line-clamp-1">S&amp;P 500</h3><div class="ml-4"><h3 class="display-s-emphasized line-clamp-1">7,408.50</h3></div></div><div class="justify-between"><p class="line-clamp-1 display-s-regular"><!-- -2 wrappers --><span class="sr-only">Stock symbol</span>GSPC</p><div class="ml-4"><p class="text-alert display-s-regular">-1.24%</p></div></div></div></div></div><div id="portals"><div id="cardi-b-portal"></div><div id="specialPromotion-portal"></div><div id="horoscope-portal"></div><div id="localEvent-portal"></div><div id="sportsScores-portal"></div><div id="wtw-portal"></div><div id="customWidget-portal"></div><div id="finance-portal"></div><div id="chat-portal"></div><div id="history-portal"></div><div id="games-portal"></div><div id="uv-radar-portal"></div><div id="audio-briefing-portal"></div><div id="march-madness-portal"></div></div></div><div class="m-auto first:mt-3 md:max-w-[760px] md:px-6 lg:max-w-[1000px] lg:px-6 xl:max-w-[var(--xl-page-max-width)] xl:px-8"><!-- -1 wrappers  class="gap-y-6 md:gap-y-4 lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:justify-center lg:gap-x-4 xl:grid-cols-[300px_minmax(0,1fr)_300px]"--><section aria-label="Trending content" class="hidden xl:grid" id="stacked-list"><!-- -1 wrappers  class="mb-[100px] min-h-[800px] scroll-mt-[9.75rem] gap-4"--><div class="mb-4"><!-- -3 wrappers  class="overflow-hidden transition-[opacity,max-height,margin] duration-300 ease-out max-h-[500px] opacity-100 rounded-xl bg-primary p-4 xl:py-5 !bg-always-brand" data-yga="{"ySubModuleName":"chrome-extension"}" id="chrome-extension-promo"--><button type="button" class="absolute right-[-0.5rem] top-[-0.75rem] z-10 size-8 justify-center rounded-full bg-always-white text-gray-15 transition-colors hover:bg-carbon-0 dark:text-gray-2 dark:hover:bg-carbon-15" aria-label="Dismiss" data-ylk="elm:close;itc:0;sec:default-browser;slk:dismiss;" data-yga="{&quot;yLinkElement&quot;:&quot;close&quot;,&quot;yLinkText&quot;:&quot;dismiss&quot;,&quot;yModuleName&quot;:&quot;chrome_extension&quot;,&quot;yModulePlacement&quot;:&quot;left_rail&quot;,&quot;yModulePosition&quot;:1,&quot;yTrafficOrigin&quot;:&quot;chrome-extension&quot;}" data-rapid_p="1" data-v9y="1"><svg class="size-4" /></button><div class="pr-20"><div class="flex-1"><h3 id="_R_miinsr564nqq5b_" class="mb-2 text-always-white display-m-emphasized">Make Yahoo your homepage</h3><p class="mb-4 text-always-white">Get faster access to trending news, weather and Mail.</p><a data-ylk="itc:0;sec:default-browser;slk:set as default;" data-yga="{&quot;yLinkText&quot;:&quot;set as default&quot;,&quot;yModuleName&quot;:&quot;chrome_extension&quot;,&quot;yModulePlacement&quot;:&quot;left_rail&quot;,&quot;yModulePosition&quot;:1,&quot;yTrafficOrigin&quot;:&quot;chrome-extension&quot;}" class="inline-flex justify-center rounded-full bg-always-white px-9 py-2 text-sm font-semibold text-gray-15 transition-transform duration-150 ease-in-out hover:scale-105 active:scale-100 dark:text-gray-2" data-rapid_p="2" data-v9y="1">Set as default</a></div><div class="absolute -right-4 top-[55%] -translate-y-1/2"><svg class="h-auto w-28" /></div></div></div><section class="rounded-xl bg-primary p-4 xl:py-5 mb-4" id="trending-search"><header class="mb-5 items-end justify-start gap-2"><a data-ylk="elm:navcat;itc:0;mpos:4;slk:Trending;subsec:trending_search;" class="gap-2" data-rapid_p="3" data-v9y="1"><svg class="size-6 shrink-0" role="img" /><h2 class="grow display-m-emphasized" id="_R_56iinsr564nqq5b_">Trending</h2></a><p></p></header><ol><li class="mb-4 gap-x-2.5 pb-3 last:mb-0 last:border-0 last:pb-0 sm:border-b sm:border-muted xl:mb-3"><div><img data-nimg="1" class="size-[20] rounded object-contain lg:size-[62px]"><div class="absolute left-0 top-0 h-[1.1875rem] w-[1.125rem] rounded-[0.219rem] bg-always-black"><span class="bg-always-white absolute size-[1.125rem] justify-center rounded-[0.219rem] border border-always-black font-centra text-[.8125rem] font-bold text-always-black xl:text-[.75rem]">1</span></div></div><div class="gap-y-1"><!-- -1 wrappers  class="stretched-box z-1 line-clamp-3 text-ellipsis headline-s-regular hover:underline" data-ylk="cpos:1;ct:story;elm:hdln;g:f28c784a-cd5a-3109-9e23-1124d3d82fa4;itc:0;mpos:4;slk:Will Ferrell and Paul McCartney close ‘SNL’ season;source:trending-search;subsec:trending_search;ll3:target-modal;" data-yga="{"yContentOwner":"3P","yContentPartner":"","yDestinationContentUUID":"f28c784a-cd5a-3109-9e23-1124d3d82fa4","yLinkElement":"headline","yLinkPosition":1,"yLinkText":"Will Ferrell and Paul McCartney close ‘SNL’ season","yTrafficOrigin":"trending-search"}" data-rapid_p="4" data-y-link-id="1y4eakh1holpbg0sz3dc" data-v9y="1"--><p class="headline-s-emphasized line-clamp-3">Will Ferrell and Paul McCartney close ‘SNL’ season</p></div></li><!-- -4 siblings --><li><!-- -1 wrappers  class="ml-auto justify-center gap-1 font-centra label-m-emphasized hover:text-brand" data-ylk="elm:navcat;itc:0;mpos:4;slk:See more stories on Yahoo 100;subsec:trending_search;" data-yga="{"yLinkElement":"navcat","yLinkText":"See more stories on Yahoo 100"}" data-rapid_p="9" data-y-link-id="02kshik1wbbom41vlrsj"-->See more stories on Yahoo 100<svg class="flex-none text-primary group-hover:text-brand [&_path]:fill-current" /></li></ol></section><div class="mb-4"><!-- -2 wrappers  class="rounded-xl bg-primary p-4 xl:py-5" id="bestof"--><header class="mb-5 items-end justify-start gap-2"><h2 class="grow display-m-emphasized" id="_R_1miinsr564nqq5b_">Weekend Reads</h2></header><ol><li class="items-start gap-x-2.5 last:mb-0 last:border-0 last:pb-0 sm:border-b sm:border-muted xl:mb-3 mb-4 pb-3"><img data-nimg="1" class="size-20 rounded sm:size-[3.875rem]"><div class="gap-y-1"><p class="headline-s-emphasized line-clamp-4">The secret of Sarah Sherman's success: Failure</p><a data-ylk="cpos:1;ct:story;elm:hdln;g:93989185-0463-31ba-aa59-1c2274770f06;itc:0;mpos:5;pos:1;slk:The secret of Sarah Sherman's success: Failure;subsec:bestof;ll3:target-modal;" data-yga="{&quot;yContentOwner&quot;:&quot;3P&quot;,&quot;yContentPartner&quot;:&quot;InStyle&quot;,&quot;yDestinationContentUUID&quot;:&quot;93989185-0463-31ba-aa59-1c2274770f06&quot;,&quot;yLinkElement&quot;:&quot;headline&quot;,&quot;yLinkPosition&quot;:1,&quot;yLinkText&quot;:&quot;The secret of Sarah Sherman's success: Failure&quot;}" class="stretched-box z-1 line-clamp-4 text-ellipsis headline-s-regular hover:underline" data-y-link-id="0kojkre00ql3fp0z8zwt" data-rapid_p="29">Turns out bombing her 1st 'SNL' shot was for the best.</a></div></li><!-- -2 siblings --></ol></div><div class="mb-4"></div><div class="mb-4"><!-- -1 wrappers  class="rounded-xl bg-primary p-4 xl:py-5 min-h-[22.5rem]" id="buying-guide"--><div><header class="mb-5 items-end justify-start gap-2"><svg class="size-6" /><a data-ylk="mpos:7;subsec:buying-guide;" data-y-link-id="1y1woch1ldpmml17z5p0" data-rapid_p="32"><h2 class="grow display-m-emphasized" id="_R_2miinsr564nqq5b_">Top Deals</h2></a></header><ol><li class="items-start gap-x-2.5 last:mb-0 last:border-0 last:pb-0 sm:border-b sm:border-muted xl:mb-3 mb-4 pb-3"><img data-nimg="1" class="size-[3.875rem] rounded-[4px] object-cover"><div class="gap-y-1"><!-- -1 wrappers --><a data-ylk="g:ea8bb861-1ec0-4ac3-ba35-bf7f551bcf48;itc:0;mpos:7;subsec:commlist;cpos:1;elm:affiliate_link;elmt:Amazon;itemcost:$50;itmid:$19;pdid:Gloria Vanderbilt Women's Amanda High Rise Jeans;pid:amazon_B079GRMVM9;pos:1;sec:stacked-list;sellerN:Amazon;slk:Gloria Vanderbilt Women's Amanda High Rise Jeans;" data-yga="{&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yLinkPosition&quot;:1,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yAffiliateService&quot;:&quot;Amazon&quot;,&quot;yOriginalPrice&quot;:&quot;$50&quot;,&quot;yDiscountedPrice&quot;:&quot;$19&quot;,&quot;yRetailProductName&quot;:&quot;Gloria Vanderbilt Women's Amanda High Rise Jeans&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B079GRMVM9&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;stacked-list&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yLinkText&quot;:&quot;Gloria Vanderbilt Women's Amanda High Rise Jeans&quot;,&quot;yHasCommerce&quot;:true}" aria-label="Gloria Vanderbilt Women's Amanda High Rise Jeans, Sale Price $19, List Price $50, Merchant Amazon" class="z-1 line-clamp-2 text-[0.9375rem] font-semibold leading-[1.1875rem] group-hover:underline sm:line-clamp-3" id="_r_c_" data-y-link-id="0d58sl41c4zaay0f6chj" data-rapid_p="33">Gloria Vanderbilt Women's Amanda High Rise Jeans<div class="stretched-box"></div></a><div class="h-4 text-[0.8125rem] leading-none tracking-tight"><div><div class="pr-1 font-semibold text-brand">$19</div><div class="pr-2 font-[450] line-through">$50</div></div><div class="h-4"><span class="line-clamp-1 text-ellipsis font-[450]">Amazon</span><span class="pl-1.5 transition-transform group-hover:translate-x-[2px] group-hover:translate-y-[-2px]"><svg class="flex size-[0.688rem]" role="img" /></span></div></div></div></li><!-- -2 siblings --></ol></div><footer class="mt-3 border-t border-muted pt-3 label-s-regular">When you buy via links on our site, we may receive compensation.</footer></div><div class="mb-4"><!-- -2 wrappers  class="rounded-xl bg-primary p-4 xl:py-5 min-h-[22.5rem]" id="creator-stories"--><header class="mb-5 items-end justify-start gap-2"><svg class="size-6 shrink-0" role="img" /><a data-ylk="itc:0;" class="group/anchor" data-rapid_p="25"><h2 class="grow display-m-emphasized" id="_R_36iinsr564nqq5b_">Stories from creators</h2><svg class="size-3.5 translate-y-px text-left text-brand transition-transform duration-300 group-hover/anchor:translate-x-1" /></a></header><ol class="@container"><li class="items-start gap-x-2.5 last:mb-0 last:border-0 last:pb-0 sm:border-b sm:border-muted xl:mb-3 mb-4 pb-3"><!-- -1 wrappers  class="gap-y-1"--><img data-nimg="1" class="mb-1 rounded-md @md:w-full"><div><a data-ylk="cpos:1;ct:story;elm:hdln;g:8326cfce-94b3-4918-9b6f-b7ad5d1c9328;itc:0;mpos:8;slk:I tried the 6 worst-rated restaurants on Yelp — and gave one a trophy;subsec:creator-stories;ll3:target-modal;" class="stretched-box z-1 line-clamp-4 text-ellipsis headline-s-regular hover:underline" data-rapid_p="26">I tried the 6 worst-rated restaurants on Yelp — and gave one a trophy</a></div><div><!-- -2 wrappers  class="mt-0.5"--><img data-nimg="1" class="mr-1.5 inline size-5 rounded-full"><span class="truncate">Nick DiGiovanni</span></div></li><li class="items-start gap-x-2.5 last:mb-0 last:border-0 last:pb-0 sm:border-b sm:border-muted xl:mb-3 mb-4 pb-3"><!-- -1 wrappers  class="gap-y-1"--><div><a data-ylk="cpos:2;ct:story;elm:hdln;g:d29204b8-0268-4e27-8957-b82192ede077;itc:0;mpos:8;slk:The Rare Blue Moon on May 31 Is Bringing Powerful Energy—Here’s What It Means Spiritually and Astrologically;subsec:creator-stories;ll3:target-modal;" class="stretched-box z-1 line-clamp-4 text-ellipsis headline-s-regular hover:underline" data-rapid_p="27">The Rare Blue Moon on May 31 Is Bringing Powerful Energy—Here’s What It Means Spiritually and Astrologically</a></div><div><!-- -2 wrappers  class="mt-0.5"--><img data-nimg="1" class="mr-1.5 inline size-5 rounded-full"><span class="truncate">Alexandra Nicole Nolan</span></div></li><li class="items-start gap-x-2.5 last:mb-0 last:border-0 last:pb-0 sm:border-b sm:border-muted xl:mb-3 mb-4 pb-3"><!-- -1 wrappers  class="gap-y-1"--><div><a data-ylk="cpos:3;ct:story;elm:hdln;g:fd8a4752-fb72-4f95-827c-acefb03a4ddc;itc:0;mpos:8;slk:She made it to the Olympics. Then, she had a baby and realized she'd been preparing for that all along.;subsec:creator-stories;ll3:target-modal;" class="stretched-box z-1 line-clamp-4 text-ellipsis headline-s-regular hover:underline" data-rapid_p="28">She made it to the Olympics. Then, she had a baby and realized she'd been preparing for that all along.</a></div><div><!-- -2 wrappers  class="mt-0.5"--><img data-nimg="1" class="mr-1.5 inline size-5 rounded-full"><span class="truncate">Flame Bearers</span></div></li></ol></div><div class="mb-4"><!-- -1 wrappers  class="rounded-xl bg-primary p-4 xl:py-5" id="explore-hub"--><header class="mb-5 items-end justify-start gap-2"><h2 class="grow display-m-emphasized" id="_R_3miinsr564nqq5b_">Explore More</h2></header><ul class="h-full items-start justify-start gap-2"><li><!-- -2 wrappers  class="items-end justify-start gap-2.5 gap-3" data-ylk="cpos:1;slk:News;elm:navcat;itc:0;mpos:9;pkgt:left-rail;subsec:explore-hub;" data-yga="{"yLinkElement":"navcat","yLinkPosition":1,"yLinkText":"News"}" data-rapid_p="10" data-y-link-id="1yox55i0xpeucw13io2v"--><div class="justify-center rounded-[0.1875rem] p-[0.1875rem]"><svg class="size-5" /></div><div class="font-centra text-[0.938rem] font-medium leading-none hover:text-brand-secondary">News</div></li><!-- -14 siblings --></ul></div></section><main aria-label="Top stories and Stories for you" class="scroll-mt-[9.75rem] rounded-xl will-change-scroll"><div class="max-md:mb-5 md:mb-4"><!-- -2 wrappers  class="rounded-xl md:bg-primary md:p-4" id="ntk" data-i13n-boundary="true"--><section aria-label="Top stories" role="group"><!-- -1 wrappers  class="overflow-hidden"--><div class="absolute right-4 top-4 z-1 gap-1"><div class="hidden md:flex bg-always-black/35 h-5 justify-center rounded-2xl px-2 text-[0.8125rem] tracking-[.01625rem] text-always-white md:h-6" role="status"><span class="pr-1 font-bold">1</span><span class="font-normal">of 15</span></div><button aria-label="Pause" class="hidden size-6 justify-center rounded-full md:flex bg-always-black/35 active:bg-brand-secondary hover:bg-brand-secondary transition duration-150 ease-in-out dark:active:bg-always-black dark:hover:bg-always-black" data-ylk="pkgt:minintk-heromod;sec:strm;subsec:needtoknow;itc:1;slk:Pause;" data-yga="{&quot;yLinkText&quot;:&quot;Pause&quot;,&quot;yModuleName&quot;:&quot;carousel_toggle_pause_button&quot;,&quot;yModulePlacement&quot;:&quot;above_fold&quot;}" data-rapid_p="1" data-y-link-id="19q401r0wx995t0p005h" data-v9y="1"><svg class="size-3 text-always-white group-hover:text-brand" /></button></div><div class="absolute bottom-5 right-4 z-1 hidden gap-2 md:flex"><button aria-label="Previous slide" class="rapid-noclick-resp justify-center rounded-full border size-[2.5rem] bg-always-black/35 active:bg-brand-secondary hover:bg-brand-secondary transition duration-150 ease-in-out dark:active:bg-always-black dark:hover:bg-always-black border-none embla__prev" data-yga="{&quot;yLinkElement&quot;:&quot;arrow&quot;,&quot;yLinkPosition&quot;:15,&quot;yLinkText&quot;:&quot;prev&quot;}" data-rapid_p="2" data-y-link-id="01b5mhr0pvq2ie064vxi" data-v9y="1"><svg class="size-[1.5rem] text-always-white group-hover:text-brand" /></button><button aria-label="Next slide" class="rapid-noclick-resp justify-center rounded-full border size-[2.5rem] bg-always-black/35 active:bg-brand-secondary hover:bg-brand-secondary transition duration-150 ease-in-out dark:active:bg-always-black dark:hover:bg-always-black border-none embla__next" data-yga="{&quot;yLinkElement&quot;:&quot;arrow&quot;,&quot;yLinkPosition&quot;:2,&quot;yLinkText&quot;:&quot;next&quot;}" data-rapid_p="3" data-y-link-id="0v0z4o01m3czu91e2d48" data-v9y="1"><svg class="size-[1.5rem] text-always-white group-hover:text-brand" /></button></div><div class="transform-gpu touch-pan-y touch-pinch-zoom md:overflow-hidden md:rounded-xl"><!-- -1 wrappers  class="md:mx-0 mx-4" id="_R_6aiinsr564nqq5b_"--><article aria-label="Slide 1 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -1 wrappers --><img data-nimg="1" class="aspect-[3/2] object-cover md:aspect-[16/9]"><div class="md:opacity-100 inset-y-0 absolute inset-x-0 z-10 justify-between gap-1.5 px-4 pb-4 sm:pb-5 md:gap-2 md:opacity-0 md:transition-opacity md:duration-500 md:ease-in-out"><div class="pt-4"></div><div class="justify-end gap-1.5 md:gap-2"><!-- -1 wrappers  class="flex-col-reverse md:pr-24"--><h3 class="line-clamp-3 text-[1.25rem] font-semibold leading-[1.375rem] text-always-white sm:text-[1.875rem] sm:font-[550] sm:leading-9 sm:tracking-[-0.0375rem]"><a data-ylk="aid:8403f67e-a80c-324b-ad4e-afdd27ca242a;ccode:ntk_single_feed__en-US__frontpage__default__default__desktop__ga__noSplit;cpos:1;ct:story;elm:hdln;g:41ca478e-9a85-3921-a243-9743c2d1dc6e;itc:0;mab_test:eyJ1IjoiODQwM2Y2N2UtYTgwYy0zMjRiLWFkNGUtYWZkZDI3Y2EyNDJhIiwiYiI6IjcyMzIxMDQiLCJlIjoiMTk3MzgxMyJ9;mpos:1;p_sys:jarvis;pkgt:minintk;sec:strm;source:strm needtoknow;subsec:needtoknow;ll3:target-modal;" data-yga="{&quot;yContentCategory&quot;:&quot;Politics&quot;,&quot;yContentOwner&quot;:&quot;3P&quot;,&quot;yContentPartner&quot;:&quot;Associated Press&quot;,&quot;yHasBadge&quot;:false,&quot;yLinkText&quot;:&quot;Another Trump dissenter purged as Sen. Bill Cassidy loses Louisiana primary&quot;,&quot;yModuleContentType&quot;:&quot;story&quot;,&quot;yDestinationContentUUID&quot;:&quot;41ca478e-9a85-3921-a243-9743c2d1dc6e&quot;,&quot;yLinkElement&quot;:&quot;headline&quot;,&quot;yLinkPosition&quot;:1,&quot;yTrafficOrigin&quot;:&quot;strm needtoknow&quot;}" class="stretched-box text-always-white hover:underline" data-rapid_p="4" data-y-link-id="0hbl9yl0n5372q0jy8j4" data-v9y="1">Another Trump dissenter purged as Sen. Bill Cassidy loses Louisiana primary</a></h3><div class="justify-start gap-3 text-shadow"><!-- -1 wrappers  class="max-w-[170px] sm:max-w-none"--><div><img data-nimg="1" class="mr-1.5 inline size-5 rounded-full"><span class="truncate text-always-white">Associated Press</span></div><div><!-- -1 wrappers  class="before:text-always-white/50 before:mx-1.5 before:content-['/'] text-always-white"--><svg aria-label="Comments" class="mr-1" />3.2K</div></div></div></div><div class="pointer-events-none inset-y-0 rounded-lg bg-gradient-to-b from-transparent md:absolute md:rounded-xl via-[rgba(0,0,0,0.06)_36%,rgba(0,0,0,0.15)_50%,rgba(0,_0,_0,_0.30)_60%,rgba(0,_0,_0,_0.40)_65%,rgba(0,_0,_0,_0.62)_75%,rgba(0,_0,_0,_0.9)_100%]"></div></article><article aria-label="Slide 2 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -1 wrappers --><img data-nimg="1" class="aspect-[3/2] object-cover md:aspect-[16/9]"><div class="pointer-events-none inset-y-0 rounded-lg bg-gradient-to-b from-transparent md:absolute md:rounded-xl via-[rgba(0,0,0,0.06)_36%,rgba(0,0,0,0.15)_50%,rgba(0,_0,_0,_0.30)_60%,rgba(0,_0,_0,_0.40)_65%,rgba(0,_0,_0,_0.62)_75%,rgba(0,_0,_0,_0.9)_100%]"></div></article><!-- -2 siblings --><article aria-label="Slide 5 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -3 wrappers  class="ad-container" id="_r_9_"--><div class="justify-center text-center leading-3 bg-accent/2">Advertisement</div></article><article aria-label="Slide 6 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -1 wrappers --><img data-nimg="1" class="aspect-[3/2] object-cover md:aspect-[16/9]"><div class="pointer-events-none inset-y-0 rounded-lg bg-gradient-to-b from-transparent md:absolute md:rounded-xl via-[rgba(0,0,0,0.06)_36%,rgba(0,0,0,0.15)_50%,rgba(0,_0,_0,_0.30)_60%,rgba(0,_0,_0,_0.40)_65%,rgba(0,_0,_0,_0.62)_75%,rgba(0,_0,_0,_0.9)_100%]"></div></article><!-- -3 siblings --><article aria-label="Slide 10 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -4 wrappers  class="trc_related_container tbl-trecs-container trc_spotlight_widget trc_elastic trc_elastic_ntk-a-rocket trc_rbox_container trc_rbox ntk-a-rocket trc-content-sponsored" id="trc_wrapper_8879873200" data-placement-name="taboola-ntk-rocket-9"--><div id="trc_header_8879873200" class="trc_rbox_header trc_rbox_border_elm"><div class="trc_header_ext"><!-- -2 wrappers  class="logoDiv link-disclosure attribution-disclosure-link-sponsored trc_desktop_disclosure_link trc_attribution_position_top" aria-label="Sponsored: learn about this recommendation (opens dialog)" data-rapid_p="19"--><span>AD</span></div><span role="heading" class="trc_rbox_header_span"></span></div><div id="outer_8879873200" class="trc_rbox_outer"><!-- -3 wrappers  class="trc_rbox_div trc_rbox_border_elm videoCube trc_spotlight_item origin-undefined textItem thumbnail_under videoCube_1_child syndicatedItem trc-first-recommendation trc-spotlight-first-recommendation" data-item-id="~~V1~~-5963095516907590332~~cIuraNWN0uG2EBu4TA8hdZpPL_Q4wuk1mNGgAE-LVQEe79Ni-eBnd8iQ4KmvvX-QJ_U_WPEdwTm13-AZb0Ha4tkJzjabFAQpv8o35k-7zF-OWcdGVdg2ij8wBORwKRp7uSe3QZEpieUPDW-ghGCjTKxABgRg5X4Zdkfgdh4oAD9JL0ZpCE8rO8BH_g13OanRlba3z6cu9tuORF9-VC3ZWWYPtvzJTD-HiLJQfTJomfY" data-item-title="Come and enjoy the Balearics with Zafiro." data-item-thumb="https://cdn.taboola.com/libtrc/static/thumbnails/59c3e4eedea57ccd79087b49cea31fd8.jpg" data-item-syndicated="true"--><a class="item-thumbnail-href" data-rapid_p="23"><!-- -1 wrappers  class="thumbBlock_holder"--><span role="img" aria-label="Image for Taboola Advertising Unit" class="thumbBlock"><span class="thumbnail-overlay"></span></span><div class="videoCube_aspect"></div></a><a title="Come and enjoy the Balearics with Zafiro." class="item-label-href tbl-text-over-container" data-rapid_p="24"><span class="tbl-text-over"></span><span class="video-label-box trc-main-label"><span class="branding" aria-label="Zafiro Hotels in Taboola advertising section" role="link">Zafiro Hotels</span><span class="video-label video-title trc_ellipsis" role="link">Come and enjoy the Balearics with Zafiro.</span></span></a></div></article><article aria-label="Slide 11 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -1 wrappers --><img data-nimg="1" class="aspect-[3/2] object-cover md:aspect-[16/9]"><div class="pointer-events-none inset-y-0 rounded-lg bg-gradient-to-b from-transparent md:absolute md:rounded-xl via-[rgba(0,0,0,0.06)_36%,rgba(0,0,0,0.15)_50%,rgba(0,_0,_0,_0.30)_60%,rgba(0,_0,_0,_0.40)_65%,rgba(0,_0,_0,_0.62)_75%,rgba(0,_0,_0,_0.9)_100%]"></div></article><!-- -3 siblings --><article aria-label="Slide 15 of 15" class="max-md:mr-2 max-md:rounded-lg md:flex-[0_0_100%] flex-[0_0_calc(100%-1rem)] overflow-hidden md:mr-3 md:rounded-xl" role="group"><!-- -4 wrappers  class="trc_related_container tbl-trecs-container trc_spotlight_widget trc_elastic trc_elastic_ntk-a-rocket trc_rbox_container trc_rbox ntk-a-rocket trc-content-sponsored" id="trc_wrapper_5796790179" data-placement-name="taboola-ntk-rocket-14"--><div id="trc_header_5796790179" class="trc_rbox_header trc_rbox_border_elm"><div class="trc_header_ext"><!-- -2 wrappers  class="logoDiv link-disclosure attribution-disclosure-link-sponsored trc_desktop_disclosure_link trc_attribution_position_top" aria-label="Sponsored: learn about this recommendation (opens dialog)" data-rapid_p="25"--><span>AD</span></div><span role="heading" class="trc_rbox_header_span"></span></div><div id="outer_5796790179" class="trc_rbox_outer"><!-- -3 wrappers  class="trc_rbox_div trc_rbox_border_elm videoCube trc_spotlight_item origin-undefined textItem thumbnail_under videoCube_1_child syndicatedItem trc-first-recommendation trc-spotlight-first-recommendation" data-item-id="~~V1~~-5849028502158054096~~cIuraNWN0uG2EBu4TA8hdZpPL_Q4wuk1mNGgAE-LVQEe79Ni-eBnd8iQ4KmvvX-QJ_U_WPEdwTm13-AZb0Ha4jFwYXCg4vVQR1lfrB25WeeOWcdGVdg2ij8wBORwKRp7uSe3QZEpieUPDW-ghGCjTKxABgRg5X4Zdkfgdh4oAD9JL0ZpCE8rO8BH_g13OanRlba3z6cu9tuORF9-VC3ZWWYPtvzJTD-HiLJQfTJomfY" data-item-title="Spring in the Mediterranean: Up to 25% off." data-item-thumb="https://cdn.taboola.com/libtrc/static/thumbnails/da5989221f6077896fc8ca5555d8a219.jpg" data-item-syndicated="true"--><a class="item-thumbnail-href" data-rapid_p="29"><!-- -1 wrappers  class="thumbBlock_holder"--><span role="img" aria-label="Image for Taboola Advertising Unit" class="thumbBlock"><span class="thumbnail-overlay"></span></span><div class="videoCube_aspect"></div></a><a title="Spring in the Mediterranean: Up to 25% off." class="item-label-href tbl-text-over-container" data-rapid_p="30"><span class="tbl-text-over"></span><span class="video-label-box trc-main-label"><span class="branding" aria-label="Zafiro Hotels in Taboola advertising section" role="link">Zafiro Hotels</span><span class="video-label video-title trc_ellipsis" role="link">Spring in the Mediterranean: Up to 25% off.</span></span></a></div></article></div></section><div class="hidden gap-4 pt-4 md:flex"><div class="gap-2 rounded-lg bg-primary"><div><img data-nimg="1" class="rounded-t-lg object-cover hidden rounded-lg md:block"></div><div class="flex-1 justify-between gap-2"><h3><a data-ylk="aid:4e1b5287-d586-37b5-99bb-ebb1a49cf244;ccode:ntk_single_feed__en-US__frontpage__default__default__desktop__ga__noSplit;cpos:2;ct:story;elm:hdln;g:2c369d20-6560-4578-9168-63b48a511fa3;itc:0;mab_test:eyJ1IjoiNGUxYjUyODctZDU4Ni0zN2I1LTk5YmItZWJiMWE0OWNmMjQ0IiwiYiI6IjcyMzIxOTciLCJlIjoiMTk3Mzg0MCJ9;mpos:1;p_sys:jarvis;pkgt:minintk;sec:strm;source:strm needtoknow;subsec:needtoknow;ll3:target-modal;" data-yga="{&quot;yContentCategory&quot;:&quot;Sports&quot;,&quot;yContentOwner&quot;:&quot;1P&quot;,&quot;yContentPartner&quot;:&quot;Uncrowned&quot;,&quot;yDestinationContentUUID&quot;:&quot;2c369d20-6560-4578-9168-63b48a511fa3&quot;,&quot;yHasBadge&quot;:false,&quot;yLinkElement&quot;:&quot;headline&quot;,&quot;yLinkPosition&quot;:2,&quot;yLinkText&quot;:&quot;Rousey vs. Carano ends in 17 seconds as Netflix makes its MMA debut&quot;,&quot;yModuleName&quot;:&quot;ntk&quot;,&quot;yModulePlacement&quot;:&quot;need_to_know&quot;,&quot;yModulePosition&quot;:1,&quot;yTrafficOrigin&quot;:&quot;strm needtoknow&quot;}" class="stretched-box headline-s-emphasized hover:underline line-clamp-4" data-rapid_p="16" data-y-link-id="0ktllk21wv3x8d09bvj2">Rousey vs. Carano ends in 17 seconds as Netflix makes its MMA debut</a></h3><div><!-- -1 wrappers --><div><img data-nimg="1" class="mr-1.5 inline size-5 rounded-full"><span class="truncate font-[450]">Uncrowned</span></div><div><!-- -1 wrappers  class="before:text-tertiary/50 before:mx-1.5 before:content-['/'] font-[450]"--><svg aria-label="Comments" class="mr-1" />802</div></div></div></div><!-- -2 siblings --></div></div><div class="sm:px-4 md:px-0 mt-3"><!-- -1 wrappers --><div class="mb-2.5 justify-between px-4 sm:px-0 md:mb-4"><div class="[&>div]:mb-0"><!-- -1 wrappers  class="mb-2 lg:mb-4"--><h2 class="inline-block display-m-emphasized">For You</h2></div><div class="h-[2.125rem]"><!-- -1 wrappers  class="gap-[0.375rem]" role="group"--><span class="text-[0.8125rem] font-normal leading-4 tracking-[-0.008125rem] text-secondary">Feed view</span><div><!-- -1 wrappers  class="h-[2.125rem] w-[6rem] rounded-[1.5rem] bg-tertiary p-[0.1875rem]" role="group"--><div class="absolute h-[1.75rem] rounded-full bg-primary transition-all duration-300 ease-in-out left-[0.1875rem] top-[0.1875rem] w-[2.75rem]"></div><button aria-label="Small Cards" class="absolute left-[0.1875rem] top-[0.1875rem] z-10 h-[1.75rem] w-[2.75rem] justify-center rounded-full bg-transparent transition-colors" role="radio" data-ylk="elm:small;itc:1;pkgt:dense-feed;sec:feed-toggle;slk:small-cards;"><svg class="*:fill-current *:text-primary" /></button><button aria-label="Large Cards" class="absolute left-[3.0625rem] top-[0.1875rem] z-10 h-[1.75rem] w-[2.75rem] justify-center rounded-full bg-transparent transition-colors" role="radio" data-ylk="elm:large;itc:1;pkgt:multi-modal;sec:feed-toggle;slk:large-cards;"><svg class="*:fill-carbon-7 dark:*:fill-carbon-8" /></button></div></div></div><div class="col-span-full rounded-xl pb-4 lg:col-span-8 xl:col-span-6 sm:bg-primary sm:pt-4 md:bg-primary md:p-4" id="strm" data-card-size="small"><div class="grid gap-[0.75rem] grid-cols-2 md:grid-cols-[2fr_1fr]"><div class="justify-end gap-3 pr-4 md:pr-0"></div></div><ul class="gap-4 lg:gap-5 sm:rounded-xl sm:bg-primary"><li class="list-none"><!-- -1 wrappers  class="border-tertiary last:border-none lg:last:pb-0 xl:pr-5 col-span-full grid gap-x-3 grid-cols-[130px_1fr] sm:grid-cols-[3fr_5fr] lg:grid-cols-[260px_1fr] max-md:mx-4"--><div class="pointer-events-none"><img data-nimg="1" class="hidden rounded-lg object-cover sm:block"></div><div class="flex-1 items-start gap-1.5"><div><div class="text-link text-nowrap label-m-emphasized">US</div></div><h3><a data-ylk="ccode:megastream_unified__en-US__frontpage__googlebot__default__desktop__ga__noSplit;cnt_tpc:U.S.;cpos:1;ct:story;elm:hdln;elmt:ct;g:3290474e-d3da-4d31-9b6b-4ef0932cf24d;grpt:singlestory;itc:0;ll4:badge-us;mpos:2;p_sys:jarvis;pkgt:dense-feed;pos:1;source:strm article-river;subsec:article-river;ll3:target-modal;" data-yga="{&quot;yContentCategory&quot;:&quot;U.S.&quot;,&quot;yContentOwner&quot;:&quot;3P&quot;,&quot;yContentPartner&quot;:&quot;Yahoo News&quot;,&quot;yLinkText&quot;:&quot;Hantavirus latest updates: Suspected case at New York high school not linked to cruise ship&quot;,&quot;yPageContainer&quot;:&quot;modal&quot;,&quot;yPageContentUUID&quot;:&quot;3290474e-d3da-4d31-9b6b-4ef0932cf24d&quot;,&quot;yDestinationContentUUID&quot;:&quot;3290474e-d3da-4d31-9b6b-4ef0932cf24d&quot;,&quot;yLinkElement&quot;:&quot;headline&quot;,&quot;yLinkElementType&quot;:&quot;ct&quot;,&quot;yLinkPosition&quot;:1,&quot;yTrafficOrigin&quot;:&quot;strm article-river&quot;}" class="stretched-box headline-m-emphasized hover:underline line-clamp-3" data-rapid_p="1" data-y-link-id="0h4ndxs09dmpg30r0iy4">Hantavirus latest updates: Suspected case at New York high school not linked to cruise ship</a></h3><div><div><img data-nimg="1" class="mr-1.5 inline size-5 rounded-full"><span class="truncate">Yahoo News</span></div><div><span class="before:text-tertiary/50 before:mx-1.5 before:content-['/']">2 min read</span></div></div></div></li><!-- -59 siblings --></ul><nav class="justify-between pt-4"><a data-rapid_p="61">Next</a></nav></div></div></main><aside aria-label="Weather, games, newsletter sign up, and more" class="hidden scroll-mt-[9.75rem] lg:grid"><!-- -1 wrappers  class="h-full max-w-[300px]"--><div id="right-rail"><div class="mb-4 rounded-xl bg-primary px-4 py-5"><!-- -3 wrappers  class="text-xs" id="weather"--><div class="mb-2 justify-between"><a data-ylk="mpos:1;sec:right-rail;subsec:weather;ct:saved-city;elm:location;itc:0;slk:Amsterdam;" data-yga="{&quot;yLinkElement&quot;:&quot;location&quot;,&quot;yLinkElementType&quot;:&quot;saved-city&quot;,&quot;yLinkText&quot;:&quot;Amsterdam&quot;,&quot;yTrafficOrigin&quot;:&quot;right-rail weather&quot;}" class="display-xs-emphasized" data-rapid_p="1" data-y-link-id="1taan4w08ednb015iiy4" data-v9y="1">Weather</a><div class="justify-end gap-1"><!-- -1 wrappers  class="rounded-3xl border border-tertiary py-1 pl-2 pr-1.5" data-ylk="mpos:1;sec:right-rail;subsec:weather;ct:edit-city;elm:location;slk:Amsterdam;" data-yga="{"yLinkElement":"location","yLinkElementType":"edit-city","yLinkText":"Amsterdam","yTrafficOrigin":""}" data-rapid_p="2" data-y-link-id="1umoy6u0ktvjx00hyfea" data-v9y="1"--><span class="font-centra text-[0.813rem] font-medium leading-none tracking-tight group-hover:text-brand">Amsterdam</span><svg class="cursor-pointer" /></div></div><div><div class="gap-3"><div aria-label="Cloudy" class="size-[4.5rem] aspect-square bg-contain bg-no-repeat [background-image:var(--icon-light)] dark:[background-image:var(--icon-dark)]" role="img"></div><div><div class="font-centra text-[1.75rem] font-medium leading-[2.0625rem]">54°</div><div class="gap-1"><span class="text-[0.875rem] font-[450] leading-[1.25rem]">RealFeel® 49°, Cloudy</span></div></div></div><div class="w-auto justify-between gap-3 py-3 pt-2 text-center"><div class="inline-flex flex-1 justify-center text-center gap-1"><div class="text-xs font-[450] tracking-tight">Today</div><span class="weather-icon-variables"><svg /></span><div class="font-centra text-[0.813rem] tracking-[0.0325rem] inline-flex items-start justify-start gap-1"><span>59°</span><span class="text-muted">50°</span></div></div><!-- -2 siblings --></div><div class="justify-center gap-4"><span class="text-[10px] leading-[14px] tracking-tight text-muted">Powered by AccuWeather</span><a data-ylk="mpos:1;sec:right-rail;subsec:weather;ct:saved-city;elm:location;ll4:badge-weather-new;slk:Amsterdam;" data-yga="{&quot;yLinkElement&quot;:&quot;location&quot;,&quot;yLinkElementType&quot;:&quot;saved-city&quot;,&quot;yLinkText&quot;:&quot;Amsterdam&quot;,&quot;yTrafficOrigin&quot;:&quot;right-rail weather&quot;}" type="button" class="uds-ring uds-hit-target inline-flex overflow-hidden justify-center select-none [transform-origin:center] [backface-visibility:hidden] [transition-property:color,background-color,border-color,box-shadow,text-decoration-color,fill,stroke] [transition-timing-function:cubic-bezier(0,0,0.2,1)] [transition-duration:220ms] uds-button-size-sm-root uds-button-variant-contrast-high-root" data-rapid_p="3" data-y-link-id="0d5549x13j7xok0k5uj8" data-v9y="1"><!-- -1 wrappers  class="truncate"--><span class="pointer-events-auto z-10">Check UV, air quality and more</span></a></div></div></div><div><!-- -1 wrappers --><div class="justify-center"><!-- -3 wrappers  class="mb-4 ad-container" id="google_ads_iframe_/22888152279/us/yhp/main/dt/us_yhp_main_dt_top_right_0__container__" data-google-query-id="CIuUweOAwJQDFYehgwcddAwWMQ"--><iframe id="google_ads_iframe_/22888152279/us/yhp/main/dt/us_yhp_main_dt_top_right_0" title="3rd party ad content" data-is-safeframe="true" aria-label="Advertisement" data-google-container-id="2" data-load-complete="true"></iframe></div><div class="mb-4 rounded-xl bg-primary px-4 py-5"><div class="min-h-[20.4375rem]"></div></div></div></div><div class="sticky left-0 top-[92px] will-change-scroll"><div class="ad-container min-h-[607px] overflow-hidden"><div><div class="mb-3" id="sda-LREC3-iframe_1024"></div><div class="justify-center text-center leading-3 bg-accent/2">Advertisement</div></div><div><div class="mb-3" id="sda-LREC4-iframe_1024"></div><span></span></div><div><div class="mb-3" id="sda-MON2-iframe_1024"></div><span></span></div></div><div id="footer" class="text-center lg:sticky lg:top-[720px] xl:max-w-[300px]"><div class="grow-0 md:ml-auto md:w-full md:basis-72 mt-2"><!-- -2 wrappers  class="mb-1 mt-3 list-none md:mt-1 justify-center"--><li class="mr-8 last:mr-0"><!-- -1 wrappers  class="dark:fill-current dark:text-primary" data-ylk="elm:follow;itc:0;outcm:follow;slk:twitter;" data-yga="{"yLinkElement":"follow","yLinkText":"twitter"}" aria-label="Twitter" data-rapid_p="1"--><svg /></li><!-- -4 siblings --></div><ul class="mx-auto max-w-[280px] flex-wrap justify-center gap-x-1.5 gap-y-2.5 pt-2 text-xs leading-3 md:mb-0 md:text-[13px]"><li class="text-secondary"><a data-ylk="ylk:sec:footer;subsec:corp;" class="text-secondary hover:text-brand" data-rapid_p="12">Terms</a><span class="whitespace-pre-wrap leading-5"> and </span><a data-ylk="ylk:sec:footer;subsec:corp;" class="text-secondary hover:text-brand" data-rapid_p="13">Privacy Policy</a></li><li class="text-secondary"><a data-ylk="ylk:sec:footer;subsec:corp;" class="privacy-link-privacy-settings text-secondary hover:text-brand" data-rapid_p="14">Privacy &amp; Cookie Settings</a></li><!-- -6 siblings --></ul><small class="mt-2 block text-xs text-secondary md:text-[13px]">© 2026 Yahoo. All rights reserved.</small></div></div></aside></div></div></div></div><next-route-announcer></next-route-announcer></body>
+
+<!-- Stats: 211 wrappers collapsed, 132 list items truncated -->
+
+
+--- API REQUEST round 1 ---
+model=claude-sonnet-4-6 messages=3 payload_chars=56,833
+
+--- API RESPONSE round 1 ---
+elapsed_s=5.1 prompt_tokens=1 completion_tokens=181 finish_reason=tool_use tool_calls=[show_in_dom, show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#ybar-l1-nav",
+  "depth": 5
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="ybar-l1-nav" class="ml-2 mr-8 hidden items-center justify-start lg:flex gap-7"><div class="flex flex-col items-center justify-start gap-1 rounded-[4px]"><a data-ylk="elm:navcat;itc:0;pkgt:top;sec:ybar;slk:news;subsec:navrail;" data-yga="{&quot;yLinkText&quot;:&quot;news&quot;,&quot;yLinkElement&quot;:&quot;navcat&quot;,&quot;ySection&quot;:&quot;primary-nav&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" class="hover:text-grape-jelly dark:hover:text-uds-brand-dark focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark py-0.5 text-center focus-visible:rounded-[1px] focus-visible:outline focus-visible:outline-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-grey-hair focus-visible:outline-offset-[12px]" href="https://www.yahoo.com/" data-rapid_p="90" data-y-link-id="1n8fdtt1l3ytg21wvj4z" data-v9y="1">News</a></div><div class="flex flex-col items-center justify-start gap-1 rounded-[4px]"><a data-ylk="elm:navcat;itc:0;pkgt:top;sec:ybar;slk:finance;subsec:navrail;" data-yga="{&quot;yLinkText&quot;:&quot;finance&quot;,&quot;yLinkElement&quot;:&quot;navcat&quot;,&quot;ySection&quot;:&quot;primary-nav&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" class="hover:text-grape-jelly dark:hover:text-uds-brand-dark focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark py-0.5 text-center focus-visible:rounded-[1px] focus-visible:outline focus-visible:outline-4 whitespace-nowrap text-sm font-medium text-battleship dark:text-bob focus-visible:outline-offset-[12px]" href="https://finance.yahoo.com/" data-rapid_p="91" data-y-link-id="0482lhc0lvz19n1adcjp" data-v9y="1">Finance</a></div><div class="flex flex-col items-center justify-start gap-1 rounded-[4px]"><a data-ylk="elm:navcat;itc:0;pkgt:top;sec:ybar;slk:sports;subsec:navrail;" data-yga="{&quot;yLinkText&quot;:&quot;sports&quot;,&quot;yLinkElement&quot;:&quot;navcat&quot;,&quot;ySection&quot;:&quot;primary-nav&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" class="hover:text-grape-jelly dark:hover:text-uds-brand-dark focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark py-0.5 text-center focus-visible:rounded-[1px] focus-visible:outline focus-visible:outline-4 whitespace-nowrap text-sm font-medium text-battleship dark:text-bob focus-visible:outline-offset-[12px]" href="https://sports.yahoo.com/" data-rapid_p="92" data-y-link-id="16awa820jlnle11knhj5" data-v9y="1">Sports</a></div><div id="ybar-l1-more-menu" class="group flex flex-col items-center justify-start gap-1 rounded-[4px] pb-1 pt-[0.3rem]"><button class="focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)] focus-visible:text-grape-jelly dark:focus-visible:text-uds-brand-dark items-center font-medium tracking-tight focus-visible:outline-offset-[12px] whitespace-nowrap text-sm text-battleship dark:text-bob relative top-0 flex text-center leading-none focus-visible:rounded-[1px] focus-visible:outline focus-visible:outline-4 group-hover:text-grape-jelly dark:group-hover:text-uds-brand-dark" aria-haspopup="menu" aria-expanded="false" aria-controls="_R_1cil64nqq5b_" id="_R_1cil64nqq5bH1_" data-rapid_p="93" data-y-link-id="08ba1ib1oaqa1e09k3vs" data-v9y="1">More<svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" fill="none" aria-hidden="true" class="group relative left-1 fill-current group-hover:fill-grape-jelly dark:group-hover:fill-uds-brand-dark group-hover:top-px top-[0.075rem]"><path fill="inherit" d="M6.01 9.371 1.2 4.561 2.26 3.5l3.75 3.75L9.76 3.5l1.061 1.06z" /></svg></button></div></div>
+
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#module-uh",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<header id="module-uh" data-version="1.1.63" class="font-yahoosans top-0 z-20 inline-flex w-full flex-col items-start bg-uds-primary-light dark:bg-uds-primary-dark md:items-center [transition:background-color_0.12s_ease,_box-shadow_0.12s_ease] dark:duration-300 md:bg-secondary dark:md:bg-secondary sticky"><div class="flex w-full flex-col py-2.5 md:py-[9px] px-5 md:px-6 lg:px-8 gap-2.5 max-w-uh-custom"><div class="inline-flex items-center justify-around"><a data-ylk="elm:logo;itc:0;sec:ybar;slk:frontpage;subsec:logo;" data-yga="{&quot;yLinkText&quot;:&quot;frontpage&quot;,&quot;yLinkElement&quot;:&quot;logo&quot;,&quot;ySection&quot;:&quot;logo&quot;,&quot;ySubModuleName&quot;:&quot;top-bar&quot;}" href="https://www.yahoo.com/" class="focus-visible:rounded-[4px] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-8 md:mr-6 focus-visible:outline-[rgb(96_1_210/50%)] dark:focus-visible:outline-[rgb(149_126_252/50%)]" data-rapid_p="80" data-y-link-id="18seotd1cbw90w0r3h8e" data-v9y="1"><!-- -1 children --></a><div class="z-10 h-10 w-full caret-purple-700 backdrop-blur-0 md:block md:h-[46px] md:mr-8 lg:mr-10 relative hidden max-w-[702px]"><!-- -1 children --></div><ul><!-- -4 children --></ul><div id="ybar-l1-nav" class="ml-2 mr-8 hidden items-center justify-start lg:flex gap-7"><!-- -4 children --></div><div class="flex min-w-min min-h-8 md:min-h-10 shrink grow basis-0 items-center justify-end md:gap-2"><!-- -2 children --></div></div></div></header>
+
+
+--- API REQUEST round 2 ---
+model=claude-sonnet-4-6 messages=5 payload_chars=63,027
+
+--- API RESPONSE round 2 ---
+elapsed_s=5.0 prompt_tokens=2422 completion_tokens=187 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "#ybar-l1-nav",
+  "label": "Enlarge nav container",
+  "logic": "\nelement.style.gap = '6px';\nelement.style.alignItems = 'center';\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#1): "Enlarge nav container" - selector="#ybar-l1-nav"
+
+--- API REQUEST round 3 ---
+model=claude-sonnet-4-6 messages=7 payload_chars=63,769
+
+--- API RESPONSE round 3 ---
+elapsed_s=5.6 prompt_tokens=161 completion_tokens=172 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "#ybar-l1-nav > div",
+  "label": "Style nav link pill buttons",
+  "logic": "\nelement.style.padding = '0';\nelement.style.borderRadius = '10px';\nelement.style.background = 'transparent';\nelement.style.transition = 'background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease';\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#2): "Style nav link pill buttons" - selector="#ybar-l1-nav > div"
+
+--- API REQUEST round 4 ---
+model=claude-sonnet-4-6 messages=9 payload_chars=64,415
+
+--- API RESPONSE round 4 ---
+elapsed_s=7.3 prompt_tokens=370 completion_tokens=507 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "#ybar-l1-nav a[data-ylk*=\"navcat\"]",
+  "label": "Enlarge nav portal links",
+  "logic": "\nelement.style.fontSize = '1rem';\nelement.style.fontWeight = '700';\nelement.style.letterSpacing = '-0.01em';\nelement.style.padding = '7px 16px';\nelement.style.borderRadius = '9px';\nelement.style.border = '2px solid transparent';\nelement.style.display = 'inline-block';\nelement.style.lineHeight = '1.2';\nelement.style.transition = 'background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease';\nelement.style.whiteSpace = 'nowrap';\n// Hover effect via onmouseenter/onmouseleave (idempotent – always overwritten)\nelement.onmouseenter = function() {\n  this.style.background = 'rgba(84,9,178,0.09)';\n  this.style.borderColor = 'rgba(84,9,178,0.35)';\n  this.style.color = '#5409b2';\n  this.style.boxShadow = '0 2px 8px rgba(84,9,178,0.15)';\n  this.style.transform = 'translateY(-1px)';\n};\nelement.onmouseleave = function() {\n  this.style.background = 'transparent';\n  this.style.borderColor = 'transparent';\n  this.style.color = '';\n  this.style.boxShadow = 'none';\n  this.style.transform = 'none';\n};\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#3): "Enlarge nav portal links" - selector="#ybar-l1-nav a[data-ylk*="navcat"]"
+
+--- API REQUEST round 5 ---
+model=claude-sonnet-4-6 messages=11 payload_chars=65,952
+
+--- API RESPONSE round 5 ---
+elapsed_s=5.5 prompt_tokens=591 completion_tokens=471 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "#ybar-l1-more-menu button",
+  "label": "Enlarge More menu button",
+  "logic": "\nelement.style.fontSize = '1rem';\nelement.style.fontWeight = '700';\nelement.style.letterSpacing = '-0.01em';\nelement.style.padding = '7px 16px';\nelement.style.borderRadius = '9px';\nelement.style.border = '2px solid transparent';\nelement.style.display = 'inline-flex';\nelement.style.alignItems = 'center';\nelement.style.lineHeight = '1.2';\nelement.style.transition = 'background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease';\nelement.onmouseenter = function() {\n  this.style.background = 'rgba(84,9,178,0.09)';\n  this.style.borderColor = 'rgba(84,9,178,0.35)';\n  this.style.color = '#5409b2';\n  this.style.boxShadow = '0 2px 8px rgba(84,9,178,0.15)';\n  this.style.transform = 'translateY(-1px)';\n};\nelement.onmouseleave = function() {\n  this.style.background = 'transparent';\n  this.style.borderColor = 'transparent';\n  this.style.color = '';\n  this.style.boxShadow = 'none';\n  this.style.transform = 'none';\n};\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#4): "Enlarge More menu button" - selector="#ybar-l1-more-menu button"
+
+--- API REQUEST round 6 ---
+model=claude-sonnet-4-6 messages=13 payload_chars=67,385
+
+--- API RESPONSE round 6 ---
+elapsed_s=6.1 prompt_tokens=557 completion_tokens=471 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "[data-ylk*=\"slk:Mail\"]",
+  "label": "Enlarge Mail button",
+  "logic": "\nelement.style.fontSize = '1rem';\nelement.style.fontWeight = '700';\nelement.style.padding = '8px 20px';\nelement.style.height = 'auto';\nelement.style.minWidth = 'auto';\nelement.style.borderRadius = '10px';\nelement.style.gap = '7px';\nelement.style.border = '2px solid rgba(70,31,140,0.5)';\nelement.style.boxShadow = '0 2px 6px rgba(84,9,178,0.18)';\nelement.style.letterSpacing = '-0.01em';\nelement.style.transition = 'box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease, background 0.15s ease';\nelement.onmouseenter = function() {\n  this.style.boxShadow = '0 4px 14px rgba(84,9,178,0.28)';\n  this.style.borderColor = 'rgba(84,9,178,0.75)';\n  this.style.transform = 'translateY(-1px)';\n};\nelement.onmouseleave = function() {\n  this.style.boxShadow = '0 2px 6px rgba(84,9,178,0.18)';\n  this.style.borderColor = 'rgba(70,31,140,0.5)';\n  this.style.transform = 'none';\n};\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#5): "Enlarge Mail button" - selector="[data-ylk*="slk:Mail"]"
+
+--- API REQUEST round 7 ---
+model=claude-sonnet-4-6 messages=15 payload_chars=68,721
+
+--- API RESPONSE round 7 ---
+elapsed_s=3.5 prompt_tokens=550 completion_tokens=143 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "[data-ylk*=\"slk:Mail\"] span",
+  "label": "Enlarge Mail label text",
+  "logic": "\nelement.style.fontSize = '1rem';\nelement.style.fontWeight = '700';\nelement.style.lineHeight = '1.2';\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#6): "Enlarge Mail label text" - selector="[data-ylk*="slk:Mail"] span"
+
+--- API REQUEST round 8 ---
+model=claude-sonnet-4-6 messages=17 payload_chars=69,277
+
+--- API RESPONSE round 8 ---
+elapsed_s=2.9 prompt_tokens=225 completion_tokens=142 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "[data-ylk*=\"slk:Mail\"] svg",
+  "label": "Enlarge Mail icon",
+  "logic": "\nelement.style.width = '20px';\nelement.style.height = '20px';\nelement.style.flexShrink = '0';\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#7): "Enlarge Mail icon" - selector="[data-ylk*="slk:Mail"] svg"
+
+--- API REQUEST round 9 ---
+model=claude-sonnet-4-6 messages=19 payload_chars=69,811
+
+--- API RESPONSE round 9 ---
+elapsed_s=8.1 prompt_tokens=225 completion_tokens=305 finish_reason=end_turn tool_calls=[(none)]
+
+--- ASSISTANT ---
+All 7 rules are now in place. Here's a summary of everything that was enhanced:
+
+---
+
+### ✅ Changes Made to the Header Utility Shortcuts
+
+**Portal Nav Links (News, Finance, Sports, More):**
+- 🔡 **Font size** bumped from `0.875rem` (14px) → **`1rem` (16px)** with bold `700` weight
+- 📦 **Padding** increased with generous `7px 16px` giving each link a big tappable/clickable area
+- 🟣 **Pill-shaped border** added (transparent at rest, purple on hover) so they look like real buttons
+- 💜 **Hover effect** — subtle purple background tint + border glow + slight upward lift (`translateY(-1px)`) + purple text color
+
+**Mail Button:**
+- 🔡 **Larger font** (`1rem`, bold) and taller padding (`8px 20px`)
+- 🟣 **Stronger border** with a visible purple outline at rest so it's always eye-catching
+- ✉️ **Larger icon** (20×20px)
+- 🌟 **Drop shadow** that deepens on hover, plus the lift animation — making it the most prominent element in the header
+
+Tokens: 225 prompt / 305 completion
+
+=== Result ===
+
+
+
+7 rule(s):
+[1] Enlarge nav container — #ybar-l1-nav
+    
+element.style.gap = '6px';
+element.style.alignItems = 'center';
+
+[2] Style nav link pill buttons — #ybar-l1-nav > div
+    
+element.style.padding = '0';
+element.style.borderRadius = '10px';
+element.style.background = 'transparent';
+element.style.transition = 'background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease';
+
+[3] Enlarge nav portal links — #ybar-l1-nav a[data-ylk*="navcat"]
+    
+element.style.fontSize = '1rem';
+element.style.fontWeight = '700';
+element.style.letterSpacing = '-0.01em';
+element.style.padding = '7px 16px';
+element.style.borderRadius = '9px';
+element.style.border = '2px solid transparent';
+element.style.display = 'inline-block';
+element.style.lineHeight = '1.2';
+element.style.transition = 'background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease';
+element.style.whiteSpace = 'nowrap';
+// Hover effect via onmouseenter/onmouseleave (idempotent – always overwritten)
+element.onmouseenter = function() {
+  this.style.background = 'rgba(84,9,178,0.09)';
+  this.style.borderColor = 'rgba(84,9,178,0.35)';
+  this.style.color = '#5409b2';
+  this.style.boxShadow = '0 2px 8px rgba(84,9,178,0.15)';
+  this.style.transform = 'translateY(-1px)';
+};
+element.onmouseleave = function() {
+  this.style.background = 'transparent';
+  this.style.borderColor = 'transparent';
+  this.style.color = '';
+  this.style.boxShadow = 'none';
+  this.style.transform = 'none';
+};
+
+[4] Enlarge More menu button — #ybar-l1-more-menu button
+    
+element.style.fontSize = '1rem';
+element.style.fontWeight = '700';
+element.style.letterSpacing = '-0.01em';
+element.style.padding = '7px 16px';
+element.style.borderRadius = '9px';
+element.style.border = '2px solid transparent';
+element.style.display = 'inline-flex';
+element.style.alignItems = 'center';
+element.style.lineHeight = '1.2';
+element.style.transition = 'background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease';
+element.onmouseenter = function() {
+  this.style.background = 'rgba(84,9,178,0.09)';
+  this.style.borderColor = 'rgba(84,9,178,0.35)';
+  this.style.color = '#5409b2';
+  this.style.boxShadow = '0 2px 8px rgba(84,9,178,0.15)';
+  this.style.transform = 'translateY(-1px)';
+};
+element.onmouseleave = function() {
+  this.style.background = 'transparent';
+  this.style.borderColor = 'transparent';
+  this.style.color = '';
+  this.style.boxShadow = 'none';
+  this.style.transform = 'none';
+};
+
+[5] Enlarge Mail button — [data-ylk*="slk:Mail"]
+    
+element.style.fontSize = '1rem';
+element.style.fontWeight = '700';
+element.style.padding = '8px 20px';
+element.style.height = 'auto';
+element.style.minWidth = 'auto';
+element.style.borderRadius = '10px';
+element.style.gap = '7px';
+element.style.border = '2px solid rgba(70,31,140,0.5)';
+element.style.boxShadow = '0 2px 6px rgba(84,9,178,0.18)';
+element.style.letterSpacing = '-0.01em';
+element.style.transition = 'box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease, background 0.15s ease';
+element.onmouseenter = function() {
+  this.style.boxShadow = '0 4px 14px rgba(84,9,178,0.28)';
+  this.style.borderColor = 'rgba(84,9,178,0.75)';
+  this.style.transform = 'translateY(-1px)';
+};
+element.onmouseleave = function() {
+  this.style.boxShadow = '0 2px 6px rgba(84,9,178,0.18)';
+  this.style.borderColor = 'rgba(70,31,140,0.5)';
+  this.style.transform = 'none';
+};
+
+[6] Enlarge Mail label text — [data-ylk*="slk:Mail"] span
+    
+element.style.fontSize = '1rem';
+element.style.fontWeight = '700';
+element.style.lineHeight = '1.2';
+
+[7] Enlarge Mail icon — [data-ylk*="slk:Mail"] svg
+    
+element.style.width = '20px';
+element.style.height = '20px';
+element.style.flexShrink = '0';
+
+

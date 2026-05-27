@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Hide Trending Now cards",
+		"query_selector": "[data-test-id=\"ideas-root-today-articles\"]",
+		"logic": "element.style.display = 'none';"
+	}
+]

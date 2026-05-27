@@ -1,0 +1,32 @@
+[
+	{
+		"label": "Hide weather informer",
+		"query_selector": ".WeatherInformer",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide market cart",
+		"query_selector": ".HeaderDesktopActions-MarketCart",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide favorites button",
+		"query_selector": ".HeaderDesktopActions-Favorites",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide orders button",
+		"query_selector": ".HeaderDesktopActions-EcomOrders",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide actions spacer",
+		"query_selector": ".HeaderDesktopActions-Spacer",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide navigation tabs bar",
+		"query_selector": "nav.HeaderNav",
+		"logic": "element.style.display = 'none';"
+	}
+]

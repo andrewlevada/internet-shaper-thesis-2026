@@ -1,0 +1,12 @@
+[
+	{
+		"label": "Hide top ad banner",
+		"query_selector": ".border-y.border-y-tertiary.bg-always-black\\/5",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide Top Deals widget",
+		"query_selector": "#buying-guide",
+		"logic": "element.style.display = 'none';"
+	}
+]

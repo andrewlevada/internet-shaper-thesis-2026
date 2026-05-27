@@ -1,0 +1,12 @@
+[
+	{
+		"label": "Hide Alice AI answer",
+		"query_selector": "li.serp-item[data-fast-name=\"neuro_answer\"]",
+		"logic": "element.style.display = 'none';"
+	},
+	{
+		"label": "Hide Alice fast-nav bar",
+		"query_selector": "nav#search-result-fast-nav",
+		"logic": "element.style.display = 'none';"
+	}
+]

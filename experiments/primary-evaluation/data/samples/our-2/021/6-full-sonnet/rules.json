@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Hide features bar",
+		"query_selector": "#convenience-bar",
+		"logic": "element.style.display = 'none';"
+	}
+]
