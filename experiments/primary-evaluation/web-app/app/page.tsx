@@ -19,10 +19,10 @@ export default function Home() {
 		setError(null)
 	}
 
-	const handleStart = async () => {
+	const loadArchive = async () => {
 		if (!selectedFile) {
 			setError("Please select a zip archive first")
-			return
+			return false
 		}
 
 		setLoading(true)
@@ -30,13 +30,26 @@ export default function Home() {
 
 		try {
 			await initFromZip(selectedFile)
-			router.push("/trial")
+			return true
 		} catch (cause) {
 			const message =
 				cause instanceof Error ? cause.message : "Failed to load archive"
 			setError(message)
+			return false
 		} finally {
 			setLoading(false)
+		}
+	}
+
+	const handleStart = async () => {
+		if (await loadArchive()) {
+			router.push("/trial")
+		}
+	}
+
+	const handlePreview = async () => {
+		if (await loadArchive()) {
+			router.push("/preview")
 		}
 	}
 
@@ -64,9 +77,18 @@ export default function Home() {
 						</p>
 					) : null}
 
-					<Button onClick={handleStart} disabled={loading || !selectedFile}>
-						{loading ? "Loading…" : "Start"}
-					</Button>
+					<div className="flex flex-row flex-wrap gap-4 justify-center">
+						<Button onClick={handleStart} disabled={loading || !selectedFile}>
+							{loading ? "Loading…" : "Start"}
+						</Button>
+						<Button
+							variant="secondary"
+							onClick={handlePreview}
+							disabled={loading || !selectedFile}
+						>
+							Preview screenshots
+						</Button>
+					</div>
 				</div>
 			</div>
 		</div>
