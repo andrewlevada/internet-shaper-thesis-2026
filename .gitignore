@@ -1,5 +1,8 @@
 **/.env
 **/.DS_Store
+**/.venv/
 **/node_modules/
 **/.pnpm-store/
 **/__pycache__/
+**/*.gguf
+/llama.cpp/

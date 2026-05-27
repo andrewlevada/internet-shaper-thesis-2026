@@ -63,7 +63,7 @@ def parse_args() -> argparse.Namespace:
             "Default agent provider when a pipeline does not set one: vercel "
             "(Vercel AI Gateway + Qwen3.6-27B), openrouter (OpenRouter + qwen/qwen3.6-27b "
             "via wandb/fp8), anthropic (Claude via Anthropic API), "
-            "or local (Qwen/Qwen3.6-27B via transformers on GPU)."
+            "or local (Unsloth Qwen3.6-27B MTP GGUF via llama-server on GPU)."
         ),
     )
     return parser.parse_args()

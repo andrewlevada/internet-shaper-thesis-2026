@@ -1,0 +1,23 @@
+[our/001] running full → 5-full
+[full round 0] API request → unsloth/Qwen3.6-27B (2 msgs, 1,447 chars, cache=none)
+[full round 0] API response ← 1.0s, finish=tool_calls, tools=[get_map_of_dom], tokens=1288/43
+[full round 0] 1 tool call(s)
+[full round 1] API request → unsloth/Qwen3.6-27B (4 msgs, 50,139 chars, cache=none)
+[full round 1] API response ← 15.1s, finish=tool_calls, tools=[show_in_dom], tokens=23909/81
+[full round 1] 1 tool call(s)
+[full round 2] API request → unsloth/Qwen3.6-27B (6 msgs, 50,582 chars, cache=none)
+[full round 2] API response ← 1.3s, finish=tool_calls, tools=[show_in_dom], tokens=24033/71
+[full round 2] 1 tool call(s)
+[full round 3] API request → unsloth/Qwen3.6-27B (8 msgs, 51,762 chars, cache=none)
+[full round 3] API response ← 2.6s, finish=tool_calls, tools=[show_in_dom], tokens=24642/113
+[full round 3] 1 tool call(s)
+[full round 4] API request → unsloth/Qwen3.6-27B (10 msgs, 53,055 chars, cache=none)
+[full round 4] API response ← 2.4s, finish=tool_calls, tools=[show_in_dom], tokens=25293/106
+[full round 4] 1 tool call(s)
+[full round 5] API request → unsloth/Qwen3.6-27B (12 msgs, 54,054 chars, cache=none)
+[full round 5] API response ← 4.1s, finish=tool_calls, tools=[set_update_rule], tokens=25744/240
+[full round 5] 1 tool call(s)
+[full round 6] API request → unsloth/Qwen3.6-27B (14 msgs, 54,996 chars, cache=none)
+[full round 6] API response ← 2.4s, finish=stop, tools=[none], tokens=26042/130
+[our/001] screenshot 5-full
+Done.

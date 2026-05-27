@@ -1,0 +1,8 @@
+[our/001] running baseline → 2-baseline
+[baseline round 0] API request → unsloth/Qwen3.6-27B (2 msgs, 525 chars, cache=none)
+[baseline round 0] API response ← 2.1s, finish=tool_calls, tools=[get_dom], tokens=673/55
+[baseline round 0] 1 tool call(s)
+[baseline round 1] API request → unsloth/Qwen3.6-27B (4 msgs, 315,282 chars, cache=none)
+[baseline round 1] API response ← 234.5s, finish=length, tools=[none], tokens=159593/4096
+[our/001] screenshot 2-baseline
+Done.

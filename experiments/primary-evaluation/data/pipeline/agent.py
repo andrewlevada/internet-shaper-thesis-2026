@@ -650,6 +650,55 @@ def _parse_tool_arguments(raw: str) -> dict[str, Any]:
     return {"raw": text}
 
 
+_LOCAL_QWEN: dict[str, object] | None = None
+
+
+def _load_local_qwen() -> tuple[Any, Any, Any]:
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    global _LOCAL_QWEN
+    if _LOCAL_QWEN is not None:
+        cached = _LOCAL_QWEN
+        return cached["tokenizer"], cached["model"], cached["device"]
+
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+        print("Using CPU for local Qwen inference (slow).")
+
+    print(f"Loading {LOCAL_MODEL_ID}…")
+    tokenizer = AutoTokenizer.from_pretrained(LOCAL_MODEL_ID, trust_remote_code=True)
+    load_kwargs: dict[str, object] = {
+        "trust_remote_code": True,
+        "dtype": "auto",
+    }
+    if device.type == "cpu":
+        load_kwargs["device_map"] = "cpu"
+    else:
+        load_kwargs["device_map"] = "auto"
+
+    model = AutoModelForCausalLM.from_pretrained(LOCAL_MODEL_ID, **load_kwargs)
+    model.eval()
+
+    input_device = next(model.parameters()).device
+    if device.type == "cuda" and input_device.type == "cuda":
+        allocated_gb = torch.cuda.memory_allocated() / 1e9
+        print(f"Local Qwen ready on GPU ({allocated_gb:.1f} GiB allocated).")
+    else:
+        print(f"Local Qwen ready (input device: {input_device}).")
+
+    _LOCAL_QWEN = {
+        "tokenizer": tokenizer,
+        "model": model,
+        "device": input_device,
+    }
+    return tokenizer, model, input_device
+
+
 def run_agent_local(
     pipeline: PipelineConfig,
     *,
@@ -660,26 +709,8 @@ def run_agent_local(
 ) -> AgentRunResult:
     del sample_id
     import torch
-    from transformers import AutoModel, AutoTokenizer
 
-    if torch.backends.mps.is_available():
-        device = torch.device("mps")
-    elif torch.cuda.is_available():
-        device = torch.device("cuda")
-    else:
-        device = torch.device("cpu")
-        print("Using CPU for local Qwen inference (slow).")
-
-    dtype = torch.float16 if device.type in ("mps", "cuda") else torch.float32
-    print(f"Loading {LOCAL_MODEL_ID} on {device}…")
-    tokenizer = AutoTokenizer.from_pretrained(LOCAL_MODEL_ID, trust_remote_code=True)
-    model = AutoModel.from_pretrained(
-        LOCAL_MODEL_ID,
-        trust_remote_code=True,
-        dtype=dtype,
-    )
-    model.to(device)
-    model.eval()
+    tokenizer, model, device = _load_local_qwen()
 
     tools = build_tools(pipeline)
     dispatcher = ToolDispatcher(
@@ -703,6 +734,7 @@ def run_agent_local(
             tools=tools,
             tokenize=False,
             add_generation_prompt=True,
+            chat_template_kwargs={"preserve_thinking": True},
         )
         inputs = tokenizer(
             prompt_text,
@@ -775,11 +807,14 @@ def run_agent(
     provider = resolve_agent_provider(pipeline, backend)
 
     if provider == "local":
-        return run_agent_local(
+        from agent_local_llama import run_agent_local_llama
+
+        return run_agent_local_llama(
             pipeline,
             sample_id=sample_id,
             user_message=user_message,
             paths=paths,
+            model_id=pipeline.model or LOCAL_MODEL_ID,
             log_writer=log_writer,
         )
     if provider == "anthropic":
