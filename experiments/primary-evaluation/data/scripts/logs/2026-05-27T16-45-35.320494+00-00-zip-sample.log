@@ -1,0 +1,10 @@
+Zip sample
+------------------------------------------------
+timestamp (UTC): 2026-05-27T16:45:35.320494+00:00
+script: zip-sample.py
+fold: our-2
+input: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2
+output: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2-2026-05-27T16-45-35.320636+00-00.zip
+files: 631
+bytes: 41482409
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-27T16-45-35.320494+00-00-zip-sample.log

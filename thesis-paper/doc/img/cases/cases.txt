@@ -1,0 +1,5 @@
+1. google images 'remove the text under images'
+2. gmail 'style the page in minecraft theme'
+3. substack 'replace the Up next block with an audio player from spotify'
+
+(make the before/after plots with python code)

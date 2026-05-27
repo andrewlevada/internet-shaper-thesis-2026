@@ -361,8 +361,6 @@ To isolate the perception and action components, we run six agent configurations
 
 Baseline and map-only swap perception strategy while keeping a one-shot edit action. Engine-only and full swap persistence while keeping full-DOM or compact perception respectively. The full pipeline matches the production prototype; results are reported in the Results section.
 
-Pairwise preference judgments were analyzed with Bradley–Terry models fit via MM algorithms @hunter_mm_2004.
-
 == AI Usage Disclosure <sec:ai-usage-disclosure>
 
 AI agents via Cursor Editor and Claude Code CLI were used in writing the prototype code. All generated code was fully reviewed and verified manually, and all architectural decisions were made explicitly by the authors. We used proprietary frontier models in the prototype evaluation; following @palmer_using_2024, we treat this as justified because the contribution is the adaptation system rather than a model benchmark.

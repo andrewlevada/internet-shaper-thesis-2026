@@ -3,6 +3,7 @@
 
 Usage:
   python3 zip-sample.py --sample our-2
+  python3 zip-sample.py --sample our-2 --samples 001,002,098
 """
 
 from __future__ import annotations
@@ -30,11 +31,20 @@ def parse_args() -> argparse.Namespace:
         help="Sample fold to archive (e.g. our-2).",
     )
     parser.add_argument(
+        "--samples",
+        metavar="IDS",
+        help="Comma-separated sample ids to include (e.g. 001,002,098). Default: entire fold.",
+    )
+    parser.add_argument(
         "--output",
         metavar="PATH",
         help="Output zip path (default: samples/{fold}-{timestamp}.zip).",
     )
     return parser.parse_args()
+
+
+def parse_sample_ids(raw: str) -> list[str]:
+    return [sample_id for part in raw.split(",") if (sample_id := part.strip())]
 
 
 def timestamp_slug() -> str:
@@ -45,27 +55,42 @@ def default_zip_path(fold: str) -> Path:
     return SAMPLES_DIR / f"{fold}-{timestamp_slug()}.zip"
 
 
-def iter_files(fold_dir: Path) -> list[tuple[Path, str]]:
+def iter_files(fold_dir: Path, sample_ids: list[str] | None = None) -> list[tuple[Path, str]]:
     entries: list[tuple[Path, str]] = []
 
-    for path in sorted(fold_dir.rglob("*")):
-        if not path.is_file():
-            continue
-        if path.suffix.lower() == ".html":
-            continue
+    if sample_ids is None:
+        search_roots = [fold_dir]
+    else:
+        search_roots = []
+        for sample_id in sample_ids:
+            sample_dir = fold_dir / sample_id
+            if not sample_dir.is_dir():
+                raise FileNotFoundError(f"Sample not found: {sample_dir}")
+            search_roots.append(sample_dir)
 
-        arcname = path.relative_to(fold_dir.parent).as_posix()
-        entries.append((path, arcname))
+    for root in search_roots:
+        for path in sorted(root.rglob("*")):
+            if not path.is_file():
+                continue
+            if path.suffix.lower() == ".html":
+                continue
+
+            arcname = path.relative_to(fold_dir.parent).as_posix()
+            entries.append((path, arcname))
 
     return entries
 
 
-def create_zip(fold: str, output_path: Path) -> tuple[int, int]:
+def create_zip(
+    fold: str,
+    output_path: Path,
+    sample_ids: list[str] | None = None,
+) -> tuple[int, int]:
     fold_dir = SAMPLES_DIR / fold
     if not fold_dir.is_dir():
         raise FileNotFoundError(f"Sample fold not found: {fold_dir}")
 
-    files = iter_files(fold_dir)
+    files = iter_files(fold_dir, sample_ids)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with zipfile.ZipFile(output_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
@@ -79,9 +104,14 @@ def main() -> None:
     args = parse_args()
     timestamp = datetime.now(timezone.utc).isoformat()
     output_path = Path(args.output) if args.output else default_zip_path(args.sample)
+    sample_ids = parse_sample_ids(args.samples) if args.samples else None
+
+    if args.samples and not sample_ids:
+        print("No sample ids provided after parsing --samples.", file=sys.stderr)
+        sys.exit(1)
 
     try:
-        file_count, byte_size = create_zip(args.sample, output_path)
+        file_count, byte_size = create_zip(args.sample, output_path, sample_ids)
     except FileNotFoundError as error:
         print(error, file=sys.stderr)
         sys.exit(1)
@@ -93,6 +123,7 @@ def main() -> None:
         f"timestamp (UTC): {timestamp}",
         f"script: {Path(__file__).name}",
         f"fold: {args.sample}",
+        f"samples: {', '.join(sample_ids) if sample_ids else 'all'}",
         f"input: {SAMPLES_DIR / args.sample}",
         f"output: {output_path}",
         f"files: {file_count}",
