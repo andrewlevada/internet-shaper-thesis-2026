@@ -1,34 +1,32 @@
 {
-	"request-prompt": "Remove the 'Sign in to like videos, comment, and subscribe' promo banner in the left sidebar completely, along with the 'Sign in' buttons from the header, to keep my casual, anonymous browsing session private and distraction-free.",
-	"goal": "I prefer to watch content completely anonymously and passively, avoiding signing in or leaving any digital footprint on the platform.",
+	"request-prompt": "Completely hide the top 'Trending now' hero cards ('Baby pink glam', 'Easy dinner party recipes', 'Motorsport style') so I can focus directly on categories and search.",
+	"goal": "I ignore trends and viral content, preferring to focus strictly on my deeply specific, niche interests and personal, timeless hobbies.",
 	"jobs": [
-		"I want to watch funny or cute cat compilations to improve my mood.",
-		"I want to browse and watch short, vertical cat videos (Shorts) for quick entertainment.",
-		"I want to filter the cat video results by criteria like 'Unwatched' or 'Recently uploaded' to discover fresh content.",
-		"I want to find a live cat stream to see live feline activities in real-time.",
-		"I want to search for a more specific cat topic using the search box if the general results aren't what I need.",
-		"I want to sign in to my YouTube account to save interesting cat videos to my library or subscribe to the channels."
+		"I want to search for specific ideas, recipes, or style inspiration to help plan a project or activity",
+		"I want to discover what is currently trending to stay up-to-date with modern style and lifestyle trends",
+		"I want to browse ideas by visual categories to explore inspiration related to my specific hobbies or interests",
+		"I want to log in or sign up to Pinterest so I can save ideas and organize them into my own boards"
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer short-form, bite-sized vertical video content (like Shorts) for quick bursts of entertainment throughout my day.",
-			"b": "I prefer long-form, horizontal videos and compilations that I can lean back and watch on a larger screen."
+			"a": "I rely heavily on highly visual platforms to get spontaneous ideas and prefer scrolling through continuous image feeds without a strict agenda.",
+			"b": "I prefer structured search tools and curated, categorized text-based lists when looking for ideas, as unstructured image feeds feel overwhelming."
 		},
 		{
-			"a": "I love exploring and discovering new creators through search results and algorithmic recommendations.",
-			"b": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations."
+			"a": "I am highly motivated by what's popular and trending right now, and I actively seek out global styles and viral aesthetics.",
+			"b": "I ignore trends and viral content, preferring to focus strictly on my deeply specific, niche interests and personal, timeless hobbies."
 		},
 		{
-			"a": "I prefer to use video platforms while logged into an account so I can customize my feed, like, comment, and build a search history.",
-			"b": "I prefer to watch content completely anonymously and passively, avoiding signing in or leaving any digital footprint on the platform."
+			"a": "I only browse inspiration platforms when I have a specific, actionable project or purchase in mind that I need to plan immediately.",
+			"b": "I use inspiration platforms primarily for casual daydreaming, relaxation, and visual stimulation with no intent to actually buy or build anything."
 		}
 	],
-	"preference-pair-index": 3,
+	"preference-pair-index": 2,
 	"preference-side": "b",
-	"preference": "I prefer to watch content completely anonymously and passively, avoiding signing in or leaving any digital footprint on the platform.",
-	"source-snapshot": "004",
+	"preference": "I ignore trends and viral content, preferring to focus strictly on my deeply specific, niche interests and personal, timeless hobbies.",
+	"source-snapshot": "052",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://youtube.com/results?search_query=cats",
-	"final-url": "https://www.youtube.com/results?search_query=cats",
-	"finalized_at": 1779830871373
+	"url": "https://www.pinterest.com/ideas",
+	"final-url": "https://www.pinterest.com/ideas/",
+	"finalized_at": 1779830878003
 }

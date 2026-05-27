@@ -1,36 +1,33 @@
 {
-	"request-prompt": "Completely hide the 'Esporte' column and the 'Agenda' sports match score widget from the homepage layout to free up space for other content.",
-	"goal": "I am completely indifferent to sports and find soccer tables, match schedules, and athletic news irrelevant to my browsing experience.",
+	"request-prompt": "Completely remove the intrusive 'Sign In' and 'Register' buttons from the top navigation header and hide the anonymous comments section at the bottom.",
+	"goal": "I am a passive consumer who uses online platforms strictly to read information without ever registering an account or participating in discussions.",
 	"jobs": [
-		"I want to catch up on the most important news of the day in Brazil and the world.",
-		"I want to check the latest results, standings, and upcoming match schedules for the Brazilian football league.",
-		"I want to see what is playing on TV Globo right now and check the schedule for the rest of the day.",
-		"I want to check the current weather and forecast for my city to plan my day.",
-		"I want to read the latest celebrity gossip and entertainment news to stay up to date with pop culture.",
-		"I want to check my daily horoscope to see what the astrological prediction is for my sign.",
-		"I want to find cooking recipes and meal ideas for what to make today.",
-		"I want to explore subscription plans for streaming services like Globoplay, Premiere, or Telecine to watch live TV, movies, and sports."
+		"I want to learn how to sign up for a new Fandom account on both desktop and mobile devices",
+		"I want to find out how to customize my viewing experience, such as switching between light and dark themes",
+		"I want to learn how to adjust my text size and other preferences specifically on the mobile interface",
+		"I want to discover the next steps to get involved in the Fandom community, such as contributing to wikis or joining discussions",
+		"I want to ask a question or share feedback about the registration process by leaving a comment on this guide"
 	],
 	"preference-pairs": [
 		{
-			"a": "I am only interested in serious journalism, politics, and economy, and I actively avoid sensationalism, gossip, and entertainment content.",
-			"b": "I use web portals primarily for lightweight entertainment, celebrity gossip, and lifestyle tips, finding political and tragic news draining."
+			"a": "I learn new systems best through visual screenshots and step-by-step image guides rather than reading long text descriptions.",
+			"b": "I prefer to read quick, concise text-based bullet points and find large screenshot galleries distracting and slow to scroll through."
 		},
 		{
-			"a": "I prefer to quickly scan text headlines and read articles at my own pace, finding auto-playing videos and multimedia carousels distracting.",
-			"b": "I prefer consuming news and stories through video clips, live TV streams, and visual media, and I rarely read long-form text articles."
+			"a": "I always search for dark mode on every website I visit because bright white backgrounds cause me severe eye strain.",
+			"b": "I prefer standard light themes across all websites because I find dark interfaces harder to read and less aesthetically pleasing."
 		},
 		{
-			"a": "I am a die-hard sports fan who closely tracks football tables, match analysis, and team rosters whenever I browse a portal.",
-			"b": "I am completely indifferent to sports and find soccer tables, match schedules, and athletic news irrelevant to my browsing experience."
+			"a": "I am a passive consumer who uses online platforms strictly to read information without ever registering an account or participating in discussions.",
+			"b": "I am an active community member who likes to set up personalized profiles, customize settings, and interact with other users on platforms I visit."
 		}
 	],
 	"preference-pair-index": 3,
-	"preference-side": "b",
-	"preference": "I am completely indifferent to sports and find soccer tables, match schedules, and athletic news irrelevant to my browsing experience.",
-	"source-snapshot": "071",
+	"preference-side": "a",
+	"preference": "I am a passive consumer who uses online platforms strictly to read information without ever registering an account or participating in discussions.",
+	"source-snapshot": "070",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://globo.com",
-	"final-url": "https://www.globo.com/",
-	"finalized_at": 1779830870267
+	"url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
+	"final-url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
+	"finalized_at": 1779830875644
 }

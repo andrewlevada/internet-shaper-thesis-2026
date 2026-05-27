@@ -1,34 +1,35 @@
 {
-	"request-prompt": "Replace the technical specifications overview with an interactive 'Help Me Choose' wizard that recommends a model based on simple daily tasks like studying, office work, or creative projects.",
-	"goal": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine.",
+	"request-prompt": "Make the utility shortcuts in the header (like Mail, Finance, Sports, and Weather) much larger and more visually prominent so I can jump to other portals instantly.",
+	"goal": "I prefer using an all-in-one web portal that aggregates news, weather, email, and entertainment so I don't have to visit multiple different websites.",
 	"jobs": [
-		"I want to purchase a new Samsung Galaxy Book6 laptop.",
-		"I want to compare the specifications of the Galaxy Book6 Ultra and the Galaxy Book6 Pro to decide which model is right for me.",
-		"I want to learn about the new Galaxy AI features, battery life, and performance capabilities of the Galaxy Book6 series.",
-		"I want to customize the processor, RAM, storage, and color options of a Galaxy Book6 laptop to see the total price.",
-		"I want to check if there are any trade-in deals, discounts, or promotional offers available when buying this laptop.",
-		"I want to find out the delivery times, shipping costs, and return policies for the Galaxy Book6 series."
+		"I want to catch up on the latest news and trending stories to stay informed.",
+		"I want to search the web to find information on a specific topic.",
+		"I want to access my personal inbox to read and send emails.",
+		"I want to check my daily horoscope to see what the day has in store for me.",
+		"I want to check how the stock market is performing today.",
+		"I want to browse recommended retail products and find active shopping deals.",
+		"I want to find out which shows or movies are currently recommended to watch."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am a tech enthusiast who makes purchase decisions based on detailed hardware specifications, performance benchmarks, and in-depth component breakdowns.",
-			"b": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine."
+			"a": "I prefer using an all-in-one web portal that aggregates news, weather, email, and entertainment so I don't have to visit multiple different websites.",
+			"b": "I prefer visiting dedicated, specialized websites for my news, weather, and email separately to avoid cluttered interfaces and stay focused."
 		},
 		{
-			"a": "I strongly prefer staying loyal to one brand ecosystem (like Samsung Galaxy) so all my devices connect and sync together effortlessly.",
-			"b": "I am brand-agnostic and always choose the absolute best standalone value for my budget, even if it means mixing different device ecosystems."
+			"a": "I prefer highly condensed, text-heavy list layouts with minimal images so I can scan a large volume of headlines as quickly as possible.",
+			"b": "I prefer spacious, visual layouts with large images and preview text that make the browsing experience feel engaging and less overwhelming."
 		},
 		{
-			"a": "I prefer purchasing expensive electronics directly from the official brand's website because I trust their official customer service and exclusive trade-in deals more.",
-			"b": "I rarely buy high-end electronics online without trying them out in a physical store first to feel the build quality, keyboard, and screen in person."
+			"a": "I welcome sponsored content, product deals, and algorithmic recommendations because they often introduce me to new products and topics I wouldn't have discovered on my own.",
+			"b": "I actively ignore or block sponsored links, ads, and shopping recommendations, preferring to consume strictly organic news and utility-focused information."
 		}
 	],
 	"preference-pair-index": 1,
-	"preference-side": "b",
-	"preference": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine.",
-	"source-snapshot": "040",
+	"preference-side": "a",
+	"preference": "I prefer using an all-in-one web portal that aggregates news, weather, email, and entertainment so I don't have to visit multiple different websites.",
+	"source-snapshot": "015",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy",
-	"final-url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy/",
-	"finalized_at": 1779830871719
+	"url": "https://yahoo.com",
+	"final-url": "https://www.yahoo.com/?guccounter=1",
+	"finalized_at": 1779830879413
 }

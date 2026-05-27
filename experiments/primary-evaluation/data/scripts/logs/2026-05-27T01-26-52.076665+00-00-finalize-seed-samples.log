@@ -1,0 +1,243 @@
+Finalize seed samples
+------------------------------------------------
+timestamp (UTC): 2026-05-27T01:26:52.076665+00:00
+script: finalize-seed-samples.py
+seed samples root: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples
+folds: instruct-4-edit, our, our-2, our-2-raw
+html reserialize: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/reserialize_html.ts
+dry run: False
+
+=== instruct-4-edit ===
+samples found: 10
+skip 001: already finalized
+skip 002: already finalized
+skip 003: already finalized
+skip 004: already finalized
+skip 005: already finalized
+skip 006: already finalized
+skip 007: already finalized
+skip 008: already finalized
+skip 009: already finalized
+skip 010: already finalized
+instruct-4-edit: folder names already normalized (10 samples)
+
+=== our ===
+samples found: 1
+skip 001: already finalized
+our: folder names already normalized (1 samples)
+
+=== our-2 ===
+samples found: 42
+skip 001: already finalized
+skip 002: already finalized
+skip 005: already finalized
+skip 013: already finalized
+skip 014: already finalized
+skip 018: already finalized
+skip 028: already finalized
+skip 037: already finalized
+skip 039: already finalized
+skip 040: already finalized
+skip 041: already finalized
+skip 047: already finalized
+skip 048: already finalized
+skip 053: already finalized
+skip 059: already finalized
+skip 060: already finalized
+skip 062: already finalized
+skip 064: already finalized
+skip 066: already finalized
+skip 073: already finalized
+skip 074: already finalized
+skip 075: already finalized
+skip 076: already finalized
+skip 078: already finalized
+skip 096: already finalized
+skip 098: already finalized
+skip 099: already finalized
+skip 100: already finalized
+skip 102: already finalized
+skip 103: already finalized
+skip 104: already finalized
+skip 106: already finalized
+skip 107: already finalized
+skip 109: already finalized
+skip 110: already finalized
+skip 111: already finalized
+skip 112: already finalized
+skip 113: already finalized
+skip 114: already finalized
+skip 115: already finalized
+skip 116: already finalized
+skip 118: already finalized
+renamed our-2/005 -> 003
+renamed our-2/013 -> 004
+renamed our-2/014 -> 005
+renamed our-2/018 -> 006
+renamed our-2/028 -> 007
+renamed our-2/037 -> 008
+renamed our-2/039 -> 009
+renamed our-2/040 -> 010
+renamed our-2/041 -> 011
+renamed our-2/047 -> 012
+renamed our-2/048 -> 013
+renamed our-2/053 -> 014
+renamed our-2/059 -> 015
+renamed our-2/060 -> 016
+renamed our-2/062 -> 017
+renamed our-2/064 -> 018
+renamed our-2/066 -> 019
+renamed our-2/073 -> 020
+renamed our-2/074 -> 021
+renamed our-2/075 -> 022
+renamed our-2/076 -> 023
+renamed our-2/078 -> 024
+renamed our-2/096 -> 025
+renamed our-2/098 -> 026
+renamed our-2/099 -> 027
+renamed our-2/100 -> 028
+renamed our-2/102 -> 029
+renamed our-2/103 -> 030
+renamed our-2/104 -> 031
+renamed our-2/106 -> 032
+renamed our-2/107 -> 033
+renamed our-2/109 -> 034
+renamed our-2/110 -> 035
+renamed our-2/111 -> 036
+renamed our-2/112 -> 037
+renamed our-2/113 -> 038
+renamed our-2/114 -> 039
+renamed our-2/115 -> 040
+renamed our-2/116 -> 041
+renamed our-2/118 -> 042
+our-2: normalized 40 folder name(s)
+
+=== our-2-raw ===
+samples found: 120
+skip 001: already finalized
+skip 002: already finalized
+skip 003: already finalized
+skip 004: already finalized
+skip 005: already finalized
+skip 006: already finalized
+skip 007: already finalized
+skip 008: already finalized
+skip 009: already finalized
+skip 010: already finalized
+skip 011: already finalized
+skip 012: already finalized
+skip 013: already finalized
+skip 014: already finalized
+skip 015: already finalized
+skip 016: already finalized
+skip 017: already finalized
+skip 018: already finalized
+skip 019: already finalized
+skip 020: already finalized
+skip 021: already finalized
+skip 022: already finalized
+skip 023: already finalized
+skip 024: already finalized
+skip 025: already finalized
+skip 026: already finalized
+skip 027: already finalized
+skip 028: already finalized
+skip 029: already finalized
+skip 030: already finalized
+skip 031: already finalized
+skip 032: already finalized
+skip 033: already finalized
+skip 034: already finalized
+skip 035: already finalized
+skip 036: already finalized
+skip 037: already finalized
+skip 038: already finalized
+skip 039: already finalized
+skip 040: already finalized
+skip 041: already finalized
+skip 042: already finalized
+skip 043: already finalized
+skip 044: already finalized
+skip 045: already finalized
+skip 046: already finalized
+skip 047: already finalized
+skip 048: already finalized
+skip 049: already finalized
+skip 050: already finalized
+skip 051: already finalized
+skip 052: already finalized
+skip 053: already finalized
+skip 054: already finalized
+skip 055: already finalized
+skip 056: already finalized
+skip 057: already finalized
+skip 058: already finalized
+skip 059: already finalized
+skip 060: already finalized
+skip 061: already finalized
+skip 062: already finalized
+skip 063: already finalized
+skip 064: already finalized
+skip 065: already finalized
+skip 066: already finalized
+skip 067: already finalized
+skip 068: already finalized
+skip 069: already finalized
+skip 070: already finalized
+skip 071: already finalized
+skip 072: already finalized
+skip 073: already finalized
+skip 074: already finalized
+skip 075: already finalized
+skip 076: already finalized
+skip 077: already finalized
+skip 078: already finalized
+skip 079: already finalized
+skip 080: already finalized
+skip 081: already finalized
+skip 082: already finalized
+skip 083: already finalized
+skip 084: already finalized
+skip 085: already finalized
+skip 086: already finalized
+skip 087: already finalized
+skip 088: already finalized
+skip 089: already finalized
+skip 090: already finalized
+skip 091: already finalized
+skip 092: already finalized
+skip 093: already finalized
+skip 094: already finalized
+skip 095: already finalized
+skip 096: already finalized
+skip 097: already finalized
+skip 098: already finalized
+skip 099: already finalized
+skip 100: already finalized
+skip 101: already finalized
+skip 102: already finalized
+skip 103: already finalized
+skip 104: already finalized
+skip 105: already finalized
+skip 106: already finalized
+skip 107: already finalized
+skip 108: already finalized
+skip 109: already finalized
+skip 110: already finalized
+skip 111: already finalized
+skip 112: already finalized
+skip 113: already finalized
+skip 114: already finalized
+skip 115: already finalized
+skip 116: already finalized
+skip 117: already finalized
+skip 118: already finalized
+skip 119: already finalized
+skip 120: already finalized
+our-2-raw: folder names already normalized (120 samples)
+
+finalized: 0
+skipped (already finalized or invalid): 173
+renamed folders: 40
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-27T01-26-52.076665+00-00-finalize-seed-samples.log

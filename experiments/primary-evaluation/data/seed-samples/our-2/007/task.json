@@ -1,36 +1,34 @@
 {
-	"request-prompt": "Remove the 'Entretenimento' column, the horoscope widget, and all celebrity gossip articles from the page so I can focus entirely on serious journalism and hard news.",
-	"goal": "I am only interested in serious journalism, politics, and economy, and I actively avoid sensationalism, gossip, and entertainment content.",
+	"request-prompt": "Completely hide the 'Start the conversation' button, reactions widget, and OpenWeb comments block below the article body to keep the reading experience clutter-free.",
+	"goal": "I find comment sections and online forums toxic or distracting, so I strictly read the main article content and ignore community discussions entirely.",
 	"jobs": [
-		"I want to catch up on the most important news of the day in Brazil and the world.",
-		"I want to check the latest results, standings, and upcoming match schedules for the Brazilian football league.",
-		"I want to see what is playing on TV Globo right now and check the schedule for the rest of the day.",
-		"I want to check the current weather and forecast for my city to plan my day.",
-		"I want to read the latest celebrity gossip and entertainment news to stay up to date with pop culture.",
-		"I want to check my daily horoscope to see what the astrological prediction is for my sign.",
-		"I want to find cooking recipes and meal ideas for what to make today.",
-		"I want to explore subscription plans for streaming services like Globoplay, Premiere, or Telecine to watch live TV, movies, and sports."
+		"I want to find out when and how the rescheduled Indy 500 qualifying session will take place.",
+		"I want to check the weather forecast for Indianapolis on Sunday to see if rain will delay the events again.",
+		"I want to access the official rules and draw document for the condensed Sunday qualifying session.",
+		"I want to share this news update with fellow racing fans who are following the Indy 500.",
+		"I want to see what other fans are saying about the weather delay and join the discussion.",
+		"I want to look up the current weather forecast for my local area using the search function."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am only interested in serious journalism, politics, and economy, and I actively avoid sensationalism, gossip, and entertainment content.",
-			"b": "I use web portals primarily for lightweight entertainment, celebrity gossip, and lifestyle tips, finding political and tragic news draining."
+			"a": "I am a dedicated sports fan who primarily seeks out weather websites to see how atmospheric conditions directly impact upcoming races and outdoor sporting events.",
+			"b": "I am a general weather observer who only cares about daily forecasts and severe weather warnings, and I have no interest in sports-related weather delays."
 		},
 		{
-			"a": "I prefer to quickly scan text headlines and read articles at my own pace, finding auto-playing videos and multimedia carousels distracting.",
-			"b": "I prefer consuming news and stories through video clips, live TV streams, and visual media, and I rarely read long-form text articles."
+			"a": "I love interacting with online communities, so I always scroll down to read and participate in the comment section of news articles.",
+			"b": "I find comment sections and online forums toxic or distracting, so I strictly read the main article content and ignore community discussions entirely."
 		},
 		{
-			"a": "I am a die-hard sports fan who closely tracks football tables, match analysis, and team rosters whenever I browse a portal.",
-			"b": "I am completely indifferent to sports and find soccer tables, match schedules, and athletic news irrelevant to my browsing experience."
+			"a": "I prefer highly detailed, text-heavy articles that link to official PDFs and external source documents so I can thoroughly research a topic.",
+			"b": "I prefer quick, visual summaries, bullet points, and quick infographics so I can understand the news in under thirty seconds."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "a",
-	"preference": "I am only interested in serious journalism, politics, and economy, and I actively avoid sensationalism, gossip, and entertainment content.",
-	"source-snapshot": "071",
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I find comment sections and online forums toxic or distracting, so I strictly read the main article content and ignore community discussions entirely.",
+	"source-snapshot": "050",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://globo.com",
-	"final-url": "https://www.globo.com/",
-	"finalized_at": 1779830869471
+	"url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"finalized_at": 1779830872903
 }

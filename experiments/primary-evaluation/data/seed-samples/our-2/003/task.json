@@ -1,6 +1,6 @@
 {
-	"request-prompt": "Hide all non-weather sections, including 'Sponsored Content', 'Product Reviews & Deals', and 'Lonely Planet', leaving only the search bar and the main current conditions display.",
-	"goal": "I am strictly task-focused when using utility websites; I look for the specific information I need, get out quickly, and ignore all peripheral articles or lifestyle pieces.",
+	"request-prompt": "Completely remove the 'Sponsored Content' (Taboola feed) container from the bottom of the page and eliminate all advertisement banners.",
+	"goal": "I actively avoid and ignore sponsored content recommendations and native advertising because I find them highly distracting and untrustworthy.",
 	"jobs": [
 		"I want to search for a specific city or zip code to check its current temperature and forecast.",
 		"I want to check the hourly or 10-day forecast to plan my upcoming activities and decide what to wear.",
@@ -23,12 +23,12 @@
 			"b": "I am open to clicking on sponsored content recommendation widgets, often finding the recommended listicles, product deals, and external articles interesting to read."
 		}
 	],
-	"preference-pair-index": 2,
+	"preference-pair-index": 3,
 	"preference-side": "a",
-	"preference": "I am strictly task-focused when using utility websites; I look for the specific information I need, get out quickly, and ignore all peripheral articles or lifestyle pieces.",
+	"preference": "I actively avoid and ignore sponsored content recommendations and native advertising because I find them highly distracting and untrustworthy.",
 	"source-snapshot": "047",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://weather.com",
 	"final-url": "https://weather.com/?Goto=Redirected",
-	"finalized_at": 1779830868814
+	"finalized_at": 1779830869149
 }

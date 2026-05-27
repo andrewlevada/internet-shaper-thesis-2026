@@ -1,33 +1,35 @@
 {
-	"request-prompt": "Make the horizontal suggestion pills larger and place them at the very top of the page with interactive preview icons, inviting me to explore related subcategories.",
-	"goal": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches.",
+	"request-prompt": "Remove the introductory text paragraphs above the first bulleted list and display only the clean checklist of features immediately under the main heading.",
+	"goal": "I prefer quick, straight-to-the-point instructions and bulleted lists with minimal explanation so I can get back to my task immediately.",
 	"jobs": [
-		"I want to browse through cute and funny cat pictures to get visual inspiration or entertainment.",
-		"I want to refine my search using suggested topic pills (like 'aesthetic', 'wallpaper', or 'meme') to find a specific style of cat image.",
-		"I want to search for another topic, interest, or idea using the main search bar.",
-		"I want to log in or create an account so I can save my favorite cat images to curated boards.",
-		"I want to click on an appealing cat image to view its full details, larger size, or original source."
+		"I want to find out how to enable or disable built-in features (like Article Comments, Message Wall, or Blogs) on my Fandom wiki.",
+		"I want to request Fandom support to turn on a restricted extension (such as custom JavaScript, Achievements, or DPL) for my wiki.",
+		"I want to learn how to access the Admin Dashboard to manage my wiki's configuration.",
+		"I want to find instructions for setting up an interlanguage link.",
+		"I want to find related guides on making other structural changes to my wiki, such as changing its URL, closing it, or adding custom fonts.",
+		"I want to search the Fandom Help Center for answers to other administration questions.",
+		"I want to submit a support ticket to get direct help from the Fandom team."
 	],
 	"preference-pairs": [
 		{
-			"a": "I love saving and organizing digital content into highly curated collections so I can easily reference them later.",
-			"b": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them."
+			"a": "I prefer to configure settings and troubleshoot technical issues on my own using self-service dashboards rather than contacting support.",
+			"b": "I prefer reaching out to customer support to handle configurations and fixes for me so that I do not risk making mistakes."
 		},
 		{
-			"a": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
-			"b": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from."
+			"a": "I prefer highly detailed documentation that thoroughly explains the background, features, and implications of a setting before I change it.",
+			"b": "I prefer quick, straight-to-the-point instructions and bulleted lists with minimal explanation so I can get back to my task immediately."
 		},
 		{
-			"a": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
-			"b": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches."
+			"a": "I am highly comfortable with advanced technical customization (like custom CSS, JavaScript, and database extensions) and want maximum control over my digital spaces.",
+			"b": "I prefer simple, pre-designed templates and basic toggle switches because writing code or configuring complex modules feels overwhelming to me."
 		}
 	],
-	"preference-pair-index": 3,
+	"preference-pair-index": 2,
 	"preference-side": "b",
-	"preference": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches.",
-	"source-snapshot": "051",
+	"preference": "I prefer quick, straight-to-the-point instructions and bulleted lists with minimal explanation so I can get back to my task immediately.",
+	"source-snapshot": "069",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://pinterest.com/search/pins/?q=cats",
-	"final-url": "https://www.pinterest.com/search/pins/?q=cats",
-	"finalized_at": 1779830874946
+	"url": "https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"finalized_at": 1779830885705
 }

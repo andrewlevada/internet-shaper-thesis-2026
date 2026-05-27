@@ -1,36 +1,33 @@
 {
-	"request-prompt": "Move the 'Esporte' column and the 'Agenda' sports match widget to the top of the page, and add a prominent dropdown to quickly filter all news by my favorite team.",
-	"goal": "I am a die-hard sports fan who closely tracks football tables, match analysis, and team rosters whenever I browse a portal.",
+	"request-prompt": "Remove the horizontal list of suggestion pills (like 'Eye nails', 'Black', 'Meme') beneath the search header to keep the interface focused solely on my exact search query.",
+	"goal": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
 	"jobs": [
-		"I want to catch up on the most important news of the day in Brazil and the world.",
-		"I want to check the latest results, standings, and upcoming match schedules for the Brazilian football league.",
-		"I want to see what is playing on TV Globo right now and check the schedule for the rest of the day.",
-		"I want to check the current weather and forecast for my city to plan my day.",
-		"I want to read the latest celebrity gossip and entertainment news to stay up to date with pop culture.",
-		"I want to check my daily horoscope to see what the astrological prediction is for my sign.",
-		"I want to find cooking recipes and meal ideas for what to make today.",
-		"I want to explore subscription plans for streaming services like Globoplay, Premiere, or Telecine to watch live TV, movies, and sports."
+		"I want to browse through cute and funny cat pictures to get visual inspiration or entertainment.",
+		"I want to refine my search using suggested topic pills (like 'aesthetic', 'wallpaper', or 'meme') to find a specific style of cat image.",
+		"I want to search for another topic, interest, or idea using the main search bar.",
+		"I want to log in or create an account so I can save my favorite cat images to curated boards.",
+		"I want to click on an appealing cat image to view its full details, larger size, or original source."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am only interested in serious journalism, politics, and economy, and I actively avoid sensationalism, gossip, and entertainment content.",
-			"b": "I use web portals primarily for lightweight entertainment, celebrity gossip, and lifestyle tips, finding political and tragic news draining."
+			"a": "I love saving and organizing digital content into highly curated collections so I can easily reference them later.",
+			"b": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them."
 		},
 		{
-			"a": "I prefer to quickly scan text headlines and read articles at my own pace, finding auto-playing videos and multimedia carousels distracting.",
-			"b": "I prefer consuming news and stories through video clips, live TV streams, and visual media, and I rarely read long-form text articles."
+			"a": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
+			"b": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from."
 		},
 		{
-			"a": "I am a die-hard sports fan who closely tracks football tables, match analysis, and team rosters whenever I browse a portal.",
-			"b": "I am completely indifferent to sports and find soccer tables, match schedules, and athletic news irrelevant to my browsing experience."
+			"a": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
+			"b": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches."
 		}
 	],
 	"preference-pair-index": 3,
 	"preference-side": "a",
-	"preference": "I am a die-hard sports fan who closely tracks football tables, match analysis, and team rosters whenever I browse a portal.",
-	"source-snapshot": "071",
+	"preference": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
+	"source-snapshot": "051",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://globo.com",
-	"final-url": "https://www.globo.com/",
-	"finalized_at": 1779830870100
+	"url": "https://pinterest.com/search/pins/?q=cats",
+	"final-url": "https://www.pinterest.com/search/pins/?q=cats",
+	"finalized_at": 1779830874814
 }

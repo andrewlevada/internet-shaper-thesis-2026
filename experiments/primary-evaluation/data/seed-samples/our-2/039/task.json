@@ -1,33 +1,36 @@
 {
-	"request-prompt": "Hide all text overlays, website attributions, and creator tags beneath the pins in the search grid to create a clean, borderless display of pure images.",
-	"goal": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
+	"request-prompt": "Remove all secondary portal features from the header, such as the weather informer, market cart, favorites, and the navigation tabs like 'Алиса AI' or 'Финансы', leaving only the basic search input.",
+	"goal": "I prefer a distraction-free, minimalist search interface containing only relevant query results without any extra widgets or portal-like elements.",
 	"jobs": [
-		"I want to browse through cute and funny cat pictures to get visual inspiration or entertainment.",
-		"I want to refine my search using suggested topic pills (like 'aesthetic', 'wallpaper', or 'meme') to find a specific style of cat image.",
-		"I want to search for another topic, interest, or idea using the main search bar.",
-		"I want to log in or create an account so I can save my favorite cat images to curated boards.",
-		"I want to click on an appealing cat image to view its full details, larger size, or original source."
+		"I want to quickly read factual information about cat behavior, biology, and care without visiting separate websites.",
+		"I want to browse and download the game 'C.A.T.S.: Crash Arena Turbo Stars' based on the top search results.",
+		"I want to find and watch cute or funny cat video compilations.",
+		"I want to find royalty-free or high-resolution cat photos by clicking through to image hosting websites like Pixabay.",
+		"I want to ask the AI assistant a more specific question about cats to narrow down my search.",
+		"I want to switch my search from text-only results to dedicated categories like images, videos, or translation using the main navigation tabs.",
+		"I want to run a new search query using voice input or by uploading a source image.",
+		"I want to compare Yandex's search results for 'cats' with alternative search engines like Google or Bing."
 	],
 	"preference-pairs": [
 		{
-			"a": "I love saving and organizing digital content into highly curated collections so I can easily reference them later.",
-			"b": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them."
+			"a": "I prefer getting a direct, quick summary from an AI assistant on the search page instead of visiting multiple external websites.",
+			"b": "I do not trust AI-generated content and prefer to browse traditional organic links to read source materials directly."
 		},
 		{
-			"a": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
-			"b": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from."
+			"a": "I am a visual browser who prefers engaging with video carousels and image galleries over reading text descriptions.",
+			"b": "I am a text-oriented browser who relies on scanning titles and text snippets to evaluate search result relevance quickly."
 		},
 		{
-			"a": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
-			"b": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches."
+			"a": "I appreciate a highly interactive and feature-rich search page that provides tools like instant weather updates, shopping carts, and voice search.",
+			"b": "I prefer a distraction-free, minimalist search interface containing only relevant query results without any extra widgets or portal-like elements."
 		}
 	],
-	"preference-pair-index": 2,
-	"preference-side": "a",
-	"preference": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
-	"source-snapshot": "051",
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I prefer a distraction-free, minimalist search interface containing only relevant query results without any extra widgets or portal-like elements.",
+	"source-snapshot": "019",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://pinterest.com/search/pins/?q=cats",
-	"final-url": "https://www.pinterest.com/search/pins/?q=cats",
-	"finalized_at": 1779830874547
+	"url": "https://yandex.ru/search/?text=cats",
+	"final-url": "https://yandex.ru/search/?text=cats&lr=10466",
+	"finalized_at": 1779830885230
 }

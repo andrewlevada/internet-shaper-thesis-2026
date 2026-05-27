@@ -1,34 +1,32 @@
 {
-	"request-prompt": "Add a detailed, expandable technical comparison matrix for the processor, RAM, and GPU specifications directly within the main product configuration panel.",
-	"goal": "I am a tech enthusiast who makes purchase decisions based on detailed hardware specifications, performance benchmarks, and in-depth component breakdowns.",
+	"request-prompt": "Shrink the header text and header search bar to maximize the vertical screen space available for displaying the visual image grids.",
+	"goal": "I use inspiration platforms primarily for casual daydreaming, relaxation, and visual stimulation with no intent to actually buy or build anything.",
 	"jobs": [
-		"I want to purchase a new Samsung Galaxy Book6 laptop.",
-		"I want to compare the specifications of the Galaxy Book6 Ultra and the Galaxy Book6 Pro to decide which model is right for me.",
-		"I want to learn about the new Galaxy AI features, battery life, and performance capabilities of the Galaxy Book6 series.",
-		"I want to customize the processor, RAM, storage, and color options of a Galaxy Book6 laptop to see the total price.",
-		"I want to check if there are any trade-in deals, discounts, or promotional offers available when buying this laptop.",
-		"I want to find out the delivery times, shipping costs, and return policies for the Galaxy Book6 series."
+		"I want to search for specific ideas, recipes, or style inspiration to help plan a project or activity",
+		"I want to discover what is currently trending to stay up-to-date with modern style and lifestyle trends",
+		"I want to browse ideas by visual categories to explore inspiration related to my specific hobbies or interests",
+		"I want to log in or sign up to Pinterest so I can save ideas and organize them into my own boards"
 	],
 	"preference-pairs": [
 		{
-			"a": "I am a tech enthusiast who makes purchase decisions based on detailed hardware specifications, performance benchmarks, and in-depth component breakdowns.",
-			"b": "I am a casual user who is overwhelmed by technical jargon; I prefer simplified, benefit-driven explanations of what a laptop can do for my daily routine."
+			"a": "I rely heavily on highly visual platforms to get spontaneous ideas and prefer scrolling through continuous image feeds without a strict agenda.",
+			"b": "I prefer structured search tools and curated, categorized text-based lists when looking for ideas, as unstructured image feeds feel overwhelming."
 		},
 		{
-			"a": "I strongly prefer staying loyal to one brand ecosystem (like Samsung Galaxy) so all my devices connect and sync together effortlessly.",
-			"b": "I am brand-agnostic and always choose the absolute best standalone value for my budget, even if it means mixing different device ecosystems."
+			"a": "I am highly motivated by what's popular and trending right now, and I actively seek out global styles and viral aesthetics.",
+			"b": "I ignore trends and viral content, preferring to focus strictly on my deeply specific, niche interests and personal, timeless hobbies."
 		},
 		{
-			"a": "I prefer purchasing expensive electronics directly from the official brand's website because I trust their official customer service and exclusive trade-in deals more.",
-			"b": "I rarely buy high-end electronics online without trying them out in a physical store first to feel the build quality, keyboard, and screen in person."
+			"a": "I only browse inspiration platforms when I have a specific, actionable project or purchase in mind that I need to plan immediately.",
+			"b": "I use inspiration platforms primarily for casual daydreaming, relaxation, and visual stimulation with no intent to actually buy or build anything."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "a",
-	"preference": "I am a tech enthusiast who makes purchase decisions based on detailed hardware specifications, performance benchmarks, and in-depth component breakdowns.",
-	"source-snapshot": "040",
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I use inspiration platforms primarily for casual daydreaming, relaxation, and visual stimulation with no intent to actually buy or build anything.",
+	"source-snapshot": "052",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy",
-	"final-url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy/",
-	"finalized_at": 1779830871560
+	"url": "https://www.pinterest.com/ideas",
+	"final-url": "https://www.pinterest.com/ideas/",
+	"finalized_at": 1779830878250
 }

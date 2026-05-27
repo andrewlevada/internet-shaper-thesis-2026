@@ -1,34 +1,35 @@
 {
-	"request-prompt": "Completely hide the horizontal 'Shorts' grid shelves (such as 'Cute Cat Compilations' and 'Funny Cat Videos') from the search results feed so I only see standard, long-form videos.",
-	"goal": "I prefer long-form, horizontal videos and compilations that I can lean back and watch on a larger screen.",
+	"request-prompt": "Remove the large decorative icon, promotional text, and background card from the center of the page, leaving only a simple, distraction-free sign-in button.",
+	"goal": "I prefer a clean, minimal interface that focuses solely on my content, and I find promotional banners and sign-in prompts highly distracting.",
 	"jobs": [
-		"I want to watch funny or cute cat compilations to improve my mood.",
-		"I want to browse and watch short, vertical cat videos (Shorts) for quick entertainment.",
-		"I want to filter the cat video results by criteria like 'Unwatched' or 'Recently uploaded' to discover fresh content.",
-		"I want to find a live cat stream to see live feline activities in real-time.",
-		"I want to search for a more specific cat topic using the search box if the general results aren't what I need.",
-		"I want to sign in to my YouTube account to save interesting cat videos to my library or subscribe to the channels."
+		"I want to sign in to my YouTube account to access my personalized library of saved videos.",
+		"I want to look up a video I recently watched by checking my watch history.",
+		"I want to access my 'Watch Later' list to watch the videos I saved for my leisure time.",
+		"I want to browse my custom playlists to watch or listen to my curated collections.",
+		"I want to see the list of videos I have liked in the past to find a specific video again.",
+		"I want to search for a video or topic using the top search bar.",
+		"I want to navigate to other areas of YouTube, such as Home, Shorts, or Subscriptions, using the side menu."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer short-form, bite-sized vertical video content (like Shorts) for quick bursts of entertainment throughout my day.",
-			"b": "I prefer long-form, horizontal videos and compilations that I can lean back and watch on a larger screen."
+			"a": "I always stay logged in to my accounts to ensure my history, preferences, and curated playlists are seamlessly synced across all my devices.",
+			"b": "I prefer to browse websites signed out or in private modes because I highly value my privacy and do not want platforms tracking my personal viewing habits."
 		},
 		{
-			"a": "I love exploring and discovering new creators through search results and algorithmic recommendations.",
-			"b": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations."
+			"a": "I like to actively organize and manage my content by saving videos to custom playlists and Watch Later lists so I can systematically watch them later.",
+			"b": "I rarely save content or curate playlists; I prefer to search for what I want on the spot or rely on instant algorithmic recommendations."
 		},
 		{
-			"a": "I prefer to use video platforms while logged into an account so I can customize my feed, like, comment, and build a search history.",
-			"b": "I prefer to watch content completely anonymously and passively, avoiding signing in or leaving any digital footprint on the platform."
+			"a": "I prefer a clean, minimal interface that focuses solely on my content, and I find promotional banners and sign-in prompts highly distracting.",
+			"b": "I do not mind promotional banners and call-to-action prompts occupying screen space, as I am used to standard layouts and easily look past them to find what I need."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "b",
-	"preference": "I prefer long-form, horizontal videos and compilations that I can lean back and watch on a larger screen.",
-	"source-snapshot": "004",
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I prefer a clean, minimal interface that focuses solely on my content, and I find promotional banners and sign-in prompts highly distracting.",
+	"source-snapshot": "007",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://youtube.com/results?search_query=cats",
-	"final-url": "https://www.youtube.com/results?search_query=cats",
-	"finalized_at": 1779830870612
+	"url": "https://www.youtube.com/feed/you",
+	"final-url": "https://www.youtube.com/feed/you",
+	"finalized_at": 1779830876560
 }

@@ -1,34 +1,34 @@
 {
-	"request-prompt": "Add a visual tag (like 'Subscribed') on search result cards from channels I already follow, and provide a 'Subscribed Only' filter checkbox in the 'Filters' dropdown menu.",
-	"goal": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations.",
+	"request-prompt": "Move the 'Images of Cats' and 'Explore with images' visual panels to the top of the search results, making the image thumbnails larger and the textual snippets smaller.",
+	"goal": "I prefer highly visual layouts dominated by image grids, photo carousels, and short, scannable snippets to quickly digest information.",
 	"jobs": [
-		"I want to watch funny or cute cat compilations to improve my mood.",
-		"I want to browse and watch short, vertical cat videos (Shorts) for quick entertainment.",
-		"I want to filter the cat video results by criteria like 'Unwatched' or 'Recently uploaded' to discover fresh content.",
-		"I want to find a live cat stream to see live feline activities in real-time.",
-		"I want to search for a more specific cat topic using the search box if the general results aren't what I need.",
-		"I want to sign in to my YouTube account to save interesting cat videos to my library or subscribe to the channels."
+		"I want to learn general information about domestic cats, such as their diet, behavior, lifespan, and taxonomy.",
+		"I want to find and buy tickets for the 'Cats' musical performing in the Netherlands.",
+		"I want to explore different cat breeds to learn about their unique characteristics and traits.",
+		"I want to find and compare pet insurance plans for my cat.",
+		"I want to view cute images or memes of cats for entertainment.",
+		"I want to refine my search query or ask follow-up questions about cats using search suggestions or Copilot."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer short-form, bite-sized vertical video content (like Shorts) for quick bursts of entertainment throughout my day.",
-			"b": "I prefer long-form, horizontal videos and compilations that I can lean back and watch on a larger screen."
+			"a": "I prefer traditional, curated lists of organic web links and authoritative text sources like Wikipedia to conduct my own objective research.",
+			"b": "I prefer using conversational AI search tools to synthesize information and answer follow-up questions for me directly without me having to click through websites."
 		},
 		{
-			"a": "I love exploring and discovering new creators through search results and algorithmic recommendations.",
-			"b": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations."
+			"a": "I actively ignore sponsored ads on search pages, believing they are biased, and immediately scroll past them to get to organic results.",
+			"b": "I find sponsored search ads highly convenient as they quickly connect me to active commercial services and booking platforms that solve my needs."
 		},
 		{
-			"a": "I prefer to use video platforms while logged into an account so I can customize my feed, like, comment, and build a search history.",
-			"b": "I prefer to watch content completely anonymously and passively, avoiding signing in or leaving any digital footprint on the platform."
+			"a": "I prefer structured, text-heavy informational layouts where I can read deep, detailed articles and taxonomy tables.",
+			"b": "I prefer highly visual layouts dominated by image grids, photo carousels, and short, scannable snippets to quickly digest information."
 		}
 	],
-	"preference-pair-index": 2,
+	"preference-pair-index": 3,
 	"preference-side": "b",
-	"preference": "I only watch videos from channels and creators I already know and trust, rarely clicking on unfamiliar recommendations.",
-	"source-snapshot": "004",
+	"preference": "I prefer highly visual layouts dominated by image grids, photo carousels, and short, scannable snippets to quickly digest information.",
+	"source-snapshot": "033",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://youtube.com/results?search_query=cats",
-	"final-url": "https://www.youtube.com/results?search_query=cats",
-	"finalized_at": 1779830870986
+	"url": "https://bing.com/search?q=cats",
+	"final-url": "https://www.bing.com/search?q=cats&toWww=1&redig=166FE07F096B48228FF48EB1AE03C166",
+	"finalized_at": 1779830877487
 }
