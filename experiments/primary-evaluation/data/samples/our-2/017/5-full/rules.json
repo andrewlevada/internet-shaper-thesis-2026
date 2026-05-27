@@ -1,0 +1,102 @@
+[
+  {
+    "label": "Hide category images",
+    "query_selector": "[data-test-id=\"interestRep\"] a > div.bnBtRO",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Flatten category grid to list",
+    "query_selector": "[data-test-id=\"related-interests\"] [role=\"list\"]",
+    "logic": "element.style.display = 'flex';\nelement.style.flexWrap = 'wrap';\nelement.style.height = 'auto';\nelement.style.width = '100%';\nelement.style.gap = '8px';\nelement.style.position = 'relative';"
+  },
+  {
+    "label": "Style category grid items as list",
+    "query_selector": "[data-test-id=\"related-interests\"] [data-grid-item]",
+    "logic": "element.style.position = 'relative';\nelement.style.transform = 'none';\nelement.style.top = 'auto';\nelement.style.left = 'auto';\nelement.style.width = 'auto';\nelement.style.height = 'auto';\nelement.style.flex = '0 1 auto';"
+  },
+  {
+    "label": "Style interestRep as text links",
+    "query_selector": "[data-test-id=\"interestRep\"]",
+    "logic": "element.style.display = 'inline-block';\nelement.style.padding = '6px 12px';\nelement.style.borderRadius = '20px';\nelement.style.background = '#f0f0f0';\nelement.style.margin = '4px';"
+  },
+  {
+    "label": "Style category link anchors",
+    "query_selector": "[data-test-id=\"interestRep\"] a",
+    "logic": "element.style.display = 'inline-block';\nelement.style.textDecoration = 'none';\nelement.style.color = '#333';\nelement.style.fontSize = '14px';\nelement.style.fontWeight = '500';\nelement.style.padding = '0';"
+  },
+  {
+    "label": "Style category text labels",
+    "query_selector": "[data-test-id=\"topic-rep-title\"]",
+    "logic": "if (!element.textContent || element.textContent.trim() === '') return;\nelement.style.display = 'inline';\nelement.style.color = '#333';\nelement.style.fontSize = '14px';\nelement.style.fontWeight = '500';\nelement.style.lineHeight = '1.4';\nelement.style.webkitLineClamp = 'unset';\nelement.style.maxWidth = 'none';"
+  },
+  {
+    "label": "Hide category image overlays",
+    "query_selector": "[data-test-id=\"interestRep\"] .NYgy1O.TfR6nu.aHn_t7",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide image containers in categories",
+    "query_selector": "[data-test-id=\"interestRep\"] .e2jAjp",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Clean up masonry wrappers",
+    "query_selector": "[data-test-id=\"masonry-container\"]",
+    "logic": "element.style.padding = '0';\nelement.style.height = 'auto';"
+  },
+  {
+    "label": "Hide See More in categories",
+    "query_selector": "[data-test-id=\"related-interests\"] .LbyOQL",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Clean up grid item wrappers",
+    "query_selector": "[data-test-id=\"interestRep\"] a > div",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide category images only",
+    "query_selector": "[data-test-id=\"interestRep\"] img[role=\"presentation\"]",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Show category containers",
+    "query_selector": "[data-test-id=\"interestRep\"] a > div.bnBtRO",
+    "logic": "element.style.display = 'block';\nelement.style.paddingBottom = '0';\nelement.style.height = 'auto';"
+  },
+  {
+    "label": "Show e2jAjp containers",
+    "query_selector": "[data-test-id=\"interestRep\"] .e2jAjp",
+    "logic": "element.style.display = 'block';\nelement.style.height = 'auto';\nelement.style.width = '100%';"
+  },
+  {
+    "label": "Show overlay wrappers",
+    "query_selector": "[data-test-id=\"interestRep\"] .NYgy1O.TfR6nu.aHn_t7",
+    "logic": "element.style.display = 'block';\nelement.style.height = 'auto';"
+  },
+  {
+    "label": "Show topic title wrapper",
+    "query_selector": "[data-test-id=\"interestRep\"] .BVzdUh._xSIdT",
+    "logic": "element.style.display = 'block';\nelement.style.height = 'auto';\nelement.style.backgroundColor = 'transparent';"
+  },
+  {
+    "label": "Undo hide all div children",
+    "query_selector": "[data-test-id=\"interestRep\"] a > div",
+    "logic": "element.style.display = 'block';"
+  },
+  {
+    "label": "Clean up grid item inner wrappers",
+    "query_selector": "[data-test-id=\"interestRep\"] a > div.bnBtRO > div",
+    "logic": "element.style.display = 'block';\nelement.style.height = 'auto';"
+  },
+  {
+    "label": "Style category section container",
+    "query_selector": "[data-test-id=\"related-interests\"] > div.RZadGf.jemUgL",
+    "logic": "element.style.display = 'block';\nelement.style.padding = '0';"
+  },
+  {
+    "label": "Clean up grid item idx wrappers",
+    "query_selector": "[data-grid-item] > div",
+    "logic": "element.style.display = 'contents';"
+  }
+]

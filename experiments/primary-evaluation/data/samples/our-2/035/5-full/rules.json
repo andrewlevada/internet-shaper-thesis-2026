@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide Алиса AI quick answer",
+    "query_selector": "li.serp-item__futuris-snippet",
+    "logic": "element.style.display = 'none'"
+  }
+]

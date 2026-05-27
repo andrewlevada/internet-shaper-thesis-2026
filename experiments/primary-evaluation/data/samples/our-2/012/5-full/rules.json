@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Hide top nav Sign In",
+    "query_selector": ".global-top-navigation .global-action__item.sign-in",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide top nav Register",
+    "query_selector": ".global-top-navigation .global-action__item.register",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide sticky header Sign In",
+    "query_selector": ".community-navigation .global-action__item.sign-in",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide anonymous comments",
+    "query_selector": ".ArticleAnonymousComments_anonymousCommentsSection__tQcO0",
+    "logic": "element.style.display = 'none';"
+  }
+]

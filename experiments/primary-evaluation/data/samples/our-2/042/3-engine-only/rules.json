@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide intro paragraphs before lists",
+    "query_selector": ".article-body > p",
+    "logic": "element.style.display = 'none';"
+  }
+]

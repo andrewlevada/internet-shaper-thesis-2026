@@ -1,0 +1,17 @@
+[
+  {
+    "label": "Hide sidebar sign-in promo",
+    "query_selector": "ytd-guide-signin-promo-renderer",
+    "logic": "element.style.display = 'none'"
+  },
+  {
+    "label": "Hide header sign-in button",
+    "query_selector": "#end ytd-button-renderer[aria-label=\"Sign in\"], #end ytd-button-renderer yt-button-shape[aria-label=\"Sign in\"]",
+    "logic": "element.style.display = 'none'"
+  },
+  {
+    "label": "Hide header sign-in button",
+    "query_selector": "#end ytd-button-renderer",
+    "logic": "const btnShape = element.querySelector('yt-button-shape[aria-label=\"Sign in\"]');\nif (!btnShape) {\n  return;\n}\nelement.style.display = 'none';"
+  }
+]

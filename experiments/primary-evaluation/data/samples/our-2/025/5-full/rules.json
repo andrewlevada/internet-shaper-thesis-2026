@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Hide year/month archive nav",
+    "query_selector": ".hlist",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide calendar grid table",
+    "query_selector": "table.toccolours.floatnone",
+    "logic": "element.style.display = 'none';"
+  }
+]

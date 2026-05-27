@@ -1,0 +1,27 @@
+[
+  {
+    "label": "Move stream tags above title",
+    "query_selector": ".fsLBGq",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Move stream tags above title",
+    "query_selector": ".fsLBGq",
+    "logic": "element.style.display = '';"
+  },
+  {
+    "label": "Reorder stream card tags to top",
+    "query_selector": ".fzKxJT",
+    "logic": "element.style.display = 'flex';\nelement.style.flexDirection = 'column';\n\nvar children = Array.from(element.children);\nchildren.forEach(function(child) {\n  if (child.classList.contains('fsLBGq')) {\n    child.style.order = '-1';\n  } else if (child.classList.contains('bfhuDn')) {\n    child.style.order = '1';\n  } else if (child.getAttribute('data-test-selector') === 'TitleAndChannel') {\n    child.style.order = '0';\n  }\n});"
+  },
+  {
+    "label": "Add spacing below stream tags",
+    "query_selector": ".fsLBGq",
+    "logic": "element.style.marginBottom = '6px';"
+  },
+  {
+    "label": "Style game link after reposition",
+    "query_selector": ".bfhuDn",
+    "logic": "element.style.marginTop = '4px';\nelement.style.marginBottom = '0';"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "label": "Increase stream title font size",
+    "query_selector": "h4.CoreText-sc-1txzju1-0.gfsA-dt",
+    "logic": "element.style.fontSize = '1.15rem';\nelement.style.fontWeight = '600';"
+  },
+  {
+    "label": "Increase streamer name font size",
+    "query_selector": "p.CoreText-sc-1txzju1-0.kdDAY",
+    "logic": "element.style.fontSize = '1.05rem';\nelement.style.fontWeight = '600';"
+  },
+  {
+    "label": "Hide thumbnail viewer count overlay",
+    "query_selector": "div.ScMediaCardStatWrapper-sc-anph5i-0.tw-media-card-stat",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Add viewer count below streamer name",
+    "query_selector": "a.preview-card-channel-link",
+    "logic": "if (element.querySelector('.viewer-count-added')) return;\n\nvar statEl = element.closest('article') && element.closest('article').querySelector('.tw-media-card-stat');\nif (!statEl) return;\n\nvar viewerText = statEl.textContent.trim();\nif (!viewerText) return;\n\nvar lvgXe = element.querySelector('.lvgXe');\nif (!lvgXe) return;\n\nvar existingP = lvgXe.querySelector('p.CoreText-sc-1txzju1-0.kdDAY');\nif (!existingP) return;\n\nvar viewerSpan = document.createElement('span');\nviewerSpan.className = 'viewer-count-added';\nviewerSpan.style.fontSize = '0.95rem';\nviewerSpan.style.color = '#adadad';\nviewerSpan.style.marginLeft = '8px';\nviewerSpan.textContent = viewerText;\n\nexistingP.appendChild(viewerSpan);"
+  },
+  {
+    "label": "Increase game link font size",
+    "query_selector": "p.CoreText-sc-1txzju1-0.bfhuDn",
+    "logic": "element.style.fontSize = '0.95rem';"
+  }
+]

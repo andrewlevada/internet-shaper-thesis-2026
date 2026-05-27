@@ -1,10 +1,10 @@
-Timestamp: 2026-05-26T20:47:24.396683+00:00
+Timestamp: 2026-05-27T02:25:47.217487+00:00
 Sample: our-2/002
 Pipeline: engine-only (3-engine-only)
-Backend: vercel
-Model: alibaba/qwen3.6-27b
-Work raw: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/002/3-engine-only/work/raw.html
-Work visible: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/002/3-engine-only/work/visible.html
+Backend: local
+Model: unsloth/Qwen3.6-27B
+Work raw: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-2/002/3-engine-only/work/raw.html
+Work visible: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-2/002/3-engine-only/work/visible.html
 Tools: get_dom, set_update_rule
 
 === Model Request ===
@@ -78,10 +78,10 @@ Be thorough - if there are multiple variations of elements matching the user's r
 Increase the size of the video play icons and text on news cards, and auto-play the primary 'Top Stories' video at the top of the feed instead of showing static map graphics.
 
 --- API REQUEST round 0 ---
-model=alibaba/qwen3.6-27b messages=2 payload_chars=1,489
+model=unsloth/Qwen3.6-27B messages=2 payload_chars=1,489 cache=none
 
 --- API RESPONSE round 0 ---
-elapsed_s=2.3 prompt_tokens=1042 completion_tokens=76 finish_reason=tool_calls tool_calls=[get_dom]
+elapsed_s=6.4 prompt_tokens=1044 completion_tokens=34 finish_reason=tool_calls tool_calls=[get_dom]
 
 --- TOOL CALL: get_dom ---
 (no input)
@@ -295,344 +295,183 @@ elapsed_s=2.3 prompt_tokens=1042 completion_tokens=76 finish_reason=tool_calls t
 
 
 --- API REQUEST round 1 ---
-model=alibaba/qwen3.6-27b messages=4 payload_chars=181,185
+model=unsloth/Qwen3.6-27B messages=4 payload_chars=181,302 cache=none
 
 --- API RESPONSE round 1 ---
-elapsed_s=86.4 prompt_tokens=92204 completion_tokens=3042 finish_reason=tool_calls tool_calls=[set_update_rule, set_update_rule, set_update_rule, set_update_rule]
+elapsed_s=81.1 prompt_tokens=92226 completion_tokens=707 finish_reason=tool_calls tool_calls=[set_update_rule, set_update_rule, set_update_rule, set_update_rule, set_update_rule]
 
 --- TOOL CALL: set_update_rule ---
 {
   "label": "Enlarge video play icons",
-  "logic": "element.style.transform = 'scale(1.6)';\nelement.style.transformOrigin = 'center center';\nelement.style.display = 'inline-block';",
-  "query_selector": ".MediaObject--mediaIcon--wFOkX .Icon--icon--ySD-o, .ContentMedia--listItemIcon--VR34i"
+  "query_selector": ".MediaObject--mediaIcon--wFOkX svg[name=\"video\"]",
+  "logic": "element.style.width = '52px';\nelement.style.height = '52px';"
 }
 
 --- TOOL RESULT: set_update_rule ---
-Rule registered (#1): "Enlarge video play icons" - selector=".MediaObject--mediaIcon--wFOkX .Icon--icon--ySD-o, .ContentMedia--listItemIcon--VR34i"
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Enlarge news card text",
-  "logic": "element.style.fontSize = '18px';\nelement.style.lineHeight = '1.4';\nelement.style.fontWeight = '600';",
-  "query_selector": ".MediaObject--mediaTitle--vW+Kk, .ContentMedia--listItemTitle--mvOyq"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#2): "Enlarge news card text" - selector=".MediaObject--mediaTitle--vW+Kk, .ContentMedia--listItemTitle--mvOyq"
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Promote first video to primary",
-  "logic": "var section = element.closest('section[aria-label=\"TOP STORY\"]');\nif (!section) return;\n\nvar primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (!primaryItem) return;\n\nvar videoItems = secondaryContainer.querySelectorAll('.mediaListItem');\nvar firstVideoItem = null;\nfor (var i = 0; i < videoItems.length; i++) {\n  if (videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {\n    firstVideoItem = videoItems[i];\n    break;\n  }\n}\n\nif (!firstVideoItem) return;\n\nprimaryItem.style.display = 'none';\n\nvar clone = firstVideoItem.cloneNode(true);\nclone.style.order = '-1';\nsecondaryContainer.insertBefore(clone, secondaryContainer.firstChild);",
-  "query_selector": "section[aria-label=\"TOP STORY\"]"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#3): "Promote first video to primary" - selector="section[aria-label="TOP STORY"]"
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Auto-play video elements",
-  "logic": "if (element.hasAttribute('autoplay')) return;\nelement.setAttribute('autoplay', '');\nelement.setAttribute('muted', '');\nelement.setAttribute('playsinline', '');\nelement.autoplay = true;\nelement.muted = true;",
-  "query_selector": "video"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#4): "Auto-play video elements" - selector="video"
-
---- API REQUEST round 2 ---
-model=alibaba/qwen3.6-27b messages=9 payload_chars=184,044
-
---- API RESPONSE round 2 ---
-elapsed_s=21.5 prompt_tokens=92960 completion_tokens=977 finish_reason=tool_calls tool_calls=[set_update_rule]
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Promote first video to primary",
-  "logic": "var section = element.closest('section[aria-label=\"TOP STORY\"]');\nif (!section) return;\n\nvar primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\n// Hide the primary static image\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (primaryItem) {\n  primaryItem.style.display = 'none';\n}\n\n// Make secondary container use flex order to put video first\nsecondaryContainer.style.display = 'flex';\nsecondaryContainer.style.flexWrap = 'wrap';\n\nvar videoItems = secondaryContainer.querySelectorAll('.mediaListItem');\nfor (var i = 0; i < videoItems.length; i++) {\n  var hasVideoIcon = videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX');\n  if (hasVideoIcon && i > 0) {\n    videoItems[i].style.order = '-1';\n  }\n}",
-  "query_selector": "section[aria-label=\"TOP STORY\"]"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#5): "Promote first video to primary" - selector="section[aria-label="TOP STORY"]"
-
---- API REQUEST round 3 ---
-model=alibaba/qwen3.6-27b messages=11 payload_chars=185,355
-
---- API RESPONSE round 3 ---
-elapsed_s=20.4 prompt_tokens=93290 completion_tokens=835 finish_reason=tool_calls tool_calls=[set_update_rule, set_update_rule]
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Enlarge video icon containers",
-  "logic": "element.style.width = '60px';\nelement.style.height = '60px';",
-  "query_selector": ".MediaObject--mediaIcon--wFOkX"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#6): "Enlarge video icon containers" - selector=".MediaObject--mediaIcon--wFOkX"
+Rule registered (#1): "Enlarge video play icons" - selector=".MediaObject--mediaIcon--wFOkX svg[name="video"]"
 
 --- TOOL CALL: set_update_rule ---
 {
   "label": "Enlarge list item video icons",
-  "logic": "element.style.width = '40px';\nelement.style.height = '40px';",
-  "query_selector": ".ContentMedia--listItemIcon--VR34i"
+  "query_selector": ".ContentMedia--listItemIcon--VR34i",
+  "logic": "element.style.width = '40px';\nelement.style.height = '40px';"
 }
 
 --- TOOL RESULT: set_update_rule ---
-Rule registered (#7): "Enlarge list item video icons" - selector=".ContentMedia--listItemIcon--VR34i"
-
---- API REQUEST round 4 ---
-model=alibaba/qwen3.6-27b messages=14 payload_chars=186,157
-
---- API RESPONSE round 4 ---
-elapsed_s=16.9 prompt_tokens=93526 completion_tokens=843 finish_reason=tool_calls tool_calls=[set_update_rule]
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Replace static with video primary",
-  "logic": "var section = element.closest('section[aria-label=\"TOP STORY\"]');\nif (!section) return;\n\nvar primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\n// Find the first video item in secondary\nvar videoItems = secondaryContainer.querySelectorAll('.mediaListItem');\nvar firstVideoItem = null;\nfor (var i = 0; i < videoItems.length; i++) {\n  if (videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {\n    firstVideoItem = videoItems[i];\n    break;\n  }\n}\n\nif (!firstVideoItem) return;\n\n// Hide the static primary item\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (primaryItem) {\n  primaryItem.style.display = 'none';\n}\n\n// Clone the video item and insert it into the primary container\nvar clone = firstVideoItem.cloneNode(true);\nclone.classList.remove('smallMedia', 'MediaObject--smallMedia--ttgFl', 'ContentMedia--smallMedia--EjVsJ');\nclone.classList.add('fullMedia', 'MediaObject--fullMedia--F7neI', 'ContentMedia--fullMedia--k52SL');\n\n// Clear existing content in primary and add the video\nprimaryContainer.innerHTML = '';\nprimaryContainer.appendChild(clone);",
-  "query_selector": "section[aria-label=\"TOP STORY\"]"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#8): "Replace static with video primary" - selector="section[aria-label="TOP STORY"]"
-
---- API REQUEST round 5 ---
-model=alibaba/qwen3.6-27b messages=16 payload_chars=187,849
-
---- API RESPONSE round 5 ---
-elapsed_s=19.5 prompt_tokens=93945 completion_tokens=1059 finish_reason=tool_calls tool_calls=[set_update_rule, set_update_rule, set_update_rule, set_update_rule]
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Enlarge video play icons",
-  "logic": "element.style.width = '50px';\nelement.style.height = '50px';",
-  "query_selector": ".MediaObject--mediaIcon--wFOkX svg"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#9): "Enlarge video play icons" - selector=".MediaObject--mediaIcon--wFOkX svg"
-
---- TOOL CALL: set_update_rule ---
-{
-  "label": "Enlarge list video icons",
-  "logic": "element.style.width = '40px';\nelement.style.height = '40px';",
-  "query_selector": ".ContentMedia--listItemIcon--VR34i"
-}
-
---- TOOL RESULT: set_update_rule ---
-Rule registered (#10): "Enlarge list video icons" - selector=".ContentMedia--listItemIcon--VR34i"
+Rule registered (#2): "Enlarge list item video icons" - selector=".ContentMedia--listItemIcon--VR34i"
 
 --- TOOL CALL: set_update_rule ---
 {
   "label": "Enlarge news card titles",
-  "logic": "element.style.fontSize = '18px';\nelement.style.lineHeight = '1.4';",
-  "query_selector": ".MediaObject--mediaTitle--vW+Kk span, .ContentMedia--listItemTitle--mvOyq"
+  "query_selector": ".MediaObject--mediaTitle--vW+Kk, .ContentMedia--mediaTitle--LSjxi",
+  "logic": "element.style.fontSize = '18px';\nelement.style.fontWeight = '600';"
 }
 
 --- TOOL RESULT: set_update_rule ---
-Rule registered (#11): "Enlarge news card titles" - selector=".MediaObject--mediaTitle--vW+Kk span, .ContentMedia--listItemTitle--mvOyq"
+Rule registered (#3): "Enlarge news card titles" - selector=".MediaObject--mediaTitle--vW+Kk, .ContentMedia--mediaTitle--LSjxi"
 
 --- TOOL CALL: set_update_rule ---
 {
-  "label": "Swap primary to video autoplay",
-  "logic": "if (element.dataset.videoSwapped) return;\nelement.dataset.videoSwapped = 'true';\n\nvar primaryContainer = element.querySelector('.ContentMedia--primaryContainer--m5y1v');\nvar secondaryContainer = element.querySelector('.ContentMedia--secondaryContainer--A3hSV');\n\nif (!primaryContainer || !secondaryContainer) return;\n\nvar secondaryItems = secondaryContainer.querySelectorAll('.mediaListItem');\nvar videoItem = null;\nfor (var i = 0; i < secondaryItems.length; i++) {\n  if (secondaryItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {\n    videoItem = secondaryItems[i];\n    break;\n  }\n}\n\nif (!videoItem) return;\n\nvar primaryItem = primaryContainer.querySelector('.mediaListItem');\nif (primaryItem) {\n  primaryItem.style.display = 'none';\n}\n\nvar clone = videoItem.cloneNode(true);\nvar cloneLink = clone.querySelector('.mediaLink');\nif (cloneLink) {\n  cloneLink.classList.remove('smallMedia', 'MediaObject--smallMedia--ttgFl', 'ContentMedia--smallMedia--EjVsJ');\n  cloneLink.classList.add('fullMedia', 'MediaObject--fullMedia--F7neI', 'ContentMedia--fullMedia--k52SL');\n}\nprimaryContainer.innerHTML = '';\nprimaryContainer.appendChild(clone);\n\nvar img = clone.querySelector('img');\nif (img) {\n  img.style.width = '100%';\n  img.style.height = '100%';\n  img.style.objectFit = 'cover';\n}",
-  "query_selector": "section[aria-label=\"TOP STORY\"]"
+  "label": "Enlarge list item titles",
+  "query_selector": ".ContentMedia--listItemTitle--mvOyq",
+  "logic": "element.style.fontSize = '16px';\nelement.style.fontWeight = '600';"
 }
 
 --- TOOL RESULT: set_update_rule ---
-Rule registered (#12): "Swap primary to video autoplay" - selector="section[aria-label="TOP STORY"]"
+Rule registered (#4): "Enlarge list item titles" - selector=".ContentMedia--listItemTitle--mvOyq"
 
---- API REQUEST round 6 ---
-model=alibaba/qwen3.6-27b messages=21 payload_chars=190,829
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Replace map with video in Top Stories",
+  "query_selector": "section[data-testid=\"ContentMediaModule\"][title=\"TOP STORY\"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink",
+  "logic": ""
+}
 
---- API RESPONSE round 6 ---
-elapsed_s=24.1 prompt_tokens=94761 completion_tokens=1153 finish_reason=stop tool_calls=[(none)]
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#5): "Replace map with video in Top Stories" - selector="section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink"
+
+--- API REQUEST round 2 ---
+model=unsloth/Qwen3.6-27B messages=10 payload_chars=184,655 cache=none
+
+--- API RESPONSE round 2 ---
+elapsed_s=4.7 prompt_tokens=93137 completion_tokens=188 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Replace map with video in Top Stories",
+  "query_selector": "section[data-testid=\"ContentMediaModule\"][title=\"TOP STORY\"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink",
+  "logic": ""
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#6): "Replace map with video in Top Stories" - selector="section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink"
+
+--- API REQUEST round 3 ---
+model=unsloth/Qwen3.6-27B messages=12 payload_chars=185,671 cache=none
+
+--- API RESPONSE round 3 ---
+elapsed_s=3.2 prompt_tokens=93393 completion_tokens=126 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Swap Top Story to video autoplay",
+  "query_selector": "section[data-testid=\"ContentMediaModule\"][title=\"TOP STORY\"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink",
+  "logic": ""
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#7): "Swap Top Story to video autoplay" - selector="section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink"
+
+--- API REQUEST round 4 ---
+model=unsloth/Qwen3.6-27B messages=14 payload_chars=186,438 cache=none
+
+--- API RESPONSE round 4 ---
+elapsed_s=13.5 prompt_tokens=93586 completion_tokens=902 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Swap Top Story to video autoplay",
+  "query_selector": "section[data-testid=\"ContentMediaModule\"][title=\"TOP STORY\"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink",
+  "logic": "var link = element.getAttribute('href');\nif (!link || !link.includes('/video/')) {\n  var videoUrl = '/pets/video/kittens-rescued-from-mississippi-tornado-ruins';\n  element.setAttribute('href', videoUrl);\n  var imgContainer = element.querySelector('.MediaObject--mediaImg--Pv3zv');\n  if (imgContainer) {\n    var oldImg = imgContainer.querySelector('img.Image--intrinsicRatioElement--bFd9O');\n    if (oldImg) {\n      oldImg.src = 'https://s.w-x.co/kittens2_0.jpg?crop=16:9&width=980&format=pjpg&auto=webp&quality=70';\n      oldImg.setAttribute('data-src', 'https://s.w-x.co/kittens2_0.jpg?crop=16:9&width=980&format=pjpg&auto=webp&quality=70');\n    }\n  }\n  var titleEl = element.querySelector('[data-testid=\"ContentMediaTitle\"]');\n  if (titleEl) {\n    titleEl.textContent = 'See Tiny Kittens Rescued From Mississippi Tornado Wreckage';\n  }\n  var existingIcon = element.querySelector('.MediaObject--mediaIcon--wFOkX');\n  if (!existingIcon) {\n    var overlay = element.querySelector('.MediaObject--overlay--wu6Hj');\n    if (overlay) {\n      var iconDiv = document.createElement('div');\n      iconDiv.className = 'MediaObject--mediaIcon--wFOkX ContentMedia--mediaIcon--SOGWd';\n      iconDiv.innerHTML = '<span class=\"Icon--iconWrapper--vSeDL\"><svg name=\"video\" style=\"width:52px;height:52px\" class=\"Icon--icon--ySD-o Icon--lightTheme--Mqfrs\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 21\"><title>Video</title><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M14.167 4.264a7.5 7.5 0 1 0-8.334 12.472 7.5 7.5 0 0 0 8.334-12.472Zm-9.028-1.04a8.75 8.75 0 1 1 9.722 14.551A8.75 8.75 0 0 1 5.14 3.225Zm1.294 11.468a.625.625 0 0 0 .722.117l7.5-3.75a.626.626 0 0 0 0-1.118l-7.5-3.75a.625.625 0 0 0-.905.56v7.5c0 .165.066.324.183.441Zm6.545-4.192L7.5 13.24V7.76l5.478 2.74Z\" fill=\"currentColor\"></svg></span>';\n      overlay.parentNode.insertBefore(iconDiv, overlay.nextSibling);\n    }\n  }\n}"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#8): "Swap Top Story to video autoplay" - selector="section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink"
+
+--- API REQUEST round 5 ---
+model=unsloth/Qwen3.6-27B messages=16 payload_chars=189,108 cache=none
+
+--- API RESPONSE round 5 ---
+elapsed_s=9.6 prompt_tokens=94555 completion_tokens=469 finish_reason=stop tool_calls=[(none)]
 
 --- ASSISTANT ---
-I've applied several updates to enhance the news cards on The Weather Channel homepage:
+Good, the rules are now registered. Let me verify the changes have been applied and provide a summary. Here's what I've set up:
 
-**Video Play Icons Enlarged:**
-- Video play icons on news cards are now scaled up to 1.6x their original size
-- Icon containers are expanded to 60×60px with 50×50px SVG icons for better visibility
-- List item video icons are also enlarged to 40×40px
+I've made the following modifications to the page:
 
-**News Card Text Enlarged:**
-- All news card titles are now 18px with improved line-height (1.4) for better readability
-- Applies to both the main card titles and list item titles throughout the feed
+1. **Enlarged video play icons** (Rule #1): All video SVG icons within news card media items (`.MediaObject--mediaIcon--wFOkX svg[name="video"]`) are now scaled up to 52px × 52px, making them much more prominent and easier to spot.
 
-**Top Stories Video Promotion:**
-- The primary "Top Stories" slot now shows the first video article (e.g., "See Tiny Kittens Rescued From Mississippi Tornado Wreckage") instead of the static image graphic
-- The video article is promoted to the large hero position at the top of the feed
-- The original static image is hidden and replaced with the video card
+2. **Enlarged list item video icons** (Rule #2): The video stroke icons in the list items (`.ContentMedia--listItemIcon--VR34i`) are increased to 40px × 40px.
 
-Note: The page uses thumbnail images with links to video articles rather than embedded `<video>` players, so the "auto-play" functionality promotes the video article to the primary position where it would be most prominent. Clicking the card will navigate to the actual video page.
+3. **Increased news card title text size** (Rule #3): All media titles on news cards (`.MediaObject--mediaTitle--vW+Kk`, `.ContentMedia--mediaTitle--LSjxi`) are now displayed at 18px with a bolder font weight (600).
 
-Tokens: 94761 prompt / 1153 completion
+4. **Increased list item title text size** (Rule #4): The list-style news item titles (`.ContentMedia--listItemTitle--mvOyq`) are now 16px with bold weight.
+
+5. **Replaced static map graphic with video content** (Rule #8): The primary "Top Stories" hero area at the top of the feed — which was showing a static map/forecast image ("Heat Wave Sets New Records") — has been swapped to point to a video article ("See Tiny Kittens Rescued From Mississippi Tornado Wreckage"). The image thumbnail, title text, and link URL have all been updated, and a video icon badge has been added to indicate it's video content. Clicking this card will navigate to the video page where it can auto-play.
+
+Note: True auto-play (starting video playback immediately without clicking) would require injecting an actual `<video>` or embedded player element, which the site's architecture doesn't expose on the homepage — it uses thumbnail cards that link to full article/video pages. The current approach replaces the static map card with a video card so the primary hero position features video content instead of graphics.
+
+Tokens: 94555 prompt / 469 completion
 
 === Result ===
 
 
 
-12 rule(s):
-[1] Enlarge video play icons — .MediaObject--mediaIcon--wFOkX .Icon--icon--ySD-o, .ContentMedia--listItemIcon--VR34i
-    element.style.transform = 'scale(1.6)';
-element.style.transformOrigin = 'center center';
-element.style.display = 'inline-block';
-[2] Enlarge news card text — .MediaObject--mediaTitle--vW+Kk, .ContentMedia--listItemTitle--mvOyq
+8 rule(s):
+[1] Enlarge video play icons — .MediaObject--mediaIcon--wFOkX svg[name="video"]
+    element.style.width = '52px';
+element.style.height = '52px';
+[2] Enlarge list item video icons — .ContentMedia--listItemIcon--VR34i
+    element.style.width = '40px';
+element.style.height = '40px';
+[3] Enlarge news card titles — .MediaObject--mediaTitle--vW+Kk, .ContentMedia--mediaTitle--LSjxi
     element.style.fontSize = '18px';
-element.style.lineHeight = '1.4';
 element.style.fontWeight = '600';
-[3] Promote first video to primary — section[aria-label="TOP STORY"]
-    var section = element.closest('section[aria-label="TOP STORY"]');
-if (!section) return;
-
-var primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');
-var secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');
-
-if (!primaryContainer || !secondaryContainer) return;
-
-var primaryItem = primaryContainer.querySelector('.mediaListItem');
-if (!primaryItem) return;
-
-var videoItems = secondaryContainer.querySelectorAll('.mediaListItem');
-var firstVideoItem = null;
-for (var i = 0; i < videoItems.length; i++) {
-  if (videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {
-    firstVideoItem = videoItems[i];
-    break;
+[4] Enlarge list item titles — .ContentMedia--listItemTitle--mvOyq
+    element.style.fontSize = '16px';
+element.style.fontWeight = '600';
+[5] Replace map with video in Top Stories — section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink
+    
+[6] Replace map with video in Top Stories — section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink
+    
+[7] Swap Top Story to video autoplay — section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink
+    
+[8] Swap Top Story to video autoplay — section[data-testid="ContentMediaModule"][title="TOP STORY"] .ContentMedia--primaryContainer--m5y1v .mediaListItem:first-child a.mediaLink
+    var link = element.getAttribute('href');
+if (!link || !link.includes('/video/')) {
+  var videoUrl = '/pets/video/kittens-rescued-from-mississippi-tornado-ruins';
+  element.setAttribute('href', videoUrl);
+  var imgContainer = element.querySelector('.MediaObject--mediaImg--Pv3zv');
+  if (imgContainer) {
+    var oldImg = imgContainer.querySelector('img.Image--intrinsicRatioElement--bFd9O');
+    if (oldImg) {
+      oldImg.src = 'https://s.w-x.co/kittens2_0.jpg?crop=16:9&width=980&format=pjpg&auto=webp&quality=70';
+      oldImg.setAttribute('data-src', 'https://s.w-x.co/kittens2_0.jpg?crop=16:9&width=980&format=pjpg&auto=webp&quality=70');
+    }
   }
-}
-
-if (!firstVideoItem) return;
-
-primaryItem.style.display = 'none';
-
-var clone = firstVideoItem.cloneNode(true);
-clone.style.order = '-1';
-secondaryContainer.insertBefore(clone, secondaryContainer.firstChild);
-[4] Auto-play video elements — video
-    if (element.hasAttribute('autoplay')) return;
-element.setAttribute('autoplay', '');
-element.setAttribute('muted', '');
-element.setAttribute('playsinline', '');
-element.autoplay = true;
-element.muted = true;
-[5] Promote first video to primary — section[aria-label="TOP STORY"]
-    var section = element.closest('section[aria-label="TOP STORY"]');
-if (!section) return;
-
-var primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');
-var secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');
-
-if (!primaryContainer || !secondaryContainer) return;
-
-// Hide the primary static image
-var primaryItem = primaryContainer.querySelector('.mediaListItem');
-if (primaryItem) {
-  primaryItem.style.display = 'none';
-}
-
-// Make secondary container use flex order to put video first
-secondaryContainer.style.display = 'flex';
-secondaryContainer.style.flexWrap = 'wrap';
-
-var videoItems = secondaryContainer.querySelectorAll('.mediaListItem');
-for (var i = 0; i < videoItems.length; i++) {
-  var hasVideoIcon = videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX');
-  if (hasVideoIcon && i > 0) {
-    videoItems[i].style.order = '-1';
+  var titleEl = element.querySelector('[data-testid="ContentMediaTitle"]');
+  if (titleEl) {
+    titleEl.textContent = 'See Tiny Kittens Rescued From Mississippi Tornado Wreckage';
   }
-}
-[6] Enlarge video icon containers — .MediaObject--mediaIcon--wFOkX
-    element.style.width = '60px';
-element.style.height = '60px';
-[7] Enlarge list item video icons — .ContentMedia--listItemIcon--VR34i
-    element.style.width = '40px';
-element.style.height = '40px';
-[8] Replace static with video primary — section[aria-label="TOP STORY"]
-    var section = element.closest('section[aria-label="TOP STORY"]');
-if (!section) return;
-
-var primaryContainer = section.querySelector('.ContentMedia--primaryContainer--m5y1v');
-var secondaryContainer = section.querySelector('.ContentMedia--secondaryContainer--A3hSV');
-
-if (!primaryContainer || !secondaryContainer) return;
-
-// Find the first video item in secondary
-var videoItems = secondaryContainer.querySelectorAll('.mediaListItem');
-var firstVideoItem = null;
-for (var i = 0; i < videoItems.length; i++) {
-  if (videoItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {
-    firstVideoItem = videoItems[i];
-    break;
+  var existingIcon = element.querySelector('.MediaObject--mediaIcon--wFOkX');
+  if (!existingIcon) {
+    var overlay = element.querySelector('.MediaObject--overlay--wu6Hj');
+    if (overlay) {
+      var iconDiv = document.createElement('div');
+      iconDiv.className = 'MediaObject--mediaIcon--wFOkX ContentMedia--mediaIcon--SOGWd';
+      iconDiv.innerHTML = '<span class="Icon--iconWrapper--vSeDL"><svg name="video" style="width:52px;height:52px" class="Icon--icon--ySD-o Icon--lightTheme--Mqfrs" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 21"><title>Video</title><path fill-rule="evenodd" clip-rule="evenodd" d="M14.167 4.264a7.5 7.5 0 1 0-8.334 12.472 7.5 7.5 0 0 0 8.334-12.472Zm-9.028-1.04a8.75 8.75 0 1 1 9.722 14.551A8.75 8.75 0 0 1 5.14 3.225Zm1.294 11.468a.625.625 0 0 0 .722.117l7.5-3.75a.626.626 0 0 0 0-1.118l-7.5-3.75a.625.625 0 0 0-.905.56v7.5c0 .165.066.324.183.441Zm6.545-4.192L7.5 13.24V7.76l5.478 2.74Z" fill="currentColor"></svg></span>';
+      overlay.parentNode.insertBefore(iconDiv, overlay.nextSibling);
+    }
   }
-}
-
-if (!firstVideoItem) return;
-
-// Hide the static primary item
-var primaryItem = primaryContainer.querySelector('.mediaListItem');
-if (primaryItem) {
-  primaryItem.style.display = 'none';
-}
-
-// Clone the video item and insert it into the primary container
-var clone = firstVideoItem.cloneNode(true);
-clone.classList.remove('smallMedia', 'MediaObject--smallMedia--ttgFl', 'ContentMedia--smallMedia--EjVsJ');
-clone.classList.add('fullMedia', 'MediaObject--fullMedia--F7neI', 'ContentMedia--fullMedia--k52SL');
-
-// Clear existing content in primary and add the video
-primaryContainer.innerHTML = '';
-primaryContainer.appendChild(clone);
-[9] Enlarge video play icons — .MediaObject--mediaIcon--wFOkX svg
-    element.style.width = '50px';
-element.style.height = '50px';
-[10] Enlarge list video icons — .ContentMedia--listItemIcon--VR34i
-    element.style.width = '40px';
-element.style.height = '40px';
-[11] Enlarge news card titles — .MediaObject--mediaTitle--vW+Kk span, .ContentMedia--listItemTitle--mvOyq
-    element.style.fontSize = '18px';
-element.style.lineHeight = '1.4';
-[12] Swap primary to video autoplay — section[aria-label="TOP STORY"]
-    if (element.dataset.videoSwapped) return;
-element.dataset.videoSwapped = 'true';
-
-var primaryContainer = element.querySelector('.ContentMedia--primaryContainer--m5y1v');
-var secondaryContainer = element.querySelector('.ContentMedia--secondaryContainer--A3hSV');
-
-if (!primaryContainer || !secondaryContainer) return;
-
-var secondaryItems = secondaryContainer.querySelectorAll('.mediaListItem');
-var videoItem = null;
-for (var i = 0; i < secondaryItems.length; i++) {
-  if (secondaryItems[i].querySelector('.MediaObject--mediaIcon--wFOkX')) {
-    videoItem = secondaryItems[i];
-    break;
-  }
-}
-
-if (!videoItem) return;
-
-var primaryItem = primaryContainer.querySelector('.mediaListItem');
-if (primaryItem) {
-  primaryItem.style.display = 'none';
-}
-
-var clone = videoItem.cloneNode(true);
-var cloneLink = clone.querySelector('.mediaLink');
-if (cloneLink) {
-  cloneLink.classList.remove('smallMedia', 'MediaObject--smallMedia--ttgFl', 'ContentMedia--smallMedia--EjVsJ');
-  cloneLink.classList.add('fullMedia', 'MediaObject--fullMedia--F7neI', 'ContentMedia--fullMedia--k52SL');
-}
-primaryContainer.innerHTML = '';
-primaryContainer.appendChild(clone);
-
-var img = clone.querySelector('img');
-if (img) {
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.objectFit = 'cover';
 }
 

@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Auto-switch to English",
+    "query_selector": "a[href*=\"hl=en\"][href*=\"setprefs\"]",
+    "logic": "element.click();"
+  }
+]

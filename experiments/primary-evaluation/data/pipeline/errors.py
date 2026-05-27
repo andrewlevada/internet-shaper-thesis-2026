@@ -50,6 +50,9 @@ def is_context_overflow_error(error: BaseException) -> bool:
         "maximum context" in message
         or "context length" in message
         or "context window" in message
+        or "context size" in message
+        or "exceed_context" in message
+        or "exceeds the available context" in message
         or "too many tokens" in message
         or "token limit" in message
         or "maximum number of tokens" in message

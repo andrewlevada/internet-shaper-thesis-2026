@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Move video carousel to top",
+    "query_selector": "li.serp-item[data-fast-name=\"video-unisearch\"]",
+    "logic": "element.style.display = 'none';\nvar parent = element.parentElement;\nif (!parent) return;\nvar clone = element.cloneNode(true);\nclone.style.display = '';\nvar firstItem = parent.firstElementChild;\nif (firstItem) {\n    parent.insertBefore(clone, firstItem);\n} else {\n    parent.prepend(clone);\n}"
+  }
+]

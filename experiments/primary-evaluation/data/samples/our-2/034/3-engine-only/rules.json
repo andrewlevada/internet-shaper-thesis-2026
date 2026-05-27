@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Expand Alice AI card",
+    "query_selector": ".FuturisSearchCard_gen.FuturisSearchCard_collapsed",
+    "logic": "element.classList.remove('FuturisSearchCard_collapsed', 'FuturisSearchCard_view_fold');\nelement.classList.add('FuturisSearchCard_view_unfold');"
+  },
+  {
+    "label": "Unlimit FactFold height",
+    "query_selector": ".FactFold_height-limited .FactFold-Container",
+    "logic": "element.style.removeProperty('height');\nelement.style.height = 'auto';"
+  },
+  {
+    "label": "Hide FactFold button",
+    "query_selector": ".FactFold-Button",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide folded divider",
+    "query_selector": ".FactFold-Divider_folded",
+    "logic": "element.style.display = 'none';"
+  }
+]

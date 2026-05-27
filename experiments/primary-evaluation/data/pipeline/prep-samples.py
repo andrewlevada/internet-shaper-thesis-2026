@@ -9,7 +9,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from agent import AgentBackend, apply_changes, resolve_agent_provider, run_agent
+from agent import AgentBackend, apply_changes, copy_over_the_final, resolve_agent_provider, run_agent
 from config import (
     AGENT_PIPELINE_IDS,
     ANTHROPIC_MODEL_ID,
@@ -123,7 +123,10 @@ def resolve_model_id(pipeline: PipelineConfig, backend: AgentBackend) -> str:
     return GATEWAY_MODEL_ID
 
 
-def resolve_agent_pipelines(pipeline_filter: str | None) -> list[PipelineConfig]:
+def resolve_agent_pipelines(
+    pipeline_filter: str | None,
+    backend: AgentBackend,
+) -> list[PipelineConfig]:
     if pipeline_filter:
         match = next((cfg for cfg in PIPELINES.values() if cfg.folder == pipeline_filter), None)
         
@@ -141,7 +144,13 @@ def resolve_agent_pipelines(pipeline_filter: str | None) -> list[PipelineConfig]
 
         return [match]
 
-    return [PIPELINES[pid] for pid in AGENT_PIPELINE_IDS]
+    pipelines = [PIPELINES[pid] for pid in AGENT_PIPELINE_IDS]
+    if backend == "local":
+        pipelines = [
+            cfg for cfg in pipelines
+            if resolve_agent_provider(cfg, backend) == "local"
+        ]
+    return pipelines
 
 
 def copy_original_variant(sample_dir: Path, seed_dir: Path) -> None:
@@ -248,6 +257,19 @@ def run_agent_pipeline(
             result_summary=f"{overflow_note}\n\n{summary}",
             context_overflow=str(exc),
         )
+    except RuntimeError as exc:
+        if "set_update_rules failed" not in str(exc):
+            log_writer.close()
+            raise
+        print(
+            f"[{sample_id}] apply failed in {pipeline.folder}; "
+            "saved raw.html as index.html"
+        )
+        copy_over_the_final(paths)
+        log_writer.finalize(
+            run_result=run_result,
+            result_summary=f"Apply failed: {exc}\n\nSaved raw.html as index.html.",
+        )
     except Exception:
         log_writer.close()
         raise
@@ -267,11 +289,21 @@ def screenshot_sample(
             continue
         
         output_path = variant_dir / "screenshot.png"
+        if output_path.is_file():
+            print(f"[{sample_id}] skip screenshot {cfg.folder} (already exists)")
+            continue
+
         print(f"[{sample_id}] screenshot {cfg.folder}")
-        screenshot_variant(
-            html_path=html_path,
-            output_path=output_path,
-        )
+        try:
+            screenshot_variant(
+                html_path=html_path,
+                output_path=output_path,
+            )
+        except Exception as exc:
+            print(
+                f"[{sample_id}] screenshot failed for {cfg.folder}: {exc}",
+                file=sys.stderr,
+            )
 
 
 def process_sample(
@@ -309,7 +341,7 @@ def process_sample(
 def main() -> None:
     args = parse_args()
     seed_ids = list_seed_ids(args.sample)
-    agent_pipelines = resolve_agent_pipelines(args.pipeline)
+    agent_pipelines = resolve_agent_pipelines(args.pipeline, args.backend)
     screenshot_pipelines = (
         agent_pipelines if args.pipeline else list(PIPELINES.values())
     )

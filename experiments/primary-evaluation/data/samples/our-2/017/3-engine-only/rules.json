@@ -1,0 +1,17 @@
+[
+  {
+    "label": "Hide category image grid",
+    "query_selector": "div[data-test-id=\"related-interests\"] > .ADXRXN.RZadGf.jemUgL",
+    "logic": "element.style.display = 'none'"
+  },
+  {
+    "label": "Insert text category list",
+    "query_selector": "section > div.ADXRXN.Nt6yCq.T0vDbM.Tjcf3c.i4_mIm.qJUqe1.zEVE_X h2.wyEmcc.qnEc35.WuRgKB.yx4fLT.yv4JQN.iuUxZ9",
+    "logic": "if (element.textContent.trim() !== 'Browse by category') return;\nif (element.nextElementSibling && element.nextElementSibling.classList.contains('category-text-list')) return;\n\nvar relatedInterests = document.querySelector('[data-test-id=\"related-interests\"]');\nif (!relatedInterests) return;\n\nvar interestItems = relatedInterests.querySelectorAll('[data-test-id=\"interestRep\"] a');\nif (interestItems.length === 0) return;\n\nvar ul = document.createElement('ul');\nul.className = 'category-text-list';\nul.style.listStyle = 'none';\nul.style.padding = '0';\nul.style.margin = '16px 0 24px 0';\nul.style.display = 'flex';\nul.style.flexWrap = 'wrap';\nul.style.gap = '8px';\nul.style.maxWidth = '1244px';\nul.style.width = '100%';\n\nfor (var i = 0; i < interestItems.length; i++) {\n    var link = interestItems[i];\n    var href = link.getAttribute('href') || '#';\n    var titleEl = link.querySelector('[data-test-id=\"topic-rep-title\"]');\n    var text = titleEl ? titleEl.textContent.trim() : link.textContent.trim();\n    if (!text) continue;\n\n    var li = document.createElement('li');\n    var a = document.createElement('a');\n    a.href = href;\n    a.textContent = text;\n    a.style.display = 'inline-block';\n    a.style.padding = '8px 16px';\n    a.style.borderRadius = '20px';\n    a.style.backgroundColor = '#efefef';\n    a.style.color = '#111';\n    a.style.textDecoration = 'none';\n    a.style.fontSize = '14px';\n    a.style.fontWeight = '500';\n    a.style.transition = 'background-color 0.2s';\n    a.style.cursor = 'pointer';\n\n    li.appendChild(a);\n    ul.appendChild(li);\n}\n\nvar headingContainer = element.parentElement;\nif (headingContainer) {\n    headingContainer.parentElement.insertBefore(ul, headingContainer.nextSibling);\n}"
+  },
+  {
+    "label": "Hide category See more button",
+    "query_selector": "div[data-test-id=\"related-interests\"] + div.ADXRXN.LbyOQL._tKaHB.sSBu24.zEVE_X",
+    "logic": "element.style.display = 'none'"
+  }
+]

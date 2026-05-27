@@ -1,0 +1,46 @@
+Generated: 2026-05-27T08:46:32.930945+00:00
+Input: samples/our-2/*/agent.log
+Metric: sum of elapsed_s across API request rounds per agent.log (model inference time)
+
+Fold: our-2
+Samples with agent logs: 42
+
+=== Pipeline run times (API elapsed, seconds) ===
+
+2-baseline:
+  runs: 42
+  mean: 202.5s (3.4 min)
+  median: 162.8s (2.7 min)
+  min: 14.2s
+  max: 513.6s
+
+3-engine-only:
+  runs: 42
+  mean: 74.4s (1.2 min)
+  median: 63.4s (1.1 min)
+  min: 6.7s
+  max: 155.1s
+
+4-map-only:
+  runs: 42
+  mean: 116.8s (1.9 min)
+  median: 82.3s (1.4 min)
+  min: 13.9s
+  max: 361.2s
+
+5-full:
+  runs: 42
+  mean: 37.6s
+  median: 34.3s
+  min: 9.4s
+  max: 119.8s
+
+=== Apply failures (set_update_rules could not run) ===
+
+total: 2
+
+- our-2/007 / 5-full
+  Apply failed: set_update_rules failed (1): Unknown pseudo-class :has-text
+
+- our-2/030 / 5-full
+  Apply failed: set_update_rules failed (1): Rule "Auto-switch to English" failed on element: Cannot set properties of undefined (setting 'href')

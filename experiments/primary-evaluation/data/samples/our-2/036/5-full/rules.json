@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Move video carousel to top",
+    "query_selector": "li[data-fast-name=\"video-unisearch\"]",
+    "logic": "var videoItem = element;\nvar parent = videoItem.parentNode;\nif (!parent) return;\nvar neuroAnswer = null;\nvar children = Array.from(parent.children);\nfor (var i = 0; i < children.length; i++) {\n  if (children[i].getAttribute('data-fast-name') === 'neuro_answer') {\n    neuroAnswer = children[i];\n    break;\n  }\n}\nif (neuroAnswer && parent.contains(videoItem)) {\n  parent.insertBefore(videoItem, neuroAnswer);\n}"
+  }
+]

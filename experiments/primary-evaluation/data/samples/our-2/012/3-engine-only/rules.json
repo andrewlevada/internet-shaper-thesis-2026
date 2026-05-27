@@ -1,0 +1,17 @@
+[
+  {
+    "label": "Hide Sign In button in header",
+    "query_selector": ".global-top-navigation .global-action__item.sign-in",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide Register button in header",
+    "query_selector": ".global-top-navigation .global-action__item.register",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide anonymous comments section",
+    "query_selector": "#articleComments .ArticleAnonymousComments_anonymousCommentsSection__tQcO0",
+    "logic": "element.style.display = 'none';"
+  }
+]
