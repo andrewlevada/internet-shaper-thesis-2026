@@ -23,13 +23,9 @@
   font-family: "Times New Roman"
 )
 
-#set par(
-  leading: 1em,
-)
-
 = Introduction <sec:introduction>
 
-== Background
+== Background <sec:background>
 
 We build User Interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user (*WIP*: citation needed), but here come 2 problems:
 - intrinsically, designers can not feasibly plan interfaces for every single user's specific needs and jobs. with constrained resources, even good interfaces are usually not perfect for each user. For example
@@ -41,9 +37,9 @@ Prior HCI research extensivly shows that user interfaces can be made adaptive an
 
 Few works take a diffrent approach and try to make interfaces malleable by end users. In this thesis we build upon the ideas they introduce. We want to implement into really this vision of individually tailored user interfaces, shared by many UX practitioners, made possible my recient advaces in LLM's capabilities.
 
-== Internet Shaper
+== Internet Shaper <sec:internet-shaper-intro>
 
-(*WIP: Shaper demo image)
+(*WIP*: Shaper demo image)
 
 We design, build and evaluate Internet Shaper — an agentic system wrapped in a browser extension that can change web pages from natural language requests. It works directly on the page in the users browser and does not need access to source code of the website. These changes are persistent across sessions and are powerfull enough to restyle, hide, change elements and while layouts or even bring new, althogh limited, functionality to the website 
 
@@ -52,8 +48,8 @@ On evaluation we show how this system enables user-controlled adaptations of exi
 Our contributions are as follows:
 
 1. Internet Shaper as a whole and it’s two critical components: a DOM compression algorithm for percieving the web pages; and the Rules Engine for applying chnages to the webpage in a percistent way
-2 . A pipeline that can create datasets with user-sided natural language edit requests grounded in user personas and jobs
-3 . And evaluation of an Internet shaper on a dataset gathered form that pipeline
+2. A pipeline that can create datasets with user-sided natural language edit requests grounded in user personas and jobs
+3. And evaluation of an Internet shaper on a dataset gathered form that pipeline
 
 = Related work <sec:related-work>
 
@@ -90,11 +86,14 @@ DOM snapshots from real websites are far larger than model context windows allow
 
 #align(center)[
   #figure(
-    caption: [#flex-title([DOM snapshot sizes], [Token counts across pages from top traffic websites])],
+    caption: [#flex-title(
+      [DOM snapshot sizes — Approximate token counts over 73 page snapshots from the top 25 traffic domains; counted with tiktoken `o200k_base`.],
+      [DOM snapshot sizes],
+    )],
     table(
       columns: 4,
       inset: 0.5em,
-      table.header([Stage], [Mean], [Median], [Max]),
+      table.header([Stage], [Mean (tok)], [Median (tok)], [Max (tok)]),
       stroke: (left: none),
       table.vline(stroke: none, start: 0, end: 5),
       [Raw DOM], [339,253], [240,918], [1,338,122],
@@ -115,8 +114,11 @@ On the action side, direct edit instructions do not survive a page reload. Witho
 #align(center)[
   #figure(
     image("img/system.png"),
-    caption: [Internet Shaper architecture: agentic core with extension wrapper],
-  )
+    caption: [#flex-title(
+      [Internet Shaper architecture — Agentic core with browser extension wrapper.],
+      [Internet Shaper architecture],
+    )],
+  ) <fig:internet-shaper-architecture>
 ]
 
 Internet Shaper is an agentic system that makes user-side adaptation of web UIs possible with two specialized components.
@@ -127,27 +129,60 @@ _Action_ is powered by _Rules Engine_. Instead of direct edits, it records persi
 
 The LLM interacts with both components through tools in a fixed explore-then-act loop. It never writes to the live page directly; it reads from a snapshot frozen at request time and appends rules to a store.
 
+@fig:internet-shaper-architecture shows the end-to-end workflow inside the browser extension. The numbered steps proceed as follows:
+
+#enum(
+  tight: true,
+  [The user writes a natural-language adaptation request.],
+  [The agent calls `get_map_of_dom()` and receives a compact structural map of a DOM snapshot captured at request time.],
+  [When the map is not enough, the agent calls `show_in_dom()` to inspect local detail from the original snapshot.],
+  [The agent calls `set_update_rule()` to record persistent, selector-bound JavaScript in the rules store — it does not edit the live page during the loop.],
+  [After the loop finishes, the rules engine applies stored rules to the live page on load and on DOM mutation, yielding the updated page.],
+)
+
 == Perception <sec:perception>
 
-An ideal perception interface must meet two criteria that the read-all baseline cannot (@sec:baseline-limitations). _Scale_: the representation must fit within practical context limits even though median visible DOMs already exceed 100k tokens (@tab:dom-snapshot-sizes). _Signal density_: it must shed the request-irrelevant bulk of production HTML — invisible markup, framework boilerplate, wrapper chains, and repetitive siblings — while preserving enough structure to locate and reason about adaptation targets.
+An ideal perception interface must meet two criteria that the read-all baseline cannot (@sec:baseline-limitations):
+
+- _Scale_. The representation must fit within practical context limits even though median visible DOMs already exceed 100k tokens (@tab:dom-snapshot-sizes).
+- _Signal density_. It must shed the request-irrelevant bulk of production HTML — invisible markup, framework boilerplate, wrapper chains, and repetitive siblings — while preserving enough structure to locate and reason about adaptation targets.
 
 Perception is implemented as a single DOM compression pipeline exposed through two complementary tools on the same captured snapshot: `get_map_of_dom` returns a site-wide structural map; `show_in_dom` retrieves local detail from the uncompressed snapshot when the map is not enough.
 
 === DOM Compression Algorithm <sec:dom-compression-algorithm>
 
-(*WIP: combine description of algo into a single stage*)
+The compression pipeline operates on the visible DOM captured at request time (subtrees with `display: none`, `visibility: hidden`, or `opacity: 0` are already removed during capture, as in the evaluation corpus). `get_map_of_dom` applies the following steps in fixed order:
 
-The compression pipeline runs in two stages: deterministic pre-cleaning, then structural compaction with a mix of straightforward filters and similarity heuristics. Both stages operate on the visible DOM captured at request time (subtrees with `display: none`, `visibility: hidden`, or `opacity: 0` are already removed during capture, as in the evaluation corpus).
+1. _Remove non-structural markup_ — drop `head`, `script`, `link`, `style`, and `noscript` elements; build-tool HTML comments; and SVG path data (keeping each `svg` tag and its `title` for accessibility context).
 
-_Stage 1 — pre-cleaning_ (deterministic). Before any structural transformation, the pipeline removes markup that carries no adaptation-relevant semantics: `head`, `script`, `link`, `style`, and `noscript` elements; build-tool HTML comments; and SVG path data (keeping each `svg` tag and its `title` for accessibility context). This step is rule-based and does not depend on page-specific thresholds.
+2. _Attribute filtering_ — each element keeps only `class`, `id`, `role`, `aria-label`, `label`, `alt`, `type`, `name`, `placeholder`, `value`, and `data-*` attributes; all others (including `href`, `src`, and inline styles) are dropped. Empty attribute values are removed afterward.
 
-_Stage 2 — structural compaction_ (mixed). The cleaned tree is parsed and transformed in a fixed order:
+3. _High-frequency class removal_ — class tokens appearing on more than 5% of elements are stripped tree-wide. The assumption is that very common classes are design-system scaffolding rather than component identifiers.
 
-+ _Attribute filtering_ (deterministic) — each element keeps only `class`, `id`, `role`, `aria-label`, `label`, `alt`, `type`, `name`, `placeholder`, `value`, and `data-*` attributes; all others (including `href`, `src`, and inline styles) are dropped. Empty attribute values are removed afterward.
-+ _High-frequency class removal_ (heuristic) — class tokens appearing on more than 5% of elements are stripped tree-wide. The assumption is that very common classes are design-system scaffolding rather than component identifiers.
-+ _Single-child wrapper collapse_ (heuristic) — chains of elements with exactly one element child and no significant direct text are flattened: intermediate nodes are removed and replaced by an HTML comment recording how many wrappers were collapsed and which class or attribute tokens were lost. Chains stop at leaf elements or at nodes that carry inline text.
-+ _Repeated-sibling truncation_ (heuristic) — among groups of three or more consecutive siblings deemed structurally similar, only the first is kept; the rest are removed and annotated with a comment giving the truncated count. Similarity requires matching tag name and `id`, approximately matching class tokens (symmetric-difference thresholds scale with class-list length), and approximately matching sequences of immediate child tag names (compared via Levenshtein distance with length-dependent tolerances).
-+ _Whitespace normalization_ (deterministic) — insignificant text nodes are removed and remaining text is collapsed to single spaces, except inside `script`, `style`, `pre`, and `textarea` ancestors.
+4. _Single-child wrapper collapse_ — chains of elements with exactly one element child and no significant direct text are flattened: intermediate nodes are removed and replaced by an HTML comment recording how many wrappers were collapsed and which class or attribute tokens were lost. Chains stop at leaf elements or at nodes that carry inline text.
+
+#align(center)[
+  #figure(
+    image("img/wrapper-heuristic-example.png"),
+    caption: [#flex-title(
+      [Single-child wrapper collapse — Before (left) and after (right): three nested `div` wrappers around a button become `<!-- -3 wrappers -->` while the button and unrelated siblings are kept.],
+      [Single-child wrapper collapse],
+    )],
+  ) <fig:wrapper-collapse-example>
+]
+
+5. _Repeated-sibling truncation_ — among groups of three or more consecutive siblings deemed structurally similar, only the first is kept; the rest are removed and annotated with a comment giving the truncated count. Similarity requires matching tag name and `id`, approximately matching class tokens (symmetric-difference thresholds scale with class-list length), and approximately matching sequences of immediate child tag names (compared via Levenshtein distance with length-dependent tolerances).
+
+#align(center)[
+  #figure(
+    image("img/sibling-heuristic-example.png"),
+    caption: [#flex-title(
+      [Repeated-sibling truncation — Before (left) and after (right): three structurally similar `li` items become one representative plus `<!-- -2 siblings -->`.],
+      [Repeated-sibling truncation],
+    )],
+  ) <fig:sibling-truncation-example>
+]
+6. _Whitespace normalization_ — insignificant text nodes are removed and remaining text is collapsed to single spaces, except inside `script`, `style`, `pre`, and `textarea` ancestors.
 
 The result is a compact HTML map that preserves relative hierarchy and enough identifying tokens to locate targets, at the cost of omitting repeated list items and decorative wrapper depth.
 
@@ -157,13 +192,15 @@ Because compaction is intentionally lossy for scale, the agent can call `show_in
 
 This complements the map in two ways. First, it restores attributes and child structure removed or summarized during compaction — for example, `href` values, inline styles, or the second item in a truncated sibling group. Second, it bounds local context: the agent requests only the subtree it needs rather than reverting to a full-DOM read. Increasing `depth` trades token cost for completeness when a rule must inspect deep descendants
 
-=== Alternative
+=== Alternatives <sec:perception-alternatives>
 
 We also considered alternative comprehension strategies from the web-agent literature. Following @ning_survey_2025's classification into text-based, screenshot-based, and multimodal approaches, screenshot-only input is incompatible with our action model, which targets elements via CSS selectors and JavaScript. The accessibility tree preserves semantics for assistive technologies but strips layout detail users often want to change. Task-specific DOM pruning — as in Prune4Web @zhang_prune4web_2025 — suits localized edits, but many adaptation requests are global: restyling a feed, suppressing a class of distractions, or restructuring layout. We therefore compress the full visible page structurally rather than pruning to a task-specific subset. We believe a combined aproach of DOM compresssion tigether with pruning might work best, but this is out of scope for this thesis
 
 == Action <sec:action>
 
-An ideal action interface must meet two criteria that one-shot DOM edits cannot (@sec:baseline-limitations). _Persistence_: changes must survive reload and re-apply on dynamic pages without re-running the full perception pipeline or depending on identical model outputs each visit. _Expressiveness_: the mechanism must cover the same edit space direct manipulation allows — styling, interaction changes, and conditional logic over runtime content — not merely the subset CSS can hide or restyle.
+An ideal action interface must meet two criteria that one-shot DOM edits cannot (@sec:baseline-limitations):
+- _Persistence_. Changes must survive reload and re-apply on dynamic pages without re-running the full perception pipeline or depending on identical model outputs each visit.
+- _Expressiveness_. The mechanism must cover the same edit space direct manipulation allows — styling, interaction changes, and conditional logic over runtime content — not merely the subset CSS can hide or restyle.
 
 #example[
 "Show only videos that are longer than 40 min" on a YouTube playlist page. A persistent rule must read duration text from each item and conditionally hide non-matching entries — logic that CSS and one-shot text replacements cannot express.
@@ -173,7 +210,22 @@ We considered a custom transformation language and generated CSS before settling
 
 === Rules Engine <sec:rules-engine>
 
-An _update rule_ is a persistent, selector-bound transformation stored as a small record: a human-readable `label` (shown in the rule manager UI), a CSS `query_selector`, and a `logic` string of JavaScript. An optional `enabled` flag allows the user to toggle rules without deleting them. Rules are scoped to the page hostname and persisted in extension storage; on each visit the extension loads the stored set and applies it before the user interacts with the page.
+Internet Shaper uses update rules. An _update rule_ is a persistent, selector-bound transformation stored as a small record: a human-readable `label` (shown in the rule manager UI), a CSS `query_selector`, and a `logic` string of JavaScript. Rules are scoped to the page hostname and persisted in extension storage; on each visit the extension loads the stored set and applies it before the user interacts with the page.
+
+#example[
+  For the YouTube playlist request in the expressiveness example above, the agent might emit a rule like the following:
+
+  + *label:* `Hide videos under 40 min`
+  + *query\_selector:* `ytd-playlist-video-renderer`
+  + *logic:*
+    #raw(block: true, lang: "js", "
+const duration = element.querySelector('span.ytd-thumbnail-overlay-time-status-renderer')?.textContent?.trim();
+if (!duration) return;
+const parts = duration.split(':').map(Number);
+const minutes = parts.length === 3 ? parts[0] * 60 + parts[1] : parts[0];
+if (minutes < 40) element.style.display = 'none';
+")
+]
 
 The LLM never executes rule logic during the agent loop. Instead, the `set_update_rule` tool appends a rule to an in-memory list. The tool schema exposes exactly the three fields above and documents the execution contract: the logic runs once per matched element with only an `element` parameter in scope — no `window`, `document`, or other globals. The system prompt further requires idempotent logic (repeated application must converge to the same state), deterministic side effects (set absolute values rather than toggle or append), and graceful handling of not-yet-loaded child content (early return when a value is missing, relying on re-application once content appears). Conditional hiding should prefer `element.style.display = 'none'` over `element.remove()` so the rule can still run when descendants populate.
 
@@ -193,7 +245,7 @@ The system prompt enforces a strict perception-before-action sequence on every u
 
 This ordering prevents the model from committing to selectors before it has a structural overview, while still allowing targeted inspection where the compressed map is insufficient. Prompt caching is applied to the system prompt and the `get_map_of_dom` result — typically the largest context item — so multi-turn exploration stays economical. There is also a limit = 1 on the get_map_of_dom calls by the agent to prevent context contamination with duplicate information. We found this is useful during evaluation to prevent agents from trying to get the DOM again to see the review the changes.
 
-== The Browser Extension
+== The Browser Extension <sec:browser-extension>
 
 The agentic core is hosted in a Chromium browser extension. It captures snapshots, hosts the LLM loop, stores rules in `localStorage`, and applies them in the page's main JavaScript world. Extensions can read and write any tab's DOM without site cooperation, which satisfies the deployment constraint from @sec:design-goals, but they add no algorithmic behavior beyond capture, RPC, and rule injection.
 
@@ -240,7 +292,10 @@ We ran the production `get_map_of_dom` pipeline on each snapshot's `visible.html
 
 #align(center)[
   #figure(
-    caption: [#flex-title([Corpus compression results], [Token counts over 73 snapshots; compressed = production `get_map_of_dom` output])],
+    caption: [#flex-title(
+      [Corpus compression results — Token counts over 73 snapshots; compressed = production `get_map_of_dom` output],
+      [Corpus compression results],
+    )],
     table(
       columns: 3,
       inset: 0.5em,
@@ -302,9 +357,9 @@ AI agents via Cursor Editor and Claude Code CLI were used in writing the prototy
 
 = Results <sec:results>
 
-== DOM Compression Algorithm
+== DOM Compression Algorithm <sec:results-dom-compression>
 
-== Pairwise Preference Evaluation
+== Pairwise Preference Evaluation <sec:pairwise-preference-evaluation>
 
 = Discussion <sec:discussion>
 
@@ -336,6 +391,6 @@ Even more complex queries produced unexpectedly positive results, with the agent
 
 #show: appendix
 
-= Source Code
+= Source Code <sec:source-code>
 
 *WIP*
