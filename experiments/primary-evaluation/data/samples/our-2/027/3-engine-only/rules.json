@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Move tags above title",
+    "query_selector": "article.Layout-sc-1xcs6mc-0.ghbJdj .Layout-sc-1xcs6mc-0.cexlzi",
+    "logic": "(function() {\n  const card = element;\n  const textWrapper = card.querySelector('.ScTextWrapper-sc-10mto54-1');\n  const tagsContainer = card.querySelector('.Layout-sc-1xcs6mc-0.fsLBGq');\n  \n  if (!textWrapper || !tagsContainer) return;\n  \n  const titleLink = textWrapper.querySelector('a[data-test-selector=\"TitleAndChannel\"]');\n  if (!titleLink) return;\n  \n  const h4 = titleLink.querySelector('h4');\n  if (!h4) return;\n  \n  const gameLink = card.querySelector('.CoreText-sc-1txzju1-0.bfhuDn');\n  \n  if (tagsContainer.previousElementSibling === textWrapper) {\n    textWrapper.insertBefore(tagsContainer, textWrapper.firstChild);\n  }\n  \n  if (gameLink && tagsContainer.nextSibling !== gameLink) {\n    const parent = gameLink.parentNode;\n    parent.insertBefore(gameLink, tagsContainer.nextSibling || null);\n  }\n})();"
+  },
+  {
+    "label": "Move tags above title",
+    "query_selector": "article.Layout-sc-1xcs6mc-0.ghbJdj .Layout-sc-1xcs6mc-0.cexlzi",
+    "logic": "(function() {\n  const card = element;\n  const mainColumn = card.querySelector('.Layout-sc-1xcs6mc-0.iKmojN');\n  const tagsContainer = card.querySelector('.Layout-sc-1xcs6mc-0.fsLBGq');\n  \n  if (!mainColumn || !tagsContainer) return;\n  \n  const textWrapper = mainColumn.querySelector('.ScTextWrapper-sc-10mto54-1');\n  if (!textWrapper) return;\n  \n  const titleLink = textWrapper.querySelector('a[data-test-selector=\"TitleAndChannel\"]');\n  if (!titleLink) return;\n  \n  const gameLinkP = textWrapper.querySelector('.CoreText-sc-1txzju1-0.bfhuDn');\n  \n  // Move tags container to be the first child of mainColumn (before title wrapper)\n  if (mainColumn.firstChild !== tagsContainer) {\n    mainColumn.insertBefore(tagsContainer, mainColumn.firstChild);\n  }\n})();"
+  }
+]

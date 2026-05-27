@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Admin Dashboard link box",
+    "query_selector": ".article-body",
+    "logic": "if (element.querySelector('.admin-dashboard-notice')) return;\nvar box = document.createElement('div');\nbox.className = 'admin-dashboard-notice';\nbox.style.cssText = 'background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:16px 20px;margin-bottom:20px;font-weight:bold;';\nvar link = document.createElement('a');\nlink.href = '/admin';\nlink.target = '_blank';\nlink.style.cssText = 'color:#856404;text-decoration:underline;font-size:1.1em;';\nlink.textContent = 'Admin Dashboard';\nvar text = document.createTextNode(' Configure settings yourself: ');\nvar instructions = document.createElement('span');\ninstructions.style.color = '#856404';\ninstructions.textContent = ' Click the link above to open your wiki\\'s Admin Dashboard and enable/disable features like Article Comments, Blogs, Message Wall, and more.';\nbox.appendChild(link);\nbox.appendChild(text);\nbox.appendChild(instructions);\nelement.insertBefore(box, element.firstChild);"
+  }
+]

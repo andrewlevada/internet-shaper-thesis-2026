@@ -1,0 +1,52 @@
+[
+  {
+    "label": "Hide weather informer",
+    "query_selector": ".HeaderDesktopActions-WeatherInformer",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide market cart",
+    "query_selector": ".HeaderDesktopActions-MarketCart",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide favorites button",
+    "query_selector": ".HeaderDesktopActions-Favorites",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide ecom orders",
+    "query_selector": ".HeaderDesktopActions-EcomOrders",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide voice search button",
+    "query_selector": ".HeaderDesktopActions .VoiceInput",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide image search button",
+    "query_selector": ".HeaderDesktopActions-Cbir",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide advanced search",
+    "query_selector": ".HeaderDesktopActions-AdvancedSearch",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide navigation tabs",
+    "query_selector": ".HeaderDesktop-Navigation",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide user section",
+    "query_selector": ".HeaderDesktop-User",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide actions spacer",
+    "query_selector": ".HeaderDesktopActions-Spacer",
+    "logic": "element.style.display = 'none';"
+  }
+]

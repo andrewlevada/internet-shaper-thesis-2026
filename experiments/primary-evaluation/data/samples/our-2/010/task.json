@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Show a brief description and the domain name directly under each pin thumbnail in the grid so I can understand the context and origin of each image before clicking it.",
+	"goal": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from.",
+	"jobs": [
+		"I want to browse through cute and funny cat pictures to get visual inspiration or entertainment.",
+		"I want to refine my search using suggested topic pills (like 'aesthetic', 'wallpaper', or 'meme') to find a specific style of cat image.",
+		"I want to search for another topic, interest, or idea using the main search bar.",
+		"I want to log in or create an account so I can save my favorite cat images to curated boards.",
+		"I want to click on an appealing cat image to view its full details, larger size, or original source."
+	],
+	"preference-pairs": [
+		{
+			"a": "I love saving and organizing digital content into highly curated collections so I can easily reference them later.",
+			"b": "I prefer casual, transient browsing where I just look at things for temporary entertainment without any desire to save or organize them."
+		},
+		{
+			"a": "I am a visual-first user who focuses entirely on the aesthetic quality of images and doesn't care about text descriptions or external links.",
+			"b": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from."
+		},
+		{
+			"a": "I prefer using precise search queries where I type exactly what I want and expect highly specific results.",
+			"b": "I prefer clicking through visual tags, suggested category pills, and recommended feeds to organically discover new ideas rather than typing manual searches."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I always look for the story and context behind an image, heavily relying on titles, captions, and website links to find out where the image came from.",
+	"source-snapshot": "051",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://pinterest.com/search/pins/?q=cats",
+	"final-url": "https://www.pinterest.com/search/pins/?q=cats",
+	"finalized_at": 1779830874681
+}

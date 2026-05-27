@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide trending thumbnails",
+    "query_selector": "#trending-search ol li div.relative.shrink-0:has(img.chromatic-ignore)",
+    "logic": "element.style.display = 'none';"
+  }
+]

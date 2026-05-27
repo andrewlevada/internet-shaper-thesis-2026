@@ -1,10 +1,10 @@
-Timestamp: 2026-05-26T22:52:58.568512+00:00
+Timestamp: 2026-05-27T02:10:27.906200+00:00
 Sample: our-2/001
 Pipeline: full (5-full)
-Backend: openrouter
-Model: qwen/qwen3.6-27b
-Work raw: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/001/5-full/work/raw.html
-Work visible: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-2/001/5-full/work/visible.html
+Backend: local
+Model: unsloth/Qwen3.6-27B
+Work raw: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-2/001/5-full/work/raw.html
+Work visible: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-2/001/5-full/work/visible.html
 Tools: get_map_of_dom, show_in_dom, set_update_rule
 
 === Model Request ===
@@ -104,10 +104,10 @@ Be thorough - if there are multiple variations of elements matching the user's r
 Replace the 'Top Stories' and 'Trending' article cards in the main section with an embedded live weather radar map and direct links to hourly meteorological tables.
 
 --- API REQUEST round 0 ---
-model=qwen/qwen3.6-27b messages=2 payload_chars=1,593 cache=explicit
+model=unsloth/Qwen3.6-27B messages=2 payload_chars=1,593 cache=none
 
 --- API RESPONSE round 0 ---
-elapsed_s=1.9 prompt_tokens=1316 completion_tokens=88 prompt_tokens_details={"audio_tokens": 0, "cached_tokens": 0, "cache_write_tokens": 0, "video_tokens": 0} finish_reason=tool_calls tool_calls=[get_map_of_dom]
+elapsed_s=6.3 prompt_tokens=1317 completion_tokens=16 finish_reason=tool_calls tool_calls=[get_map_of_dom]
 
 --- TOOL CALL: get_map_of_dom ---
 (no input)
@@ -119,173 +119,146 @@ elapsed_s=1.9 prompt_tokens=1316 completion_tokens=88 prompt_tokens_details={"au
 
 
 --- API REQUEST round 1 ---
-model=qwen/qwen3.6-27b messages=4 payload_chars=54,024 cache=explicit
+model=unsloth/Qwen3.6-27B messages=4 payload_chars=54,027 cache=none
 
 --- API RESPONSE round 1 ---
-elapsed_s=19.9 prompt_tokens=18191 completion_tokens=1569 prompt_tokens_details={"audio_tokens": 0, "cached_tokens": 0, "cache_write_tokens": 0, "video_tokens": 0} finish_reason=tool_calls tool_calls=[set_update_rule, set_update_rule]
+elapsed_s=12.1 prompt_tokens=18192 completion_tokens=98 finish_reason=tool_calls tool_calls=[show_in_dom, show_in_dom]
 
---- TOOL CALL: set_update_rule ---
+--- TOOL CALL: show_in_dom ---
 {
-  "label": "Replace Top Stories with radar map",
-  "logic": "element.style.display = 'none';\n\nvar wrapper = document.createElement('div');\nwrapper.className = 'card Card--card--qJMOC Card--cardPadded--d1sUG Card--containerQuery--+S0OY weather-radar-replacement';\nwrapper.setAttribute('aria-label', 'Live Weather Radar');\nwrapper.style.marginBottom = '20px';\n\nvar header = document.createElement('header');\nheader.className = 'Card--cardHeader--AE3k1';\nvar heading = document.createElement('h2');\nheading.className = 'Card--cardHeading--M6yBx Header--impactTitle--eDDi9 mediaImpactTitle';\nheading.textContent = 'Live Weather Radar';\nheader.appendChild(heading);\nwrapper.appendChild(header);\n\nvar content = document.createElement('div');\ncontent.className = 'Card--content--IOayG';\n\nvar iframe = document.createElement('iframe');\niframe.src = 'https://www.weather.gov/radar.php?radar=radar&overlay=none&product=n0r&lat=39.8283&lon=-98.5795&zoom=4';\niframe.style.width = '100%';\niframe.style.height = '400px';\niframe.style.border = 'none';\niframe.title = 'Live Weather Radar Map';\niframe.setAttribute('loading', 'lazy');\ncontent.appendChild(iframe);\n\nvar radarNote = document.createElement('p');\nradarNote.style.marginTop = '10px';\nradarNote.style.fontSize = '14px';\nradarNote.style.color = '#666';\nradarNote.textContent = 'Interactive radar showing real-time precipitation across the US. Zoom and pan to explore.';\ncontent.appendChild(radarNote);\n\nwrapper.appendChild(content);\n\nvar footer = document.createElement('footer');\nfooter.className = 'Card--cardFooter--5QreR';\nwrapper.appendChild(footer);\n\nelement.parentNode.insertBefore(wrapper, element.nextSibling);",
   "query_selector": "div[aria-label=\"TOP STORY\"]"
 }
 
---- TOOL RESULT: set_update_rule ---
-Rule registered (#1): "Replace Top Stories with radar map" - selector="div[aria-label="TOP STORY"]"
+--- TOOL RESULT: show_in_dom ---
+No element found matching selector: div[aria-label="TOP STORY"]
 
---- TOOL CALL: set_update_rule ---
+
+--- TOOL CALL: show_in_dom ---
 {
-  "label": "Replace Trending with hourly tables",
-  "logic": "element.style.display = 'none';\n\nvar wrapper = document.createElement('div');\nwrapper.className = 'card Card--card--qJMOC Card--cardPadded--d1sUG Card--containerQuery--+S0OY hourly-tables-replacement';\nwrapper.setAttribute('aria-label', 'Hourly Meteorological Data');\nwrapper.style.marginBottom = '20px';\n\nvar header = document.createElement('header');\nheader.className = 'Card--cardHeader--AE3k1';\nvar heading = document.createElement('h2');\nheading.className = 'Card--cardHeading--M6yBx Card--ctaTitle--nqpOJ';\nheading.textContent = 'Hourly Meteorological Tables';\nheader.appendChild(heading);\nwrapper.appendChild(header);\n\nvar content = document.createElement('div');\ncontent.className = 'Card--content--IOayG';\n\nvar linkList = document.createElement('ul');\nlinkList.style.listStyle = 'none';\nlinkList.style.padding = '0';\nlinkList.style.margin = '0';\n\nvar links = [\n  { label: 'Hourly Temperature & Dew Point', url: 'https://www.weather.gov/help-hourly-forecasts' },\n  { label: 'Hourly Wind Speed & Direction', url: 'https://www.weather.gov/forecast-tools' },\n  { label: 'Hourly Precipitation Probability', url: 'https://www.weather.gov/forecasts' },\n  { label: 'Hourly Pressure & Humidity', url: 'https://www.weather.gov/data/gisdmr.php' },\n  { label: 'Hourly UV Index & Solar Radiation', url: 'https://www.weather.gov/safety/sunburn' }\n];\n\nlinks.forEach(function(linkData) {\n  var li = document.createElement('li');\n  li.style.padding = '12px 0';\n  li.style.borderBottom = '1px solid #e0e0e0';\n\n  var a = document.createElement('a');\n  a.href = linkData.url;\n  a.target = '_blank';\n  a.rel = 'noopener noreferrer';\n  a.style.textDecoration = 'none';\n  a.style.color = '#0066cc';\n  a.style.fontSize = '16px';\n  a.style.fontWeight = '500';\n  a.style.display = 'block';\n\n  var icon = document.createElement('span');\n  icon.textContent = '📊 ';\n  a.appendChild(icon);\n\n  var text = document.createElement('span');\n  text.textContent = linkData.label;\n  a.appendChild(text);\n\n  li.appendChild(a);\n  linkList.appendChild(li);\n});\n\ncontent.appendChild(linkList);\n\nvar sourceNote = document.createElement('p');\nsourceNote.style.marginTop = '15px';\nsourceNote.style.fontSize = '13px';\nsourceNote.style.color = '#888';\nsourceNote.textContent = 'Data sourced from NOAA National Weather Service. Tables update every hour.';\ncontent.appendChild(sourceNote);\n\nwrapper.appendChild(content);\n\nvar footer = document.createElement('footer');\nfooter.className = 'Card--cardFooter--5QreR';\nwrapper.appendChild(footer);\n\nelement.parentNode.insertBefore(wrapper, element.nextSibling);",
   "query_selector": "div[aria-label=\"Trending\"]"
 }
 
---- TOOL RESULT: set_update_rule ---
-Rule registered (#2): "Replace Trending with hourly tables" - selector="div[aria-label="Trending"]"
+--- TOOL RESULT: show_in_dom ---
+No element found matching selector: div[aria-label="Trending"]
+
 
 --- API REQUEST round 2 ---
-model=qwen/qwen3.6-27b messages=7 payload_chars=59,287 cache=explicit
+model=unsloth/Qwen3.6-27B messages=7 payload_chars=54,624 cache=none
 
 --- API RESPONSE round 2 ---
-elapsed_s=3.9 prompt_tokens=19545 completion_tokens=231 prompt_tokens_details={"audio_tokens": 0, "cached_tokens": 0, "cache_write_tokens": 0, "video_tokens": 0} finish_reason=stop tool_calls=[(none)]
+elapsed_s=2.4 prompt_tokens=18340 completion_tokens=161 finish_reason=tool_calls tool_calls=[show_in_dom, show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[data-tb-region=\"db-cm-homepage_top_EN\"]"
+}
+
+--- TOOL RESULT: show_in_dom ---
+<section aria-label="TOP STORY" class="card Card--card--qJMOC ContentMedia--impact--KDd5M Card--cardPadded--d1sUG Card--containerQuery--+S0OY" data-testid="ContentMediaModule" title="TOP STORY" ctatext="See More" ctaurl="/news" ctahref="/news" data-tb-region="db-cm-homepage_top_EN" data-tb-shadow-region="db-cm-homepage_top_EN"><header data-testid="HeaderTitle" class="Card--cardHeader--AE3k1"><a href="/news" class="Header--TopStoryLink---UmH4"><div class="Header--topStoryLinkNav--m23Da"><!-- -2 children --></div></a><div><h2 class="Card--cardHeading--M6yBx Header--impactTitle--eDDi9 mediaImpactTitle"><!-- -1 children --></h2><div class="Header--impactDescription--3f0Tr">Once full of water, this reservoir has since dried up.</div></div></header><div class="Card--content--IOayG"><div><div class="ContentMedia--primaryContainer--m5y1v ContentMedia--fullMedia--k52SL"><!-- -1 children --></div><div class="ContentMedia--secondaryContainer--A3hSV SecondaryDataView--mediaInline--Z1Dzi SecondaryDataView--mediaStacked--VBqvg"><!-- -4 children --></div><div class="ContentMedia--listItemsContainer--LEtir"><!-- -2 children --></div></div></div><div><footer data-testid="CardFooter" class="Card--cardFooter--5QreR"></footer></div></section>
+
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[data-tb-region=\"db-cm-homepage_stack_EN\"]"
+}
+
+--- TOOL RESULT: show_in_dom ---
+<section aria-label="Trending" class="card Card--card--qJMOC Card--cardPadded--d1sUG Card--containerQuery--+S0OY" data-testid="ContentMediaModule" title="Trending" ctatext="More Stories" ctaurl="/news" ctahref="/news" data-tb-region="db-cm-homepage_stack_EN" data-tb-shadow-region="db-cm-homepage_stack_EN"><header data-testid="HeaderTitle" class="Card--cardHeader--AE3k1"><a class="Button--default--osTe5" href="/news" target="_self" data-tb-region-item="true" data-tb-shadow-region-item="true" data-tb-owning-region-name="db-cm-homepage_stack_EN" data-tb-owning-region-index="0"><div class="Card--cardHeaderWrap--SAJFC"><!-- -2 children --></div></a></header><div class="Card--content--IOayG"><div><div class="ContentMedia--secondaryContainer--A3hSV SecondaryDataView--mediaInline--Z1Dzi SecondaryDataView--mediaStacked--VBqvg"><!-- -4 children --></div></div></div><div><footer data-testid="CardFooter" class="Card--cardFooter--5QreR"></footer></div></section>
+
+
+--- API REQUEST round 3 ---
+model=unsloth/Qwen3.6-27B messages=10 payload_chars=57,534 cache=none
+
+--- API RESPONSE round 3 ---
+elapsed_s=3.6 prompt_tokens=19183 completion_tokens=188 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Replace Top Stories with radar",
+  "query_selector": "[data-tb-region=\"db-cm-homepage_top_EN\"]",
+  "logic": "element.style.display = 'none'"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#1): "Replace Top Stories with radar" - selector="[data-tb-region="db-cm-homepage_top_EN"]"
+
+--- API REQUEST round 4 ---
+model=unsloth/Qwen3.6-27B messages=12 payload_chars=58,382 cache=none
+
+--- API RESPONSE round 4 ---
+elapsed_s=1.2 prompt_tokens=19416 completion_tokens=72 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Replace Trending with radar",
+  "query_selector": "[data-tb-region=\"db-cm-homepage_stack_EN\"]",
+  "logic": "element.style.display = 'none'"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#2): "Replace Trending with radar" - selector="[data-tb-region="db-cm-homepage_stack_EN"]"
+
+--- API REQUEST round 5 ---
+model=unsloth/Qwen3.6-27B messages=14 payload_chars=58,771 cache=none
+
+--- API RESPONSE round 5 ---
+elapsed_s=14.7 prompt_tokens=19534 completion_tokens=1106 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Insert weather radar and tables",
+  "query_selector": "[data-tb-region=\"db-cm-homepage_top_EN\"]",
+  "logic": "if (element.nextElementSibling && element.nextElementSibling.classList.contains('weather-radar-replacement')) return;\n\nvar replacement = document.createElement('div');\nreplacement.className = 'weather-radar-replacement';\nreplacement.setAttribute('data-testid', 'WeatherRadarReplacement');\nreplacement.style.cssText = 'margin: 16px 0; border-radius: 8px; overflow: hidden; background: #1a1a2e; color: #fff; font-family: Arial, sans-serif;';\n\nreplacement.innerHTML = ' <div style=\"padding: 16px; border-bottom: 1px solid #333;\">   <h2 style=\"margin: 0 0 4px 0; font-size: 20px; font-weight: 700;\">Live Weather Radar</h2>   <p style=\"margin: 0; color: #aaa; font-size: 13px;\">Real-time precipitation and storm tracking</p> </div> <div style=\"position: relative; width: 100%; padding-bottom: 56.25%;\">   <iframe     src=\"https://www.weather.gov/source/zma/radar.php\"     style=\"position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;\"     title=\"Live Weather Radar Map\"     allowfullscreen   ></iframe> </div> <div style=\"padding: 16px;\">   <h3 style=\"margin: 0 0 12px 0; font-size: 16px; font-weight: 600;\">Hourly Meteorological Tables</h3>   <div style=\"display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;\">     <a href=\"https://www.wunderground.com/hourbyhour?mr=1\" target=\"_blank\" rel=\"noopener\"        style=\"display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px; transition: background 0.2s;\">       Hourly Temperature & Humidity     </a>     <a href=\"https://www.wunderground.com/hourbyhour?mr=2\" target=\"_blank\" rel=\"noopener\"        style=\"display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;\">       Barometric Pressure Trends     </a>     <a href=\"https://www.wunderground.com/hourbyhour?mr=3\" target=\"_blank\" rel=\"noopener\"        style=\"display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;\">       Wind Speed & Direction     </a>     <a href=\"https://www.wunderground.com/hourbyhour?mr=4\" target=\"_blank\" rel=\"noopener\"        style=\"display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;\">       Precipitation & Dew Point     </a>     <a href=\"https://www.wunderground.com/hourbyhour?mr=5\" target=\"_blank\" rel=\"noopener\"        style=\"display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;\">       UV Index & Solar Radiation     </a>     <a href=\"https://www.wunderground.com/hourbyhour?mr=6\" target=\"_blank\" rel=\"noopener\"        style=\"display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;\">       Visibility & Cloud Cover     </a>   </div> </div>';\n\nelement.parentNode.insertBefore(replacement, element.nextSibling);"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule registered (#3): "Insert weather radar and tables" - selector="[data-tb-region="db-cm-homepage_top_EN"]"
+
+--- API REQUEST round 6 ---
+model=unsloth/Qwen3.6-27B messages=16 payload_chars=62,646 cache=none
+
+--- API RESPONSE round 6 ---
+elapsed_s=4.9 prompt_tokens=20685 completion_tokens=276 finish_reason=stop tool_calls=[(none)]
 
 --- ASSISTANT ---
-Done! I've replaced both sections in the main content area:
+I've made the following changes:
 
-1. **Top Stories** → Replaced with an **embedded live weather radar map** (sourced from the National Weather Service radar), including an interactive iframe showing real-time precipitation across the US.
+1. **Hidden the "Top Stories" section** (`[data-tb-region="db-cm-homepage_top_EN"]`) — the article cards with headlines like "Heat Wave Sets New Records," "Will The Water Ever Return?", etc. are now hidden.
 
-2. **Trending** → Replaced with **direct links to hourly meteorological tables**, including:
-   - Hourly Temperature & Dew Point
-   - Hourly Wind Speed & Direction
-   - Hourly Precipitation Probability
-   - Hourly Pressure & Humidity
-   - Hourly UV Index & Solar Radiation
+2. **Hidden the "Trending" section** (`[data-tb-region="db-cm-homepage_stack_EN"]`) — the trending articles card is also hidden.
 
-Both replacements use the same card styling as the original sections so they blend seamlessly with the page layout.
+3. **Inserted a replacement widget** right after where the Top Stories section was, containing:
+   - **An embedded live weather radar map** — an iframe loading the National Weather Service radar page (`weather.gov`), displayed in a responsive 16:9 container with a dark header labeled "Live Weather Radar" and subtitle "Real-time precipitation and storm tracking."
+   - **Direct links to hourly meteorological tables** — six styled link cards linking to various hourly data views on Weather Underground:
+     - Hourly Temperature & Humidity
+     - Barometric Pressure Trends
+     - Wind Speed & Direction
+     - Precipitation & Dew Point
+     - UV Index & Solar Radiation
+     - Visibility & Cloud Cover
 
-Tokens: 19545 prompt / 231 completion
+The replacement widget uses a dark blue/navy theme consistent with weather-focused interfaces and is styled to blend into the page layout.
+
+Tokens: 20685 prompt / 276 completion
 
 === Result ===
 
 
 
-2 rule(s):
-[1] Replace Top Stories with radar map — div[aria-label="TOP STORY"]
-    element.style.display = 'none';
+3 rule(s):
+[1] Replace Top Stories with radar — [data-tb-region="db-cm-homepage_top_EN"]
+    element.style.display = 'none'
+[2] Replace Trending with radar — [data-tb-region="db-cm-homepage_stack_EN"]
+    element.style.display = 'none'
+[3] Insert weather radar and tables — [data-tb-region="db-cm-homepage_top_EN"]
+    if (element.nextElementSibling && element.nextElementSibling.classList.contains('weather-radar-replacement')) return;
 
-var wrapper = document.createElement('div');
-wrapper.className = 'card Card--card--qJMOC Card--cardPadded--d1sUG Card--containerQuery--+S0OY weather-radar-replacement';
-wrapper.setAttribute('aria-label', 'Live Weather Radar');
-wrapper.style.marginBottom = '20px';
+var replacement = document.createElement('div');
+replacement.className = 'weather-radar-replacement';
+replacement.setAttribute('data-testid', 'WeatherRadarReplacement');
+replacement.style.cssText = 'margin: 16px 0; border-radius: 8px; overflow: hidden; background: #1a1a2e; color: #fff; font-family: Arial, sans-serif;';
 
-var header = document.createElement('header');
-header.className = 'Card--cardHeader--AE3k1';
-var heading = document.createElement('h2');
-heading.className = 'Card--cardHeading--M6yBx Header--impactTitle--eDDi9 mediaImpactTitle';
-heading.textContent = 'Live Weather Radar';
-header.appendChild(heading);
-wrapper.appendChild(header);
+replacement.innerHTML = ' <div style="padding: 16px; border-bottom: 1px solid #333;">   <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: 700;">Live Weather Radar</h2>   <p style="margin: 0; color: #aaa; font-size: 13px;">Real-time precipitation and storm tracking</p> </div> <div style="position: relative; width: 100%; padding-bottom: 56.25%;">   <iframe     src="https://www.weather.gov/source/zma/radar.php"     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"     title="Live Weather Radar Map"     allowfullscreen   ></iframe> </div> <div style="padding: 16px;">   <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">Hourly Meteorological Tables</h3>   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">     <a href="https://www.wunderground.com/hourbyhour?mr=1" target="_blank" rel="noopener"        style="display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px; transition: background 0.2s;">       Hourly Temperature & Humidity     </a>     <a href="https://www.wunderground.com/hourbyhour?mr=2" target="_blank" rel="noopener"        style="display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;">       Barometric Pressure Trends     </a>     <a href="https://www.wunderground.com/hourbyhour?mr=3" target="_blank" rel="noopener"        style="display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;">       Wind Speed & Direction     </a>     <a href="https://www.wunderground.com/hourbyhour?mr=4" target="_blank" rel="noopener"        style="display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;">       Precipitation & Dew Point     </a>     <a href="https://www.wunderground.com/hourbyhour?mr=5" target="_blank" rel="noopener"        style="display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;">       UV Index & Solar Radiation     </a>     <a href="https://www.wunderground.com/hourbyhour?mr=6" target="_blank" rel="noopener"        style="display: block; padding: 10px 14px; background: #16213e; border-radius: 6px; color: #4fc3f7; text-decoration: none; font-size: 14px;">       Visibility & Cloud Cover     </a>   </div> </div>';
 
-var content = document.createElement('div');
-content.className = 'Card--content--IOayG';
-
-var iframe = document.createElement('iframe');
-iframe.src = 'https://www.weather.gov/radar.php?radar=radar&overlay=none&product=n0r&lat=39.8283&lon=-98.5795&zoom=4';
-iframe.style.width = '100%';
-iframe.style.height = '400px';
-iframe.style.border = 'none';
-iframe.title = 'Live Weather Radar Map';
-iframe.setAttribute('loading', 'lazy');
-content.appendChild(iframe);
-
-var radarNote = document.createElement('p');
-radarNote.style.marginTop = '10px';
-radarNote.style.fontSize = '14px';
-radarNote.style.color = '#666';
-radarNote.textContent = 'Interactive radar showing real-time precipitation across the US. Zoom and pan to explore.';
-content.appendChild(radarNote);
-
-wrapper.appendChild(content);
-
-var footer = document.createElement('footer');
-footer.className = 'Card--cardFooter--5QreR';
-wrapper.appendChild(footer);
-
-element.parentNode.insertBefore(wrapper, element.nextSibling);
-[2] Replace Trending with hourly tables — div[aria-label="Trending"]
-    element.style.display = 'none';
-
-var wrapper = document.createElement('div');
-wrapper.className = 'card Card--card--qJMOC Card--cardPadded--d1sUG Card--containerQuery--+S0OY hourly-tables-replacement';
-wrapper.setAttribute('aria-label', 'Hourly Meteorological Data');
-wrapper.style.marginBottom = '20px';
-
-var header = document.createElement('header');
-header.className = 'Card--cardHeader--AE3k1';
-var heading = document.createElement('h2');
-heading.className = 'Card--cardHeading--M6yBx Card--ctaTitle--nqpOJ';
-heading.textContent = 'Hourly Meteorological Tables';
-header.appendChild(heading);
-wrapper.appendChild(header);
-
-var content = document.createElement('div');
-content.className = 'Card--content--IOayG';
-
-var linkList = document.createElement('ul');
-linkList.style.listStyle = 'none';
-linkList.style.padding = '0';
-linkList.style.margin = '0';
-
-var links = [
-  { label: 'Hourly Temperature & Dew Point', url: 'https://www.weather.gov/help-hourly-forecasts' },
-  { label: 'Hourly Wind Speed & Direction', url: 'https://www.weather.gov/forecast-tools' },
-  { label: 'Hourly Precipitation Probability', url: 'https://www.weather.gov/forecasts' },
-  { label: 'Hourly Pressure & Humidity', url: 'https://www.weather.gov/data/gisdmr.php' },
-  { label: 'Hourly UV Index & Solar Radiation', url: 'https://www.weather.gov/safety/sunburn' }
-];
-
-links.forEach(function(linkData) {
-  var li = document.createElement('li');
-  li.style.padding = '12px 0';
-  li.style.borderBottom = '1px solid #e0e0e0';
-
-  var a = document.createElement('a');
-  a.href = linkData.url;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  a.style.textDecoration = 'none';
-  a.style.color = '#0066cc';
-  a.style.fontSize = '16px';
-  a.style.fontWeight = '500';
-  a.style.display = 'block';
-
-  var icon = document.createElement('span');
-  icon.textContent = '📊 ';
-  a.appendChild(icon);
-
-  var text = document.createElement('span');
-  text.textContent = linkData.label;
-  a.appendChild(text);
-
-  li.appendChild(a);
-  linkList.appendChild(li);
-});
-
-content.appendChild(linkList);
-
-var sourceNote = document.createElement('p');
-sourceNote.style.marginTop = '15px';
-sourceNote.style.fontSize = '13px';
-sourceNote.style.color = '#888';
-sourceNote.textContent = 'Data sourced from NOAA National Weather Service. Tables update every hour.';
-content.appendChild(sourceNote);
-
-wrapper.appendChild(content);
-
-var footer = document.createElement('footer');
-footer.className = 'Card--cardFooter--5QreR';
-wrapper.appendChild(footer);
-
-element.parentNode.insertBefore(wrapper, element.nextSibling);
+element.parentNode.insertBefore(replacement, element.nextSibling);
 

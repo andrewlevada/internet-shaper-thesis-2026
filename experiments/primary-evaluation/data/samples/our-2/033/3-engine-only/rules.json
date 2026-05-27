@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Move PAA after first result",
+    "query_selector": "div.A6K0A[data-rpos=\"10\"]",
+    "logic": "(function() {\n  const paaElement = element;\n  const parent = paaElement.parentNode;\n  if (!parent) return;\n  \n  // Find the first web result (data-rpos=\"2\")\n  const firstResult = parent.querySelector('div.A6K0A[data-rpos=\"2\"]');\n  if (!firstResult) return;\n  \n  // Insert PAA right after the first result\n  const nextSibling = firstResult.nextSibling;\n  if (nextSibling === paaElement) {\n    // Already in correct position\n    return;\n  }\n  \n  parent.insertBefore(paaElement, nextSibling);\n})();"
+  }
+]

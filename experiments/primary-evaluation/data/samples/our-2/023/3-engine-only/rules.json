@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Increase trending item spacing",
+    "query_selector": "#trending-search ol li.group",
+    "logic": "element.style.marginBottom = '1.25rem';\nelement.style.paddingBottom = '1rem';"
+  },
+  {
+    "label": "Enlarge trending thumbnails",
+    "query_selector": "#trending-search ol li.group img[data-nimg]",
+    "logic": "element.style.width = '90px';\nelement.style.height = '90px';\nelement.style.minWidth = '90px';\nelement.style.minHeight = '90px';"
+  }
+]

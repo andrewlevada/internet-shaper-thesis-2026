@@ -1,0 +1,27 @@
+[
+  {
+    "label": "Hide pin text overlays",
+    "query_selector": "[data-test-id=\"pin\"] > div:last-child",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide content layer overlays",
+    "query_selector": "[data-test-id=\"contentLayer\"]",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide pin attributions",
+    "query_selector": "[data-test-id=\"pin-attribution\"]",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide creator/source names",
+    "query_selector": "[data-test-id=\"related-pins-name\"]",
+    "logic": "element.style.display = 'none';"
+  },
+  {
+    "label": "Hide more actions buttons",
+    "query_selector": "[data-test-id=\"more-actions-button\"]",
+    "logic": "element.style.display = 'none';"
+  }
+]

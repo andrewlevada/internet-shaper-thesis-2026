@@ -1,17 +1,57 @@
 [
-	{
-		"label": "Enlarge video play icons on news cards",
-		"query_selector": "svg[name=\"video-stroke\"], svg[name=\"video\"]",
-		"logic": "element.style.width = '32px';\nelement.style.height = '32px';\nelement.style.minWidth = '32px';\nelement.style.minHeight = '32px';"
-	},
-	{
-		"label": "Enlarge text on news cards",
-		"query_selector": ".ContentMedia--mediaTitle--LSjxi, .ContentMedia--listItemTitle--mvOyq, .MediaObject--mediaTitle--vW+Kk",
-		"logic": "element.style.fontSize = '1.2em';\nelement.style.lineHeight = '1.4';"
-	},
-	{
-		"label": "Hide static map in Weather Today section",
-		"query_selector": ".MediaObject--noTitleMedia--u9sFT",
-		"logic": "if (element.closest('[aria-label=\"Weather Today Across the Country\"]')) {\n  element.style.display = 'none';\n}"
-	}
+  {
+    "label": "Enlarge video play icons",
+    "query_selector": ".ContentMedia--listItemIcon--VR34i",
+    "logic": "element.style.width = '32px';\nelement.style.height = '32px';"
+  },
+  {
+    "label": "Enlarge media video icons",
+    "query_selector": ".MediaObject--mediaIcon--wFOkX .Icon--icon--ySD-o",
+    "logic": "element.style.width = '48px';\nelement.style.height = '48px';"
+  },
+  {
+    "label": "Enlarge video icon wrappers",
+    "query_selector": ".MediaObject--mediaIcon--wFOkX",
+    "logic": "element.style.width = '48px';\nelement.style.height = '48px';"
+  },
+  {
+    "label": "Enlarge news card titles",
+    "query_selector": ".ContentMedia--mediaTitle--LSjxi .Ellipsis--ellipsis--zynqj",
+    "logic": "element.style.fontSize = '1.15rem';\nelement.style.fontWeight = '600';"
+  },
+  {
+    "label": "Enlarge list item video titles",
+    "query_selector": ".ContentMedia--listItemTitle--mvOyq",
+    "logic": "element.style.fontSize = '1.1rem';\nelement.style.fontWeight = '600';"
+  },
+  {
+    "label": "Add play button to Top Story",
+    "query_selector": ".ContentMedia--impact--KDd5M .MediaObject--overlay--wu6Hj",
+    "logic": "if (element.children.length > 0) return;\nelement.style.display = 'flex';\nelement.style.alignItems = 'center';\nelement.style.justifyContent = 'center';\nelement.style.background = 'rgba(0,0,0,0.3)';\nelement.style.cursor = 'pointer';\n\nvar playBtn = document.createElement('div');\nplayBtn.style.width = '72px';\nplayBtn.style.height = '72px';\nplayBtn.style.borderRadius = '50%';\nplayBtn.style.background = 'rgba(255,255,255,0.9)';\nplayBtn.style.display = 'flex';\nplayBtn.style.alignItems = 'center';\nplayBtn.style.justifyContent = 'center';\nplayBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';\n\nvar svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsvg.setAttribute('width', '32');\nsvg.setAttribute('height', '32');\nsvg.setAttribute('viewBox', '0 0 24 24');\nsvg.style.fill = '#1a1a1a';\nsvg.style.marginLeft = '4px';\n\nvar path = document.createElementNS('http://www.w3.org/2000/svg', 'path');\npath.setAttribute('d', 'M8 5v14l11-7z');\nsvg.appendChild(path);\nplayBtn.appendChild(svg);\nelement.appendChild(playBtn);\n\nelement.addEventListener('click', function(e) {\n    e.preventDefault();\n    var link = element.closest('a');\n    if (link) { window.location.href = link.href; }\n});"
+  },
+  {
+    "label": "Replace static map with video CTA",
+    "query_selector": "[data-tb-region=\"db-cm-homepage_single_natl_EN\"] .MediaObject--mediaImg--Pv3zv",
+    "logic": "var overlay = element.querySelector('.MediaObject--overlay--wu6Hj');\nif (!overlay) return;\n\noverlay.style.display = 'flex';\noverlay.style.alignItems = 'center';\noverlay.style.justifyContent = 'center';\noverlay.style.background = 'rgba(0,0,0,0.4)';\noverlay.style.cursor = 'pointer';\n\nif (overlay.children.length > 0) return;\n\nvar playBtn = document.createElement('div');\nplayBtn.style.width = '64px';\nplayBtn.style.height = '64px';\nplayBtn.style.borderRadius = '50%';\nplayBtn.style.background = 'rgba(255,255,255,0.9)';\nplayBtn.style.display = 'flex';\nplayBtn.style.alignItems = 'center';\nplayBtn.style.justifyContent = 'center';\nplayBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';\n\nvar svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsvg.setAttribute('width', '28');\nsvg.setAttribute('height', '28');\nsvg.setAttribute('viewBox', '0 0 24 24');\nsvg.style.fill = '#1a1a1a';\nsvg.style.marginLeft = '4px';\n\nvar path = document.createElementNS('http://www.w3.org/2000/svg', 'path');\npath.setAttribute('d', 'M8 5v14l11-7z');\nsvg.appendChild(path);\nplayBtn.appendChild(svg);\noverlay.appendChild(playBtn);"
+  },
+  {
+    "label": "Enlarge Top Story headline",
+    "query_selector": ".Header--impactTitle--eDDi9",
+    "logic": "element.style.fontSize = '1.6rem';\nelement.style.fontWeight = '700';"
+  },
+  {
+    "label": "Enlarge small media titles",
+    "query_selector": ".MediaObject--smallMedia--ttgFl .ContentMedia--mediaTitle--LSjxi span",
+    "logic": "element.style.fontSize = '1.05rem';\nelement.style.fontWeight = '600';"
+  },
+  {
+    "label": "Enlarge list item icon wrapper",
+    "query_selector": ".ContentMedia--listItem--mbZwr .Icon--iconWrapper--vSeDL",
+    "logic": "element.style.display = 'inline-flex';\nelement.style.alignItems = 'center';\nelement.style.justifyContent = 'center';\nelement.style.width = '36px';\nelement.style.height = '36px';\nelement.style.minWidth = '36px';"
+  },
+  {
+    "label": "Enlarge small media icon wrapper",
+    "query_selector": ".MediaObject--mediaIcon--wFOkX .Icon--iconWrapper--vSeDL",
+    "logic": "element.style.display = 'flex';\nelement.style.alignItems = 'center';\nelement.style.justifyContent = 'center';\nelement.style.width = '48px';\nelement.style.height = '48px';"
+  }
 ]

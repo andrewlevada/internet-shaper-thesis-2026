@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Add Shorts only chip",
+    "query_selector": "iron-selector#chips.yt-chip-cloud-renderer",
+    "logic": "element.style.display = 'none'"
+  },
+  {
+    "label": "Add Shorts only chip",
+    "query_selector": "yt-chip-cloud-renderer.ytd-search-header-renderer",
+    "logic": "var selector = element.querySelector('iron-selector#chips');\nif (!selector) return;\n\nvar existingChips = selector.querySelectorAll('yt-chip-cloud-chip-renderer');\nif (existingChips.length < 2) return;\n\nvar unwatchedChip = existingChips[1];\nif (!unwatchedChip) return;\n\nvar chipTexts = [];\nfor (var i = 0; i < existingChips.length; i++) {\n  var div = existingChips[i].querySelector('chip-shape .ytChipShapeChip > div');\n  if (div) chipTexts.push(div.textContent);\n}\nif (chipTexts.indexOf('Shorts only') !== -1) return;\n\nvar newChip = document.createElement('yt-chip-cloud-chip-renderer');\nnewChip.setAttribute('class', 'style-scope yt-chip-cloud-chip-renderer');\nnewChip.setAttribute('chip-style', 'STYLE_HOME_FILTER');\n\nvar chipShapeContainer = document.createElement('div');\nchipShapeContainer.id = 'chip-shape-container';\nchipShapeContainer.setAttribute('class', 'style-scope yt-chip-cloud-chip-renderer');\n\nvar chipShape = document.createElement('chip-shape');\nchipShape.setAttribute('class', 'ytChipShapeHost');\n\nvar button = document.createElement('button');\nbutton.className = 'ytChipShapeButtonReset';\nbutton.setAttribute('role', 'tab');\nbutton.setAttribute('aria-selected', 'false');\n\nvar chipDiv = document.createElement('div');\nchipDiv.className = 'ytChipShapeChip ytChipShapeInactive ytChipShapeOnlyTextPadding';\n\nvar textDiv = document.createElement('div');\ntextDiv.textContent = 'Shorts only';\n\nchipDiv.appendChild(textDiv);\nbutton.appendChild(chipDiv);\nchipShape.appendChild(button);\nchipShapeContainer.appendChild(chipShape);\nnewChip.appendChild(chipShapeContainer);\n\nselector.insertBefore(newChip, unwatchedChip.nextSibling);"
+  },
+  {
+    "label": "Move first Shorts shelf to top",
+    "query_selector": "ytd-item-section-renderer.ytd-two-column-search-results-renderer",
+    "logic": "var contents = element.querySelector('#contents');\nif (!contents) return;\n\nvar children = Array.from(contents.children);\nvar firstShortsShelf = null;\n\nfor (var i = 0; i < children.length; i++) {\n  var child = children[i];\n  if (child.tagName === 'GRID-SHELF-VIEW-MODEL' || child.classList.contains('ytGridShelfViewModelHost')) {\n    firstShortsShelf = child;\n    break;\n  }\n}\n\nif (!firstShortsShelf) return;\n\nvar firstChild = contents.firstChild;\nif (firstChild === firstShortsShelf) return;\n\ncontents.insertBefore(firstShortsShelf, firstChild);"
+  },
+  {
+    "label": "Move first Shorts shelf to top",
+    "query_selector": "ytd-item-section-renderer.ytd-section-list-renderer",
+    "logic": "var contents = element.querySelector('#contents');\nif (!contents) return;\n\nvar children = Array.from(contents.children);\nvar firstShortsShelf = null;\n\nfor (var i = 0; i < children.length; i++) {\n  var child = children[i];\n  if (child.tagName === 'GRID-SHELF-VIEW-MODEL' || child.classList.contains('ytGridShelfViewModelHost')) {\n    firstShortsShelf = child;\n    break;\n  }\n}\n\nif (!firstShortsShelf) return;\n\nvar firstChild = contents.firstChild;\nif (firstChild === firstShortsShelf) return;\n\ncontents.insertBefore(firstShortsShelf, firstChild);"
+  }
+]

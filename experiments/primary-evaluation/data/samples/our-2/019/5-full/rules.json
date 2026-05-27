@@ -1,0 +1,47 @@
+[
+  {
+    "label": "Shrink main header bar",
+    "query_selector": "[data-test-id=\"unauth-header\"] > div[style*=\"height:80px\"]",
+    "logic": "element.style.height = '40px';"
+  },
+  {
+    "label": "Remove extra header spacer",
+    "query_selector": "header > div[style*=\"height:80px\"]:not([data-test-id])",
+    "logic": "element.style.height = '20px';"
+  },
+  {
+    "label": "Shrink search bar height",
+    "query_selector": "#searchBoxContainer > div[style*=\"height:48px\"]",
+    "logic": "element.style.height = '28px';"
+  },
+  {
+    "label": "Shrink header logo/tab area",
+    "query_selector": "[data-test-id=\"ideas-tab\"][style*=\"height:48px\"]",
+    "logic": "element.style.height = '28px';"
+  },
+  {
+    "label": "Shrink main page title",
+    "query_selector": "[data-test-id=\"ideas-root-header\"] h1",
+    "logic": "if (!element) return;\nelement.style.fontSize = '0.8em';\nelement.style.margin = '4px 0';\nelement.style.lineHeight = '1.2';"
+  },
+  {
+    "label": "Shrink section headers",
+    "query_selector": ".Nt6yCq h2",
+    "logic": "if (!element) return;\nelement.style.fontSize = '0.85em';\nelement.style.margin = '4px 0';\nelement.style.lineHeight = '1.2';"
+  },
+  {
+    "label": "Compact section header containers",
+    "query_selector": ".Nt6yCq",
+    "logic": "if (!element) return;\nelement.style.padding = '4px 0';\nelement.style.margin = '4px 0';"
+  },
+  {
+    "label": "Compact page title container",
+    "query_selector": "[data-test-id=\"ideas-root-header\"]",
+    "logic": "if (!element) return;\nelement.style.padding = '4px 0';\nelement.style.margin = '4px 0';"
+  },
+  {
+    "label": "Shrink header button text",
+    "query_selector": "[data-test-id=\"unauth-header\"] .WuRgKB, [data-test-id=\"unauth-header\"] .lIkAnG",
+    "logic": "if (!element) return;\nelement.style.fontSize = '0.8em';\nelement.style.lineHeight = '1.2';"
+  }
+]

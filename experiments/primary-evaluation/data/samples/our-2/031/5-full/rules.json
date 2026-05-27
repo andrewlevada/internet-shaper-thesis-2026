@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide English language suggestion",
+    "query_selector": "#slim_appbar div[jscontroller=\"IlbVv\"]",
+    "logic": "element.style.display = 'none'"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide English language suggestion box",
+    "query_selector": "div[jscontroller=\"IlbVv\"][style*=\"background:#feefc3\"]",
+    "logic": "element.style.display = 'none';"
+  }
+]

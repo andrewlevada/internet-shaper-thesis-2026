@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Hide top banner ad",
+    "query_selector": "div.ad-container:has(#top_center-frontpage_1024)",
+    "logic": "element.style.display = 'none'"
+  },
+  {
+    "label": "Hide Top Deals widget",
+    "query_selector": "#buying-guide",
+    "logic": "element.style.display = 'none'"
+  }
+]

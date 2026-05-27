@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide stream tags on cards",
+    "query_selector": "article.ghbJdj .fsLBGq",
+    "logic": "element.style.display = 'none'"
+  }
+]

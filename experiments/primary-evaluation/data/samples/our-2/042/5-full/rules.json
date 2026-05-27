@@ -1,0 +1,7 @@
+[
+  {
+    "label": "Hide intro paragraphs in article",
+    "query_selector": "div.article-body > p",
+    "logic": "element.style.display = 'none'"
+  }
+]

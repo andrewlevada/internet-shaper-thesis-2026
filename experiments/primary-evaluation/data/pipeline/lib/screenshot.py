@@ -91,7 +91,14 @@ def capture_screenshot(html: str, output_path: Path) -> None:
                         f"Warning: load timeout for {output_path.name}; capturing screenshot anyway",
                         file=sys.stderr,
                     )
-            page.screenshot(path=str(output_path), full_page=False)
+            try:
+                page.screenshot(path=str(output_path), full_page=False, timeout=60_000)
+            except PlaywrightTimeoutError:
+                print(
+                    f"Warning: screenshot timeout for {output_path.name}; skipping",
+                    file=sys.stderr,
+                )
+                return
             context.close()
         finally:
             browser.close()
