@@ -19,7 +19,9 @@
 )
 
 #show: thesis.with(
-  abstract: lorem(100),
+  abstract: [
+    *WIP*
+  ],
   font-family: "Times New Roman"
 )
 
@@ -33,7 +35,7 @@ We build User Interfaces to make interactions with tech simpler, easier. Designe
 
 These 2 problems make interfaces misaligned with the users needs — undermining the core of design practice. This is the problem we begin to tackle with this thesis.
 
-Prior HCI research extensivly shows that user interfaces can be made adaptive and customizable @lee_towards_nodate (*WIP: cite an old adaptivity and customization meta a anlysys*). These approaches requre the developer/designer to implement them. As we see in the industry, these methods are not widly adpoted except for select adaptivity dimentions — ios and android apps commonly react to the dynamic type accesability settings by changing the layout of the app to better display the content with larger text. Or how websites are almost always made responsive to screen sizes. But as a way of mitigating misaligned interfaces, the adaptive-interface approach is not really used.
+User interfaces can be made adaptive and customizable to cater to specific user's needs. However customization and especially automatic adaptation of the UIS requre the developer/designer to implement them. As we see in the industry, these methods are not widly adpoted except for select adaptivity dimentions — ios and android apps commonly react to the dynamic type accesability settings by changing the layout of the app to better display the content with larger text. Or how websites are almost always made responsive to screen sizes. But as a way of mitigating misaligned interfaces, the adaptive-interface approach is not really used.
 
 Few works take a diffrent approach and try to make interfaces malleable by end users @litt_end-user_2020 @katongo_towards_2021. In this thesis we build upon the ideas they introduce. We want to implement into really this vision of individually tailored user interfaces, shared by many UX practitioners @nng_generative_nodate @noauthor_introducing_nodate, made possible my recient advaces in LLM's capabilities.
 
@@ -76,9 +78,8 @@ Far fewer systems give end users tools to adapt existing web interfaces they do 
 Current end-user adaptation methods remain limited relative to our goals. Changes are often ephemeral, scoped to appearance or layout, or tied to manually authored adapters rather than open-ended user goals @kim_stylette_2022 @nebeling_crowdadapt_2013 @huynh_enabling_2006 @santana_continuous_2019. Like this prior work, Internet Shaper is deployed as a browser extension that reads the live DOM. We extend the paradigm with LLM-driven perception over compressed page structure and a rules engine that persists selector-bound JavaScript, including conditional logic that CSS-only or one-shot edits cannot express.
 
 = Implementation <sec:implementation>
-(*Section status: Very nice and accurate!*)
 
-This section describes how we designed and built the agentic system at the core of Internet Shaper. We begin from the user-side adaptation problem, explain why a naive read-and-edit baseline is not sufficient, and present the perception and action components that address those failures. The perception and action components are implemented as LLM tools plus a rules engine; the browser extension provides capture, storage, and execution. Source code is listed in the appendix.
+This section describes how we designed and built the agentic system at the core of Internet Shaper. We begin from the user-side adaptation problem, explain why a naive read-and-edit baseline is not sufficient, and present the perception and action components that address those failures. The perception and action components are implemented as LLM tools plus a rules engine; the browser extension provides capture, storage, and execution. Source code, experiment pipelines, evaluation artifacts, and analysis logs are available in the public repository at #link("https://github.com/andrewlevada/internet-shaper-thesis-2026")[github.com/andrewlevada/internet-shaper-thesis-2026] (@sec:data-code).
 
 == Design Goals <sec:design-goals>
 
@@ -196,7 +197,7 @@ The compression pipeline operates on the visible DOM captured at request time (s
 ]
 6. _Whitespace normalization_ — insignificant text nodes are removed and remaining text is collapsed to single spaces, except inside `script`, `style`, `pre`, and `textarea` ancestors.
 
-The result is a compact HTML map that preserves relative hierarchy and enough identifying tokens to locate targets, at the cost of omitting repeated list items and decorative wrapper depth.
+The result is a compact HTML map that preserves relative hierarchy and enough identifying tokens to locate targets, at the cost of omitting repeated list items and decorative wrapper depth. On outlier pages the heuristics may barely shrink the tree (@sec:results-dom-compression), and when a map still exceeds provider limits the production gateway truncates tool output at roughly 96k characters — the model must then rely on `show_in_dom` for the missing detail.
 
 === Selective Drill-Down <sec:selective-drill-down>
 
@@ -241,7 +242,7 @@ if (minutes < 40) element.style.display = 'none';
 
 The LLM never executes rule logic during the agent loop. Instead, the `set_update_rule` tool appends a rule to an in-memory list. The tool schema exposes exactly the three fields above and documents the execution contract: the logic runs once per matched element with only an `element` parameter in scope — no `window`, `document`, or other globals. The system prompt further requires idempotent logic (repeated application must converge to the same state), deterministic side effects (set absolute values rather than toggle or append), and graceful handling of not-yet-loaded child content (early return when a value is missing, relying on re-application once content appears). Conditional hiding should prefer `element.style.display = 'none'` over `element.remove()` so the rule can still run when descendants populate.
 
-After the agent loop completes, the new rules are merged into storage and passed to `applyRules`, which injects an applier function into the page's main JavaScript world via the extension's RPC layer. For each enabled rule, the engine queries `document.querySelectorAll`, wraps the logic as `(function(element) { ... })`, and compiles it through a Trusted Types policy where the host page requires one (needed on strict Content Security Policy sites such as YouTube). Each matching element is processed at most once per rule via a per-selector weak set; a `MutationObserver` on `document.body` re-applies rules to newly inserted nodes, and a short-lived child observer debounces re-runs when descendants of a matched element change — covering single-page applications that hydrate content after the initial render. 
+After the agent loop completes, the new rules are merged into storage and passed to `applyRules`, which injects an applier function into the page's main JavaScript world via the extension's RPC layer. For each enabled rule, the engine queries `document.querySelectorAll`, wraps the logic as `(function(element) { ... })`, and compiles it through a Trusted Types policy where the host page requires one (needed on strict Content Security Policy sites such as YouTube). Each matching element is processed at most once per rule via a per-selector weak set; a `MutationObserver` on `document.body` re-applies rules to newly inserted nodes, and a child observer debounces re-runs when descendants of a matched element change — but disconnects after five seconds, so very late-loading content may never be transformed. Sites with strict CSP or Trusted Types allowlists that block our policy name may still reject dynamic rule compilation (@sec:limitations). 
 
 From the model's perspective, a rule is therefore a declarative target (`query_selector`) plus imperative body (`logic`); from the runtime's perspective, it is a recurring DOM transformation that survives reloads and dynamic updates without re-invoking the LLM.
 
@@ -255,11 +256,11 @@ The system prompt enforces a strict perception-before-action sequence on every u
 + Emit one or more `set_update_rule(label, query_selector, logic)` calls.
 + Reply to the user when no further tools are needed; the loop continues until the model produces a message without tool calls or the stop reason is `end_turn`, at which point the collected rules are persisted and applied to the live page.
 
-This ordering prevents the model from committing to selectors before it has a structural overview, while still allowing targeted inspection where the compressed map is insufficient. Prompt caching is applied to the system prompt and the `get_map_of_dom` result — typically the largest context item — so multi-turn exploration stays economical. There is also a limit = 1 on the get_map_of_dom calls by the agent to prevent context contamination with duplicate information. We found this is useful during evaluation to prevent agents from trying to get the DOM again to see the review the changes.
+This ordering prevents the model from committing to selectors before it has a structural overview, while still allowing targeted inspection where the compressed map is insufficient. Because all perception tools read from the frozen snapshot, the agent cannot observe live DOM updates or the effect of rules during the loop — only the pre-request page state. `get_map_of_dom` and `get_dom` may each be called at most once per request; repeat calls return the cached result rather than a fresh capture. Prompt caching is applied to the system prompt and the `get_map_of_dom` result — typically the largest context item — so multi-turn exploration stays economical.
 
 == The Browser Extension <sec:browser-extension>
 
-The agentic core is hosted in a Chromium browser extension. It captures snapshots, hosts the LLM loop, stores rules in `localStorage`, and applies them in the page's main JavaScript world. Extensions can read and write any tab's DOM without site cooperation, which satisfies the deployment constraint from @sec:design-goals, but they add no algorithmic behavior beyond capture, RPC, and rule injection.
+The agentic core is hosted in a Chromium browser extension — the prototype targets Chrome-compatible browsers only and is not ported to Firefox or Safari. It captures snapshots, hosts the LLM loop, stores rules in `localStorage`, and applies them in the page's main JavaScript world. Extensions can read and write any tab's DOM without site cooperation, which satisfies the deployment constraint from @sec:design-goals, but they add no algorithmic behavior beyond capture, RPC, and rule injection.
 
 Browser extensions run code in isolated worlds that cannot call each other directly: content scripts, a background service worker, and the page's main JavaScript context. Fiber, a small framework built for this project, wraps Chrome APIs in an RPC proxy so calling `executeInMainWorld` from a content script behaves like a local function while messages cross process boundaries. Trusted Types policies registered in the main world allow dynamic compilation of rule logic on strict Content Security Policy sites such as YouTube.
 
@@ -300,7 +301,7 @@ Captchas and empty bot-rejection pages were handled in a semi-manual patch pass;
 
 === Compression measurements <sec:compression-measurements>
 
-After capture, we ran the reproducible batch script in `experiments/dom-compression-analysis/`: for each snapshot it applies the production `get_map_of_dom` tool to `visible.html`, then counts characters and tokens (tiktoken `o200k_base`, matching @tab:dom-snapshot-sizes). Aggregates and interpretation are reported in @sec:results-dom-compression; those figures motivate the perception design in @sec:perception and the context budget argument in @sec:baseline-limitations.
+After capture, we ran the reproducible batch script in `experiments/dom-compression-analysis/` (see @sec:data-code): for each snapshot it applies the production `get_map_of_dom` tool to `visible.html`, then counts characters and tokens (tiktoken `o200k_base`, matching @tab:dom-snapshot-sizes). Aggregates and interpretation are reported in @sec:results-dom-compression; those figures motivate the perception design in @sec:perception and the context budget argument in @sec:baseline-limitations.
 
 == Task Synthesis <sec:evaluation-task-synthesis>
 
@@ -349,7 +350,7 @@ We chose local inference for three practical reasons. First, the baseline condit
 
 Subjective quality was collected with a small Next.js web application. The test stand is not part of the browser extension; it only replays archived evaluation artifacts.
 
-For each trial the participant first sees the original-page screenshot and the adaptation prompt, then nine blinded pairwise screenshot comparisons per sample. Pipelines are compared in a fixed set of pairs (original vs each treatment, baseline vs full, and the component ablations listed in @sec:ablation-pipelines); left and right positions are randomized per trial. We originally planned a five-point Likert scale, but piloting showed that raters rarely used the intermediate anchors. The deployed interface therefore asks for a simple preference: left better, right better, or similar (neutral).
+For each trial the participant first sees the original-page screenshot and the adaptation prompt, then nine blinded pairwise screenshot comparisons per sample. Screenshots capture a fixed 1440×800 viewport and are not interactive — raters cannot scroll, reload, or verify that rules persist after navigation (@sec:limitations). Pipelines are compared in a fixed set of pairs (original vs each treatment, baseline vs full, and the component ablations listed in @sec:ablation-pipelines); left and right positions are randomized per trial. We originally planned a five-point Likert scale, but piloting showed that raters rarely used the intermediate anchors. The deployed interface therefore asks for a simple preference: left better, right better, or similar (neutral).
 
 === Sample filtering and scope <sec:sample-filtering>
 
@@ -369,7 +370,7 @@ This section reports the DOM compression study in full. The corpus and capture p
 
 === Corpus and procedure
 
-We evaluated 73 page snapshots stored under `experiments/dom-compression-analysis/data/snapshots/` — the same 25-domain sample as in @sec:corpus-source (homepage plus three internal URLs per domain, after manual quality filtering). For each snapshot id `NNN` we measured three HTML stages:
+We evaluated 73 page snapshots stored under `experiments/dom-compression-analysis/data/snapshots/` in the project repository (@sec:data-code) — the same 25-domain sample as in @sec:corpus-source (homepage plus three internal URLs per domain, after manual quality filtering). For each snapshot id `NNN` we measured three HTML stages:
 
 + _Raw DOM_ — serialized `raw.html` as captured by Playwright.
 + _Visible DOM_ — `visible.html` after stripping subtrees hidden by computed style (`display: none`, `visibility: hidden`, `opacity: 0`), matching extension capture.
@@ -469,7 +470,7 @@ Paired Wilcoxon tests (same 42 samples): baseline vs full — median 162.8 s vs 
 
 == Pairwise preference evaluation <sec:pairwise-preference-evaluation>
 
-Human judgments cover 15 samples (135 comparisons). Task completion vs original (decisive outcomes only):
+Human judgments cover 15 samples (135 comparisons) — a small set with limited statistical power (@sec:limitations). Task completion vs original counts only decisive outcomes (excluding ties) from static screenshots; it does not verify reload persistence or interactive behavior:
 
 #align(center)[
   #figure(
@@ -490,7 +491,7 @@ Human judgments cover 15 samples (135 comparisons). Task completion vs original 
 
 Exact binomial sign tests for baseline and full vs original are significant at $alpha = 0.05$ ($p < 0.001$ for both). McNemar tests on discordant baseline-vs-full outcomes when both are compared to original report zero discordant pairs.
 
-Head-to-head quality (full vs baseline on the same samples): 4 wins, 6 losses, 5 ties; decisive win rate for full = 40% (4/10); exact binomial $p = 0.754$; Wilcoxon on signed preference scores $p = 0.625$.
+Head-to-head quality (full vs baseline on the same samples): 4 wins, 6 losses, 5 ties; decisive win rate for full = 40% (4/10); exact binomial $p = 0.754$; Wilcoxon on signed preference scores $p = 0.625$. Quality parity between full and baseline is therefore inconclusive — the speed gains in @sec:automated-ablation-corpus are not matched by a significant human preference for either pipeline.
 
 Component ablation (decisive win rate for the named pipeline):
 
@@ -561,7 +562,7 @@ Each figure pairs the page before the user submits a prompt with the state after
 
 The evaluation corpus ended up much smaller than we planned: 60 synthesized seeds, 42 machine-runnable samples, and only 15 that survived screenshot quality filtering for human review. Power for pairwise tests is therefore limited, and non-significant component contrasts should be read as inconclusive rather than as evidence of parity.
 
-Within that constraint, Internet Shaper does not perform worse than the read-all baseline on task completion. Every decisive judgment against the original page favored both baseline and full treatments (@tab:task-completion). When baseline and full are compared directly, full wins 40% of decisive pairs and loses 60% — a mixed quality outcome with no significant preference either way. So the compact perception plus rules engine trades some judged quality variance for large gains in automation cost.
+Within that constraint, both baseline and full beat the original on decisive screenshot judgments (@tab:task-completion), but many comparisons were ties and the raters could not interact with the pages — so task-completion claims should be read as weak evidence of visual improvement, not verified functional success. When baseline and full are compared directly, full wins 40% of decisive pairs and loses 60% — quality parity remains inconclusive ($p = 0.754$). The compact perception plus rules engine therefore delivers large inference-time savings (@tab:pipeline-times) without a demonstrated human quality advantage over the read-all baseline.
 
 Processing times show a clearer pattern (@tab:pipeline-times). The full pipeline mediates 4.7× faster inference than baseline on the same 42 tasks, with map-only and engine-only ablations in between. Because rules persist in extension storage, those minutes of model time are spent once per adaptation goal rather than on every revisit.
 
@@ -580,22 +581,20 @@ Reported informally during extension use (not part of the 15-sample preference s
 
 This thesis presented Internet Shaper, a browser-extension-hosted agent that adapts third-party web pages from natural language without site cooperation. The technical contributions are (1) DOM compression with selective drill-down for scalable perception, (2) a persistent rules engine for expressive, reload-safe action, and (3) a JTBD-based pipeline for synthesizing grounded adaptation tasks on real page snapshots.
 
-Empirically, compression reduces median visible DOM size by roughly 16× on a 73-page corpus. On 42 automated samples the full pipeline runs about five times faster than a full-DOM baseline while matching it on task completion against the original UI in our small human study; direct baseline-vs-full quality preferences were mixed and not statistically significant. Three live-site case screenshots demonstrate non-trivial adaptations outside the formal dataset.
+Empirically, compression reduces median visible DOM size by roughly 16× on a 73-page corpus. On 42 automated samples the full pipeline runs about five times faster than a full-DOM baseline. In a preliminary human study ($n = 15$) both pipelines visually outperformed the original on decisive screenshot judgments, but quality parity between baseline and full was inconclusive and many comparisons were ties. Three live-site case screenshots demonstrate non-trivial adaptations outside the formal dataset.
 
 The human evaluation is preliminary because rendering failures forced heavy sample filtering. Future work will harden snapshot replay, expand the ratable set toward statistically powered inference, and measure whether emergent behaviors such as API calls and multi-rule layout refactors appear in baseline conditions as well.
 
 == Limitations <sec:limitations>
 
-+ The LLM is provided a single screen in an application and is not aware of the multi-screen context. The risk is that it might produce adaptations incompatible with the overall flow on more complex tasks.
-+ The system can only influence a single screen, making construction of multi-step flows and app-wide modifications difficult.
-+ Rules are applied to all pages that match the domain; no URL path matching occurs. As a result, rules sometimes unintentionally apply to pages they were not intended for. This was an architectural decision that helps handle dynamically constructed pages (e.g. `domain.com/user/<id>`). Future work can investigate the feasibility of requiring a URL mask for each rule, or a similar approach to limit unexpected rule applications.
-+ The LLM has access only to data visible to the user and present in the DOM. For a subset of interactions — specifically those involving dynamically loaded data — access to the underlying JavaScript data structures could be helpful. The same applies to API actions, of which the model has no context at all.
++ Internet Shaper operates on a single screen at a time: the agent has no multi-screen context and cannot construct multi-step or app-wide flows.
++ Rules are scoped to the hostname with no URL path matching, so adaptations intended for one page may apply across the whole domain (@sec:rules-engine).
++ The human evaluation is preliminary: only 15 samples survived screenshot filtering, judgments are static viewport PNGs with no reload or interaction, many comparisons were ties, and baseline-vs-full quality parity is inconclusive ($p = 0.754$; @sec:pairwise-preference-evaluation).
++ Adaptation prompts were LLM-synthesized rather than collected from real users, and automated ablations replay archived HTML in batch scripts — approximating but not identical to live extension use (@sec:evaluation-task-synthesis, @sec:ablation-pipelines).
++ The prototype is not production-ready: it is vulnerable to prompt injection via page content and stores API keys in plaintext (@sec:security-concerns).
 
+= Data and Code Availability <sec:data-code>
+
+All source code, experiment pipelines, evaluation datasets, agent logs, analysis scripts, and supplementary materials for this thesis are available in the public repository #link("https://github.com/andrewlevada/internet-shaper-thesis-2026")[github.com/andrewlevada/internet-shaper-thesis-2026].
 
 #bibliography(title: "Bibliography cited", "refs.bib", style: "ieee")
-
-#show: appendix
-
-= Source Code <sec:source-code>
-
-*WIP*
