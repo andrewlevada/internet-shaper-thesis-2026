@@ -12,9 +12,9 @@
 режиме реального времени",
   topic-en: "User‑Aligned Web Interfaces: Just‑in‑Time Generative Adaptation of Existing UIs",
   author-ru: "Левада Андрей Романович",
-  author-en: "todo",
-  supervisor-ru: "todo",
-  supervisor-en: "todo",
+  author-en: "Andrey Levada",
+  supervisor-ru: "Лукманов Рустам Абубакирович",
+  supervisor-en: "Rustam Lukmanov",
   year: "2026",
 )
 
@@ -28,43 +28,44 @@
 )
 
 = Introduction <sec:introduction>
-(*Section status: WIP, Outdated*)
 
 == Background
 
 We build User Interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user (*WIP*: citation needed), but here come 2 problems:
 - intrinsically, designers can not feasibly plan interfaces for every single user's specific needs and jobs. with constrained resources, even good interfaces are usually not perfect for each user. For example
 - on the other more bleak side are the. Gray and dark patterns systematically misalign system and user goals. This happens when business and user goal diverge, and interface ends up being less helpful and more intrusive (*WIP*: citation needed). 
+
 These 2 problems make interfaces misaligned with the users needs — undermining the core of design practice. This is the problem we begin to tackle with this thesis.
 
-This motivates the _Research Question_ — How can adaptive generative interfaces counteract hostile UIs by re‑aligning the interface with a user's articulated goal?
+Prior HCI research extensivly shows that user interfaces can be made adaptive and customizable. (*WIP*: A bunch of citations needed) These approaches requre the developer/designer to implement them. As we see in the industry, this is understandably hardly ever a priority (*WIP*: citation needed) except for select adaptivity dimentions — ios and android apps commonly react to the dynamic type accesability settings by changing the layout of the app to better display the content with larger text. Or how websites are almost always made responsive to screen sizes. But as a way of mitigating misaligned interfaces, the adaptive-interface approach is not really used.
 
-Prior HCI research extensivly shows that user interfaces can be made adaptive and customizable. (*WIP*: A bunch of citations needed) These approaches however are not the focus of our thesis, as they requre the developer/designer to implement them. As we see in the industry, this is understandably hardly ever a priority (*WIP*: citation needed).
+Few works take a diffrent approach and try to make interfaces malleable by end users. In this thesis we build upon the ideas they introduce. We want to implement into really this vision of individually tailored user interfaces, shared by many UX practitioners, made possible my recient advaces in LLM's capabilities.
 
-Few works take a diffrent approach and try to make interfaces malleable by end users. In this thesis we build upon the ideas they introduce. We want to implement the vision of individually tailored user interfaces, shared by many UX practitioners, made possible my recient advaces in LLM's capabilities. We build and evaluate an agentic system that shows how user-controlled adaptations of existing web interfaces can function as a way for users to activly realign UIs they use with their needs and interests.
+== Internet Shaper
 
-A _Solution_ we propose is an agentic system wrapped in a browser extension that uses large language models (LLMs) to adapt existing web user interfaces to a user-defined goal. This prototype takes a user request in a form of prompt as an input. It then generates edits to be applied to the currently opened web page. These edits get applied to the web page every session the user opens it.
+(*WIP: Shaper demo image)
 
-== Key contributions
+We design, build and evaluate Internet Shaper — an agentic system wrapped in a browser extension that can change web pages from natural language requests. It works directly on the page in the users browser and does not need access to source code of the website. These changes are persistent across sessions and are powerfull enough to restyle, hide, change elements and while layouts or even bring new, althogh limited, functionality to the website 
 
-1. *Internet Shaper* prototype — first of it's kind proof of concept of a generative UI adaptation
-2. *Fiber*, a browser extension framework, also used by the prototype.
-3. Rule-based approach for LLM-to-webpage interactions.
-4. A unified DOM compression algorithm with selective drill-down for agent perception.
+On evaluation we show how this system enables user-controlled adaptations of existing web interfaces and can function as a way for users to activly realign UIs they use with their needs and interests.
 
-We also conduct a proof-of-concept user testing with N=?, showing feasibility of the interface adaptation in re-aligning user interfaces.
+Our contributions are as follows:
+
+1. Internet Shaper as a whole and it’s two critical components: a DOM compression algorithm for percieving the web pages; and the Rules Engine for applying chnages to the webpage in a percistent way
+2 . A pipeline that can create datasets with user-sided natural language edit requests grounded in user personas and jobs
+3 . And evaluation of an Internet shaper on a dataset gathered form that pipeline
 
 = Related work <sec:related-work>
 
-We explore similar solutions that demonstrate UI generation and adaptation, from which a gap becomes apparent: very few interface adaptation methods exist.
+There is a longstanding interest of the HCI field practitionerrs in making UIs better by adapting them to the user or giving the user ways to customuze interface for them. Theare have been a number of prominent papers…
 
-== Generative Adaptation of UI <sec:generative-adaptation-of-ui>
+They all however are limited by the design-time application. The the devs don’t include the method there is nothing users can do
 
-== Generation of UI <sec:generation-of-ui>
+For papers that are user-side, so propose building the interface for the user’s task (maluable ui paper) 
 
-== Adaptation of UI <sec:adaptation-of-ui>
+There are a lot less papers that explore the idea of an end-user interface adpatation / customization. These are the closest to our thesis — give the users tools to adapt the UI.
 
-Nearly all existing UI adaptation solutions require implementation by the application itself or its developers, with renders them unapplicable for our user-initiated setting. This section covers only adaptation methods that are controlled by the end user, of which few exist.
+Curent method are however extremely limited — chabges are not percistend, rearly apply to logic. Like these papers we use a browser extension wrapper and read DOM — we then improve processing
 
 = Implementation <sec:implementation>
 (*Section status: Very nice and accurate!*)
@@ -134,6 +135,8 @@ Perception is implemented as a single DOM compression pipeline exposed through t
 
 === DOM Compression Algorithm <sec:dom-compression-algorithm>
 
+(*WIP: combine description of algo into a single stage*)
+
 The compression pipeline runs in two stages: deterministic pre-cleaning, then structural compaction with a mix of straightforward filters and similarity heuristics. Both stages operate on the visible DOM captured at request time (subtrees with `display: none`, `visibility: hidden`, or `opacity: 0` are already removed during capture, as in the evaluation corpus).
 
 _Stage 1 — pre-cleaning_ (deterministic). Before any structural transformation, the pipeline removes markup that carries no adaptation-relevant semantics: `head`, `script`, `link`, `style`, and `noscript` elements; build-tool HTML comments; and SVG path data (keeping each `svg` tag and its `title` for accessibility context). This step is rule-based and does not depend on page-specific thresholds.
@@ -146,17 +149,17 @@ _Stage 2 — structural compaction_ (mixed). The cleaned tree is parsed and tran
 + _Repeated-sibling truncation_ (heuristic) — among groups of three or more consecutive siblings deemed structurally similar, only the first is kept; the rest are removed and annotated with a comment giving the truncated count. Similarity requires matching tag name and `id`, approximately matching class tokens (symmetric-difference thresholds scale with class-list length), and approximately matching sequences of immediate child tag names (compared via Levenshtein distance with length-dependent tolerances).
 + _Whitespace normalization_ (deterministic) — insignificant text nodes are removed and remaining text is collapsed to single spaces, except inside `script`, `style`, `pre`, and `textarea` ancestors.
 
-The result is a compact HTML map that preserves relative hierarchy and enough identifying tokens to locate targets, at the cost of omitting repeated list items and decorative wrapper depth. Corpus measurements (@sec:compression-measurements) show median token count falling from 107,851 (visible DOM) to 6,613 (compressed map), showing a 16x reduction in token count.
+The result is a compact HTML map that preserves relative hierarchy and enough identifying tokens to locate targets, at the cost of omitting repeated list items and decorative wrapper depth.
 
 === Selective Drill-Down <sec:selective-drill-down>
 
 Because compaction is intentionally lossy for scale, the agent can call `show_in_dom(query_selector, depth)` on the _original_ snapshot — not the compressed map. The tool resolves the selector against the full captured HTML, clones the matched subtree, and prunes descendants beyond a configurable depth (default three element levels below the matched node). At the depth boundary, nested elements are replaced by a comment of the form `<!-- -N children -->`, while direct text on retained nodes is kept intact.
 
-This complements the map in two ways. First, it restores attributes and child structure removed or summarized during compaction — for example, `href` values, inline styles, or the second item in a truncated sibling group. Second, it bounds local context: the agent requests only the subtree it needs rather than reverting to a full-DOM read. Increasing `depth` trades token cost for completeness when a rule must inspect deep descendants (as in the YouTube duration example in @sec:action).
+This complements the map in two ways. First, it restores attributes and child structure removed or summarized during compaction — for example, `href` values, inline styles, or the second item in a truncated sibling group. Second, it bounds local context: the agent requests only the subtree it needs rather than reverting to a full-DOM read. Increasing `depth` trades token cost for completeness when a rule must inspect deep descendants
 
 === Alternative
 
-We also considered alternative comprehension strategies from the web-agent literature. Following @ning_survey_2025's classification into text-based, screenshot-based, and multimodal approaches, screenshot-only input is incompatible with our action model, which targets elements via CSS selectors and JavaScript. The accessibility tree preserves semantics for assistive technologies but strips layout detail users often want to change. Task-specific DOM pruning — as in Prune4Web @zhang_prune4web_2025 — suits localized edits, but many adaptation requests are global: restyling a feed, suppressing a class of distractions, or restructuring layout. We therefore compress the full visible page structurally rather than pruning to a task-specific subset.
+We also considered alternative comprehension strategies from the web-agent literature. Following @ning_survey_2025's classification into text-based, screenshot-based, and multimodal approaches, screenshot-only input is incompatible with our action model, which targets elements via CSS selectors and JavaScript. The accessibility tree preserves semantics for assistive technologies but strips layout detail users often want to change. Task-specific DOM pruning — as in Prune4Web @zhang_prune4web_2025 — suits localized edits, but many adaptation requests are global: restyling a feed, suppressing a class of distractions, or restructuring layout. We therefore compress the full visible page structurally rather than pruning to a task-specific subset. We believe a combined aproach of DOM compresssion tigether with pruning might work best, but this is out of scope for this thesis
 
 == Action <sec:action>
 
@@ -174,7 +177,7 @@ An _update rule_ is a persistent, selector-bound transformation stored as a smal
 
 The LLM never executes rule logic during the agent loop. Instead, the `set_update_rule` tool appends a rule to an in-memory list. The tool schema exposes exactly the three fields above and documents the execution contract: the logic runs once per matched element with only an `element` parameter in scope — no `window`, `document`, or other globals. The system prompt further requires idempotent logic (repeated application must converge to the same state), deterministic side effects (set absolute values rather than toggle or append), and graceful handling of not-yet-loaded child content (early return when a value is missing, relying on re-application once content appears). Conditional hiding should prefer `element.style.display = 'none'` over `element.remove()` so the rule can still run when descendants populate.
 
-After the agent loop completes, the new rules are merged into storage and passed to `applyRules`, which injects an applier function into the page's main JavaScript world via the extension's RPC layer. For each enabled rule, the engine queries `document.querySelectorAll`, wraps the logic as `(function(element) { ... })`, and compiles it through a Trusted Types policy where the host page requires one (needed on strict Content Security Policy sites such as YouTube). Each matching element is processed at most once per rule via a per-selector weak set; a `MutationObserver` on `document.body` re-applies rules to newly inserted nodes, and a short-lived child observer debounces re-runs when descendants of a matched element change — covering single-page applications that hydrate content after the initial render.
+After the agent loop completes, the new rules are merged into storage and passed to `applyRules`, which injects an applier function into the page's main JavaScript world via the extension's RPC layer. For each enabled rule, the engine queries `document.querySelectorAll`, wraps the logic as `(function(element) { ... })`, and compiles it through a Trusted Types policy where the host page requires one (needed on strict Content Security Policy sites such as YouTube). Each matching element is processed at most once per rule via a per-selector weak set; a `MutationObserver` on `document.body` re-applies rules to newly inserted nodes, and a short-lived child observer debounces re-runs when descendants of a matched element change — covering single-page applications that hydrate content after the initial render. 
 
 From the model's perspective, a rule is therefore a declarative target (`query_selector`) plus imperative body (`logic`); from the runtime's perspective, it is a recurring DOM transformation that survives reloads and dynamic updates without re-invoking the LLM.
 
@@ -202,15 +205,14 @@ The overlay UI — prompt input, rule manager, status — is implemented with Li
 
 The prototype in its current state has several vulnerabilities and must not be used in a public setting:
 
-- It stores API keys in the browser's storage in plain, un-encoded form.
-- It has no protection against prompt injections that can be present in page content. This can enable severely harmful behavior up to remote code execution, as the rule application sandbox can fetch data from any URL.
+- The agentic system has no protection against prompt injections that can be present in page content. This can enable severely harmful behavior up to remote code execution, as the rule application sandbox can fetch data from any URL.
+- The browser extension stores API keys in the browser's storage in plain, un-encoded form.
 
 = Methods <sec:methods>
-(*Section status: Fully unreviewed, first draft*)
 
-This section covers the data collection and processing piplines, evaluation task synthesis, and the evaluation process itself.
+This section covers the data collection, processing piplines, evaluation task synthesis, and the evaluation process itself.
 
-== DOM Snapshot Corpus <sec:dom-snapshot-corpus>
+== DOM Compression Evaluation <sec:dom-snapshot-corpus>
 
 To move from anecdotal DOM sizes to measurable compression, we assembled a corpus of real page snapshots and ran the perception pipeline on each one.
 
@@ -255,7 +257,7 @@ We ran the production `get_map_of_dom` pipeline on each snapshot's `visible.html
 
 Visible capture alone cuts median size by roughly half; the compressed map reduces it by another order of magnitude. This confirmed that a compact initial view plus selective drill-down is necessary rather than optional.
 
-== Evaluation Task Synthesis <sec:evaluation-task-synthesis>
+== Task Synthesis <sec:evaluation-task-synthesis>
 
 Compression metrics alone do not define adaptation tasks. To evaluate the full agent, we synthesized user requests from the snapshot corpus using a Jobs-to-be-Done (JTBD) pipeline.
 
@@ -292,45 +294,21 @@ To isolate the perception and action components, we run six agent configurations
 
 Baseline and map-only swap perception strategy while keeping a one-shot edit action. Engine-only and full swap persistence while keeping full-DOM or compact perception respectively. The full pipeline matches the production prototype; results are reported in the Results section.
 
-== User Testing Protocol <sec:user-testing-protocol>
-
-The goal of the trial is to assess whether the work addresses the originally stated problem:
-
-#quote[
-How can adaptive generative interfaces counteract systematically misaligned business and user goals in user interfaces by re‑aligning the interface with a user's articulated goal?
-]
-
-More precisely — can the solution adequately solve the problem in at least a single case of a misaligned interface?
-
-The setup is a Dia (Chromium) browser on the researcher's laptop with an extension built from the current version of code (commit f1ae9bbfbc02c663c336e78c4772b2378ea9e77d).
-
-The questionnaire follows (experiment language — Russian):
-
-+ Встречались ли вы со случаями, когда интерфейс какого-либо сайта затрудняет его использование для ваших личных целей и задач, то есть не подходил вам на сто процентов?
-   + No — end of test.
-+ Что это был за сайт и как именно интерфейс вам мешал? Вспомните один любой случай.
-
-The respondent proceeds to open the website. The researcher then opens the browser extension and instructs the user on how to use it. The respondent is invited to use the extension to customize the website. After customization, a questionnaire on the result follows:
-
-+ Did the transformation occur? (set by the researcher)
-+ Соответствует ли новая версия сайта вашим задачам больше, чем оригинальная?
-+ Насколько вы оцените новую версию сайта по шкале от -3 до +3, где -3 — новая версия сайта сильно менее полезна, чем оригинальная, 0 — новая версия сайта не отличается от оригинальной в контексте решения личных задач, +3 — новая версия сайта сильно более полезна, чем оригинальная.
-
-The testing was conducted in an informal, uncontrolled setting and cannot be used to compare different methods, models, or approaches. What it does show is the feasibility of the approach and that it can be useful for certain tasks.
+(*WIP: how the test was run, the pairvise test stand the ststaistical test used for eval*)
 
 == AI Usage Disclosure <sec:ai-usage-disclosure>
 
-AI agents via Cursor Editor and Claude Code CLI were used extensively in writing the prototype code. All generated code was fully reviewed and verified manually, and all architectural decisions were made explicitly by the authors.
+AI agents via Cursor Editor and Claude Code CLI were used in writing the prototype code. All generated code was fully reviewed and verified manually, and all architectural decisions were made explicitly by the authors.
 
 = Results <sec:results>
 
-== Browser Extension <sec:browser-extension>
+== DOM Compression Algorithm
 
-== User Testing <sec:user-testing>
-
-== DOM Compression <sec:dom-compression>
+== Pairwise Preference Evaluation
 
 = Discussion <sec:discussion>
+
+(*WIP*: why these results, how they are interesting; each вывод is in it's own numbered callout block)
 
 == Emergent Behaviors <sec:emergent-behaviors>
 
@@ -343,6 +321,8 @@ Even more complex queries produced unexpectedly positive results, with the agent
 - When asked to restructure the page in a major way, moving sections around, the agent created a single rule for the `main` element containing all the logic, rather than many individual rules.
 
 = Conclusion <sec:conclusion>
+
+(*WIP*: in the end this is what we got and how we a)
 
 == Limitations <sec:limitations>
 
