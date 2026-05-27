@@ -20,7 +20,7 @@
 
 #show: thesis.with(
   abstract: [
-    *WIP*
+    Commercial web interfaces often misalign with individual users' goals: designers cannot anticipate every task, and gray or dark patterns can prioritize business metrics over usability. Adaptive interfaces that developers build at design time don't help users reshape third-party sites they already use. We present Internet Shaper, a browser-extension-hosted agentic system that adapts live web pages from natural-language requests without access to site source code. The system separates _perception_ from _action_: a DOM compression algorithm gives a large language model a compact structural view of the page, and a rules engine persists selector-bound JavaScript that re-applies on reload and on DOM mutation. We evaluate compression on 73 snapshots from high-traffic domains, and collect preliminary human preferences on 15 samples. Compression reduces median visible DOM size by roughly 16×; the Internet Shaper system processes user requests about five times faster than a baseline on the same tasks. Screenshot-based judgments favor adapted pages over originals, but quality parity between the full system and the baseline remains inconclusive at this sample size.
   ],
   font-family: "Times New Roman"
 )
@@ -29,7 +29,7 @@
 
 == Background <sec:background>
 
-We build User Interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user @hancock_hedonomics_2005 @yusop_revised_2020, but here come 2 problems:
+Designers and developers build user interfaces to make interactions with tech simpler, easier. Designers generally strive to make the ui as usable as possible for each user @hancock_hedonomics_2005 @yusop_revised_2020; nevertheless, two structural limitations undermine this alignment:
 - intrinsically, designers can not feasibly plan interfaces for every single user's specific needs and jobs. with constrained resources, even good interfaces are usually not perfect for each user. For example
 - on the other more bleak side are the. Gray and dark patterns systematically misalign system and user goals. This happens when business and user goal diverge, and interface ends up being less helpful and more intrusive @timms_all_2025 @baroni_deceptive_2024 @potel-saville_dark_2023.
 
@@ -100,8 +100,8 @@ DOM snapshots from real websites are far larger than model context windows allow
 #align(center)[
   #figure(
     caption: [#flex-title(
-      [DOM snapshot sizes — Approximate token counts over 73 page snapshots from the top 25 traffic domains; counted with tiktoken `o200k_base`.],
-      [DOM snapshot sizes],
+      [Estimated token count of popular web page DOMs — Approximate token counts over 73 page snapshots from the top 25 traffic domains; counted with tiktoken `o200k_base`.],
+      [Estimated token count of popular web page DOMs],
     )],
     table(
       columns: 4,
@@ -128,8 +128,8 @@ On the action side, direct edit instructions do not survive a page reload. Witho
   #figure(
     image("img/system.png"),
     caption: [#flex-title(
-      [Internet Shaper architecture — Agentic core with browser extension wrapper.],
-      [Internet Shaper architecture],
+      [Internet Shaper architecture overview — Agentic core with browser extension wrapper.],
+      [Internet Shaper architecture overview],
     )],
   ) <fig:internet-shaper-architecture>
 ]
@@ -321,18 +321,21 @@ To isolate the perception and action components, we run six agent configurations
 
 #align(center)[
   #figure(
-    caption: [Agent ablation conditions],
+    caption: [#flex-title(
+      [Agent ablation conditions — Perception and action combinations compared in the evaluation study.],
+      [Agent ablation conditions],
+    )],
     table(
       columns: 3,
       inset: 0.5em,
       table.header([Pipeline], [Perception], [Action]),
       stroke: (left: none),
       table.vline(stroke: none, start: 0, end: 7),
-      [Baseline], [full DOM (`get_dom`)], [immediate patch (`edit`)],
-      [Engine only], [full DOM], [persistent rules],
-      [Map only], [map + drill-down], [immediate patch],
-      [Full], [map + drill-down], [persistent rules],
-      [Full (Sonnet)], [map + drill-down], [persistent rules, Claude Sonnet 4.6],
+      [Baseline], [full DOM], [immediate patch],
+      [Engine only], [full DOM], [Rules Engine],
+      [Map only], [DOM Compression], [immediate patch],
+      [Full], [DOM Compression], [Rules Engine],
+      [Full (Sonnet)], [DOM Compression], [Rules Engine, Claude Sonnet 4.6],
     ),
     supplement: "TABLE",
   )
@@ -374,7 +377,7 @@ We evaluated 73 page snapshots stored under `experiments/dom-compression-analysi
 
 + _Raw DOM_ — serialized `raw.html` as captured by Playwright.
 + _Visible DOM_ — `visible.html` after stripping subtrees hidden by computed style (`display: none`, `visibility: hidden`, `opacity: 0`), matching extension capture.
-+ _Compressed map_ — output of `get_map_of_dom` on that visible snapshot (all heuristics in @sec:dom-compression-algorithm).
++ _Compressed DOM_ — output of `get_map_of_dom` on that visible snapshot (all heuristics in @sec:dom-compression-algorithm).
 
 Counts use tiktoken encoding `o200k_base` for tokens and UTF-8 byte length for characters. HTML comments introduced by the compressor (wrapper collapse, sibling truncation) are tracked separately as _comment overhead_ inside the compressed file. The script writes per-page rows to `samples.csv` and corpus-level means/medians to `total.csv`.
 
@@ -383,8 +386,8 @@ Counts use tiktoken encoding `o200k_base` for tokens and UTF-8 byte length for c
 #align(center)[
   #figure(
     caption: [#flex-title(
-      [DOM compression study — Token counts over 73 snapshots (`o200k_base`).],
-      [DOM compression — tokens],
+      [Token counts after DOM compression — Token counts over 73 snapshots (`o200k_base`).],
+      [Token counts after DOM compression],
     )],
     table(
       columns: 5,
@@ -394,7 +397,7 @@ Counts use tiktoken encoding `o200k_base` for tokens and UTF-8 byte length for c
       table.vline(stroke: none, start: 0, end: 5),
       [Raw DOM], [339,253], [240,918], [18,490], [1,338,122],
       [Visible DOM], [162,806], [107,851], [7,188], [1,028,594],
-      [Compressed map], [11,135], [6,613], [522], [107,851],
+      [Compressed DOM], [11,135], [6,613], [522], [107,851],
     ),
     supplement: "TABLE",
   ) <tab:compression-tokens>
@@ -402,7 +405,7 @@ Counts use tiktoken encoding `o200k_base` for tokens and UTF-8 byte length for c
 
 _Visible capture_ removes boilerplate that never renders: median size drops from 240,918 to 107,851 tokens (factor 2.2×). That step alone does not bring typical pages under a practical reasoning budget.
 
-_Compression_ removes non-structural markup, high-frequency classes, wrapper chains, and repeated siblings (@sec:dom-compression-algorithm). Median map size is 6,613 tokens — 16.3× smaller than the median visible DOM and 36.4× smaller than median raw. Mean map size is 11,135 tokens versus 162,806 visible (14.6×). The distribution is skewed: the smallest map is 522 tokens; the largest is 107,851 tokens, equal to the median _visible_ page. On that outlier, heuristics barely shrink the tree, so the map still occupies essentially a full visible DOM worth of context. Compression is therefore necessary for typical pages but not a universal fit guarantee.
+_Compression_ removes non-structural markup, high-frequency classes, wrapper chains, and repeated siblings (@sec:dom-compression-algorithm). Median compressed DOM size is 6,613 tokens — *16.3×* smaller than the median visible DOM and 36.4× smaller than median raw. Mean compressed DOM size is 11,135 tokens versus 162,806 visible (14.6×). The distribution is skewed: the smallest compressed DOM is 522 tokens; the largest is 107,851 tokens, equal to the median _visible_ page. On that outlier, heuristics barely shrink the tree, so the compressed DOM still occupies essentially a full visible DOM worth of context. Compression is therefore necessary for typical pages but not a universal fit guarantee.
 
 @tab:dom-snapshot-sizes in @sec:baseline-limitations reproduces the raw and visible columns from this table; the compressed column appears only here.
 
@@ -411,8 +414,8 @@ _Compression_ removes non-structural markup, high-frequency classes, wrapper cha
 #align(center)[
   #figure(
     caption: [#flex-title(
-      [DOM compression study — Character counts over 73 snapshots.],
-      [DOM compression — characters],
+      [Character counts after DOM compression — Character counts over 73 snapshots.],
+      [Character counts after DOM compression],
     )],
     table(
       columns: 5,
@@ -422,14 +425,14 @@ _Compression_ removes non-structural markup, high-frequency classes, wrapper cha
       table.vline(stroke: none, start: 0, end: 5),
       [Raw DOM], [948,621], [708,458], [50,097], [4,411,456],
       [Visible DOM], [421,952], [295,185], [21,212], [2,353,194],
-      [Compressed map], [35,730], [21,424], [1,854], [332,518],
-      [Map comments only], [8,780], [5,789], [311], [50,983],
+      [Compressed DOM], [35,730], [21,424], [1,854], [332,518],
+      [Compressed DOM comments only], [8,780], [5,789], [311], [50,983],
     ),
     supplement: "TABLE",
   ) <tab:compression-chars>
 ]
 
-Character counts follow the same ordering as tokens. Median visible HTML is 295,185 characters; median compressed map is 21,424 (13.8× reduction). Annotation comments account for a median of 5,789 characters inside the map — about 27% of median compressed file size — so a non-trivial share of the compact representation documents what was removed rather than live structure.
+Character counts follow the same ordering as tokens. Median visible HTML is 295,185 characters; median compressed DOM is 21,424 (13.8× reduction). Annotation comments account for a median of 5,789 characters inside the compressed DOM — about 27% of median compressed file size — so a non-trivial share of the compact representation documents what was removed rather than live structure.
 
 === Implications for the prototype
 
@@ -447,8 +450,8 @@ Processing time is summed `elapsed_s` per sample from `agent.log` (model inferen
 #align(center)[
   #figure(
     caption: [#flex-title(
-      [Pipeline inference time — Median API inference time per sample over 42 tasks (seconds).],
-      [Pipeline inference time],
+      [Median inference time by ablation pipeline — Median API inference time per sample over 42 tasks (seconds).],
+      [Median inference time by ablation pipeline],
     )],
     table(
       columns: 5,
@@ -474,7 +477,10 @@ Human judgments cover 15 samples (135 comparisons) — a small set with limited 
 
 #align(center)[
   #figure(
-    caption: [Task completion vs original — Decisive win / loss / tie counts ($n = 15$ samples per row).],
+    caption: [#flex-title(
+      [Screenshot task completion vs. original page — Decisive win / loss / tie counts ($n = 15$ samples per row).],
+      [Screenshot task completion vs. original page],
+    )],
     table(
       columns: 5,
       inset: 0.5em,
@@ -497,7 +503,10 @@ Component ablation (decisive win rate for the named pipeline):
 
 #align(center)[
   #figure(
-    caption: [Component contribution — Decisive preferences on 15 rated samples.],
+    caption: [#flex-title(
+      [Human preference scores for component ablation — Decisive preferences on 15 rated samples.],
+      [Human preference scores for component ablation],
+    )],
     table(
       columns: 4,
       inset: 0.5em,
@@ -530,7 +539,7 @@ Each figure pairs the page before the user submits a prompt with the state after
       image("img/cases/google-images-before.png", width: 100%),
       image("img/cases/google-images-after.png", width: 100%),
     ),
-    caption: [Google Images — Prompt: «remove the text under images».],
+    caption: [System in action, example 1. Google Images — Prompt: «remove the text under images».],
   ) <fig:case-google-images>
 ]
 
@@ -542,7 +551,7 @@ Each figure pairs the page before the user submits a prompt with the state after
       image("img/cases/gmail-before.png", width: 100%),
       image("img/cases/gmail-after.png", width: 100%),
     ),
-    caption: [Gmail — Prompt: «style the page in minecraft theme».],
+    caption: [System in action, example 2. Gmail — Prompt: «style the page in minecraft theme».],
   ) <fig:case-gmail>
 ]
 
@@ -554,7 +563,7 @@ Each figure pairs the page before the user submits a prompt with the state after
       image("img/cases/substack-before.png", width: 100%),
       image("img/cases/substack-after.png", width: 100%),
     ),
-    caption: [Substack — Prompt: «replace the Up next block with an audio player from spotify».],
+    caption: [System in action, example 3. Substack — Prompt: «replace the Up next block with an audio player from spotify».],
   ) <fig:case-substack>
 ]
 
