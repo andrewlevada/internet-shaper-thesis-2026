@@ -18,14 +18,17 @@ AgentProvider = Literal["vercel", "openrouter", "anthropic", "local"]
 ExploreTool = Literal["get_dom", "get_map_of_dom"]
 ActionTool = Literal["edit", "set_update_rule"]
 
-# Local eval: Unsloth Qwen3.6-27B GGUF via llama-server (see scripts/start-local-llama.sh)
+# Local eval: Unsloth Qwen3.6-27B MTP GGUF via llama-server (see scripts/start-local-llama.sh)
 LOCAL_MODEL_ID = "unsloth/Qwen3.6-27B"
 LOCAL_LLAMA_MODEL_ALIAS = LOCAL_MODEL_ID
 LOCAL_LLAMA_SERVER_URL = "http://127.0.0.1:8001/v1"
 LOCAL_LLAMA_CTX_SIZE = 262_144
 LOCAL_LLAMA_REQUEST_TIMEOUT_S = 1800.0
-LOCAL_LLAMA_GGUF_REPO = "unsloth/Qwen3.6-27B-GGUF"
+LOCAL_LLAMA_GGUF_REPO = "unsloth/Qwen3.6-27B-MTP-GGUF"
 LOCAL_LLAMA_GGUF_QUANT = "UD-Q4_K_XL"
+# MTP speculative decoding (~1.4–2.2x faster generation, Unsloth Qwen3.6 guide)
+LOCAL_LLAMA_SPEC_TYPE = "draft-mtp"
+LOCAL_LLAMA_SPEC_DRAFT_N_MAX = 2
 # qwen3.6-27b is not on Alibaba's context-cache model list; use qwen3.6-plus when
 # you need prompt caching via the gateway (explicit cache, verified by Cline/OpenCode).
 GATEWAY_MODEL_ID = "alibaba/qwen3.6-27b"
@@ -88,9 +91,11 @@ GATEWAY_CHAT_COMPLETION_KWARGS: dict[str, object] = {
 LOCAL_LLAMA_CHAT_COMPLETION_KWARGS: dict[str, object] = {
     "temperature": 0.7,
     "top_p": 0.8,
+    "presence_penalty": 1.5,
     "max_tokens": MAX_NEW_TOKENS,
     "extra_body": {
         "top_k": 20,
+        "min_p": 0.0,
         "chat_template_kwargs": {"enable_thinking": False},
     },
 }
