@@ -9,10 +9,10 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, Viewport
 from playwright.sync_api import sync_playwright
 
 VIEWPORT = ViewportSize(width=1440, height=800)
-SET_CONTENT_TIMEOUT_MS = 20_000
-GOTO_TIMEOUT_MS = 60_000
+SET_CONTENT_TIMEOUT_MS = 15_000
+GOTO_TIMEOUT_MS = 15_000
 DOCUMENT_URL_CONTENT_SELECTOR = "#contents, ytd-search, ytd-browse"
-DOCUMENT_URL_CONTENT_TIMEOUT_MS = 30_000
+DOCUMENT_URL_CONTENT_TIMEOUT_MS = 15_000
 DOCUMENT_URL_POST_LOAD_WAIT_MS = 15_000
 POST_LOAD_WAIT_MS = 5_000
 

@@ -1,0 +1,358 @@
+Renew evaluation samples
+------------------------------------------------
+timestamp (UTC): 2026-05-27T12:18:32.674557+00:00
+target: our-2
+samples: 42
+unique snapshots: 14 (001, 004, 007, 013, 015, 019, 033, 047, 050, 051, 052, 055, 069, 070)
+skip recapture: False
+dry run: False
+auto capture: False
+
+=== Phase 2: Recapture snapshots ===
+Capturing 001: https://google.com/search?q=cats
+
+Manual capture 001: https://google.com/search?q=cats
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 001 -> https://www.google.com/sorry/index?continue=https://www.google.com/search%3Fq%3Dcats%26sei%3DGeEWaqyHNdvqi-gPu--V0Q4&q=EgRbyXBiGJrC29AGIjCoZvKOl9WcHx-Y5p_g6WZI0y9ubkisYvKJcGMTCJbfR4hPzMp6riszd0gf7HKa6PwyAVJaAUM
+Capturing 004: https://youtube.com/results?search_query=cats
+Cookie click successful, waiting a bit more...
+
+Manual capture 004: https://youtube.com/results?search_query=cats
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 004 -> https://www.youtube.com/results?search_query=cats
+Capturing 007: https://www.youtube.com/feed/you
+
+Manual capture 007: https://www.youtube.com/feed/you
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 007 -> https://www.youtube.com/feed/you
+Capturing 013: https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026
+
+Manual capture 013: https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 013 -> https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026
+Capturing 015: https://yahoo.com
+Cookie click successful, waiting a bit more...
+
+Manual capture 015: https://yahoo.com
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 015 -> https://www.yahoo.com/?guccounter=1
+Capturing 019: https://yandex.ru/search/?text=cats
+
+Manual capture 019: https://yandex.ru/search/?text=cats
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 019 -> https://yandex.ru/search?text=cats&lr=10466
+Capturing 033: https://bing.com/search?q=cats
+
+Manual capture 033: https://bing.com/search?q=cats
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 033 -> https://www.bing.com/search?q=cats&toWww=1&redig=B8DA0B23DFBA4AECBD41C916E0BE4C0A&rdr=1&rdrig=E088A7CED28B43B18B4B3B17C1F0C43D
+Capturing 047: https://weather.com
+Warning: navigation timed out for https://weather.com; continuing with partially loaded page
+
+Manual capture 047: https://weather.com
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 047 -> https://weather.com/?Goto=Redirected
+Capturing 050: https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500
+
+Manual capture 050: https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 050 -> https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500
+Capturing 051: https://pinterest.com/search/pins/?q=cats
+
+Manual capture 051: https://pinterest.com/search/pins/?q=cats
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 051 -> https://www.pinterest.com/search/pins/?q=cats
+Capturing 052: https://www.pinterest.com/ideas
+Cookie click successful, waiting a bit more...
+
+Manual capture 052: https://www.pinterest.com/ideas
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 052 -> https://www.pinterest.com/ideas/
+Capturing 055: https://www.twitch.tv/directory/collection/just-chatting-irl-streams
+
+Manual capture 055: https://www.twitch.tv/directory/collection/just-chatting-irl-streams
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 055 -> https://www.twitch.tv/directory/collection/just-chatting-irl-streams
+Capturing 069: https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on
+
+Manual capture 069: https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 069 -> https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on
+Capturing 070: https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization
+
+Manual capture 070: https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization
+Interact with the browser if needed (CAPTCHA, consent); capturing in 45 seconds...
+OK recaptured snapshot 070 -> https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization
+
+=== Phase 3: Propagate HTML ===
+OK propagated HTML for our-2/001
+OK propagated HTML for our-2/002
+OK propagated HTML for our-2/003
+OK propagated HTML for our-2/004
+OK propagated HTML for our-2/005
+OK propagated HTML for our-2/006
+OK propagated HTML for our-2/007
+OK propagated HTML for our-2/008
+OK propagated HTML for our-2/009
+OK propagated HTML for our-2/010
+OK propagated HTML for our-2/011
+OK propagated HTML for our-2/012
+OK propagated HTML for our-2/013
+OK propagated HTML for our-2/014
+OK propagated HTML for our-2/015
+OK propagated HTML for our-2/016
+OK propagated HTML for our-2/017
+OK propagated HTML for our-2/018
+OK propagated HTML for our-2/019
+OK propagated HTML for our-2/020
+OK propagated HTML for our-2/021
+OK propagated HTML for our-2/022
+OK propagated HTML for our-2/023
+OK propagated HTML for our-2/024
+OK propagated HTML for our-2/025
+OK propagated HTML for our-2/026
+OK propagated HTML for our-2/027
+OK propagated HTML for our-2/028
+OK propagated HTML for our-2/029
+OK propagated HTML for our-2/030
+OK propagated HTML for our-2/031
+OK propagated HTML for our-2/032
+OK propagated HTML for our-2/033
+OK propagated HTML for our-2/034
+OK propagated HTML for our-2/035
+OK propagated HTML for our-2/036
+OK propagated HTML for our-2/037
+OK propagated HTML for our-2/038
+OK propagated HTML for our-2/039
+OK propagated HTML for our-2/040
+OK propagated HTML for our-2/041
+OK propagated HTML for our-2/042
+
+=== Phase 4: Replay agent mutations ===
+[our-2/001] 2-baseline: 0 edits OK, 1 failed
+[our-2/001] 3-engine-only: 2 rules applied
+[our-2/001] 4-map-only: 0 edits OK, 2 failed
+[our-2/001] 5-full: 3 rules applied
+[our-2/001] 6-full-sonnet: 2 rules applied
+[our-2/002] 2-baseline: 7 edits OK, 3 failed
+[our-2/002] 3-engine-only: 8 rules applied
+[our-2/002] 4-map-only: 2 edits OK, 2 failed
+[our-2/002] 5-full: 11 rules applied
+[our-2/002] 6-full-sonnet: 5 rules applied
+[our-2/003] 2-baseline: 0 edits OK, 1 failed
+[our-2/003] 3-engine-only: 2 rules applied
+[our-2/003] 4-map-only: 1 edits OK, 7 failed
+[our-2/003] 5-full: 5 rules applied
+[our-2/003] 6-full-sonnet: 8 rules applied
+[our-2/004] 2-baseline: 2 edits OK, 1 failed
+[our-2/004] 3-engine-only: 4 rules applied
+[our-2/004] 4-map-only: 4 edits OK, 1 failed
+[our-2/004] 5-full: 4 rules applied
+[our-2/004] 6-full-sonnet: 2 rules applied
+[our-2/005] 2-baseline: 1 edits OK, 3 failed
+[our-2/005] 3-engine-only: 1 rules applied
+[our-2/005] 4-map-only: 0 edits OK, 1 failed
+[our-2/005] 5-full: 1 rules applied
+[our-2/005] 6-full-sonnet: 1 rules applied
+[our-2/006] 2-baseline: 1 edits applied
+[our-2/006] 3-engine-only: 2 rules applied
+[our-2/006] 4-map-only: 1 edits OK, 1 failed
+[our-2/006] 5-full: 3 rules applied
+[our-2/006] 6-full-sonnet: 2 rules applied
+[our-2/007] 2-baseline: 1 edits OK, 1 failed
+[our-2/007] 3-engine-only: 3 rules applied
+[our-2/007] 4-map-only: 1 edits applied
+[our-2/007] rules apply failed in 5-full: set_update_rules failed (1): Unknown pseudo-class :has-text
+
+[our-2/007] 5-full: 0 rules applied (failed)
+[our-2/007] 6-full-sonnet: 5 rules applied
+[our-2/008] 2-baseline: 1 edits OK, 1 failed
+[our-2/008] 3-engine-only: 1 rules applied
+[our-2/008] 4-map-only: 2 edits applied
+[our-2/008] 5-full: 1 rules applied
+[our-2/008] 6-full-sonnet: 1 rules applied
+[our-2/009] 2-baseline: 2 edits applied
+[our-2/009] 3-engine-only: 5 rules applied
+[our-2/009] 4-map-only: 0 edits OK, 2 failed
+[our-2/009] 5-full: 7 rules applied
+[our-2/009] 6-full-sonnet: 4 rules applied
+[our-2/010] 2-baseline: 1 edits OK, 1 failed
+[our-2/010] 3-engine-only: 1 rules applied
+[our-2/010] 4-map-only: 0 edits OK, 2 failed
+[our-2/010] 5-full: 1 rules applied
+[our-2/010] 6-full-sonnet: 1 rules applied
+[our-2/011] 2-baseline: 0 edits OK, 1 failed
+[our-2/011] 3-engine-only: 1 rules applied
+[our-2/011] 4-map-only: 0 edits OK, 1 failed
+[our-2/011] 5-full: 1 rules applied
+[our-2/011] 6-full-sonnet: 1 rules applied
+[our-2/012] 2-baseline: 1 edits applied
+[our-2/012] 3-engine-only: 3 rules applied
+[our-2/012] 4-map-only: 1 edits OK, 2 failed
+[our-2/012] 5-full: 4 rules applied
+[our-2/012] 6-full-sonnet: 3 rules applied
+[our-2/013] 2-baseline: 1 edits applied
+[our-2/013] 3-engine-only: 1 rules applied
+[our-2/013] 4-map-only: 1 edits applied
+[our-2/013] 5-full: 1 rules applied
+[our-2/013] 6-full-sonnet: 1 rules applied
+[our-2/014] 2-baseline: 2 edits applied
+[our-2/014] 3-engine-only: 2 rules applied
+[our-2/014] 4-map-only: 1 edits applied
+[our-2/014] 5-full: 3 rules applied
+[our-2/014] 6-full-sonnet: 3 rules applied
+[our-2/015] 2-baseline: 0 edits OK, 4 failed
+[our-2/015] 3-engine-only: 2 rules applied
+[our-2/015] 4-map-only: 0 edits OK, 7 failed
+[our-2/015] 5-full: 2 rules applied
+[our-2/015] 6-full-sonnet: 4 rules applied
+[our-2/016] 2-baseline: 0 edits OK, 4 failed
+[our-2/016] 3-engine-only: 17 rules applied
+[our-2/016] 4-map-only: 0 edits OK, 5 failed
+[our-2/016] rules apply failed in 5-full: set_update_rules failed (1): Rule "Move image panels to top" failed on element: Cannot read properties of null (reading 'nodeType')
+
+[our-2/016] 5-full: 0 rules applied (failed)
+[our-2/016] 6-full-sonnet: 7 rules applied
+[our-2/017] 2-baseline: 0 edits OK, 1 failed
+[our-2/017] 3-engine-only: 3 rules applied
+[our-2/017] 4-map-only: 0 edits OK, 1 failed
+[our-2/017] 5-full: 20 rules applied
+[our-2/017] 6-full-sonnet: 5 rules applied
+[our-2/018] 2-baseline: 0 edits OK, 1 failed
+[our-2/018] 3-engine-only: 1 rules applied
+[our-2/018] 4-map-only: 1 edits applied
+[our-2/018] 5-full: 1 rules applied
+[our-2/018] 6-full-sonnet: 1 rules applied
+[our-2/019] 2-baseline: 1 edits applied
+[our-2/019] 3-engine-only: 6 rules applied
+[our-2/019] 4-map-only: 3 edits OK, 1 failed
+[our-2/019] 5-full: 9 rules applied
+[our-2/019] 6-full-sonnet: 9 rules applied
+[our-2/020] 2-baseline: 0 edits OK, 6 failed
+[our-2/020] 3-engine-only: 5 rules applied
+[our-2/020] 4-map-only: 1 edits applied
+[our-2/020] 5-full: 9 rules applied
+[our-2/020] 6-full-sonnet: 7 rules applied
+[our-2/021] 2-baseline: 7 edits OK, 7 failed
+[our-2/021] 3-engine-only: 1 rules applied
+[our-2/021] 4-map-only: 0 edits OK, 2 failed
+[our-2/021] 5-full: 1 rules applied
+[our-2/021] 6-full-sonnet: 1 rules applied
+[our-2/022] 2-baseline: 1 edits applied
+[our-2/022] 3-engine-only: 1 rules applied
+[our-2/022] 4-map-only: 1 edits applied
+[our-2/022] 5-full: 1 rules applied
+[our-2/022] 6-full-sonnet: 2 rules applied
+[our-2/023] 2-baseline: 0 edits OK, 1 failed
+[our-2/023] 3-engine-only: 2 rules applied
+[our-2/023] 4-map-only: 0 edits OK, 2 failed
+[our-2/023] 5-full: 2 rules applied
+[our-2/023] 6-full-sonnet: 3 rules applied
+[our-2/024] 2-baseline: 0 edits OK, 2 failed
+[our-2/024] 3-engine-only: 2 rules applied
+[our-2/024] 4-map-only: 0 edits OK, 1 failed
+[our-2/024] 5-full: 2 rules applied
+[our-2/024] 6-full-sonnet: 2 rules applied
+[our-2/025] 2-baseline: 0 edits OK, 1 failed
+[our-2/025] 3-engine-only: 2 rules applied
+[our-2/025] 4-map-only: 1 edits applied
+[our-2/025] 5-full: 2 rules applied
+[our-2/025] 6-full-sonnet: 2 rules applied
+[our-2/026] 2-baseline: 1 edits OK, 1 failed
+[our-2/026] 3-engine-only: 2 rules applied
+[our-2/026] 4-map-only: 3 edits applied
+[our-2/026] 5-full: 2 rules applied
+[our-2/026] 6-full-sonnet: 1 rules applied
+[our-2/027] 2-baseline: 0 edits OK, 10 failed
+[our-2/027] 3-engine-only: 2 rules applied
+[our-2/027] 4-map-only: 1 edits applied
+[our-2/027] 5-full: 5 rules applied
+[our-2/027] 6-full-sonnet: 1 rules applied
+[our-2/028] 2-baseline: 1 edits applied
+[our-2/028] 3-engine-only: 1 rules applied
+[our-2/028] 4-map-only: 1 edits applied
+[our-2/028] 5-full: 1 rules applied
+[our-2/028] 6-full-sonnet: 1 rules applied
+[our-2/029] 2-baseline: 2 edits OK, 1 failed
+[our-2/029] 3-engine-only: 5 rules applied
+[our-2/029] 4-map-only: 4 edits applied
+[our-2/029] 5-full: 5 rules applied
+[our-2/029] 6-full-sonnet: 3 rules applied
+[our-2/030] 2-baseline: 0 edits OK, 1 failed
+[our-2/030] 3-engine-only: 1 rules applied
+[our-2/030] 4-map-only: 0 edits OK, 2 failed
+[our-2/030] 5-full: 1 rules applied
+[our-2/030] 6-full-sonnet: 3 rules applied
+[our-2/031] 2-baseline: 0 edits OK, 1 failed
+[our-2/031] 3-engine-only: 1 rules applied
+[our-2/031] 4-map-only: 0 edits OK, 2 failed
+[our-2/031] 5-full: 1 rules applied
+[our-2/031] 6-full-sonnet: 1 rules applied
+[our-2/032] 2-baseline: 0 edits OK, 1 failed
+[our-2/032] 3-engine-only: 7 rules applied
+[our-2/032] 4-map-only: 0 edits OK, 10 failed
+[our-2/032] 5-full: 15 rules applied
+[our-2/032] 6-full-sonnet: 10 rules applied
+[our-2/033] 2-baseline: 0 edits OK, 7 failed
+[our-2/033] 3-engine-only: 1 rules applied
+[our-2/033] 4-map-only: 1 edits applied
+[our-2/033] 5-full: 1 rules applied
+[our-2/033] 6-full-sonnet: 1 rules applied
+[our-2/034] 2-baseline: 2 edits OK, 1 failed
+[our-2/034] 3-engine-only: 4 rules applied
+[our-2/034] 4-map-only: 0 edits OK, 1 failed
+[our-2/034] 5-full: 5 rules applied
+[our-2/034] 6-full-sonnet: 5 rules applied
+[our-2/035] 2-baseline: 0 edits OK, 1 failed
+[our-2/035] 3-engine-only: 1 rules applied
+[our-2/035] 4-map-only: 0 edits OK, 1 failed
+[our-2/035] 5-full: 1 rules applied
+[our-2/035] 6-full-sonnet: 2 rules applied
+[our-2/036] 2-baseline: 1 edits OK, 29 failed
+[our-2/036] 3-engine-only: 1 rules applied
+[our-2/036] 4-map-only: 0 edits OK, 1 failed
+[our-2/036] 5-full: 1 rules applied
+[our-2/036] 6-full-sonnet: 1 rules applied
+[our-2/037] 2-baseline: 7 edits OK, 2 failed
+[our-2/037] 3-engine-only: 2 rules applied
+[our-2/037] 4-map-only: 0 edits OK, 1 failed
+[our-2/037] 5-full: 2 rules applied
+[our-2/037] 6-full-sonnet: 2 rules applied
+[our-2/038] 2-baseline: 1 edits applied
+[our-2/038] 3-engine-only: 1 rules applied
+[our-2/038] 4-map-only: 0 edits OK, 1 failed
+[our-2/038] 5-full: 1 rules applied
+[our-2/038] 6-full-sonnet: 5 rules applied
+[our-2/039] 2-baseline: 0 edits OK, 1 failed
+[our-2/039] 3-engine-only: 11 rules applied
+[our-2/039] 4-map-only: 0 edits OK, 3 failed
+[our-2/039] 5-full: 10 rules applied
+[our-2/039] 6-full-sonnet: 6 rules applied
+[our-2/040] 2-baseline: 1 edits applied
+[our-2/040] 3-engine-only: 1 rules applied
+[our-2/040] 4-map-only: 1 edits applied
+[our-2/040] 5-full: 1 rules applied
+[our-2/040] 6-full-sonnet: 1 rules applied
+[our-2/041] 2-baseline: 1 edits applied
+[our-2/041] 3-engine-only: 1 rules applied
+[our-2/041] 4-map-only: 1 edits applied
+[our-2/041] 5-full: 1 rules applied
+[our-2/041] 6-full-sonnet: 1 rules applied
+[our-2/042] 2-baseline: 1 edits applied
+[our-2/042] 3-engine-only: 1 rules applied
+[our-2/042] 4-map-only: 1 edits applied
+[our-2/042] 5-full: 1 rules applied
+[our-2/042] 6-full-sonnet: 3 rules applied
+
+=== Phase 5: Screenshots ===
+[our-2/001] screenshot 1-original
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: content selector timeout for screenshot.png; continuing
+[our-2/001] screenshot 2-baseline
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: content selector timeout for screenshot.png; continuing
+[our-2/001] screenshot 3-engine-only
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: content selector timeout for screenshot.png; continuing
+[our-2/001] screenshot 4-map-only
+Warning: networkidle timeout for screenshot.png; falling back to load

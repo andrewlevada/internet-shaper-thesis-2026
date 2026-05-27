@@ -1,0 +1,34 @@
+Renew evaluation samples
+------------------------------------------------
+timestamp (UTC): 2026-05-27T12:12:05.532427+00:00
+target: our-2/005
+samples: 1
+unique snapshots: 1 (004)
+skip recapture: False
+dry run: False
+auto capture: True
+
+=== Phase 2: Recapture snapshots ===
+OK recaptured snapshot 004 -> https://www.youtube.com/results?search_query=cats
+
+=== Phase 3: Propagate HTML ===
+OK propagated HTML for our-2/005
+
+=== Phase 4: Replay agent mutations ===
+[our-2/005] 2-baseline: 1 edits OK, 3 failed
+[our-2/005] 3-engine-only: 1 rules applied
+[our-2/005] 4-map-only: 0 edits OK, 1 failed
+[our-2/005] 5-full: 1 rules applied
+[our-2/005] 6-full-sonnet: 1 rules applied
+
+=== Phase 5: Screenshots ===
+[our-2/005] screenshot 1-original
+[our-2/005] screenshot 2-baseline
+[our-2/005] screenshot 3-engine-only
+[our-2/005] screenshot 4-map-only
+[our-2/005] screenshot 5-full
+[our-2/005] screenshot 6-full-sonnet
+
+edit failure variants: 2
+rules failure variants: 0
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-27T12-12-05.532427+00-00-renew-sample-our-2-005.log

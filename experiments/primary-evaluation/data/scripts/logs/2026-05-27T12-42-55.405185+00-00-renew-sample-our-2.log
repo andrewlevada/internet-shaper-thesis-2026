@@ -1,0 +1,357 @@
+Renew evaluation samples
+------------------------------------------------
+timestamp (UTC): 2026-05-27T12:42:55.405185+00:00
+target: our-2
+samples: 42
+unique snapshots: 14 (001, 004, 007, 013, 015, 019, 033, 047, 050, 051, 052, 055, 069, 070)
+skip recapture: True
+skip replay: True
+dry run: False
+auto capture: False
+
+=== Phase 3: Propagate HTML ===
+OK propagated HTML for our-2/001
+OK propagated HTML for our-2/002
+OK propagated HTML for our-2/003
+OK propagated HTML for our-2/004
+OK propagated HTML for our-2/005
+OK propagated HTML for our-2/006
+OK propagated HTML for our-2/007
+OK propagated HTML for our-2/008
+OK propagated HTML for our-2/009
+OK propagated HTML for our-2/010
+OK propagated HTML for our-2/011
+OK propagated HTML for our-2/012
+OK propagated HTML for our-2/013
+OK propagated HTML for our-2/014
+OK propagated HTML for our-2/015
+OK propagated HTML for our-2/016
+OK propagated HTML for our-2/017
+OK propagated HTML for our-2/018
+OK propagated HTML for our-2/019
+OK propagated HTML for our-2/020
+OK propagated HTML for our-2/021
+OK propagated HTML for our-2/022
+OK propagated HTML for our-2/023
+OK propagated HTML for our-2/024
+OK propagated HTML for our-2/025
+OK propagated HTML for our-2/026
+OK propagated HTML for our-2/027
+OK propagated HTML for our-2/028
+OK propagated HTML for our-2/029
+OK propagated HTML for our-2/030
+OK propagated HTML for our-2/031
+OK propagated HTML for our-2/032
+OK propagated HTML for our-2/033
+OK propagated HTML for our-2/034
+OK propagated HTML for our-2/035
+OK propagated HTML for our-2/036
+OK propagated HTML for our-2/037
+OK propagated HTML for our-2/038
+OK propagated HTML for our-2/039
+OK propagated HTML for our-2/040
+OK propagated HTML for our-2/041
+OK propagated HTML for our-2/042
+
+=== Phase 4: Replay agent mutations ===
+(skipped — agent variants use unmodified fresh HTML)
+OK finalized agent variants (no replay) for our-2/001
+OK finalized agent variants (no replay) for our-2/002
+OK finalized agent variants (no replay) for our-2/003
+OK finalized agent variants (no replay) for our-2/004
+OK finalized agent variants (no replay) for our-2/005
+OK finalized agent variants (no replay) for our-2/006
+OK finalized agent variants (no replay) for our-2/007
+OK finalized agent variants (no replay) for our-2/008
+OK finalized agent variants (no replay) for our-2/009
+OK finalized agent variants (no replay) for our-2/010
+OK finalized agent variants (no replay) for our-2/011
+OK finalized agent variants (no replay) for our-2/012
+OK finalized agent variants (no replay) for our-2/013
+OK finalized agent variants (no replay) for our-2/014
+OK finalized agent variants (no replay) for our-2/015
+OK finalized agent variants (no replay) for our-2/016
+OK finalized agent variants (no replay) for our-2/017
+OK finalized agent variants (no replay) for our-2/018
+OK finalized agent variants (no replay) for our-2/019
+OK finalized agent variants (no replay) for our-2/020
+OK finalized agent variants (no replay) for our-2/021
+OK finalized agent variants (no replay) for our-2/022
+OK finalized agent variants (no replay) for our-2/023
+OK finalized agent variants (no replay) for our-2/024
+OK finalized agent variants (no replay) for our-2/025
+OK finalized agent variants (no replay) for our-2/026
+OK finalized agent variants (no replay) for our-2/027
+OK finalized agent variants (no replay) for our-2/028
+OK finalized agent variants (no replay) for our-2/029
+OK finalized agent variants (no replay) for our-2/030
+OK finalized agent variants (no replay) for our-2/031
+OK finalized agent variants (no replay) for our-2/032
+OK finalized agent variants (no replay) for our-2/033
+OK finalized agent variants (no replay) for our-2/034
+OK finalized agent variants (no replay) for our-2/035
+OK finalized agent variants (no replay) for our-2/036
+OK finalized agent variants (no replay) for our-2/037
+OK finalized agent variants (no replay) for our-2/038
+OK finalized agent variants (no replay) for our-2/039
+OK finalized agent variants (no replay) for our-2/040
+OK finalized agent variants (no replay) for our-2/041
+OK finalized agent variants (no replay) for our-2/042
+
+=== Phase 5: Screenshots ===
+[our-2/001] screenshot 1-original
+[our-2/001] screenshot 2-baseline
+[our-2/001] screenshot 3-engine-only
+[our-2/001] screenshot 4-map-only
+[our-2/001] screenshot 5-full
+[our-2/001] screenshot 6-full-sonnet
+[our-2/002] screenshot 1-original
+[our-2/002] screenshot 2-baseline
+[our-2/002] screenshot 3-engine-only
+[our-2/002] screenshot 4-map-only
+[our-2/002] screenshot 5-full
+[our-2/002] screenshot 6-full-sonnet
+[our-2/003] screenshot 1-original
+[our-2/003] screenshot 2-baseline
+[our-2/003] screenshot 3-engine-only
+[our-2/003] screenshot 4-map-only
+[our-2/003] screenshot 5-full
+[our-2/003] screenshot 6-full-sonnet
+[our-2/004] screenshot 1-original
+[our-2/004] screenshot 2-baseline
+[our-2/004] screenshot 3-engine-only
+[our-2/004] screenshot 4-map-only
+[our-2/004] screenshot 5-full
+[our-2/004] screenshot 6-full-sonnet
+[our-2/005] screenshot 1-original
+[our-2/005] screenshot 2-baseline
+[our-2/005] screenshot 3-engine-only
+[our-2/005] screenshot 4-map-only
+[our-2/005] screenshot 5-full
+[our-2/005] screenshot 6-full-sonnet
+[our-2/006] screenshot 1-original
+[our-2/006] screenshot 2-baseline
+[our-2/006] screenshot 3-engine-only
+[our-2/006] screenshot 4-map-only
+[our-2/006] screenshot 5-full
+[our-2/006] screenshot 6-full-sonnet
+[our-2/007] screenshot 1-original
+[our-2/007] screenshot 2-baseline
+[our-2/007] screenshot 3-engine-only
+[our-2/007] screenshot 4-map-only
+[our-2/007] screenshot 5-full
+[our-2/007] screenshot 6-full-sonnet
+[our-2/008] screenshot 1-original
+[our-2/008] screenshot 2-baseline
+[our-2/008] screenshot 3-engine-only
+[our-2/008] screenshot 4-map-only
+[our-2/008] screenshot 5-full
+[our-2/008] screenshot 6-full-sonnet
+[our-2/009] screenshot 1-original
+[our-2/009] screenshot 2-baseline
+[our-2/009] screenshot 3-engine-only
+[our-2/009] screenshot 4-map-only
+[our-2/009] screenshot 5-full
+[our-2/009] screenshot 6-full-sonnet
+[our-2/010] screenshot 1-original
+[our-2/010] screenshot 2-baseline
+[our-2/010] screenshot 3-engine-only
+[our-2/010] screenshot 4-map-only
+[our-2/010] screenshot 5-full
+[our-2/010] screenshot 6-full-sonnet
+[our-2/011] screenshot 1-original
+[our-2/011] screenshot 2-baseline
+[our-2/011] screenshot 3-engine-only
+[our-2/011] screenshot 4-map-only
+[our-2/011] screenshot 5-full
+[our-2/011] screenshot 6-full-sonnet
+[our-2/012] screenshot 1-original
+[our-2/012] screenshot 2-baseline
+[our-2/012] screenshot 3-engine-only
+[our-2/012] screenshot 4-map-only
+[our-2/012] screenshot 5-full
+[our-2/012] screenshot 6-full-sonnet
+[our-2/013] screenshot 1-original
+[our-2/013] screenshot 2-baseline
+[our-2/013] screenshot 3-engine-only
+[our-2/013] screenshot 4-map-only
+[our-2/013] screenshot 5-full
+[our-2/013] screenshot 6-full-sonnet
+[our-2/014] screenshot 1-original
+[our-2/014] screenshot 2-baseline
+[our-2/014] screenshot 3-engine-only
+[our-2/014] screenshot 4-map-only
+[our-2/014] screenshot 5-full
+[our-2/014] screenshot 6-full-sonnet
+[our-2/015] screenshot 1-original
+[our-2/015] screenshot 2-baseline
+[our-2/015] screenshot 3-engine-only
+[our-2/015] screenshot 4-map-only
+[our-2/015] screenshot 5-full
+[our-2/015] screenshot 6-full-sonnet
+[our-2/016] screenshot 1-original
+[our-2/016] screenshot 2-baseline
+[our-2/016] screenshot 3-engine-only
+[our-2/016] screenshot 4-map-only
+[our-2/016] screenshot 5-full
+[our-2/016] screenshot 6-full-sonnet
+[our-2/017] screenshot 1-original
+[our-2/017] screenshot 2-baseline
+[our-2/017] screenshot 3-engine-only
+[our-2/017] screenshot 4-map-only
+[our-2/017] screenshot 5-full
+[our-2/017] screenshot 6-full-sonnet
+[our-2/018] screenshot 1-original
+[our-2/018] screenshot 2-baseline
+[our-2/018] screenshot 3-engine-only
+[our-2/018] screenshot 4-map-only
+[our-2/018] screenshot 5-full
+[our-2/018] screenshot 6-full-sonnet
+[our-2/019] screenshot 1-original
+[our-2/019] screenshot 2-baseline
+[our-2/019] screenshot 3-engine-only
+[our-2/019] screenshot 4-map-only
+[our-2/019] screenshot 5-full
+[our-2/019] screenshot 6-full-sonnet
+[our-2/020] screenshot 1-original
+[our-2/020] screenshot 2-baseline
+[our-2/020] screenshot 3-engine-only
+[our-2/020] screenshot 4-map-only
+[our-2/020] screenshot 5-full
+[our-2/020] screenshot 6-full-sonnet
+[our-2/021] screenshot 1-original
+[our-2/021] screenshot 2-baseline
+[our-2/021] screenshot 3-engine-only
+[our-2/021] screenshot 4-map-only
+[our-2/021] screenshot 5-full
+[our-2/021] screenshot 6-full-sonnet
+[our-2/022] screenshot 1-original
+[our-2/022] screenshot 2-baseline
+[our-2/022] screenshot 3-engine-only
+[our-2/022] screenshot 4-map-only
+[our-2/022] screenshot 5-full
+[our-2/022] screenshot 6-full-sonnet
+[our-2/023] screenshot 1-original
+[our-2/023] screenshot 2-baseline
+[our-2/023] screenshot 3-engine-only
+[our-2/023] screenshot 4-map-only
+[our-2/023] screenshot 5-full
+[our-2/023] screenshot 6-full-sonnet
+[our-2/024] screenshot 1-original
+[our-2/024] screenshot 2-baseline
+[our-2/024] screenshot 3-engine-only
+[our-2/024] screenshot 4-map-only
+[our-2/024] screenshot 5-full
+[our-2/024] screenshot 6-full-sonnet
+[our-2/025] screenshot 1-original
+[our-2/025] screenshot 2-baseline
+[our-2/025] screenshot 3-engine-only
+[our-2/025] screenshot 4-map-only
+[our-2/025] screenshot 5-full
+[our-2/025] screenshot 6-full-sonnet
+[our-2/026] screenshot 1-original
+[our-2/026] screenshot 2-baseline
+[our-2/026] screenshot 3-engine-only
+[our-2/026] screenshot 4-map-only
+[our-2/026] screenshot 5-full
+[our-2/026] screenshot 6-full-sonnet
+[our-2/027] screenshot 1-original
+[our-2/027] screenshot 2-baseline
+[our-2/027] screenshot 3-engine-only
+[our-2/027] screenshot 4-map-only
+[our-2/027] screenshot 5-full
+[our-2/027] screenshot 6-full-sonnet
+[our-2/028] screenshot 1-original
+[our-2/028] screenshot 2-baseline
+[our-2/028] screenshot 3-engine-only
+[our-2/028] screenshot 4-map-only
+[our-2/028] screenshot 5-full
+[our-2/028] screenshot 6-full-sonnet
+[our-2/029] screenshot 1-original
+[our-2/029] screenshot 2-baseline
+[our-2/029] screenshot 3-engine-only
+[our-2/029] screenshot 4-map-only
+[our-2/029] screenshot 5-full
+[our-2/029] screenshot 6-full-sonnet
+[our-2/030] screenshot 1-original
+[our-2/030] screenshot 2-baseline
+[our-2/030] screenshot 3-engine-only
+[our-2/030] screenshot 4-map-only
+[our-2/030] screenshot 5-full
+[our-2/030] screenshot 6-full-sonnet
+[our-2/031] screenshot 1-original
+[our-2/031] screenshot 2-baseline
+[our-2/031] screenshot 3-engine-only
+[our-2/031] screenshot 4-map-only
+[our-2/031] screenshot 5-full
+[our-2/031] screenshot 6-full-sonnet
+[our-2/032] screenshot 1-original
+[our-2/032] screenshot 2-baseline
+[our-2/032] screenshot 3-engine-only
+[our-2/032] screenshot 4-map-only
+[our-2/032] screenshot 5-full
+[our-2/032] screenshot 6-full-sonnet
+[our-2/033] screenshot 1-original
+[our-2/033] screenshot 2-baseline
+[our-2/033] screenshot 3-engine-only
+[our-2/033] screenshot 4-map-only
+[our-2/033] screenshot 5-full
+[our-2/033] screenshot 6-full-sonnet
+[our-2/034] screenshot 1-original
+[our-2/034] screenshot 2-baseline
+[our-2/034] screenshot 3-engine-only
+[our-2/034] screenshot 4-map-only
+[our-2/034] screenshot 5-full
+[our-2/034] screenshot 6-full-sonnet
+[our-2/035] screenshot 1-original
+[our-2/035] screenshot 2-baseline
+[our-2/035] screenshot 3-engine-only
+[our-2/035] screenshot 4-map-only
+[our-2/035] screenshot 5-full
+[our-2/035] screenshot 6-full-sonnet
+[our-2/036] screenshot 1-original
+[our-2/036] screenshot 2-baseline
+[our-2/036] screenshot 3-engine-only
+[our-2/036] screenshot 4-map-only
+[our-2/036] screenshot 5-full
+[our-2/036] screenshot 6-full-sonnet
+[our-2/037] screenshot 1-original
+[our-2/037] screenshot 2-baseline
+[our-2/037] screenshot 3-engine-only
+[our-2/037] screenshot 4-map-only
+[our-2/037] screenshot 5-full
+[our-2/037] screenshot 6-full-sonnet
+[our-2/038] screenshot 1-original
+[our-2/038] screenshot 2-baseline
+[our-2/038] screenshot 3-engine-only
+[our-2/038] screenshot 4-map-only
+[our-2/038] screenshot 5-full
+[our-2/038] screenshot 6-full-sonnet
+[our-2/039] screenshot 1-original
+[our-2/039] screenshot 2-baseline
+[our-2/039] screenshot 3-engine-only
+[our-2/039] screenshot 4-map-only
+[our-2/039] screenshot 5-full
+[our-2/039] screenshot 6-full-sonnet
+[our-2/040] screenshot 1-original
+[our-2/040] screenshot 2-baseline
+[our-2/040] screenshot 3-engine-only
+[our-2/040] screenshot 4-map-only
+[our-2/040] screenshot 5-full
+[our-2/040] screenshot 6-full-sonnet
+[our-2/041] screenshot 1-original
+[our-2/041] screenshot 2-baseline
+[our-2/041] screenshot 3-engine-only
+[our-2/041] screenshot 4-map-only
+[our-2/041] screenshot 5-full
+[our-2/041] screenshot 6-full-sonnet
+[our-2/042] screenshot 1-original
+[our-2/042] screenshot 2-baseline
+[our-2/042] screenshot 3-engine-only
+[our-2/042] screenshot 4-map-only
+[our-2/042] screenshot 5-full
+[our-2/042] screenshot 6-full-sonnet
+
+edit failure variants: 0
+rules failure variants: 0
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-05-27T12-42-55.405185+00-00-renew-sample-our-2.log
