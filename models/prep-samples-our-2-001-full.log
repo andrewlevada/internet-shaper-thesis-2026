@@ -1,0 +1,111 @@
+[our-2/001] running baseline → 2-baseline
+[baseline round 0] API request → unsloth/Qwen3.6-27B (2 msgs, 671 chars, cache=none)
+[baseline round 0] API response ← 1.1s, finish=tool_calls, tools=[get_dom], tokens=704/14
+[baseline round 0] 1 tool call(s)
+[baseline round 1] API request → unsloth/Qwen3.6-27B (4 msgs, 315,428 chars, cache=none)
+[baseline round 1] API response ← 351.0s, finish=tool_calls, tools=[edit], tokens=162701/8706
+[baseline round 1] 1 tool call(s)
+[baseline round 2] API request → unsloth/Qwen3.6-27B (6 msgs, 338,733 chars, cache=none)
+[baseline round 2] API response ← 193.2s, finish=tool_calls, tools=[edit], tokens=171431/7345
+[baseline round 2] 1 tool call(s)
+[baseline round 3] API request → unsloth/Qwen3.6-27B (8 msgs, 357,773 chars, cache=none)
+[baseline round 3] API response ← 15.6s, finish=stop, tools=[none], tokens=178800/229
+[our-2/001] running engine-only → 3-engine-only
+[engine-only round 0] API request → unsloth/Qwen3.6-27B (2 msgs, 1,479 chars, cache=none)
+[engine-only round 0] API response ← 8.2s, finish=tool_calls, tools=[get_dom], tokens=1040/36
+[engine-only round 0] 1 tool call(s)
+[engine-only round 1] API request → unsloth/Qwen3.6-27B (4 msgs, 181,294 chars, cache=none)
+[engine-only round 1] API response ← 94.2s, finish=tool_calls, tools=[set_update_rule], tokens=92224/1397
+[engine-only round 1] 1 tool call(s)
+[engine-only round 2] API request → unsloth/Qwen3.6-27B (6 msgs, 185,530 chars, cache=none)
+[engine-only round 2] API response ← 27.2s, finish=tool_calls, tools=[set_update_rule], tokens=93661/1183
+[engine-only round 2] 1 tool call(s)
+[engine-only round 3] API request → unsloth/Qwen3.6-27B (8 msgs, 189,130 chars, cache=none)
+[engine-only round 3] API response ← 5.8s, finish=stop, tools=[none], tokens=94885/203
+[our-2/001] running map-only → 4-map-only
+[map-only round 0] API request → unsloth/Qwen3.6-27B (2 msgs, 1,076 chars, cache=none)
+[map-only round 0] API response ← 5.4s, finish=tool_calls, tools=[get_map_of_dom], tokens=1052/35
+[map-only round 0] 1 tool call(s)
+[map-only round 1] API request → unsloth/Qwen3.6-27B (4 msgs, 72,541 chars, cache=none)
+[map-only round 1] API response ← 18.8s, finish=tool_calls, tools=[show_in_dom, show_in_dom], tokens=23867/321
+[map-only round 1] 2 tool call(s)
+[map-only round 2] API request → unsloth/Qwen3.6-27B (7 msgs, 75,835 chars, cache=none)
+[map-only round 2] API response ← 4.7s, finish=tool_calls, tools=[show_in_dom, show_in_dom], tokens=24978/200
+[map-only round 2] 2 tool call(s)
+[map-only round 3] API request → unsloth/Qwen3.6-27B (10 msgs, 93,034 chars, cache=none)
+[map-only round 3] API response ← 92.0s, finish=tool_calls, tools=[edit], tokens=30763/4613
+[map-only round 3] 1 tool call(s)
+[map-only round 4] API request → unsloth/Qwen3.6-27B (12 msgs, 108,426 chars, cache=none)
+[map-only round 4] API response ← 6.6s, finish=tool_calls, tools=[show_in_dom, show_in_dom], tokens=35451/179
+[map-only round 4] 2 tool call(s)
+[map-only round 5] API request → unsloth/Qwen3.6-27B (15 msgs, 141,620 chars, cache=none)
+[map-only round 5] API response ← 177.6s, finish=tool_calls, tools=[edit], tokens=49272/8547
+[map-only round 5] 1 tool call(s)
+[map-only round 6] API request → unsloth/Qwen3.6-27B (17 msgs, 164,834 chars, cache=none)
+[map-only round 6] API response ← 162.6s, finish=tool_calls, tools=[edit], tokens=57843/7833
+[map-only round 6] 1 tool call(s)
+[map-only round 7] API request → unsloth/Qwen3.6-27B (19 msgs, 186,122 chars, cache=none)
+[map-only round 7] API response ← 11.7s, finish=stop, tools=[none], tokens=65700/277
+[our-2/001] running full → 5-full
+[full round 0] API request → unsloth/Qwen3.6-27B (2 msgs, 1,593 chars, cache=none)
+[full round 0] API response ← 5.7s, finish=tool_calls, tools=[get_map_of_dom], tokens=1317/16
+[full round 0] 1 tool call(s)
+[full round 1] API request → unsloth/Qwen3.6-27B (4 msgs, 54,027 chars, cache=none)
+[full round 1] API response ← 11.0s, finish=tool_calls, tools=[show_in_dom, show_in_dom], tokens=18192/92
+[full round 1] 2 tool call(s)
+[full round 2] API request → unsloth/Qwen3.6-27B (7 msgs, 55,426 chars, cache=none)
+[full round 2] API response ← 20.7s, finish=tool_calls, tools=[set_update_rule], tokens=18615/1126
+[full round 2] 1 tool call(s)
+[full round 3] API request → unsloth/Qwen3.6-27B (9 msgs, 59,469 chars, cache=none)
+[full round 3] API response ← 20.1s, finish=tool_calls, tools=[set_update_rule], tokens=19781/1064
+[full round 3] 1 tool call(s)
+[full round 4] API request → unsloth/Qwen3.6-27B (11 msgs, 63,249 chars, cache=none)
+[full round 4] API response ← 4.8s, finish=stop, tools=[none], tokens=20887/219
+[our-2/001] running full-sonnet → 6-full-sonnet
+[full-sonnet round 0] API request → claude-sonnet-4-6 (1 msgs, 4,902 chars)
+[full-sonnet round 0] API error after 0.1s: PermissionDeniedError: Error code: 403 - {'error': {'type': 'forbidden', 'message': 'Request not allowed'}}
+Traceback (most recent call last):
+  File "/home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/pipeline/prep-samples.py", line 331, in <module>
+    main()
+  File "/home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/pipeline/prep-samples.py", line 318, in main
+    process_sample(
+  File "/home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/pipeline/prep-samples.py", line 297, in process_sample
+    run_agent_pipeline(
+  File "/home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/pipeline/prep-samples.py", line 215, in run_agent_pipeline
+    run_result = run_agent(
+                 ^^^^^^^^^^
+  File "/home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/pipeline/agent.py", line 823, in run_agent
+    return run_agent_anthropic(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/pipeline/agent_anthropic.py", line 152, in run_agent_anthropic
+    response = client.messages.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/internet-shaper-thesis-2026/.venv/lib/python3.12/site-packages/anthropic/_utils/_utils.py", line 294, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/internet-shaper-thesis-2026/.venv/lib/python3.12/site-packages/anthropic/resources/messages/messages.py", line 1003, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/home/ubuntu/internet-shaper-thesis-2026/.venv/lib/python3.12/site-packages/anthropic/_base_client.py", line 1374, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/internet-shaper-thesis-2026/.venv/lib/python3.12/site-packages/anthropic/_base_client.py", line 1147, in request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.PermissionDeniedError: Error code: 403 - {'error': {'type': 'forbidden', 'message': 'Request not allowed'}}
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: load timeout for screenshot.png; capturing screenshot anyway
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: load timeout for screenshot.png; capturing screenshot anyway
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: load timeout for screenshot.png; capturing screenshot anyway
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: load timeout for screenshot.png; capturing screenshot anyway
+Warning: networkidle timeout for screenshot.png; falling back to load
+Warning: load timeout for screenshot.png; capturing screenshot anyway
+[our-2/001] screenshot 1-original
+[our-2/001] screenshot 2-baseline
+[our-2/001] screenshot 3-engine-only
+[our-2/001] screenshot 4-map-only
+[our-2/001] screenshot 5-full
+[our-2/001] skip screenshot for 6-full-sonnet (no index.html)
+Done.

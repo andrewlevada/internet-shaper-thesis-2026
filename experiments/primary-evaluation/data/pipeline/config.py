@@ -18,8 +18,14 @@ AgentProvider = Literal["vercel", "openrouter", "anthropic", "local"]
 ExploreTool = Literal["get_dom", "get_map_of_dom"]
 ActionTool = Literal["edit", "set_update_rule"]
 
-# gateway for testing, local for actual eval run
-LOCAL_MODEL_ID = "Qwen/Qwen3.6-27B"
+# Local eval: Unsloth Qwen3.6-27B GGUF via llama-server (see scripts/start-local-llama.sh)
+LOCAL_MODEL_ID = "unsloth/Qwen3.6-27B"
+LOCAL_LLAMA_MODEL_ALIAS = LOCAL_MODEL_ID
+LOCAL_LLAMA_SERVER_URL = "http://127.0.0.1:8001/v1"
+LOCAL_LLAMA_CTX_SIZE = 262_144
+LOCAL_LLAMA_REQUEST_TIMEOUT_S = 1800.0
+LOCAL_LLAMA_GGUF_REPO = "unsloth/Qwen3.6-27B-GGUF"
+LOCAL_LLAMA_GGUF_QUANT = "UD-Q4_K_XL"
 # qwen3.6-27b is not on Alibaba's context-cache model list; use qwen3.6-plus when
 # you need prompt caching via the gateway (explicit cache, verified by Cline/OpenCode).
 GATEWAY_MODEL_ID = "alibaba/qwen3.6-27b"
@@ -60,7 +66,7 @@ def gateway_uses_explicit_cache(model_id: str) -> bool:
 QWEN_MODEL_CONTEXT = 262144
 
 MAX_TOOL_ROUNDS = 32
-MAX_NEW_TOKENS = 2**12
+MAX_NEW_TOKENS = 2**15  # 32768 — Unsloth recommended adequate output length for Qwen3.6
 MAX_TOOL_OUTPUT_CHARS = int(QWEN_MODEL_CONTEXT * 0.5 * 2.4)  # half of model context size
 
 # Qwen3.6 thinking mode for precise coding / WebDev (see model card)
@@ -78,6 +84,17 @@ GATEWAY_CHAT_COMPLETION_KWARGS: dict[str, object] = {
 # cache_control marker on the last message each turn (not on tools[]).
 # https://openrouter.ai/docs/guides/best-practices/prompt-caching
 # https://www.alibabacloud.com/help/en/model-studio/explicit-cache-best-practice
+# Unsloth Qwen3.6 instruct (non-thinking) — tool-calling agent runs
+LOCAL_LLAMA_CHAT_COMPLETION_KWARGS: dict[str, object] = {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": MAX_NEW_TOKENS,
+    "extra_body": {
+        "top_k": 20,
+        "chat_template_kwargs": {"enable_thinking": False},
+    },
+}
+
 OPENROUTER_CHAT_COMPLETION_KWARGS: dict[str, object] = {
     "temperature": 0.6,
     "top_p": 0.95,
