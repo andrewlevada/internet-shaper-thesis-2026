@@ -1,33 +1,34 @@
 {
-	"request-prompt": "Move the 'Shorts' grid shelves to the very top of the search results page, above the standard video results, so I can immediately access quick-form clips.",
-	"goal": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
+	"request-prompt": "De-emphasize the ecosystem and brand-specific marketing banners and bring the raw hardware specs and direct price breakdown higher up on the page.",
+	"goal": "I am brand-agnostic and prefer to evaluate each laptop solely on its standalone specs, price, and performance, regardless of cross-device ecosystem features.",
 	"jobs": [
-		"I want to watch long-form funny cat compilations to entertain myself.",
-		"I want to watch quick, bite-sized cat clips (Shorts) for rapid entertainment.",
-		"I want to filter my search results to only show unwatched or recently uploaded cat videos.",
-		"I want to refine my search to look for specific cat breeds, such as Siamese or Persian cats, using the suggested search terms.",
-		"I want to sign in to my account so that I can subscribe to cat-centric channels, save videos to my playlists, and leave comments.",
-		"I want to find other popular animal videos (like dog or horse videos) suggested in the related search section."
+		"I want to purchase a new Samsung Galaxy Book6 laptop directly from the official store",
+		"I want to compare the specifications and features of the Galaxy Book6 Pro and Galaxy Book6 Ultra to see which model fits my needs",
+		"I want to configure a Galaxy Book6 laptop by choosing my preferred screen size, color, storage, and RAM options",
+		"I want to learn about the new Galaxy AI features and performance improvements of the Book6 series",
+		"I want to check if there are any promotional offers, discounts, or trade-in deals available for this laptop series"
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
-			"b": "I prefer long-form, comprehensive videos (like full-length compilations or documentaries) that I can sit back and watch for a long time."
+			"a": "I am deeply invested in a specific brand's ecosystem (like Samsung Galaxy or Apple) and prefer devices that seamlessly integrate with my other current devices.",
+			"b": "I am brand-agnostic and prefer to evaluate each laptop solely on its standalone specs, price, and performance, regardless of cross-device ecosystem features."
 		},
 		{
-			"a": "I rely heavily on search filters and precise categorization to find exactly the type of video content I am in the mood for.",
-			"b": "I prefer to passively browse the default search recommendations without tweaking any filters or options."
+			"a": "I prefer buying premium electronics directly from the manufacturer's official website for peace of mind, reliable warranties, and direct customer support.",
+			"b": "I prefer to buy electronics from multi-brand online retailers because they often offer better overall discounts, reward points, or consolidated shipping."
 		},
 		{
-			"a": "I always sign in so I can actively engage with content creators by subscribing, liking, and saving videos to personal playlists.",
-			"b": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered."
+			"a": "I am a highly technical user who prefers to meticulously compare granular specifications, custom configurations, and performance benchmarks before buying a laptop.",
+			"b": "I am a non-technical user who values simple, lifestyle-oriented feature descriptions (like battery life or design) and prefers to buy pre-configured models without dealing with complex specs."
 		}
 	],
 	"preference-pair-index": 1,
-	"preference-side": "a",
-	"preference": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
-	"source-snapshot": "004",
+	"preference-side": "b",
+	"preference": "I am brand-agnostic and prefer to evaluate each laptop solely on its standalone specs, price, and performance, regardless of cross-device ecosystem features.",
+	"source-snapshot": "040",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://youtube.com/results?search_query=cats",
-	"final-url": "https://www.youtube.com/results?search_query=cats"
+	"url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy",
+	"final-url": "https://www.samsung.com/nl/computers/galaxy-book/galaxy-book6-series/buy/",
+	"protected_at": 1780344967654,
+	"finalized_at": 1780345084536
 }

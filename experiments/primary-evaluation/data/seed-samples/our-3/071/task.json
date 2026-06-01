@@ -1,32 +1,34 @@
 {
-	"request-prompt": "Make the 'Trending' subnavigation bar at the very top of the page stick to the top when scrolling, and style the links with bright 'Active Deal' tags to capture impulsive interest.",
-	"goal": "I am a deal hunter who enjoys buying gadgets impulsively simply because they are marked down to an all-time low price.",
+	"request-prompt": "Move the 'Related articles' links and other self-help links from the bottom and sidebar of the page into a highly visible 'Recommended Self-Help' block right below the main article header.",
+	"goal": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
 	"jobs": [
-		"I want to find extended Memorial Day sales on tech products to save money on my next electronics purchase.",
-		"I want to browse discounted gadgets categorized by price (such as under $50, under $100, or under $250) to quickly find deals within my budget.",
-		"I want to read expert summaries and reviews of on-sale items to determine if a specific product (like the AirPods Pro 3 or Apple Watch Series 11) is right for me.",
-		"I want to see the exact discount amount and compare the sale price with the original retail price to evaluate how good the deal is.",
-		"I want to easily click through to a trusted retailer like Amazon to purchase a featured item before the limited-time discount expires."
+		"I want to learn how to enable or disable standard Fandom features (such as Message Wall, Article Comments, or Blogs) using the Admin Dashboard.",
+		"I want to submit a request to Fandom staff to turn on a restricted extension (such as custom JavaScript, achievements, DPL, or Variables) for my wiki.",
+		"I want to find where to request or set up an interlanguage link for my wiki.",
+		"I want to navigate to instructions for other wiki administration tasks, such as changing a wiki's name/URL or closing/reopening a wiki.",
+		"I want to contact Fandom support with custom questions about my wiki's features or configuration."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am strictly loyal to premium, well-known tech brands like Apple or Bose and rarely consider budget or lesser-known alternatives.",
-			"b": "I am brand-agnostic and prioritize getting the absolute best value or lowest price, even if the brand is relatively obscure."
+			"a": "I prefer using simple, built-in administrative dashboards and visual settings menus to manage my site rather than dealing with code.",
+			"b": "I prefer using advanced customization options like custom JavaScript, custom CSS, and complex extensions to fine-tune my site."
 		},
 		{
-			"a": "I highly trust curated lists and recommendations from tech editors and journalists to guide my buying decisions.",
-			"b": "I am highly skeptical of affiliate-driven editorial reviews and prefer to do my own independent research on user forums and specs."
+			"a": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
+			"b": "I prefer reaching out to customer support or system administrators directly to handle configuration changes and setup tasks for me."
 		},
 		{
-			"a": "I am a deal hunter who enjoys buying gadgets impulsively simply because they are marked down to an all-time low price.",
-			"b": "I only buy tech accessories and electronics when I have a specific, pre-determined need for them, regardless of how good a temporary discount is."
+			"a": "I prefer concise, minimal help pages that provide a direct link or a single clear instruction to solve my immediate problem.",
+			"b": "I prefer highly detailed documentation with extensive context, definitions, and external references so I can fully understand the underlying system."
 		}
 	],
-	"preference-pair-index": 3,
+	"preference-pair-index": 2,
 	"preference-side": "a",
-	"preference": "I am a deal hunter who enjoys buying gadgets impulsively simply because they are marked down to an all-time low price.",
-	"source-snapshot": "016",
+	"preference": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
+	"source-snapshot": "069",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.yahoo.com/tech/deals/breaking-news/article/memorial-day-sales-on-tech-are-already-live-at-amazon-apple-best-buy-and-more-181434324.html",
-	"final-url": "https://tech.yahoo.com/deals/breaking-news/article/memorial-day-sales-on-tech-are-still-available-shop-extended-deals-up-to-50-off-from-amazon-apple-best-buy-and-more-181434135.html"
+	"url": "https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"protected_at": 1780344967752,
+	"finalized_at": 1780345098147
 }

@@ -1,0 +1,163 @@
+Finalize seed samples
+------------------------------------------------
+timestamp (UTC): 2026-06-01T20:18:00.768290+00:00
+script: finalize-seed-samples.py
+seed samples root: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples
+folds: our-3
+html reserialize: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/reserialize_html.ts
+dry run: False
+
+=== our-3 ===
+samples found: 73
+OK finalized our-3/001 (finalized_at=1780345080769)
+OK finalized our-3/006 (finalized_at=1780345081251)
+OK finalized our-3/008 (finalized_at=1780345081504)
+OK finalized our-3/010 (finalized_at=1780345081803)
+OK finalized our-3/011 (finalized_at=1780345082086)
+OK finalized our-3/012 (finalized_at=1780345082377)
+OK finalized our-3/013 (finalized_at=1780345082662)
+OK finalized our-3/014 (finalized_at=1780345082982)
+OK finalized our-3/015 (finalized_at=1780345083294)
+OK finalized our-3/016 (finalized_at=1780345083606)
+OK finalized our-3/017 (finalized_at=1780345083922)
+OK finalized our-3/018 (finalized_at=1780345084230)
+OK finalized our-3/020 (finalized_at=1780345084536)
+OK finalized our-3/023 (finalized_at=1780345084806)
+OK finalized our-3/027 (finalized_at=1780345085077)
+OK finalized our-3/028 (finalized_at=1780345085317)
+OK finalized our-3/029 (finalized_at=1780345085530)
+OK finalized our-3/030 (finalized_at=1780345085742)
+OK finalized our-3/033 (finalized_at=1780345085959)
+OK finalized our-3/034 (finalized_at=1780345086217)
+OK finalized our-3/035 (finalized_at=1780345086566)
+OK finalized our-3/037 (finalized_at=1780345086828)
+OK finalized our-3/038 (finalized_at=1780345087044)
+OK finalized our-3/039 (finalized_at=1780345087258)
+OK finalized our-3/040 (finalized_at=1780345087473)
+OK finalized our-3/041 (finalized_at=1780345087687)
+OK finalized our-3/042 (finalized_at=1780345087902)
+OK finalized our-3/044 (finalized_at=1780345088119)
+OK finalized our-3/045 (finalized_at=1780345088346)
+OK finalized our-3/046 (finalized_at=1780345088570)
+OK finalized our-3/047 (finalized_at=1780345088796)
+OK finalized our-3/049 (finalized_at=1780345089019)
+OK finalized our-3/051 (finalized_at=1780345089258)
+OK finalized our-3/052 (finalized_at=1780345089490)
+OK finalized our-3/053 (finalized_at=1780345089726)
+OK finalized our-3/054 (finalized_at=1780345089965)
+OK finalized our-3/056 (finalized_at=1780345090207)
+OK finalized our-3/057 (finalized_at=1780345090412)
+OK finalized our-3/059 (finalized_at=1780345090615)
+OK finalized our-3/060 (finalized_at=1780345090823)
+OK finalized our-3/064 (finalized_at=1780345091032)
+OK finalized our-3/065 (finalized_at=1780345091241)
+OK finalized our-3/068 (finalized_at=1780345091454)
+OK finalized our-3/070 (finalized_at=1780345091753)
+OK finalized our-3/072 (finalized_at=1780345092046)
+OK finalized our-3/073 (finalized_at=1780345092338)
+OK finalized our-3/075 (finalized_at=1780345092574)
+OK finalized our-3/076 (finalized_at=1780345092959)
+OK finalized our-3/077 (finalized_at=1780345093201)
+OK finalized our-3/084 (finalized_at=1780345093440)
+OK finalized our-3/087 (finalized_at=1780345093642)
+OK finalized our-3/088 (finalized_at=1780345093855)
+OK finalized our-3/092 (finalized_at=1780345094062)
+OK finalized our-3/093 (finalized_at=1780345094306)
+OK finalized our-3/094 (finalized_at=1780345094545)
+OK finalized our-3/095 (finalized_at=1780345094775)
+OK finalized our-3/096 (finalized_at=1780345095008)
+OK finalized our-3/097 (finalized_at=1780345095240)
+OK finalized our-3/098 (finalized_at=1780345095439)
+OK finalized our-3/101 (finalized_at=1780345095643)
+OK finalized our-3/102 (finalized_at=1780345095864)
+OK finalized our-3/103 (finalized_at=1780345096067)
+OK finalized our-3/104 (finalized_at=1780345096319)
+OK finalized our-3/105 (finalized_at=1780345096572)
+OK finalized our-3/106 (finalized_at=1780345096823)
+OK finalized our-3/108 (finalized_at=1780345097075)
+OK finalized our-3/109 (finalized_at=1780345097348)
+OK finalized our-3/110 (finalized_at=1780345097546)
+OK finalized our-3/111 (finalized_at=1780345097749)
+OK finalized our-3/112 (finalized_at=1780345097950)
+OK finalized our-3/117 (finalized_at=1780345098147)
+OK finalized our-3/118 (finalized_at=1780345098324)
+OK finalized our-3/119 (finalized_at=1780345098501)
+renamed our-3/006 -> 002
+renamed our-3/008 -> 003
+renamed our-3/010 -> 004
+renamed our-3/011 -> 005
+renamed our-3/012 -> 006
+renamed our-3/013 -> 007
+renamed our-3/014 -> 008
+renamed our-3/015 -> 009
+renamed our-3/016 -> 010
+renamed our-3/017 -> 011
+renamed our-3/018 -> 012
+renamed our-3/020 -> 013
+renamed our-3/023 -> 014
+renamed our-3/027 -> 015
+renamed our-3/028 -> 016
+renamed our-3/029 -> 017
+renamed our-3/030 -> 018
+renamed our-3/033 -> 019
+renamed our-3/034 -> 020
+renamed our-3/035 -> 021
+renamed our-3/037 -> 022
+renamed our-3/038 -> 023
+renamed our-3/039 -> 024
+renamed our-3/040 -> 025
+renamed our-3/041 -> 026
+renamed our-3/042 -> 027
+renamed our-3/044 -> 028
+renamed our-3/045 -> 029
+renamed our-3/046 -> 030
+renamed our-3/047 -> 031
+renamed our-3/049 -> 032
+renamed our-3/051 -> 033
+renamed our-3/052 -> 034
+renamed our-3/053 -> 035
+renamed our-3/054 -> 036
+renamed our-3/056 -> 037
+renamed our-3/057 -> 038
+renamed our-3/059 -> 039
+renamed our-3/060 -> 040
+renamed our-3/064 -> 041
+renamed our-3/065 -> 042
+renamed our-3/068 -> 043
+renamed our-3/070 -> 044
+renamed our-3/072 -> 045
+renamed our-3/073 -> 046
+renamed our-3/075 -> 047
+renamed our-3/076 -> 048
+renamed our-3/077 -> 049
+renamed our-3/084 -> 050
+renamed our-3/087 -> 051
+renamed our-3/088 -> 052
+renamed our-3/092 -> 053
+renamed our-3/093 -> 054
+renamed our-3/094 -> 055
+renamed our-3/095 -> 056
+renamed our-3/096 -> 057
+renamed our-3/097 -> 058
+renamed our-3/098 -> 059
+renamed our-3/101 -> 060
+renamed our-3/102 -> 061
+renamed our-3/103 -> 062
+renamed our-3/104 -> 063
+renamed our-3/105 -> 064
+renamed our-3/106 -> 065
+renamed our-3/108 -> 066
+renamed our-3/109 -> 067
+renamed our-3/110 -> 068
+renamed our-3/111 -> 069
+renamed our-3/112 -> 070
+renamed our-3/117 -> 071
+renamed our-3/118 -> 072
+renamed our-3/119 -> 073
+our-3: normalized 72 folder name(s)
+
+finalized: 73
+skipped (already finalized or invalid): 0
+renamed folders: 72
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/scripts/logs/2026-06-01T20-18-00.768290+00-00-finalize-seed-samples.log

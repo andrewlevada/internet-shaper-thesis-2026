@@ -1,33 +1,36 @@
 {
-	"request-prompt": "Remove the 'Sign in to like videos, comment, and subscribe' promo box from the left navigation drawer and the top right header since I do not wish to log in.",
-	"goal": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered.",
+	"request-prompt": "Reposition and expand the sponsored content and trending stories widget into a wider, multi-column layout on the right sidebar so I can easily browse related and sponsored articles while reading.",
+	"goal": "I enjoy browsing through sponsored links, trending widgets, and recommended 'around the web' articles to discover other interesting topics to read.",
 	"jobs": [
-		"I want to watch long-form funny cat compilations to entertain myself.",
-		"I want to watch quick, bite-sized cat clips (Shorts) for rapid entertainment.",
-		"I want to filter my search results to only show unwatched or recently uploaded cat videos.",
-		"I want to refine my search to look for specific cat breeds, such as Siamese or Persian cats, using the suggested search terms.",
-		"I want to sign in to my account so that I can subscribe to cat-centric channels, save videos to my playlists, and leave comments.",
-		"I want to find other popular animal videos (like dog or horse videos) suggested in the related search section."
+		"I want to find out why the Indy 500 qualifying was delayed and when it has been rescheduled.",
+		"I want to check the weather forecast for Indianapolis to see if Sunday's activities will also be impacted by rain.",
+		"I want to share this news article with other racing fans or friends.",
+		"I want to read and participate in the community discussion about the qualifying delay.",
+		"I want to check the weather forecast or interactive radar for my current location.",
+		"I want to access official details on the modified qualifying procedures for Sunday.",
+		"I want to browse other trending weather stories and news updates."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
-			"b": "I prefer long-form, comprehensive videos (like full-length compilations or documentaries) that I can sit back and watch for a long time."
+			"a": "I am a dedicated sports fan who seeks highly detailed schedule updates, technical details, and official racing regulations.",
+			"b": "I am a general news reader who only cares about how major weather events disrupt public gatherings and daily life, with no interest in sport-specific details."
 		},
 		{
-			"a": "I rely heavily on search filters and precise categorization to find exactly the type of video content I am in the mood for.",
-			"b": "I prefer to passively browse the default search recommendations without tweaking any filters or options."
+			"a": "I trust only official, professionally written editorial content and verified meteorological reports when consuming news.",
+			"b": "I prefer reading community comments, social media embeds, and real-time public reactions to get an unfiltered feel for what's happening."
 		},
 		{
-			"a": "I always sign in so I can actively engage with content creators by subscribing, liking, and saving videos to personal playlists.",
-			"b": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered."
+			"a": "I want a clean, ad-free, and distraction-free interface that allows me to focus solely on the main article text.",
+			"b": "I enjoy browsing through sponsored links, trending widgets, and recommended 'around the web' articles to discover other interesting topics to read."
 		}
 	],
 	"preference-pair-index": 3,
 	"preference-side": "b",
-	"preference": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered.",
-	"source-snapshot": "004",
+	"preference": "I enjoy browsing through sponsored links, trending widgets, and recommended 'around the web' articles to discover other interesting topics to read.",
+	"source-snapshot": "050",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://youtube.com/results?search_query=cats",
-	"final-url": "https://www.youtube.com/results?search_query=cats"
+	"url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"protected_at": 1780344967667,
+	"finalized_at": 1780345085742
 }

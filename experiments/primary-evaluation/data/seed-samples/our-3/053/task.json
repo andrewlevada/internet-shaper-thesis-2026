@@ -1,32 +1,35 @@
 {
-	"request-prompt": "Completely hide the 'More from YouTube' section in the left sidebar, including links to YouTube Premium, YouTube Music, and YouTube Kids.",
-	"goal": "I only care about core, free video content and ignore cross-promoted secondary services like YouTube Premium, YouTube Music, or Kids.",
+	"request-prompt": "Hide the top 'Today's featured article archive' navigation grid entirely and expand the 'Search Wikipedia' bar in the header to take up the full width of the top container.",
+	"goal": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists.",
 	"jobs": [
-		"I want to sign in to my YouTube account to access my library of saved and liked videos.",
-		"I want to search for a specific video or topic using the search bar.",
-		"I want to browse curated content in categories like Music, Movies, or Gaming.",
-		"I want to switch to other YouTube services like YouTube Kids or YouTube Music.",
-		"I want to go to the Home feed to see recommended videos."
+		"I want to browse a compilation of Wikipedia's highest-quality articles from May 2026 to find interesting topics to read about.",
+		"I want to find out which article was featured on Wikipedia on a specific day in May 2026.",
+		"I want to read a quick summary of a featured article from May 2026 to decide if I want to click through to the full piece.",
+		"I want to navigate to the featured article archives of other months or years to explore older curated content.",
+		"I want to access tools to nominate, review, or edit featured articles to help contribute to Wikipedia's editorial process.",
+		"I want to jump to a random featured article to learn about something unexpected."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer browsing video platforms anonymously without signing in to protect my privacy and prevent companies from tracking my viewing history.",
-			"b": "I always want to be signed in to ensure my personalized recommendations, watch history, and playlists are synced seamlessly across all my devices."
+			"a": "I prefer discovering content through curated daily highlights, featured lists, and editors' picks rather than searching for specific terms.",
+			"b": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists."
 		},
 		{
-			"a": "I always use the search bar because I know exactly what content I want to watch and prefer not to waste time browsing recommendations.",
-			"b": "I prefer to casually browse curated categories, sidebar recommendations, and home feeds to let the algorithm discover interesting videos for me."
+			"a": "I only read articles for information and entertainment, and I have no interest in participating in the behind-the-scenes editing, curation, or talk page discussions of content websites.",
+			"b": "I love community-driven platforms and always seek out the talk pages, revision histories, and contribution guidelines to participate in the community process."
 		},
 		{
-			"a": "I only care about core, free video content and ignore cross-promoted secondary services like YouTube Premium, YouTube Music, or Kids.",
-			"b": "I actively look for and enjoy using specialized ecosystem services like YouTube Music, Premium features, and dedicated kids' portals."
+			"a": "I prefer highly detailed, text-heavy directory pages with multiple links and historical archives so I can explore a vast web of related information at once.",
+			"b": "I prefer clean, distraction-free interfaces that focus on a single piece of content at a time without extraneous navigation sidebars, archives, or metadata."
 		}
 	],
-	"preference-pair-index": 3,
-	"preference-side": "a",
-	"preference": "I only care about core, free video content and ignore cross-promoted secondary services like YouTube Premium, YouTube Music, or Kids.",
-	"source-snapshot": "007",
+	"preference-pair-index": 1,
+	"preference-side": "b",
+	"preference": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists.",
+	"source-snapshot": "013",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.youtube.com/feed/you",
-	"final-url": "https://www.youtube.com/feed/you"
+	"url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
+	"final-url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
+	"protected_at": 1780344967735,
+	"finalized_at": 1780345094062
 }

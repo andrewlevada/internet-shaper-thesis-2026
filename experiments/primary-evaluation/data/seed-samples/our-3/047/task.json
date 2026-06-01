@@ -1,32 +1,38 @@
 {
-	"request-prompt": "Add an easily accessible quick-settings toolbar directly on the page header (with sliders for font size, layout width, and instant dark mode toggle) so I don't have to navigate into a separate preferences menu.",
-	"goal": "I highly value deep personalization options like light/dark themes and custom font sizes, and I will immediately look for ways to adjust them to my liking on any platform.",
+	"request-prompt": "Remove lifestyle elements like horoscopes and entertainment recommendations from the top features bar, and automatically prioritize hard news categories like Politics and World news at the top of the 'For You' feed.",
+	"goal": "I like to consume hard news, political updates, and global current events to stay seriously informed about the world.",
 	"jobs": [
-		"I want to learn how to sign up for a Fandom account",
-		"I want to know how to customize my Fandom user preferences and settings",
-		"I want to learn how to switch between light and dark themes on Fandom",
-		"I want to find out the next steps to start contributing to Fandom wikis or joining discussions",
-		"I want to read other users' comments or ask a question about getting started on Fandom"
+		"I want to get a quick overview of the latest news and current events to stay informed.",
+		"I want to search the web to find specific information or websites.",
+		"I want to check my Yahoo email inbox to see if I have any new messages.",
+		"I want to check the current weather conditions and forecast for my city to plan my day.",
+		"I want to check the performance of major stock market indices to stay updated on financial trends.",
+		"I want to read my daily horoscope to get insights based on my zodiac sign.",
+		"I want to see what topics and news stories are currently trending on the internet.",
+		"I want to find recommendations on movies or TV shows to watch in my free time.",
+		"I want to browse curated shopping deals and product recommendations to find good offers."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer to figure out website settings and registration on my own through trial and error, rather than reading step-by-step tutorials.",
-			"b": "I heavily rely on visual, step-by-step guides with screenshots to help me navigate and configure new websites."
+			"a": "I prefer a clean, minimal search-centric interface with zero distractions so I can quickly perform tasks without getting sidetracked by headlines.",
+			"b": "I love a busy, portal-style homepage that compiles news, weather, stocks, and entertainment updates in one place so I can get a broad overview of everything at a glance."
 		},
 		{
-			"a": "I only use wikis to read and consume information passively, and I prefer to avoid signing up or joining any community spaces.",
-			"b": "I want to actively contribute, customize my profile, and engage in discussion boards on platforms I use regularly."
+			"a": "I like to consume hard news, political updates, and global current events to stay seriously informed about the world.",
+			"b": "I am mostly interested in lightweight lifestyle content, such as horoscopes, trending celebrity gossip, shopping deals, and simple online games."
 		},
 		{
-			"a": "I highly value deep personalization options like light/dark themes and custom font sizes, and I will immediately look for ways to adjust them to my liking on any platform.",
-			"b": "I rarely customize website settings and prefer to use whatever default display options the platform provides without changing them."
+			"a": "I prefer to actively search for specific information or navigate directly to particular sections rather than relying on suggested feeds.",
+			"b": "I prefer to browse passively and let personalized, algorithmic recommendation feeds suggest stories and content for me to consume."
 		}
 	],
-	"preference-pair-index": 3,
+	"preference-pair-index": 2,
 	"preference-side": "a",
-	"preference": "I highly value deep personalization options like light/dark themes and custom font sizes, and I will immediately look for ways to adjust them to my liking on any platform.",
-	"source-snapshot": "070",
+	"preference": "I like to consume hard news, political updates, and global current events to stay seriously informed about the world.",
+	"source-snapshot": "015",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
-	"final-url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization"
+	"url": "https://yahoo.com",
+	"final-url": "https://www.yahoo.com/?guccounter=1",
+	"protected_at": 1780344967713,
+	"finalized_at": 1780345092574
 }

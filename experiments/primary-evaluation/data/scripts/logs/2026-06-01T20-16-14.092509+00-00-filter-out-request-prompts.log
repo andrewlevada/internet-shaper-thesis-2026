@@ -1,0 +1,135 @@
+Filter out request prompts script run
+------------------------------------------------
+timestamp (UTC): 2026-06-01T20:16:14.092509+00:00
+script: filter-out-request-prompts.py
+xlsx file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/our-3-request-prompts.xlsx
+sample fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3
+dry run: False
+
+Processing rows from active sheet 'Request Prompts'...
+skip 001: already protected by stamp in task.json (left unchanged)
+skip 002: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/002
+skip 003: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/003
+skip 004: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/004
+skip 005: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/005
+skip 006: already protected by stamp in task.json (left unchanged)
+skip 007: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/007
+skip 008: already protected by stamp in task.json (left unchanged)
+skip 009: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/009
+skip 010: already protected by stamp in task.json (left unchanged)
+skip 011: already protected by stamp in task.json (left unchanged)
+skip 012: already protected by stamp in task.json (left unchanged)
+skip 013: already protected by stamp in task.json (left unchanged)
+skip 014: already protected by stamp in task.json (left unchanged)
+skip 015: already protected by stamp in task.json (left unchanged)
+skip 016: already protected by stamp in task.json (left unchanged)
+skip 017: already protected by stamp in task.json (left unchanged)
+skip 018: already protected by stamp in task.json (left unchanged)
+skip 019: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/019
+skip 020: already protected by stamp in task.json (left unchanged)
+skip 021: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/021
+skip 022: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/022
+skip 023: already protected by stamp in task.json (left unchanged)
+skip 024: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/024
+skip 025: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/025
+skip 026: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/026
+skip 027: already protected by stamp in task.json (left unchanged)
+skip 028: already protected by stamp in task.json (left unchanged)
+skip 029: already protected by stamp in task.json (left unchanged)
+skip 030: already protected by stamp in task.json (left unchanged)
+skip 031: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/031
+skip 032: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/032
+skip 033: already protected by stamp in task.json (left unchanged)
+skip 034: already protected by stamp in task.json (left unchanged)
+skip 035: already protected by stamp in task.json (left unchanged)
+skip 036: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/036
+skip 037: already protected by stamp in task.json (left unchanged)
+skip 038: already protected by stamp in task.json (left unchanged)
+skip 039: already protected by stamp in task.json (left unchanged)
+skip 040: already protected by stamp in task.json (left unchanged)
+skip 041: already protected by stamp in task.json (left unchanged)
+skip 042: already protected by stamp in task.json (left unchanged)
+skip 043: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/043
+skip 044: already protected by stamp in task.json (left unchanged)
+skip 045: already protected by stamp in task.json (left unchanged)
+skip 046: already protected by stamp in task.json (left unchanged)
+skip 047: already protected by stamp in task.json (left unchanged)
+skip 048: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/048
+skip 049: already protected by stamp in task.json (left unchanged)
+skip 050: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/050
+skip 051: already protected by stamp in task.json (left unchanged)
+skip 052: already protected by stamp in task.json (left unchanged)
+skip 053: already protected by stamp in task.json (left unchanged)
+skip 054: already protected by stamp in task.json (left unchanged)
+skip 055: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/055
+skip 056: already protected by stamp in task.json (left unchanged)
+skip 057: already protected by stamp in task.json (left unchanged)
+skip 058: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/058
+skip 059: already protected by stamp in task.json (left unchanged)
+skip 060: already protected by stamp in task.json (left unchanged)
+skip 061: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/061
+skip 062: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/062
+skip 063: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/063
+skip 064: already protected by stamp in task.json (left unchanged)
+skip 065: already protected by stamp in task.json (left unchanged)
+skip 066: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/066
+skip 067: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/067
+skip 068: already protected by stamp in task.json (left unchanged)
+skip 069: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/069
+skip 070: already protected by stamp in task.json (left unchanged)
+skip 071: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/071
+skip 072: already protected by stamp in task.json (left unchanged)
+skip 073: already protected by stamp in task.json (left unchanged)
+skip 074: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/074
+skip 075: already protected by stamp in task.json (left unchanged)
+skip 076: already protected by stamp in task.json (left unchanged)
+skip 077: already protected by stamp in task.json (left unchanged)
+skip 078: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/078
+skip 079: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/079
+skip 080: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/080
+skip 081: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/081
+skip 082: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/082
+skip 083: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/083
+skip 084: already protected by stamp in task.json (left unchanged)
+skip 085: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/085
+skip 086: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/086
+skip 087: already protected by stamp in task.json (left unchanged)
+skip 088: already protected by stamp in task.json (left unchanged)
+skip 089: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/089
+skip 090: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/090
+skip 091: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/091
+skip 092: already protected by stamp in task.json (left unchanged)
+skip 093: already protected by stamp in task.json (left unchanged)
+skip 094: already protected by stamp in task.json (left unchanged)
+skip 095: already protected by stamp in task.json (left unchanged)
+skip 096: already protected by stamp in task.json (left unchanged)
+skip 097: already protected by stamp in task.json (left unchanged)
+skip 098: already protected by stamp in task.json (left unchanged)
+skip 099: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/099
+skip 100: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/100
+skip 101: already protected by stamp in task.json (left unchanged)
+skip 102: already protected by stamp in task.json (left unchanged)
+skip 103: already protected by stamp in task.json (left unchanged)
+skip 104: already protected by stamp in task.json (left unchanged)
+skip 105: already protected by stamp in task.json (left unchanged)
+skip 106: already protected by stamp in task.json (left unchanged)
+skip 107: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/107
+skip 108: already protected by stamp in task.json (left unchanged)
+skip 109: already protected by stamp in task.json (left unchanged)
+skip 110: already protected by stamp in task.json (left unchanged)
+skip 111: already protected by stamp in task.json (left unchanged)
+skip 112: already protected by stamp in task.json (left unchanged)
+skip 113: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/113
+skip 114: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/114
+skip 115: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/115
+skip 116: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/116
+skip 117: already protected by stamp in task.json (left unchanged)
+skip 118: already protected by stamp in task.json (left unchanged)
+skip 119: already protected by stamp in task.json (left unchanged)
+skip 120: folder does not exist at /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3/120
+
+=== Summary ===
+deleted/cleared: 0
+newly protected (stamped): 0
+already protected (skipped): 73
+missing/warnings: 47

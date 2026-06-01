@@ -29,5 +29,7 @@
 	"source-snapshot": "047",
 	"model": "google/gemini-3.5-flash",
 	"url": "https://weather.com",
-	"final-url": "https://weather.com/?Goto=Redirected"
+	"final-url": "https://weather.com/?Goto=Redirected",
+	"protected_at": 1780344967626,
+	"finalized_at": 1780345080769
 }

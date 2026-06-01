@@ -1,35 +1,35 @@
 {
-	"request-prompt": "Promote pop culture and lifestyle content by placing the Entertainment column ('Entretenimento') and the reality TV video updates at the top left of the page layout, ahead of the hard news columns.",
-	"goal": "I enjoy following celebrity gossip, reality show updates, and entertainment news as a lighthearted way to unwind and stay entertained.",
+	"request-prompt": "Remove the 'Sign in to like videos, comment, and subscribe' promo box from the left navigation drawer and the top right header since I do not wish to log in.",
+	"goal": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered.",
 	"jobs": [
-		"I want to catch up on the most important news of the day in Brazil and around the world.",
-		"I want to check the schedule and times of today's football matches.",
-		"I want to check the current exchange rates of the US Dollar and Euro, as well as the Ibovespa index.",
-		"I want to read the daily horoscope forecast for my zodiac sign.",
-		"I want to find out what programs are airing on TV Globo today and at what times.",
-		"I want to read celebrity gossip and catch up on the latest entertainment news.",
-		"I want to quickly check the weather forecast for my region.",
-		"I want to read the weekly summaries and spoilers of my favorite soap operas."
+		"I want to watch long-form funny cat compilations to entertain myself.",
+		"I want to watch quick, bite-sized cat clips (Shorts) for rapid entertainment.",
+		"I want to filter my search results to only show unwatched or recently uploaded cat videos.",
+		"I want to refine my search to look for specific cat breeds, such as Siamese or Persian cats, using the suggested search terms.",
+		"I want to sign in to my account so that I can subscribe to cat-centric channels, save videos to my playlists, and leave comments.",
+		"I want to find other popular animal videos (like dog or horse videos) suggested in the related search section."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer reading written articles and detailed text reports because they provide more depth and allow me to scan information at my own pace.",
-			"b": "I prefer consuming news primarily through short video clips and highlights because they are more engaging and easier to digest."
+			"a": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
+			"b": "I prefer long-form, comprehensive videos (like full-length compilations or documentaries) that I can sit back and watch for a long time."
 		},
 		{
-			"a": "I enjoy browsing portals with a dense, diverse layout of headlines, columns, and utility widgets to discover random interesting topics.",
-			"b": "I feel easily overwhelmed by busy, multi-column portal layouts and prefer minimalist interfaces where I can focus on a single stream of content."
+			"a": "I rely heavily on search filters and precise categorization to find exactly the type of video content I am in the mood for.",
+			"b": "I prefer to passively browse the default search recommendations without tweaking any filters or options."
 		},
 		{
-			"a": "I value serious, objective news like politics, economics, and world events, and I actively filter out sensational celebrity gossip or pop culture drama.",
-			"b": "I enjoy following celebrity gossip, reality show updates, and entertainment news as a lighthearted way to unwind and stay entertained."
+			"a": "I always sign in so I can actively engage with content creators by subscribing, liking, and saving videos to personal playlists.",
+			"b": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered."
 		}
 	],
 	"preference-pair-index": 3,
 	"preference-side": "b",
-	"preference": "I enjoy following celebrity gossip, reality show updates, and entertainment news as a lighthearted way to unwind and stay entertained.",
-	"source-snapshot": "071",
+	"preference": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered.",
+	"source-snapshot": "004",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://globo.com",
-	"final-url": "https://www.globo.com/"
+	"url": "https://youtube.com/results?search_query=cats",
+	"final-url": "https://www.youtube.com/results?search_query=cats",
+	"protected_at": 1780344967651,
+	"finalized_at": 1780345084230
 }

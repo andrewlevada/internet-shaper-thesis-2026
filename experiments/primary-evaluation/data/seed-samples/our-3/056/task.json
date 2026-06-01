@@ -1,33 +1,35 @@
 {
-	"request-prompt": "Completely remove the Copilot search tab, the collapsed chat container, and the follow-up prompt textarea from the interface to focus entirely on organic web results.",
-	"goal": "I distrust AI summaries and prefer to browse traditional list-based search results to open and evaluate authoritative source websites myself.",
+	"request-prompt": "Keep the right-hand 'Featured content' sidebar pinned to the viewport, and style all archive link lists in a highly condensed layout to maximize information density.",
+	"goal": "I prefer highly detailed, text-heavy directory pages with multiple links and historical archives so I can explore a vast web of related information at once.",
 	"jobs": [
-		"I want to find general information and scientific facts about domestic cats.",
-		"I want to learn about the 'Cats' musical, including ticket booking and Dutch tour dates.",
-		"I want to browse different cat breeds to understand their history and grooming needs.",
-		"I want to filter my search results to only see images or videos of cats.",
-		"I want to refine my search or ask a follow-up question using the search bar or interactive chat assistant.",
-		"I want to find and purchase cat supplies like cat food or guidebooks online."
+		"I want to browse a compilation of Wikipedia's highest-quality articles from May 2026 to find interesting topics to read about.",
+		"I want to find out which article was featured on Wikipedia on a specific day in May 2026.",
+		"I want to read a quick summary of a featured article from May 2026 to decide if I want to click through to the full piece.",
+		"I want to navigate to the featured article archives of other months or years to explore older curated content.",
+		"I want to access tools to nominate, review, or edit featured articles to help contribute to Wikipedia's editorial process.",
+		"I want to jump to a random featured article to learn about something unexpected."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer using conversational AI search assistants to synthesize and summarize answers directly on the page rather than clicking on external web links.",
-			"b": "I distrust AI summaries and prefer to browse traditional list-based search results to open and evaluate authoritative source websites myself."
+			"a": "I prefer discovering content through curated daily highlights, featured lists, and editors' picks rather than searching for specific terms.",
+			"b": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists."
 		},
 		{
-			"a": "I prefer minimalist, clutter-free search interfaces that only show organic text results without any advertisements, reward icons, or interactive widgets.",
-			"b": "I enjoy feature-rich search portals that integrate rewards programs, media previews, and shopping ads directly into the search experience."
+			"a": "I only read articles for information and entertainment, and I have no interest in participating in the behind-the-scenes editing, curation, or talk page discussions of content websites.",
+			"b": "I love community-driven platforms and always seek out the talk pages, revision histories, and contribution guidelines to participate in the community process."
 		},
 		{
-			"a": "I actively avoid clicking on any sponsored links or advertisements because I believe they are biased and less trustworthy than organic search results.",
-			"b": "I frequently click on sponsored ads because they often provide direct, convenient shortcuts to purchase products related to my query."
+			"a": "I prefer highly detailed, text-heavy directory pages with multiple links and historical archives so I can explore a vast web of related information at once.",
+			"b": "I prefer clean, distraction-free interfaces that focus on a single piece of content at a time without extraneous navigation sidebars, archives, or metadata."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "b",
-	"preference": "I distrust AI summaries and prefer to browse traditional list-based search results to open and evaluate authoritative source websites myself.",
-	"source-snapshot": "033",
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I prefer highly detailed, text-heavy directory pages with multiple links and historical archives so I can explore a vast web of related information at once.",
+	"source-snapshot": "013",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://bing.com/search?q=cats",
-	"final-url": "https://www.bing.com/search?q=cats&toWww=1&redig=212F396B8CF743BE92F545F13FC63956&rdr=1&rdrig=82A5F1F347514BEBB64EDB4DB68C9425"
+	"url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
+	"final-url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
+	"protected_at": 1780344967735,
+	"finalized_at": 1780345094775
 }

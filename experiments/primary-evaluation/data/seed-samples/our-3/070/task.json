@@ -1,32 +1,35 @@
 {
-	"request-prompt": "Collapse the written paragraph descriptions under each product module by default, showing only the product name, clean pricing structure, and the direct store link to bypass editorial bias.",
-	"goal": "I am highly skeptical of affiliate-driven editorial reviews and prefer to do my own independent research on user forums and specs.",
+	"request-prompt": "Place global English-language resources (like Wikipedia, Medium, and LinkedIn) as the first results right under the search bar.",
+	"goal": "I am fully comfortable navigating and reading global English-language platforms and often prefer them for broader or more original content.",
 	"jobs": [
-		"I want to find extended Memorial Day sales on tech products to save money on my next electronics purchase.",
-		"I want to browse discounted gadgets categorized by price (such as under $50, under $100, or under $250) to quickly find deals within my budget.",
-		"I want to read expert summaries and reviews of on-sale items to determine if a specific product (like the AirPods Pro 3 or Apple Watch Series 11) is right for me.",
-		"I want to see the exact discount amount and compare the sale price with the original retail price to evaluate how good the deal is.",
-		"I want to easily click through to a trusted retailer like Amazon to purchase a featured item before the limited-time discount expires."
+		"I want to watch entertaining or funny cat videos to amuse myself.",
+		"I want to find high-quality, royalty-free images of cats to download or use for a project.",
+		"I want to find the official website, download links, or online communities for the mobile game 'C.A.T.S.: Crash Arena Turbo Stars'.",
+		"I want to learn interesting or educational facts about domestic cats' behavior and characteristics.",
+		"I want to refine my current search query with suggested related keywords to discover more specific cat-related topics.",
+		"I want to switch directly to specialized search vertical tabs like Yandex Images or Yandex Video to explore more visual content."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am strictly loyal to premium, well-known tech brands like Apple or Bose and rarely consider budget or lesser-known alternatives.",
-			"b": "I am brand-agnostic and prioritize getting the absolute best value or lowest price, even if the brand is relatively obscure."
+			"a": "I prefer highly structured, text-heavy search results and prioritize direct links to authoritative, factual sources like Wikipedia.",
+			"b": "I prefer highly visual search interfaces and rely on inline video carousels, image grids, and interactive media preview blocks."
 		},
 		{
-			"a": "I highly trust curated lists and recommendations from tech editors and journalists to guide my buying decisions.",
-			"b": "I am highly skeptical of affiliate-driven editorial reviews and prefer to do my own independent research on user forums and specs."
+			"a": "I prefer consuming content exclusively in my native language (Russian) and tend to skip or ignore English-language web search results.",
+			"b": "I am fully comfortable navigating and reading global English-language platforms and often prefer them for broader or more original content."
 		},
 		{
-			"a": "I am a deal hunter who enjoys buying gadgets impulsively simply because they are marked down to an all-time low price.",
-			"b": "I only buy tech accessories and electronics when I have a specific, pre-determined need for them, regardless of how good a temporary discount is."
+			"a": "I use search engines strictly for serious, objective research and informational purposes, avoiding entertainment widgets and gaming links.",
+			"b": "I often use search engines for casual entertainment, seeking out fun videos, cool images, and mobile games to pass the time."
 		}
 	],
 	"preference-pair-index": 2,
 	"preference-side": "b",
-	"preference": "I am highly skeptical of affiliate-driven editorial reviews and prefer to do my own independent research on user forums and specs.",
-	"source-snapshot": "016",
+	"preference": "I am fully comfortable navigating and reading global English-language platforms and often prefer them for broader or more original content.",
+	"source-snapshot": "019",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.yahoo.com/tech/deals/breaking-news/article/memorial-day-sales-on-tech-are-already-live-at-amazon-apple-best-buy-and-more-181434324.html",
-	"final-url": "https://tech.yahoo.com/deals/breaking-news/article/memorial-day-sales-on-tech-are-still-available-shop-extended-deals-up-to-50-off-from-amazon-apple-best-buy-and-more-181434135.html"
+	"url": "https://yandex.ru/search/?text=cats",
+	"final-url": "https://yandex.ru/search?text=cats&lr=10466",
+	"protected_at": 1780344967746,
+	"finalized_at": 1780345097950
 }

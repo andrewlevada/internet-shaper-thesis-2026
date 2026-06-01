@@ -1,34 +1,34 @@
 {
-	"request-prompt": "Insert a brief, high-level summary paragraph or bulleted 'Key Takeaways' section right below the article subheadline to explain the general weather impact without requiring me to read technical sports details.",
-	"goal": "I am a general news reader who only cares about how major weather events disrupt public gatherings and daily life, with no interest in sport-specific details.",
+	"request-prompt": "Hide all grid metadata, group text elements, and the 'Explore featured boards' section to leave only a clean, distraction-free grid of pure images.",
+	"goal": "I prefer a clean, minimalist interface that focuses purely on images with as little text, tags, and metadata as possible.",
 	"jobs": [
-		"I want to find out why the Indy 500 qualifying was delayed and when it has been rescheduled.",
-		"I want to check the weather forecast for Indianapolis to see if Sunday's activities will also be impacted by rain.",
-		"I want to share this news article with other racing fans or friends.",
-		"I want to read and participate in the community discussion about the qualifying delay.",
-		"I want to check the weather forecast or interactive radar for my current location.",
-		"I want to access official details on the modified qualifying procedures for Sunday.",
-		"I want to browse other trending weather stories and news updates."
+		"I want to search for and view cute, funny, or aesthetic cat photos and memes to entertain myself.",
+		"I want to refine my search using suggested tags so that I can find specific types of cat content like wallpapers, art, or breeds.",
+		"I want to explore curated cat-themed boards to see compiled collections from other users.",
+		"I want to click on a specific cat pin to view it in full detail and see its original source.",
+		"I want to log in or sign up for an account so that I can save these cat pins to my own boards for future reference."
 	],
 	"preference-pairs": [
 		{
-			"a": "I am a dedicated sports fan who seeks highly detailed schedule updates, technical details, and official racing regulations.",
-			"b": "I am a general news reader who only cares about how major weather events disrupt public gatherings and daily life, with no interest in sport-specific details."
+			"a": "I prefer infinite scrolling through visual layouts to casually discover unexpected inspiration without a specific objective.",
+			"b": "I prefer highly structured search results with precise filters where I can find a specific item or idea as quickly as possible."
 		},
 		{
-			"a": "I trust only official, professionally written editorial content and verified meteorological reports when consuming news.",
-			"b": "I prefer reading community comments, social media embeds, and real-time public reactions to get an unfiltered feel for what's happening."
+			"a": "I like to meticulously organize and catalog interesting visuals into themed collections or folders for long-term reference and future projects.",
+			"b": "I prefer to consume media in the moment or share it directly, and I rarely feel the need to save or organize content for later."
 		},
 		{
-			"a": "I want a clean, ad-free, and distraction-free interface that allows me to focus solely on the main article text.",
-			"b": "I enjoy browsing through sponsored links, trending widgets, and recommended 'around the web' articles to discover other interesting topics to read."
+			"a": "I prefer a clean, minimalist interface that focuses purely on images with as little text, tags, and metadata as possible.",
+			"b": "I prefer having detailed context, tags, titles, and creator information clearly visible alongside images to help me evaluate them."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "b",
-	"preference": "I am a general news reader who only cares about how major weather events disrupt public gatherings and daily life, with no interest in sport-specific details.",
-	"source-snapshot": "050",
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I prefer a clean, minimalist interface that focuses purely on images with as little text, tags, and metadata as possible.",
+	"source-snapshot": "051",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
-	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500"
+	"url": "https://pinterest.com/search/pins/?q=cats",
+	"final-url": "https://www.pinterest.com/search/pins/?q=cats",
+	"protected_at": 1780344967680,
+	"finalized_at": 1780345087687
 }

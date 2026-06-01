@@ -1,32 +1,35 @@
 {
-	"request-prompt": "Hide the search bar at the top to allow the visual category and board grids to occupy the full header width and keep the focus purely on visual browsing.",
-	"goal": "I prefer browsing highly visual grids and curated categories passively to spark my creativity.",
+	"request-prompt": "Highlight the language and regional tags on each stream card by moving them to the top of the card's text details, making it easier to scan for international broadcasters.",
+	"goal": "I enjoy watching international streams and creators from around the world, even if they speak a different language or broadcast from another country.",
 	"jobs": [
-		"I want to search for specific ideas, recipes, or style inspiration using the search bar",
-		"I want to browse curated trending topics and hacks to find immediate creative inspiration",
-		"I want to explore ideas categorized by my specific interests, like Home Decor or Art, to discover new trends",
-		"I want to view the newest pins on the platform to see what people are currently sharing",
-		"I want to sign up or log in to Pinterest so that I can start saving and organizing the ideas I find"
+		"I want to find a live Just Chatting or IRL stream to watch for entertainment right now",
+		"I want to find streams in a specific language or with specific tags, such as Travel or Outdoors, to match my current interests",
+		"I want to see which streams are currently popular based on their live viewer counts",
+		"I want to log in or sign up to Twitch so that I can follow channels, participate in chat, and customize my experience",
+		"I want to search for a specific streamer or category using the search tool",
+		"I want to browse recommended live channels on the sidebar to discover new creators"
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer browsing highly visual grids and curated categories passively to spark my creativity.",
-			"b": "I am a highly goal-oriented user who prefers typing precise queries into a search bar to find immediate answers."
+			"a": "I prefer watching large, highly popular broadcasters where the chat is fast-paced and I feel like part of a massive community event.",
+			"b": "I prefer watching smaller, cozy broadcasters where the viewer count is low and I can have genuine, direct conversations with the streamer."
 		},
 		{
-			"a": "I love meticulously organizing, saving, and categorizing visual ideas into boards for future planning.",
-			"b": "I prefer consuming ideas for quick, immediate inspiration and rarely save or organize things for later."
+			"a": "I am an active, highly interactive viewer who loves chatting, using emotes, subscribing, and participating in stream events.",
+			"b": "I am a passive viewer (a 'lurker') who prefers to keep streams on in the background as white noise or secondary entertainment without ever interacting in chat."
 		},
 		{
-			"a": "I am always looking for the newest trends, viral hacks, and aesthetic fads to stay up-to-date.",
-			"b": "I prefer timeless, practical, and classic designs or recipes, and tend to ignore fleeting online trends."
+			"a": "I only watch content in my own local language and actively avoid streams broadcasting in languages I am not fully fluent in.",
+			"b": "I enjoy watching international streams and creators from around the world, even if they speak a different language or broadcast from another country."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "a",
-	"preference": "I prefer browsing highly visual grids and curated categories passively to spark my creativity.",
-	"source-snapshot": "052",
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I enjoy watching international streams and creators from around the world, even if they speak a different language or broadcast from another country.",
+	"source-snapshot": "055",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.pinterest.com/ideas",
-	"final-url": "https://www.pinterest.com/ideas/"
+	"url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
+	"final-url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
+	"protected_at": 1780344967740,
+	"finalized_at": 1780345095864
 }

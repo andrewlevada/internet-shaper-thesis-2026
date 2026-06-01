@@ -1,32 +1,38 @@
 {
-	"request-prompt": "Remove the large 'Enjoy your favorite videos / Sign in' promo container from the main content area and show trending or general popular videos instead.",
-	"goal": "I prefer browsing video platforms anonymously without signing in to protect my privacy and prevent companies from tracking my viewing history.",
+	"request-prompt": "Replace the automated 'For You' feed with a static grid of directory buttons linking to specific categories like News, Finance, Sports, and Weather, so I can choose where to go manually.",
+	"goal": "I prefer to actively search for specific information or navigate directly to particular sections rather than relying on suggested feeds.",
 	"jobs": [
-		"I want to sign in to my YouTube account to access my library of saved and liked videos.",
-		"I want to search for a specific video or topic using the search bar.",
-		"I want to browse curated content in categories like Music, Movies, or Gaming.",
-		"I want to switch to other YouTube services like YouTube Kids or YouTube Music.",
-		"I want to go to the Home feed to see recommended videos."
+		"I want to get a quick overview of the latest news and current events to stay informed.",
+		"I want to search the web to find specific information or websites.",
+		"I want to check my Yahoo email inbox to see if I have any new messages.",
+		"I want to check the current weather conditions and forecast for my city to plan my day.",
+		"I want to check the performance of major stock market indices to stay updated on financial trends.",
+		"I want to read my daily horoscope to get insights based on my zodiac sign.",
+		"I want to see what topics and news stories are currently trending on the internet.",
+		"I want to find recommendations on movies or TV shows to watch in my free time.",
+		"I want to browse curated shopping deals and product recommendations to find good offers."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer browsing video platforms anonymously without signing in to protect my privacy and prevent companies from tracking my viewing history.",
-			"b": "I always want to be signed in to ensure my personalized recommendations, watch history, and playlists are synced seamlessly across all my devices."
+			"a": "I prefer a clean, minimal search-centric interface with zero distractions so I can quickly perform tasks without getting sidetracked by headlines.",
+			"b": "I love a busy, portal-style homepage that compiles news, weather, stocks, and entertainment updates in one place so I can get a broad overview of everything at a glance."
 		},
 		{
-			"a": "I always use the search bar because I know exactly what content I want to watch and prefer not to waste time browsing recommendations.",
-			"b": "I prefer to casually browse curated categories, sidebar recommendations, and home feeds to let the algorithm discover interesting videos for me."
+			"a": "I like to consume hard news, political updates, and global current events to stay seriously informed about the world.",
+			"b": "I am mostly interested in lightweight lifestyle content, such as horoscopes, trending celebrity gossip, shopping deals, and simple online games."
 		},
 		{
-			"a": "I only care about core, free video content and ignore cross-promoted secondary services like YouTube Premium, YouTube Music, or Kids.",
-			"b": "I actively look for and enjoy using specialized ecosystem services like YouTube Music, Premium features, and dedicated kids' portals."
+			"a": "I prefer to actively search for specific information or navigate directly to particular sections rather than relying on suggested feeds.",
+			"b": "I prefer to browse passively and let personalized, algorithmic recommendation feeds suggest stories and content for me to consume."
 		}
 	],
-	"preference-pair-index": 1,
+	"preference-pair-index": 3,
 	"preference-side": "a",
-	"preference": "I prefer browsing video platforms anonymously without signing in to protect my privacy and prevent companies from tracking my viewing history.",
-	"source-snapshot": "007",
+	"preference": "I prefer to actively search for specific information or navigate directly to particular sections rather than relying on suggested feeds.",
+	"source-snapshot": "015",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://www.youtube.com/feed/you",
-	"final-url": "https://www.youtube.com/feed/you"
+	"url": "https://yahoo.com",
+	"final-url": "https://www.yahoo.com/?guccounter=1",
+	"protected_at": 1780344967714,
+	"finalized_at": 1780345093201
 }
