@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Hide the top 'Today's featured article archive' navigation grid entirely and expand the 'Search Wikipedia' bar in the header to take up the full width of the top container.",
+	"goal": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists.",
+	"jobs": [
+		"I want to browse a compilation of Wikipedia's highest-quality articles from May 2026 to find interesting topics to read about.",
+		"I want to find out which article was featured on Wikipedia on a specific day in May 2026.",
+		"I want to read a quick summary of a featured article from May 2026 to decide if I want to click through to the full piece.",
+		"I want to navigate to the featured article archives of other months or years to explore older curated content.",
+		"I want to access tools to nominate, review, or edit featured articles to help contribute to Wikipedia's editorial process.",
+		"I want to jump to a random featured article to learn about something unexpected."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer discovering content through curated daily highlights, featured lists, and editors' picks rather than searching for specific terms.",
+			"b": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists."
+		},
+		{
+			"a": "I only read articles for information and entertainment, and I have no interest in participating in the behind-the-scenes editing, curation, or talk page discussions of content websites.",
+			"b": "I love community-driven platforms and always seek out the talk pages, revision histories, and contribution guidelines to participate in the community process."
+		},
+		{
+			"a": "I prefer highly detailed, text-heavy directory pages with multiple links and historical archives so I can explore a vast web of related information at once.",
+			"b": "I prefer clean, distraction-free interfaces that focus on a single piece of content at a time without extraneous navigation sidebars, archives, or metadata."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "b",
+	"preference": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists.",
+	"source-snapshot": "013",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026",
+	"final-url": "https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026"
+}

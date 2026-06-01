@@ -1,0 +1,32 @@
+{
+	"request-prompt": "Show titles, descriptions, and user attribution texts permanently below every single pin card on the grid so I do not have to hover over them or tap to read what they are about.",
+	"goal": "I prefer having detailed context, tags, titles, and creator information clearly visible alongside images to help me evaluate them.",
+	"jobs": [
+		"I want to search for and view cute, funny, or aesthetic cat photos and memes to entertain myself.",
+		"I want to refine my search using suggested tags so that I can find specific types of cat content like wallpapers, art, or breeds.",
+		"I want to explore curated cat-themed boards to see compiled collections from other users.",
+		"I want to click on a specific cat pin to view it in full detail and see its original source.",
+		"I want to log in or sign up for an account so that I can save these cat pins to my own boards for future reference."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer infinite scrolling through visual layouts to casually discover unexpected inspiration without a specific objective.",
+			"b": "I prefer highly structured search results with precise filters where I can find a specific item or idea as quickly as possible."
+		},
+		{
+			"a": "I like to meticulously organize and catalog interesting visuals into themed collections or folders for long-term reference and future projects.",
+			"b": "I prefer to consume media in the moment or share it directly, and I rarely feel the need to save or organize content for later."
+		},
+		{
+			"a": "I prefer a clean, minimalist interface that focuses purely on images with as little text, tags, and metadata as possible.",
+			"b": "I prefer having detailed context, tags, titles, and creator information clearly visible alongside images to help me evaluate them."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I prefer having detailed context, tags, titles, and creator information clearly visible alongside images to help me evaluate them.",
+	"source-snapshot": "051",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://pinterest.com/search/pins/?q=cats",
+	"final-url": "https://www.pinterest.com/search/pins/?q=cats"
+}

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Prepare seed samples from dom-compression snapshots via JTBD LLM pipeline.
+"""
 
-For each snapshot, runs a 3-turn Gemini session (get_dom with --with-seo, then
-jobs → preference pairs → edit requests) and writes 6 seed samples to
-seed-samples/our-2/{001,002,...}/ with a unified incrementing counter.
+Run this script to get from dom-compression-analysis/snapshots -> seed-samples
+
+We take N random snapshots. For each we generate 6 tasks (with LLM) from 3 pairs of opposing user preferences.
+Standard run to get 20 ballanced seeds:
+- 1 time with SNAPSHOTS_NUMBER = 10 and no --start-at
+- 1 time with SNAPSHOTS_NUMBER = 10 and --start-at 11 --simpler
 
 Usage:
   python3 prep-seed-samples.py
@@ -32,8 +35,9 @@ PIPELINE_DIR = DATA_DIR / "pipeline"
 REPO_ROOT = SCRIPT_DIR.parents[3]
 SNAPSHOTS_DIR = REPO_ROOT / "experiments/dom-compression-analysis/data/snapshots"
 SNAPSHOTS_CSV = SNAPSHOTS_DIR / "data.csv"
-SEED_FOLD = DATA_DIR / "seed-samples" / "our-2"
+SEED_FOLD = DATA_DIR / "seed-samples" / "our-3"
 LOGS_DIR = SCRIPT_DIR / "logs"
+REQUEST_PROMPTS_CSV = DATA_DIR / "our-3-request-prompts.csv"
 
 SNAPSHOTS_NUMBER = 10
 SNAPSHOT_GLOB = "[0-9][0-9][0-9]"
@@ -674,11 +678,9 @@ def run_session(
 
 
 def copy_snapshot_assets(snapshot_dir: Path, original_dir: Path) -> None:
-    original_dir.mkdir(parents=True, exist_ok=True)
-    for name in ("raw.html", "visible.html", "screenshot.png"):
-        src = snapshot_dir / name
-        if src.is_file():
-            shutil.copy2(src, original_dir / name)
+    if original_dir.exists():
+        shutil.rmtree(original_dir)
+    shutil.copytree(snapshot_dir, original_dir)
 
 
 def build_task_json(
@@ -751,7 +753,7 @@ def write_seed_samples(
                 encoding="utf-8",
             )
             copy_snapshot_assets(snapshot_dir, original_dir)
-            log_lines.append(f"  OK our-2/{sample_id}")
+            log_lines.append(f"  OK our-3/{sample_id}")
             index += 1
 
     return index
@@ -789,7 +791,7 @@ def process_snapshot(
         )
         log_lines.append(
             f"[{snapshot_id}] dry-run: would write seed samples "
-            f"our-2/{first_sample_id}..{last_sample_id}",
+            f"our-3/{first_sample_id}..{last_sample_id}",
         )
         return start_index + len(EXPECTED_EDIT_IDS)
 
@@ -815,12 +817,36 @@ def process_snapshot(
     )
     last_sample_id = sample_folder_name(end_index - 1)
     log_lines.append(
-        f"[{snapshot_id}] wrote seed samples our-2/{first_sample_id}..{last_sample_id}",
+        f"[{snapshot_id}] wrote seed samples our-3/{first_sample_id}..{last_sample_id}",
     )
 
     session_log_path.write_text("\n".join(session_log) + "\n", encoding="utf-8")
     log_lines.append(f"[{snapshot_id}] session log: {session_log_path}")
     return end_index
+
+
+def write_request_prompts_csv(log_lines: list[str]) -> None:
+    if not SEED_FOLD.is_dir():
+        log_lines.append("request-prompts CSV: skipped (seed folder missing)")
+        return
+
+    rows: list[tuple[str, str]] = []
+    for sample_dir in sorted(SEED_FOLD.iterdir(), key=lambda p: p.name):
+        if not sample_dir.is_dir() or not sample_dir.name.isdigit():
+            continue
+        task = read_task_json(sample_dir / "task.json")
+        if task is None:
+            continue
+        request_prompt = task.get("request-prompt", "")
+        if request_prompt:
+            rows.append((sample_dir.name, str(request_prompt)))
+
+    with REQUEST_PROMPTS_CSV.open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(["number", "request-prompt"])
+        writer.writerows(rows)
+
+    log_lines.append(f"request-prompts CSV: wrote {len(rows)} rows -> {REQUEST_PROMPTS_CSV}")
 
 
 def main() -> None:
@@ -888,6 +914,9 @@ def main() -> None:
             message = f"[{snapshot_id}] FAIL: {exc}"
             failures.append(message)
             log_lines.append(message)
+
+    if not args.dry_run:
+        write_request_prompts_csv(log_lines)
 
     log_lines.append("")
     if failures:

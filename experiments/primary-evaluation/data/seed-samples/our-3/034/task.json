@@ -1,0 +1,32 @@
+{
+	"request-prompt": "Move the current weather conditions, forecast tabs, and interactive radar widget to the very top of the main content column above the video, so I can see utility weather info instantly without distractions.",
+	"goal": "I only use utility platforms for their core purpose—like checking the daily weather forecast—and actively ignore clickbait, trending feeds, or trivia videos.",
+	"jobs": [
+		"I want to watch the featured video about the bizarre exoplanets Hubble has discovered to learn about space milestones.",
+		"I want to share this interesting scientific video with my friends or family.",
+		"I want to browse and watch other trending videos about extreme weather, space, or nature.",
+		"I want to search for the weather forecast in my local area or another specific location.",
+		"I want to explore different video categories like Severe Storms, Seasonal, or Animals to find content that interests me."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer watching short, visually engaging videos to get my science and nature news because it is entertaining and easy to digest.",
+			"b": "I prefer reading comprehensive, well-structured articles with text and high-resolution images because I can skim the information at my own pace."
+		},
+		{
+			"a": "I enjoy exploring general interest topics, space discoveries, and viral clips on informational websites to satisfy my curiosity.",
+			"b": "I only use utility platforms for their core purpose—like checking the daily weather forecast—and actively ignore clickbait, trending feeds, or trivia videos."
+		},
+		{
+			"a": "I do not mind recommended widgets, promotional columns, and native sponsored articles because they occasionally suggest interesting things to read next.",
+			"b": "I despise heavy ad placements, Taboola/feed style recommendations, and auto-playing videos, preferring a clean, uncluttered, and ad-free viewing experience."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I only use utility platforms for their core purpose—like checking the daily weather forecast—and actively ignore clickbait, trending feeds, or trivia videos.",
+	"source-snapshot": "048",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope",
+	"final-url": "https://weather.com/2026/05/15/science/space/video/weirdest-planets-seen-by-hubble-telescope"
+}

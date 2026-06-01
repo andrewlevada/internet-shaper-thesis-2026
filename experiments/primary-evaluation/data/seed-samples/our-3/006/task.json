@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Redesign the 'Product Reviews & Deals' module in the sidebar to be a wider, more visually rich grid format in the main content column to make it easier to browse outdoor gear recommendations.",
+	"goal": "I frequently discover interesting things through sponsored content recommendations and product lists, and do not mind their presence.",
+	"jobs": [
+		"I want to check the current weather conditions for my city or a specific zip code to plan my immediate outdoor activities.",
+		"I want to access detailed forecasts (such as hourly, 10-day, or monthly) to prepare for upcoming travel or events.",
+		"I want to view interactive weather radar maps to track rain, storms, or severe weather in real-time.",
+		"I want to read the latest weather news, top stories, and watch trending videos to stay informed about environmental events around the world.",
+		"I want to get seasonal health and safety tips, such as tick prevention or mosquito protection, to keep myself and my family safe.",
+		"I want to read reviews and recommendations for weather-related products like sunscreens and sun protective clothing to make smart purchase decisions."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer a strictly utility-driven interface that displays only raw data, charts, and maps, without any narrative news or lifestyle articles.",
+			"b": "I enjoy engaging with feature stories, background articles, and narrative videos related to the climate and environment."
+		},
+		{
+			"a": "I use websites as quick, transactional tools to get immediate local information and exit as fast as possible.",
+			"b": "I like to casually browse and explore different thematic sections like travel, health, and lifestyle on a website."
+		},
+		{
+			"a": "I am highly distracted by ads, promoted products, and sponsored content widgets, and actively try to filter them out of my view.",
+			"b": "I frequently discover interesting things through sponsored content recommendations and product lists, and do not mind their presence."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I frequently discover interesting things through sponsored content recommendations and product lists, and do not mind their presence.",
+	"source-snapshot": "047",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://weather.com",
+	"final-url": "https://weather.com/?Goto=Redirected"
+}

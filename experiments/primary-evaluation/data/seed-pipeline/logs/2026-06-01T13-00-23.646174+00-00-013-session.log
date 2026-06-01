@@ -1,0 +1,137 @@
+Timestamp: 2026-06-01T13:02:50.075677+00:00
+Snapshot: 013
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><title>Wikipedia:Today's featured article/May 2026 - Wikipedia</title><meta name="referrer" content="origin"><meta name="referrer" content="origin-when-cross-origin"><meta name="robots" content="max-image-preview:standard"><meta property="og:title" content="Wikipedia:Today's featured article/May 2026 - Wikipedia"><meta property="og:type" content="website"><link rel="canonical" href="https://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_article/May_2026"></head><body class="ext-discussiontools-replytool-enabled ext-discussiontools-newtopictool-enabled ext-discussiontools-sourcemodetoolbar-enabled skin--responsive skin-vector skin-vector-search-vue mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-4 ns-subject mw-editable page-Wikipedia_Today_s_featured_article_May_2026 rootpage-Wikipedia_Today_s_featured_article skin-vector-2022 action-view uls-dialog-sticky-hide">
+<div id="mw-aria-live-region" class="mw-aria-live-region" aria-live="polite"></div><a class="mw-jump-link" href="#bodyContent">Jump to content</a>
+<div class="vector-header-container">
+	<header class="vector-header mw-header no-font-mode-scale">
+		<div class="vector-header-start">
+			<nav class="vector-main-menu-landmark" aria-label="Site">
+				
+<div id="vector-main-menu-dropdown" class="vector-dropdown vector-main-menu-dropdown vector-button-flush-left vector-button-flush-right" title="Main menu">
+	
+	<label id="vector-main-menu-dropdown-label" for="vector-main-menu-dropdown-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" aria-hidden="true"><span class="vector-icon mw-ui-icon-menu mw-ui-icon-wikimedia-menu"></span>
+
+<span class="vector-dropdown-label-text">Main menu</span>
+	</label>
+	
+</div>
+
+		</nav>
+			
+<a href="/wiki/Main_Page" class="mw-logo">
+	
+	<span class="mw-logo-container skin-invert">
+		<img class="mw-logo-wordmark" alt="Wikipedia" src="/static/images/mobile/copyright/wikipedia
+
+--- ASSISTANT ---
+```json
+{
+  "jobs": [
+    "I want to browse a compilation of Wikipedia's highest-quality articles from May 2026 to find interesting topics to read about.",
+    "I want to find out which article was featured on Wikipedia on a specific day in May 2026.",
+    "I want to read a quick summary of a featured article from May 2026 to decide if I want to click through to the full piece.",
+    "I want to navigate to the featured article archives of other months or years to explore older curated content.",
+    "I want to access tools to nominate, review, or edit featured articles to help contribute to Wikipedia's editorial process.",
+    "I want to jump to a random featured article to learn about something unexpected."
+  ]
+}
+```
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I prefer discovering content through curated daily highlights, featured lists, and editors' picks rather than searching for specific terms.",
+      "b": "I prefer directly searching for what I need and rarely pay attention to featured homepages, daily articles, or editorial lists."
+    },
+    {
+      "a": "I only read articles for information and entertainment, and I have no interest in participating in the behind-the-scenes editing, curation, or talk page discussions of content websites.",
+      "b": "I love community-driven platforms and always seek out the talk pages, revision histories, and contribution guidelines to participate in the community process."
+    },
+    {
+      "a": "I prefer highly detailed, text-heavy directory pages with multiple links and historical archives so I can explore a vast web of related information at once.",
+      "b": "I prefer clean, distraction-free interfaces that focus on a single piece of content at a time without extraneous navigation sidebars, archives, or metadata."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+SCOPE OF REQUESTS:
+- requests must be simple and easy
+- focus on edits to what is already on the page instead of creating whole new parts of the UI
+- there is no way for us to magically display new info that is not on the page — the edits have to be grounded in what content is available on the page
+- focus your changes on elements at the top of the page, because they are easier for us to evaluate
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Place the archive navigation grid with year and month links at the very top of the page, above the page title, to make it easier to discover historical highlights."
+    },
+    {
+      "id": "1b",
+      "request": "Hide the top 'Today's featured article archive' navigation grid entirely and expand the 'Search Wikipedia' bar in the header to take up the full width of the top container."
+    },
+    {
+      "id": "2a",
+      "request": "Hide the utility tabs at the top-right of the page ('Talk', 'Edit', 'View history', and 'Tools') to keep the interface purely focused on reading the article."
+    },
+    {
+      "id": "2b",
+      "request": "Make the 'Talk' and 'Edit' tabs more visually prominent at the top of the page, perhaps by styling them as solid buttons instead of quiet text links."
+    },
+    {
+      "id": "3a",
+      "request": "Keep the right-hand 'Featured content' sidebar pinned to the viewport, and style all archive link lists in a highly condensed layout to maximize information density."
+    },
+    {
+      "id": "3b",
+      "request": "Hide the right-hand 'Featured content' sidebar and the calendar tables completely to give the main featured article summary a clean, single-column, distraction-free reading layout."
+    }
+  ]
+}
+

@@ -18,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 INPUT_CSV = HERE / "05-smapled-pages.csv"
 SNAPSHOTS_DIR = HERE.parent / "raw-snapshots"
 MANIFEST_CSV = SNAPSHOTS_DIR / "data.csv"
+FILTERED_MANIFEST_CSV = HERE.parent / "snapshots" / "data.csv"
 
 FOLDER_WIDTH = 3
 
@@ -43,22 +44,23 @@ def main() -> None:
 
     manifest_rows = read_manifest_rows()
     manual_patch_folders = parse_manual_patch(args.manual_patch)
-    headless = manual_patch_folders is None
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=headless,
+            headless=False,
             args=["--no-sandbox", "--disable-setuid-sandbox"],
         )
         context = browser.new_context(
             viewport=VIEWPORT,
-            user_agent=chromium_user_agent(browser.version, headless=headless),
+            user_agent=chromium_user_agent(browser.version, headless=False),
             locale="en-US",
         )
         tab = context.new_page()
 
         try:
-            if manual_patch_folders is None:
+            if args.recollect_all:
+                recollect_all_snapshots(tab, manifest_rows)
+            elif manual_patch_folders is None:
                 capture_new_snapshots(tab, input_rows, manifest_rows)
             else:
                 patch_snapshots_manually(tab, manifest_rows, manual_patch_folders)
@@ -80,6 +82,14 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Comma-separated snapshot folders to recapture in headed mode, "
             "for example: --manual-patch 1,5,6,8,30"
+        ),
+    )
+    parser.add_argument(
+        "--recollect-all",
+        action="store_true",
+        help=(
+            "Recapture every snapshot listed in the filtered snapshots manifest "
+            "(snapshots/data.csv), replacing existing raw-snapshots in place."
         ),
     )
     return parser.parse_args()
@@ -111,6 +121,40 @@ def parse_manual_patch(value: str | None) -> list[str] | None:
         sys.exit(1)
 
     return folders
+
+
+def recollect_all_snapshots(tab, manifest_rows: list[Row]) -> None:
+    if not FILTERED_MANIFEST_CSV.is_file():
+        print(f"Missing filtered manifest: {FILTERED_MANIFEST_CSV}", file=sys.stderr)
+        sys.exit(1)
+
+    with FILTERED_MANIFEST_CSV.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        source_rows = list(reader)
+
+    print(f"Recollecting {len(source_rows)} snapshots from filtered manifest...")
+    SNAPSHOTS_DIR.mkdir(exist_ok=True)
+
+    updated_rows: list[Row] = []
+
+    for row in source_rows:
+        folder_name = row.get("folder", "").strip()
+        ok, final_url = capture_snapshot(tab, row, folder_name, replace_existing=True)
+        if not ok:
+            updated_rows.append(row)
+            continue
+
+        updated_rows.append(
+            {
+                "folder": folder_name,
+                "url": row.get("url", ""),
+                "final_url": final_url,
+                "seed_domain": row.get("seed_domain", ""),
+            }
+        )
+        manifest_rows.clear()
+        manifest_rows.extend(updated_rows)
+        write_manifest_rows(manifest_rows)
 
 
 def capture_new_snapshots(tab, input_rows: list[Row], manifest_rows: list[Row]) -> None:

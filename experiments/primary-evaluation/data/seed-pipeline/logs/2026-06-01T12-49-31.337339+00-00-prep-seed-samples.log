@@ -1,0 +1,39 @@
+Prep seed samples from dom-compression snapshots
+---timestamp (UTC): 2026-06-01T12:49:31.337339+00:00
+script: prep-seed-samples.py
+model: google/gemini-3.5-flash
+backend: vercel
+snapshots dir: /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/data/snapshots
+output fold: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-samples/our-3
+snapshot filter: (all)
+skip existing: False
+simpler edit requests: False
+dry run: True
+start at snapshot position: (from start)
+snapshot order seed: 9081436
+excluded snapshots: 008, 009, 010, 011, 024, 026, 027, 028, 032, 041, 042, 043, 044, 045, 046, 065, 066, 067, 073
+next seed sample index: 001
+snapshots to process: 047, 071, 004, 040, 050, 048, 051, 070, 007, 033
+
+[047] dry-run: would run JTBD session (simpler=False)
+[047] dry-run: would write seed samples our-3/001..006
+[071] dry-run: would run JTBD session (simpler=False)
+[071] dry-run: would write seed samples our-3/007..012
+[004] dry-run: would run JTBD session (simpler=False)
+[004] dry-run: would write seed samples our-3/013..018
+[040] dry-run: would run JTBD session (simpler=False)
+[040] dry-run: would write seed samples our-3/019..024
+[050] dry-run: would run JTBD session (simpler=False)
+[050] dry-run: would write seed samples our-3/025..030
+[048] dry-run: would run JTBD session (simpler=False)
+[048] dry-run: would write seed samples our-3/031..036
+[051] dry-run: would run JTBD session (simpler=False)
+[051] dry-run: would write seed samples our-3/037..042
+[070] dry-run: would run JTBD session (simpler=False)
+[070] dry-run: would write seed samples our-3/043..048
+[007] dry-run: would run JTBD session (simpler=False)
+[007] dry-run: would write seed samples our-3/049..054
+[033] dry-run: would run JTBD session (simpler=False)
+[033] dry-run: would write seed samples our-3/055..060
+
+log file: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/seed-pipeline/logs/2026-06-01T12-49-31.337339+00-00-prep-seed-samples.log

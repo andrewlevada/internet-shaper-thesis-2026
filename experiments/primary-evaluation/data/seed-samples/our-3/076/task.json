@@ -1,0 +1,36 @@
+{
+	"request-prompt": "Position the Daily Horoscope selector and 'From Our Shopping Experts' section at the very top of the page, right below the search bar, and filter out political or military news articles from the main feed.",
+	"goal": "I am mostly interested in lightweight lifestyle content, such as horoscopes, trending celebrity gossip, shopping deals, and simple online games.",
+	"jobs": [
+		"I want to get a quick overview of the latest news and current events to stay informed.",
+		"I want to search the web to find specific information or websites.",
+		"I want to check my Yahoo email inbox to see if I have any new messages.",
+		"I want to check the current weather conditions and forecast for my city to plan my day.",
+		"I want to check the performance of major stock market indices to stay updated on financial trends.",
+		"I want to read my daily horoscope to get insights based on my zodiac sign.",
+		"I want to see what topics and news stories are currently trending on the internet.",
+		"I want to find recommendations on movies or TV shows to watch in my free time.",
+		"I want to browse curated shopping deals and product recommendations to find good offers."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer a clean, minimal search-centric interface with zero distractions so I can quickly perform tasks without getting sidetracked by headlines.",
+			"b": "I love a busy, portal-style homepage that compiles news, weather, stocks, and entertainment updates in one place so I can get a broad overview of everything at a glance."
+		},
+		{
+			"a": "I like to consume hard news, political updates, and global current events to stay seriously informed about the world.",
+			"b": "I am mostly interested in lightweight lifestyle content, such as horoscopes, trending celebrity gossip, shopping deals, and simple online games."
+		},
+		{
+			"a": "I prefer to actively search for specific information or navigate directly to particular sections rather than relying on suggested feeds.",
+			"b": "I prefer to browse passively and let personalized, algorithmic recommendation feeds suggest stories and content for me to consume."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I am mostly interested in lightweight lifestyle content, such as horoscopes, trending celebrity gossip, shopping deals, and simple online games.",
+	"source-snapshot": "015",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://yahoo.com",
+	"final-url": "https://www.yahoo.com/?guccounter=1"
+}

@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Include more interactive widgets in the side columns, such as permanent transit alerts and extended local weather cards, alongside the existing finance and horoscope widgets.",
+	"goal": "I enjoy browsing portals with a dense, diverse layout of headlines, columns, and utility widgets to discover random interesting topics.",
+	"jobs": [
+		"I want to catch up on the most important news of the day in Brazil and around the world.",
+		"I want to check the schedule and times of today's football matches.",
+		"I want to check the current exchange rates of the US Dollar and Euro, as well as the Ibovespa index.",
+		"I want to read the daily horoscope forecast for my zodiac sign.",
+		"I want to find out what programs are airing on TV Globo today and at what times.",
+		"I want to read celebrity gossip and catch up on the latest entertainment news.",
+		"I want to quickly check the weather forecast for my region.",
+		"I want to read the weekly summaries and spoilers of my favorite soap operas."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer reading written articles and detailed text reports because they provide more depth and allow me to scan information at my own pace.",
+			"b": "I prefer consuming news primarily through short video clips and highlights because they are more engaging and easier to digest."
+		},
+		{
+			"a": "I enjoy browsing portals with a dense, diverse layout of headlines, columns, and utility widgets to discover random interesting topics.",
+			"b": "I feel easily overwhelmed by busy, multi-column portal layouts and prefer minimalist interfaces where I can focus on a single stream of content."
+		},
+		{
+			"a": "I value serious, objective news like politics, economics, and world events, and I actively filter out sensational celebrity gossip or pop culture drama.",
+			"b": "I enjoy following celebrity gossip, reality show updates, and entertainment news as a lighthearted way to unwind and stay entertained."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I enjoy browsing portals with a dense, diverse layout of headlines, columns, and utility widgets to discover random interesting topics.",
+	"source-snapshot": "071",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://globo.com",
+	"final-url": "https://www.globo.com/"
+}

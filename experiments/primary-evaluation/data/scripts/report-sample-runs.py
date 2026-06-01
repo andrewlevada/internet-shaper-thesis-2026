@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize pipeline run times and apply failures from sample agent.log files.
+"""Run this after all the samples are prepped to calculate avarage time it took to process ech pipeline
 
 Usage:
   python3 report-sample-runs.py --sample our-2

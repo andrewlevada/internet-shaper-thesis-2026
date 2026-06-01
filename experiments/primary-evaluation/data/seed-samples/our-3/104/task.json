@@ -1,0 +1,33 @@
+{
+	"request-prompt": "Hide all rich cards, 'People also search for' elements, related search carousels, and image rows, leaving only the standard textual organic web links (like Wikipedia and musical site links) directly below the search filters.",
+	"goal": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites.",
+	"jobs": [
+		"I want to book tickets to see the \"Cats\" musical in Dutch theaters.",
+		"I want to watch promotional videos, trailers, and gala performances of the \"Cats\" musical.",
+		"I want to listen to or find information about the Dutch pop group \"The Cats\" from Volendam.",
+		"I want to find guides and general information on how to care for a domestic cat as a pet.",
+		"I want to look up reviews, cast details, and ratings for the 2019 \"Cats\" movie.",
+		"I want to learn about the list of songs and characters from Andrew Lloyd Webber's musical \"Cats\"."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer when search engines show rich previews, knowledge panels, and quick answers directly in the search results so I don't have to click through to external websites.",
+			"b": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites."
+		},
+		{
+			"a": "I always prefer looking for search results in my native language and find translated or local localized pages most helpful.",
+			"b": "I prefer to search for and consume web content in English to get more comprehensive and globally accurate information."
+		},
+		{
+			"a": "I prefer reading textual information, articles, and structured encyclopedia entries when learning about a topic online.",
+			"b": "I am a highly visual searcher who prefers watching videos, trailers, and looking at image galleries rather than reading articles."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "b",
+	"preference": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites.",
+	"source-snapshot": "001",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://google.com/search?q=cats",
+	"final-url": "https://www.google.com/search?q=cats&sei=H3IdaurZGZH87_UPqsPhuAk"
+}

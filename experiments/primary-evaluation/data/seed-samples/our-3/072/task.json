@@ -1,0 +1,32 @@
+{
+	"request-prompt": "Keep the 'In this story' table of contents box fully expanded by default rather than collapsed under a dropdown menu, allowing for immediate navigation directly to specific price tiers.",
+	"goal": "I only buy tech accessories and electronics when I have a specific, pre-determined need for them, regardless of how good a temporary discount is.",
+	"jobs": [
+		"I want to find extended Memorial Day sales on tech products to save money on my next electronics purchase.",
+		"I want to browse discounted gadgets categorized by price (such as under $50, under $100, or under $250) to quickly find deals within my budget.",
+		"I want to read expert summaries and reviews of on-sale items to determine if a specific product (like the AirPods Pro 3 or Apple Watch Series 11) is right for me.",
+		"I want to see the exact discount amount and compare the sale price with the original retail price to evaluate how good the deal is.",
+		"I want to easily click through to a trusted retailer like Amazon to purchase a featured item before the limited-time discount expires."
+	],
+	"preference-pairs": [
+		{
+			"a": "I am strictly loyal to premium, well-known tech brands like Apple or Bose and rarely consider budget or lesser-known alternatives.",
+			"b": "I am brand-agnostic and prioritize getting the absolute best value or lowest price, even if the brand is relatively obscure."
+		},
+		{
+			"a": "I highly trust curated lists and recommendations from tech editors and journalists to guide my buying decisions.",
+			"b": "I am highly skeptical of affiliate-driven editorial reviews and prefer to do my own independent research on user forums and specs."
+		},
+		{
+			"a": "I am a deal hunter who enjoys buying gadgets impulsively simply because they are marked down to an all-time low price.",
+			"b": "I only buy tech accessories and electronics when I have a specific, pre-determined need for them, regardless of how good a temporary discount is."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "b",
+	"preference": "I only buy tech accessories and electronics when I have a specific, pre-determined need for them, regardless of how good a temporary discount is.",
+	"source-snapshot": "016",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.yahoo.com/tech/deals/breaking-news/article/memorial-day-sales-on-tech-are-already-live-at-amazon-apple-best-buy-and-more-181434324.html",
+	"final-url": "https://tech.yahoo.com/deals/breaking-news/article/memorial-day-sales-on-tech-are-still-available-shop-extended-deals-up-to-50-off-from-amazon-apple-best-buy-and-more-181434135.html"
+}

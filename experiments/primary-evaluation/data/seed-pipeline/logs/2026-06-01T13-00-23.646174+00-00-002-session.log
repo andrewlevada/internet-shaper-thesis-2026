@@ -1,0 +1,117 @@
+Timestamp: 2026-06-01T13:02:10.376691+00:00
+Snapshot: 002
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><title>Resolve Google Search’s "Unusual traffic from your computer network" message - Google Search Help</title><meta content="follow,index" name="robots"><meta content="If a network you use, including VPN networks, seems to be sending automated traffic to Google Search, you might get the message “Our systems have detected unusual traffic from your computer network.”" name="description"><link href="https://support.google.com/websearch/answer/86640?hl=en" rel="canonical"></head><body class="mobile">     <a class="skip-link" href="#search-form">Skip to main content</a> <div class="content-background"></div> <div class="hcfe">  <header role="none" id="hcfe-header"><div class="gaiabar material-bar" data-stats-ve="57"><header class="gb_Ma gb_Eb gb_Hd gb_Zd gb_Ud gb_e gb_6a gb_id" ng-non-bindable="" id="gb" role="banner"><div class="gb_ce"></div><div class="gb_Pd gb_Sd"><div class="gb_Xd gb_wd gb_xd"><div class="gb_6c" aria-expanded="false" aria-label="Main menu" role="button" tabindex="0"><svg focusable="false" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg></div></div><div class="gb_Xd gb_6d gb_Qe gb_2e gb_6e"><div class="gb_j gb_we"><div class="gb_ye gb_xe" id="material-bar-custom-product-name"><a href="/websearch">Google Search Help</a></div></div><div class="gb_Pe"><form class="gb_Ld" action="/websearch/search" method="get" role="search" id="search-form"><div class="gb_He"><input class="gb_Ee" aria-label="Describe your issue" autocomplete="off" placeholder="Describe your issue" role="combobox" value="" name="q" type="text" aria-haspopup="listbox" aria-autocomplete="list" dir="ltr" spellcheck="false" aria-expanded="false" style="outline: none;"></div><button class="gb_Ve search-trigger" aria-label="Search Help Center" role="button"><svg focusable="false" height="24px" viewBox="0 0 24 24" width="24px" xmlns="http://www.w3.org/2000/svg"><path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,
+
+--- ASSISTANT ---
+```json
+{
+  "jobs": [
+    "I want to fix the 'Unusual traffic from your computer network' error so I can use Google Search again",
+    "I want to understand why Google is blocking my search queries and showing this message",
+    "I want to troubleshoot why the reCAPTCHA is not appearing or working on my browser",
+    "I want to learn how to resolve this error permanently when using a VPN",
+    "I want to find out how to address this 'Unusual traffic' issue as a network administrator or ISP",
+    "I want to understand what Google classifies as automated traffic to make sure my activities are compliant",
+    "I want to get additional help from the Google Search Help Community for my specific case"
+  ]
+}
+```
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I prefer quick, straightforward steps to solve a technical issue without needing to understand the underlying technical concepts.",
+      "b": "I prefer to deeply understand the root cause and technical details of an error before I start implementing any fixes."
+    },
+    {
+      "a": "I prioritize privacy and security, meaning I would rather keep my VPN and strict security extensions active even if it occasionally breaks website functionality.",
+      "b": "I prioritize convenience and speed, and I am willing to turn off VPNs, clear cookies, or disable security tools to get a website working again quickly."
+    },
+    {
+      "a": "I prefer self-diagnosing and fixing computer and network issues on my own using written documentation and official guides.",
+      "b": "I prefer reaching out to others, such as community forums, IT professionals, or customer support, to guide me through troubleshooting."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+SCOPE OF REQUESTS:
+- requests must be simple and easy
+- focus on edits to what is already on the page instead of creating whole new parts of the UI
+- there is no way for us to magically display new info that is not on the page — the edits have to be grounded in what content is available on the page
+- focus your changes on elements at the top of the page, because they are easier for us to evaluate
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Move the 'What to do when you get this message' section directly to the very top of the page, above the introductory paragraph, and format it as a simplified 1-2-3 step list."
+    },
+    {
+      "id": "1b",
+      "request": "Move 'What Google considers automated traffic' to the top of the article so I can read the technical background and understand why this is happening before seeing any troubleshooting steps."
+    },
+    {
+      "id": "2a",
+      "request": "Under the VPN troubleshooting bullet, rewrite and style the text to prioritize 'contacting your VPN provider or changing servers' instead of suggesting to 'uninstall the VPN' as the primary action."
+    },
+    {
+      "id": "2b",
+      "request": "Place a highly visible, styled callout box right under the main title that lists quick toggle-off actions like 'Turn off VPN' and 'Disable extensions' for an immediate fix."
+    },
+    {
+      "id": "3a",
+      "request": "Convert the bulleted lists under 'What to do if you continue to get the message' into an interactive, step-by-step diagnostic checklist that I can follow and check off on my own."
+    },
+    {
+      "id": "3b",
+      "request": "Move the 'Post to the help community' section from the bottom of the page to the top sidebar next to the article title so I can easily skip reading and ask a person instead."
+    }
+  ]
+}
+

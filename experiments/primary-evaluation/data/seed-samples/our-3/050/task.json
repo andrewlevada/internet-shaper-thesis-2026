@@ -1,0 +1,32 @@
+{
+	"request-prompt": "Add a prominent, auto-focusing login modal overlay immediately when visiting this page if I am not signed in, rather than showing a static page with a sign-in button.",
+	"goal": "I always want to be signed in to ensure my personalized recommendations, watch history, and playlists are synced seamlessly across all my devices.",
+	"jobs": [
+		"I want to sign in to my YouTube account to access my library of saved and liked videos.",
+		"I want to search for a specific video or topic using the search bar.",
+		"I want to browse curated content in categories like Music, Movies, or Gaming.",
+		"I want to switch to other YouTube services like YouTube Kids or YouTube Music.",
+		"I want to go to the Home feed to see recommended videos."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer browsing video platforms anonymously without signing in to protect my privacy and prevent companies from tracking my viewing history.",
+			"b": "I always want to be signed in to ensure my personalized recommendations, watch history, and playlists are synced seamlessly across all my devices."
+		},
+		{
+			"a": "I always use the search bar because I know exactly what content I want to watch and prefer not to waste time browsing recommendations.",
+			"b": "I prefer to casually browse curated categories, sidebar recommendations, and home feeds to let the algorithm discover interesting videos for me."
+		},
+		{
+			"a": "I only care about core, free video content and ignore cross-promoted secondary services like YouTube Premium, YouTube Music, or Kids.",
+			"b": "I actively look for and enjoy using specialized ecosystem services like YouTube Music, Premium features, and dedicated kids' portals."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "b",
+	"preference": "I always want to be signed in to ensure my personalized recommendations, watch history, and playlists are synced seamlessly across all my devices.",
+	"source-snapshot": "007",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.youtube.com/feed/you",
+	"final-url": "https://www.youtube.com/feed/you"
+}

@@ -214,11 +214,10 @@ def openai_tool_result_message(
     name: str,
     content: str,
 ) -> dict[str, Any]:
-    del name
     return {
         "role": "tool",
         "tool_call_id": tool_call_id,
-        "content": content,
+        "content": openai_cached_text_content(content) if should_cache_tool_result(name) else content,
     }
 
 AgentBackend = AgentProvider

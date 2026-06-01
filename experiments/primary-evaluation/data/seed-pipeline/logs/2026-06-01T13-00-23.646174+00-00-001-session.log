@@ -1,0 +1,116 @@
+Timestamp: 2026-06-01T13:03:43.044661+00:00
+Snapshot: 001
+Model: google/gemini-3.5-flash
+
+=== Session ===
+Model: google/gemini-3.5-flash
+
+--- USER (jobs) ---
+List what jobs (in terms of JTBD) users might want to perform on this page. Jobs To Be Done is a framework that describes the tasks and goals users have — in other words, a reason why they are using the UI. Each job description must start with "I want to".
+
+Example: on an e-commerce product page, primary jobs might be:
+1. I want to compare this item with another one I am looking at by its specs
+2. I want to read the reviews on this item to make an educated decision on whether to purchase it
+3. I want to share this item with a friend
+
+Call get_dom() to inspect the page, then respond with JSON: {"jobs": ["I want to ...", ...]}
+
+--- TOOL CALL: get_dom ---
+
+--- TOOL RESULT: get_dom ---
+<html><head><meta content="origin" name="referrer"><title>cats - Google Zoeken</title></head><body jsmodel="hspDDf JfINdf" class="srp" jscontroller="Eox39d" marginheight="3" topmargin="3" jsaction="rcuQ6b:npT2md;xjhTIf:.CLIENT;O2vyse:.CLIENT;IVKTfe:.CLIENT;Ez7VMc:.CLIENT;R6Slyc:.CLIENT;zbW2Cf:.CLIENT;OZ3M7e:.CLIENT;gZgazf:.CLIENT;ydZCDf:.CLIENT" id="gsr"><noscript><style>table,div,span,p{display:none}</style><meta content="0;url=/httpservice/retry/enablejs?sei=IHIdate-C5uM9u8P6ubz-AI" http-equiv="refresh"><div style="display:block">Klik <a href="/httpservice/retry/enablejs?sei=IHIdate-C5uM9u8P6ubz-AI">hier</a> als je niet binnen enkele seconden wordt omgeleid.</div></noscript><div jscontroller="EufiNb" class="wYq63b" data-ved="0ahUKEwjXzq71_OWUAxUbhv0HHWrzHC8Q7LoDCAQ"><div class="S6VXfe"><a jsname="BKxS1e" class="gyPpGe" role="link" tabindex="0" jsaction="i3viod;focus:a0Q7Qd" data-ved="0ahUKEwjXzq71_OWUAxUbhv0HHWrzHC8Q67oDCAU">Naar hoofdcontent</a><a jsname="KI37ad" class="gyPpGe" href="https://support.google.com/websearch/answer/181196?hl=nl" jsaction="focus:a0Q7Qd" data-ved="0ahUKEwjXzq71_OWUAxUbhv0HHWrzHC8QwcMDCAY" ping="/url?sa=t&source=web&rct=j&url=https://support.google.com/websearch/answer/181196%3Fhl%3Dnl&ved=0ahUKEwjXzq71_OWUAxUbhv0HHWrzHC8QwcMDCAY&opi=89978449">Hulp bij toegankelijkheid</a></div></div><div class="xrOgrb"></div><span jscontroller="Zby8rf" class="LoygGf" data-cls="VHFyob" data-h="72" data-mode="6" style="height:72px" jsaction="rcuQ6b:npT2md;MDuPYe:pcqARd"><div jsname="P9ya7d" class="Xx7Mif E5eFb" style="height:72px"><div class="CvDJxb YNk70c" id="searchform"><div class="NDnoQ P3mIxe"><form class="tsf" action="/search" id="tsf" autocomplete="off" data-submitfalse="q" method="GET" name="f" role="search"> <div jsmodel="b5W85 vNzKHd" jsdata="MuIEvd;_;IHIdate-C5uM9u8P6ubz-AI1"> <div jscontroller="cnjECf" jsmodel="kjkykd EPRt9d LM7wx Qlyryb EtCx8b Ip3Erc L97mud zmptHf CoyuFb          YHnUBc" class="A8SBwf" data-alt="true" data-biboe="false" data-
+
+--- ASSISTANT ---
+```json
+{
+  "jobs": [
+    "I want to book tickets to see the \"Cats\" musical in Dutch theaters.",
+    "I want to watch promotional videos, trailers, and gala performances of the \"Cats\" musical.",
+    "I want to listen to or find information about the Dutch pop group \"The Cats\" from Volendam.",
+    "I want to find guides and general information on how to care for a domestic cat as a pet.",
+    "I want to look up reviews, cast details, and ratings for the 2019 \"Cats\" movie.",
+    "I want to learn about the list of songs and characters from Andrew Lloyd Webber's musical \"Cats\"."
+  ]
+}
+```
+
+--- USER (preferences) ---
+Ok! Now consider what segments of users, in terms of their preferences, might be using this page. Preferences don't describe the job or the current session. They are instead persistent in time, intrinsic to the particular users and will be true across different websites. Come up with them in 3 pairs of opposites.
+
+Example: on an e-commerce product page, user preference profiles might be:
+1a. I never read the reviews because there are a lot of fake ones. I only look at the description and photos
+1b. I try to read as many reviews as possible, especially negative ones, before purchase
+2a. I am loyal to the brands I purchase from, so I always look at the store page before purchasing an item to find more items they may have that I usually like
+2b. I don't remember brands and stores — I just purchase what looks good
+3a. I think this page is too cluttered with information. It is very hard to focus on just the pictures, description, and reviews. There is too much going on
+3b. I like how the page contains everything you need to know; on the other hand, it has too much empty space. I wish it was more condensed
+
+Respond with JSON: {"preference_pairs": [{"a": "...", "b": "..."}, ...]} (exactly 3 pairs)
+
+--- ASSISTANT ---
+{
+  "preference_pairs": [
+    {
+      "a": "I prefer when search engines show rich previews, knowledge panels, and quick answers directly in the search results so I don't have to click through to external websites.",
+      "b": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites."
+    },
+    {
+      "a": "I always prefer looking for search results in my native language and find translated or local localized pages most helpful.",
+      "b": "I prefer to search for and consume web content in English to get more comprehensive and globally accurate information."
+    },
+    {
+      "a": "I prefer reading textual information, articles, and structured encyclopedia entries when learning about a topic online.",
+      "b": "I am a highly visual searcher who prefers watching videos, trailers, and looking at image galleries rather than reading articles."
+    }
+  ]
+}
+
+--- USER (edit_requests) ---
+Ok! If these users with their preferences could edit this class of pages to make their jobs easier to complete, what edits would they request? These edits have to be stylistic, stractural or functional. Edits must be refering to elements of the page, as if a user sees this page before them. Edits will be applied to all pages of this class (in our example, to all product item pages across the website). Provide one request for each preference from the list you made.
+
+Example mapping to the example above:
+1a. Hide the reviews section
+1b. Move the reviews section up above reommendations
+2a. Add a button to go to the store page near the Add to cart button
+2b. Remove the card with information about the store
+3a. The page is too cluttered. I want to see only pictures, description of an item, and reviews — and no other info about the product, store, or recommendations of other items
+3b. Make the empty space on the sides of the page less empty. I want the content to fill the whole page
+
+Respond with JSON: {"edit_requests": [{"id": "1a", "request": "..."}, ...]} (exactly 6 entries, ids 1a/1b/2a/2b/3a/3b)
+
+SCOPE OF REQUESTS:
+- requests must be simple and easy
+- focus on edits to what is already on the page instead of creating whole new parts of the UI
+- there is no way for us to magically display new info that is not on the page — the edits have to be grounded in what content is available on the page
+- focus your changes on elements at the top of the page, because they are easier for us to evaluate
+
+--- ASSISTANT ---
+{
+  "edit_requests": [
+    {
+      "id": "1a",
+      "request": "Move the knowledge panel about the 'Cats' musical (with its description, authors, and character list) from the right sidebar to the top of the main left-hand column, so I can read the quick facts immediately without scanning to the side."
+    },
+    {
+      "id": "1b",
+      "request": "Hide all rich cards, 'People also search for' elements, related search carousels, and image rows, leaving only the standard textual organic web links (like Wikipedia and musical site links) directly below the search filters."
+    },
+    {
+      "id": "2a",
+      "request": "Remove the 'Looking for results in English?' yellow prompt banner and suppress the English web results (like the IMDb entry) to keep the layout entirely focused on my localized Dutch experience."
+    },
+    {
+      "id": "2b",
+      "request": "Make the 'Change to English' option in the notification banner a prominent primary button directly next to the search bar so I can quickly shift to globally available English content."
+    },
+    {
+      "id": "3a",
+      "request": "Move the Wikipedia link and other text-heavy web results above the visual grids, 'Meer om te vragen' sections, and video rows so I can read articles without visual distractions."
+    },
+    {
+      "id": "3b",
+      "request": "Place the 'Afbeeldingen' (Images) gallery card and the 'Video's' video carousel at the absolute top of the search results column so I can immediately browse trailers and photos."
+    }
+  ]
+}
+

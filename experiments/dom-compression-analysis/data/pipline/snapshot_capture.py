@@ -184,8 +184,16 @@ def recapture_snapshot(
         raw_html = tab.evaluate("() => document.documentElement.outerHTML")
         visible_html = tab.evaluate(VISIBLE_HTML_CAPTURE_SCRIPT)
 
+        cdp = tab.context.new_cdp_session(tab)
+        try:
+            mhtml_result = cdp.send("Page.captureSnapshot", {"format": "mhtml"})
+            mhtml_content = mhtml_result["data"]
+        finally:
+            cdp.detach()
+
         (temp_dir / "raw.html").write_text(raw_html, encoding="utf-8")
         (temp_dir / "visible.html").write_text(visible_html, encoding="utf-8")
+        (temp_dir / "raw.mhtml").write_text(mhtml_content, encoding="utf-8")
         tab.screenshot(path=temp_dir / "screenshot.png")
 
         if dest_dir.exists():
