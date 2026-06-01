@@ -1,48 +1,9 @@
-// Innopolis University bachelor thesis title page (BS_Thesis_title_page_2026.docx).
-// Overrides @preview/modern-innopolis-thesis:0.1.1 title-page layout.
-
-#let title-gray = rgb("#D9D9D9")
-
-#let field-box(body, height: auto) = box(
-  stroke: 0.5pt + black,
-  fill: title-gray,
-  width: 100%,
-  height: height,
-  inset: 6pt,
-  align(left + top)[#set text(weight: "bold"); #body],
-)
-
-#let signature-box(height) = box(
-  stroke: 0.5pt + black,
-  fill: title-gray,
-  width: 100%,
-  height: height,
-  inset: (bottom: 10pt, left: 20pt, right: 20pt),
-  align(bottom)[#text(size: 8pt)[подпись / signature]],
-)
-
-#let topic-row(label, body) = grid(
-  columns: (auto, 1fr),
-  column-gutter: 7pt,
-  align(left + horizon)[#text(weight: "bold")[#label]],
-  field-box(body),
-)
-
-#let signature-row(label-ru, label-en, body, height) = grid(
-  columns: (1fr, 1.5fr, 1fr),
-  column-gutter: (20pt, 1pt, 1pt),
-  align(left + horizon)[
-    #label-ru \
-    #text(style: "italic")[#label-en]
-  ],
-  field-box(body, height: height),
-  signature-box(height),
-)
-
 #let title-page(
   program-code: "",
   program-ru: "",
   program-en: "",
+  work-ru: "",
+  work-en: "",
   specialty-ru: "",
   specialty-en: "",
   topic-ru: "",
@@ -51,69 +12,90 @@
   author-en: "",
   supervisor-ru: "",
   supervisor-en: "",
-  consultants: none,
+  consultants: "",
   year: "",
-  font-family: "Times New Roman",
 ) = {
-  set page(
-    paper: "a4",
-    margin: (
-      top: 2.5cm,
-      bottom: 1cm,
-      left: 2.5cm,
-      right: 2cm,
-    ),
-  )
-  set text(size: 14pt, font: font-family)
-  set par(leading: 0.55em, spacing: 0.55em)
+  set page(paper: "a4", margin: (top: 2.5cm, bottom: 1cm))
+  set text(size: 14pt)
 
-  [
-    #align(center)[
-      #set par(leading: 0.55em, spacing: 0.55em)
-      *Автономная некоммерческая организация высшего образования* \
-      *«Университет Иннополис»* \
-      *ВЫПУСКНАЯ КВАЛИФИКАЦИОННАЯ РАБОТА* \
-      *(БАКАЛАВРСКАЯ РАБОТА)* \
-      по направлению подготовки \
-      *#program-code «#program-ru»* \
-      *FINAL QUALIFICATION WORK* \
-      *(BACHELOR'S THESIS)* \
-      *Academic Program* \
-      *#program-code «#program-en»* \
-      *Направленность (профиль) образовательной программы* \
-      *«#specialty-ru»* \
-      *Field of Study:* \
-      *«#specialty-en»*
-    ]
+  align(center)[
+    *Автономная некоммерческая организация высшего образования* \
+    *«Университет Иннополис»*
 
-    #v(0.5em)
-    #topic-row[Тема][#topic-ru]
-    #v(0.25em)
-    #topic-row[Topic][#topic-en]
-    #v(0.5em)
+    *ВЫПУСКНАЯ КВАЛИФИКАЦИОННАЯ РАБОТА* \
+    *(#work-ru)* \
+    по направлению подготовки \
+    *#program-code – «#program-ru»*
 
-    #signature-row(
-      [Работу выполнил /],
-      [Prepared by],
-      [#author-ru / #author-en],
-      22mm,
+    *FINAL QUALIFICATION WORK* \
+    *(#work-en)* \
+    *Academic Program* \
+    *#program-code – “#program-en”*
+
+    *Направленность (профиль) образовательной программы* \
+    *«#specialty-ru»* \
+    *Field of Study:* \
+    *“#specialty-en”*
+
+    #grid(
+      columns: (0.5fr, 5fr),
+      column-gutter: 7pt,
+      [#box(inset: 4pt)[*Тема / Topic*]],
+      [#align(left)[#box(stroke: 0.5pt + black, fill: silver, width: 100%, inset: 6pt)[
+        *#topic-ru / #topic-en*
+      ]]],
+    ) \
+    #grid(
+      columns: (1fr, 1.5fr, 1fr),
+      column-gutter: (20pt, 1pt, 1pt),
+      [#box(inset: (left: 1pt, right: 1pt))[#align(left)[Работу выполнил / Prepared by]]],
+      [
+        #align(left)[
+          #box(stroke: 0.5pt + black, fill: silver, width: 100%, height: 30mm, inset: 6pt)[
+            *#author-ru / #author-en*
+          ]
+        ]],
+
+      [#box(stroke: 0.5pt + black, height: 30mm, fill: silver, inset: (bottom: 10pt, right: 20pt, left: 20pt))[
+          #align(bottom)[#text(size: 8pt, fill: black)[подпись / signature]]]
+      ],
     )
-    #v(0.15em)
-    #signature-row(
-      [Руководитель выпускной квалификационной работы /],
-      [Final Qualification Work Supervisor],
-      [#supervisor-ru / #supervisor-en],
-      24mm,
-    )
-    #v(0.15em)
-    #signature-row(
-      [Консультанты],
-      [Consultants],
-      if consultants != none { consultants } else { [] },
-      22mm,
+    #grid(
+      columns: (1fr, 1.5fr, 1fr),
+      column-gutter: (20pt, 1pt, 1pt),
+      [#box(inset: (left: 1pt, right: 1pt))[#align(
+        left,
+      )[Руководитель выпускной квалификационной работы / Final Qualification Work Supervisor]]],
+      [
+        #align(left)[
+          #box(stroke: 0.5pt + black, fill: silver, width: 100%, height: 35mm, inset: 6pt)[
+            *#supervisor-ru / #supervisor-en*
+          ]
+        ]],
+
+      [#box(stroke: 0.5pt + black, height: 35mm, fill: silver, inset: (bottom: 10pt, right: 20pt, left: 20pt))[
+          #align(bottom)[#text(size: 8pt, fill: black)[подпись / signature]]]
+      ],
     )
 
-    #v(0.4em)
-    #align(center)[Иннополис, Innopolis, #year]
+    #if (consultants != "") {
+      grid(
+        columns: (1fr, 1.5fr, 1fr),
+        column-gutter: (20pt, 1pt, 1pt),
+        [#box(inset: (left: 1pt, right: 100pt))[#align(left)[Консультанты / Consultants]]],
+        [
+          #align(left)[
+            #box(stroke: 0.5pt + black, fill: silver, width: 100%, height: 30mm, inset: 6pt)[
+              *#consultants*
+            ]
+          ]],
+
+        [#box(stroke: 0.5pt + black, height: 30mm, fill: silver, inset: (bottom: 10pt, right: 20pt, left: 20pt))[
+            #align(bottom)[#text(size: 8pt, fill: black)[подпись / signature]]]
+        ],
+      )
+    }
+
+    #align(bottom)[Иннополис, Innopolis, #year]
   ]
 }
