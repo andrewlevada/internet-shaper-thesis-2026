@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Hide keyword suggestion pills",
-		"query_selector": "[data-test-id=\"scrollable-one-bar-root\"]",
-		"logic": "element.style.display = 'none'"
-	}
-]

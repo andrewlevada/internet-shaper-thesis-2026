@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Hide AI mode button",
-		"query_selector": ".olrp5b",
-		"logic": "element.style.display = 'none';"
-	}
-]

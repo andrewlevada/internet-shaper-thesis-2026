@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Hide AI mode",
-		"query_selector": ".olrp5b a[href*='fbs='] .mXwfNd .R1QWuf",
-		"logic": "element.style.display = 'none'"
-	}
-]
