@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Add CTA button below title",
+			"query_selector": "h1.article-title",
+			"logic": "if (element.nextElementSibling && element.nextElementSibling.classList.contains('cta-button-inserted')) return;\n\nvar btn = document.createElement('a');\nbtn.href = 'https://support.fandom.com/hc/en-us/requests/new?ticket_form_id=360000931354&tf_360017817454=i_want_a_feature_or_extension_turned_on';\nbtn.target = '_self';\nbtn.rel = 'noopener';\nbtn.className = 'cta-button-inserted';\nbtn.textContent = 'Contact Us';\nbtn.style.display = 'inline-block';\nbtn.style.marginTop = '12px';\nbtn.style.padding = '12px 28px';\nbtn.style.background = '#1c4c9f';\nbtn.style.color = '#ffffff';\nbtn.style.fontWeight = '700';\nbtn.style.fontSize = '16px';\nbtn.style.borderRadius = '6px';\nbtn.style.border = 'none';\nbtn.style.cursor = 'pointer';\nbtn.style.textDecoration = 'none';\nbtn.style.transition = 'background 0.2s ease';\nbtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';\n\nvar hoverStyle = document.createElement('style');\nhoverStyle.textContent = 'a.cta-button-inserted:hover { background: #0e3a8a; }';\nbtn.appendChild(hoverStyle);\n\nelement.parentNode.insertBefore(btn, element.nextSibling);"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

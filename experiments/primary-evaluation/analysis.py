@@ -19,7 +19,7 @@ from scipy.stats import binomtest, friedmanchisquare, wilcoxon
 ROOT = Path(__file__).resolve().parent
 PAIRS_CSV = ROOT / "pairs.csv"
 WIN_MATRIX_CSV = ROOT / "win-matrix.csv"
-SAMPLES_DIR = ROOT / "data" / "samples" / "our-2"
+SAMPLES_DIR = ROOT / "data" / "samples" / "our-3"
 OUTPUT_DIR = ROOT / "analysis-output"
 
 PipelineId = Literal[

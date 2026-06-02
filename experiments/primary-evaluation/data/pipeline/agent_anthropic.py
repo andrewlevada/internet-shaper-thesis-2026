@@ -176,8 +176,12 @@ def run_agent_anthropic(
 
         elapsed = time.monotonic() - started
 
+        cache_read: int | None = None
+        cache_creation: int | None = None
         if response.usage:
-            result.prompt_tokens = response.usage.input_tokens
+            cache_read = getattr(response.usage, "cache_read_input_tokens", None)
+            cache_creation = getattr(response.usage, "cache_creation_input_tokens", None)
+            result.prompt_tokens = response.usage.input_tokens + (cache_read or 0)
             result.completion_tokens = response.usage.output_tokens
 
         assistant_content: list[dict[str, Any]] = []
@@ -204,6 +208,8 @@ def run_agent_anthropic(
             elapsed_s=elapsed,
             prompt_tokens=response.usage.input_tokens if response.usage else None,
             completion_tokens=response.usage.output_tokens if response.usage else None,
+            cached_tokens=cache_read,
+            cache_creation_tokens=cache_creation,
             finish_reason=response.stop_reason,
             tool_calls=[block.name for block in tool_use_blocks] or None,
             log_writer=log_writer,

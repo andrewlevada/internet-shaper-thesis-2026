@@ -391,9 +391,13 @@ class ToolDispatcher:
                 "query_selector": str(sel),
                 "logic": str(logic),
             }
+            try:
+                _apply_update_rules(self.page_html, [rule], self.page_html)
+            except RuntimeError as exc:
+                return f"error: {exc}"
             self.rules.append(rule)
             return (
-                f'Rule registered (#{len(self.rules)}): "{rule["label"]}" '
+                f'Rule applied (#{len(self.rules)}): "{rule["label"]}" '
                 f'- selector="{rule["query_selector"]}"'
             )
 
@@ -507,7 +511,7 @@ def _tool_schema(name: str) -> dict[str, Any]:
             "function": {
                 "name": "set_update_rule",
                 "description": (
-                    "Sets a persistent update rule that will be applied to all elements matching the CSS selector every time the page loads. \n\n"
+                    "Sets a persistent update rule. It is applied to all elements matching the CSS selector immediatly and then every time the page loads. \n\n"
                     "The 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \n"
                     "The page's 'document' is also available for DOM construction (e.g. document.createElement). \n"
                     "Global APIs like window are not avaliable. \n\n"
@@ -844,28 +848,13 @@ def apply_changes(
 ) -> str:
     if pipeline.uses_rules:
         if run_result.rules:
-            try:
-                msg = _apply_update_rules(
-                    paths.page_html,
-                    run_result.rules,
-                    paths.page_html,
-                )
-                apply_result: dict[str, object] = {"success": True, "log": msg}
-            except RuntimeError as exc:
-                apply_result = {"success": False, "log": str(exc)}
-
-            _write_rules_json(paths, run_result.rules, apply_result)
-
-            if apply_result["success"]:
-                summary_lines = [msg, "", f"{len(run_result.rules)} rule(s):"]
-                for i, rule in enumerate(run_result.rules, start=1):
-                    summary_lines.append(f"[{i}] {rule['label']} — {rule['query_selector']}")
-                    summary_lines.append(f"    {rule['logic']}")
-                copy_over_the_final(paths)
-                return "\n".join(summary_lines)
-
+            _write_rules_json(paths, run_result.rules, {"success": True, "log": "rules applied in real-time"})
+            summary_lines = [f"{len(run_result.rules)} rule(s) applied:"]
+            for i, rule in enumerate(run_result.rules, start=1):
+                summary_lines.append(f"[{i}] {rule['label']} — {rule['query_selector']}")
+                summary_lines.append(f"    {rule['logic']}")
             copy_over_the_final(paths)
-            return f"(rules apply failed: {apply_result['log']})"
+            return "\n".join(summary_lines)
 
         _write_rules_json(paths, [], {"success": True, "log": "no rules generated"})
         copy_over_the_final(paths)

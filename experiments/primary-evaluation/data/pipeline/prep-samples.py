@@ -11,7 +11,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from agent import AgentBackend, apply_changes, copy_over_the_final, resolve_agent_provider, run_agent
+from agent import AgentBackend, apply_changes, resolve_agent_provider, run_agent
 from config import (
     AGENT_PIPELINE_IDS,
     ANTHROPIC_MODEL_ID,
@@ -267,19 +267,6 @@ def run_agent_pipeline(
             run_result=run_result,
             result_summary=f"{overflow_note}\n\n{summary}",
             context_overflow=str(exc),
-        )
-    except RuntimeError as exc:
-        if "set_update_rules failed" not in str(exc):
-            log_writer.close()
-            raise
-        print(
-            f"[{sample_id}] apply failed in {pipeline.folder}; "
-            "saved raw.html as index.html"
-        )
-        copy_over_the_final(paths)
-        log_writer.finalize(
-            run_result=run_result,
-            result_summary=f"Apply failed: {exc}\n\nSaved raw.html as index.html.",
         )
     except Exception:
         log_writer.close()

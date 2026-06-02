@@ -126,21 +126,14 @@ def role() -> str:
 
 
 def read_tools_snapshot_note(explore: ExploreTool, action: ActionTool) -> str:
-    if explore == "get_dom":
-        tools = "get_dom"
-    elif explore == "get_map_of_dom":
-        tools = "get_map_of_dom, show_in_dom"
-
     if action == "edit":
         action_tool = "edit"
     elif action == "set_update_rule":
         action_tool = "set_update_rule"
 
     return (
-        f"Read tools ({tools}) always return the original page. "
-        f"Changes from {action_tool} do not update what read tools "
-        f"show on later calls. All successfull {action_tool} calls are sequentially "
-        "applied to the page after the chat is concluded"
+        f"All tools read from and write to the same live page. "
+        f"{action_tool} changes are applied immediately — subsequent read tool calls reflect the updated state."
     )
 
 
