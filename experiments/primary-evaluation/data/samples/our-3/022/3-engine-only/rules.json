@@ -1,0 +1,7 @@
+[
+	{
+		"label": "Hide keyword suggestion bar",
+		"query_selector": "[data-test-id=\"scrollable-one-bar-root\"]",
+		"logic": "element.style.display = 'none'"
+	}
+]

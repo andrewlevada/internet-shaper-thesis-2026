@@ -95,11 +95,7 @@ def run_agent_vercel(
         api_key=_resolve_api_key(),
         timeout=API_REQUEST_TIMEOUT_S,
     )
-    dispatcher = ToolDispatcher(
-        raw_html=paths.raw_html,
-        visible_html=paths.visible_html,
-        explore_uses_raw=pipeline.uses_edit,
-    )
+    dispatcher = ToolDispatcher(page_html=paths.page_html)
     tools = build_tools(pipeline)
     messages: list[dict] = [
         openai_system_message(pipeline.system_prompt),

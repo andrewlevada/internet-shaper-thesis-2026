@@ -297,25 +297,15 @@ class ToolDispatcher:
     def __init__(
         self,
         *,
-        raw_html: Path,
-        visible_html: Path,
-        explore_uses_raw: bool = False,
+        page_html: Path,
     ) -> None:
-        self.raw_html = raw_html
-        self.visible_html = visible_html
-        self.explore_uses_raw = explore_uses_raw
+        self.page_html = page_html
         self.rules: list[dict[str, str]] = []
         self._single_call_explore_used: set[str] = set()
 
     def _snapshot_for(self, name: str) -> str:
-        if name in EXPLORE_TOOLS:
-            if self.explore_uses_raw:
-                return str(self.raw_html)
-            return str(self.visible_html)
-
-        if name in MUTATION_TOOLS:
-            return str(self.raw_html)
-        
+        if name in EXPLORE_TOOLS or name in MUTATION_TOOLS:
+            return str(self.page_html)
         raise ValueError(f"Unknown tool: {name!r}")
 
     def dispatch(self, name: str, arguments: dict[str, Any]) -> str:
@@ -527,17 +517,6 @@ def _tool_schema(name: str) -> dict[str, Any]:
                     "- element.style.opacity = '0.3' - dim the element \n"
                     "- element.classList.add('hidden') - add a class \n"
                     "- element.textContent = '' - clear text content \n\n"
-
-                    "When using set_update_rule:\n"
-                    "- The logic must be idempotent: running it on the same element multiple times must produce the same result as running it once. \n"
-                    "- If the rule reads child content (e.g. text, badge values) to decide "
-                    "whether to hide the element, it will be re-run after child content loads. "
-                    "Write logic that handles an empty/missing value gracefully by doing "
-                    "nothing (early return).\n"
-                    "- Avoid accumulating side effects: do not append to textContent, do not "
-                    "toggle classes — always set to an absolute value. \n"
-                    "- Never use element.remove() when a condition check is involved; prefer "
-                    "element.style.display = 'none' so the rule can still run again if needed."
                 ),
                 "parameters": {
                     "type": "object",
@@ -712,11 +691,7 @@ def run_agent_local(
     tokenizer, model, device = _load_local_qwen()
 
     tools = build_tools(pipeline)
-    dispatcher = ToolDispatcher(
-        raw_html=paths.raw_html,
-        visible_html=paths.visible_html,
-        explore_uses_raw=pipeline.uses_edit,
-    )
+    dispatcher = ToolDispatcher(page_html=paths.page_html)
     messages: list[dict[str, Any]] = [
         {"role": "system", "content": pipeline.system_prompt},
         {"role": "user", "content": user_message},
@@ -851,7 +826,14 @@ def run_agent(
 
 
 def copy_over_the_final(paths: AgentVariantPaths) -> None:
-    shutil.copy2(paths.raw_html, paths.index_html)
+    shutil.copy2(paths.page_html, paths.index_html)
+
+
+def _write_rules_json(paths: AgentVariantPaths, rules: list[dict[str, str]], result: dict[str, object]) -> None:
+    paths.rules_json.write_text(
+        json.dumps({"rules": rules, "result": result}, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 def apply_changes(
@@ -861,26 +843,31 @@ def apply_changes(
     run_result: AgentRunResult,
 ) -> str:
     if pipeline.uses_rules:
-        paths.rules_json.write_text(
-            json.dumps(run_result.rules, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-
         if run_result.rules:
-            msg = _apply_update_rules(
-                paths.raw_html,
-                run_result.rules,
-                paths.raw_html,
-            )
-            summary_lines = [msg, "", f"{len(run_result.rules)} rule(s):"]
+            try:
+                msg = _apply_update_rules(
+                    paths.page_html,
+                    run_result.rules,
+                    paths.page_html,
+                )
+                apply_result: dict[str, object] = {"success": True, "log": msg}
+            except RuntimeError as exc:
+                apply_result = {"success": False, "log": str(exc)}
 
-            for i, rule in enumerate(run_result.rules, start=1):
-                summary_lines.append(f"[{i}] {rule['label']} — {rule['query_selector']}")
-                summary_lines.append(f"    {rule['logic']}")
+            _write_rules_json(paths, run_result.rules, apply_result)
+
+            if apply_result["success"]:
+                summary_lines = [msg, "", f"{len(run_result.rules)} rule(s):"]
+                for i, rule in enumerate(run_result.rules, start=1):
+                    summary_lines.append(f"[{i}] {rule['label']} — {rule['query_selector']}")
+                    summary_lines.append(f"    {rule['logic']}")
+                copy_over_the_final(paths)
+                return "\n".join(summary_lines)
 
             copy_over_the_final(paths)
-            return "\n".join(summary_lines)
+            return f"(rules apply failed: {apply_result['log']})"
 
+        _write_rules_json(paths, [], {"success": True, "log": "no rules generated"})
         copy_over_the_final(paths)
         return "(no rules generated; index is unchanged raw.html)"
 

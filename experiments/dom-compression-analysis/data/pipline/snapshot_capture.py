@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import email
+import quopri
 import shutil
 from pathlib import Path
 
@@ -133,6 +135,24 @@ def cleanup_dir(path: Path) -> None:
         shutil.rmtree(path)
 
 
+def _extract_page_html(mhtml_path: Path) -> str:
+    """Return the QP-decoded HTML of the first text/html part in an MHTML file."""
+    raw = mhtml_path.read_bytes()
+    msg = email.message_from_bytes(raw)
+    for part in msg.walk():
+        if part.get_content_type() == "text/html":
+            payload = part.get_payload(decode=False)
+            if isinstance(payload, bytes):
+                return payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+            if isinstance(payload, str):
+                encoding = part.get("Content-Transfer-Encoding", "").lower()
+                if encoding == "quoted-printable":
+                    decoded = quopri.decodestring(payload.encode("ascii", errors="replace"))
+                    return decoded.decode(part.get_content_charset() or "utf-8", errors="replace")
+                return payload
+    raise ValueError(f"No text/html part found in {mhtml_path}")
+
+
 def recapture_snapshot(
     tab: Page,
     url: str,
@@ -193,7 +213,9 @@ def recapture_snapshot(
 
         (temp_dir / "raw.html").write_text(raw_html, encoding="utf-8")
         (temp_dir / "visible.html").write_text(visible_html, encoding="utf-8")
-        (temp_dir / "raw.mhtml").write_text(mhtml_content, encoding="utf-8")
+        mhtml_path = temp_dir / "raw.mhtml"
+        mhtml_path.write_text(mhtml_content, encoding="utf-8")
+        (temp_dir / "page.html").write_text(_extract_page_html(mhtml_path), encoding="utf-8")
         tab.screenshot(path=temp_dir / "screenshot.png")
 
         if dest_dir.exists():

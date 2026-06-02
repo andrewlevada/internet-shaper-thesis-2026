@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
+import quopri
 import shutil
 import sys
 from pathlib import Path
@@ -29,6 +31,9 @@ PIPELINE_DIR = Path(__file__).resolve().parent
 DATA_DIR = PIPELINE_DIR.parent
 SEED_DIR = DATA_DIR / "seed-samples"
 SAMPLES_DIR = DATA_DIR / "samples"
+
+# Flag to enable/disable screenshotting functionality
+ENABLE_SCREENSHOTS = False
 
 
 def parse_args() -> argparse.Namespace:
@@ -170,7 +175,9 @@ def copy_original_variant(sample_dir: Path, seed_dir: Path) -> None:
     if task_src.is_file():
         shutil.copy2(task_src, task_dest)
 
-    original_html = src / "raw.html"
+    original_html = src / "page.html"
+    if not original_html.is_file():
+        original_html = src / "raw.html"
     if original_html.is_file():
         shutil.copy2(original_html, dest / "index.html")
 
@@ -209,8 +216,7 @@ def run_agent_pipeline(
     paths = agent_variant_paths(variant_dir)
     paths.work_dir.mkdir(parents=True, exist_ok=True)
     seed_original = seed_dir / "original"
-    shutil.copy2(seed_original / "raw.html", paths.raw_html)
-    shutil.copy2(seed_original / "visible.html", paths.visible_html)
+    shutil.copy2(seed_original / "page.html", paths.page_html)
 
     print(f"[{sample_id}] running {pipeline.id} → {pipeline.folder}")
 
@@ -304,6 +310,8 @@ def screenshot_sample(
     *,
     force: bool = False,
 ) -> None:
+    if not ENABLE_SCREENSHOTS:
+        return
     document_url = resolve_screenshot_document_url(sample_dir)
     for cfg in pipelines:
         variant_dir = sample_dir / cfg.folder
@@ -332,6 +340,75 @@ def screenshot_sample(
             )
 
 
+def update_mhtml_content(mhtml_bytes: bytes, new_html: str) -> bytes:
+    boundary_match = re.search(rb'boundary="([^"]+)"', mhtml_bytes)
+    if not boundary_match:
+        boundary_match = re.search(rb'boundary=([^;\r\n\s]+)', mhtml_bytes)
+    if not boundary_match:
+        for line in mhtml_bytes.split(b'\n'):
+            line = line.strip(b'\r')
+            if line.startswith(b'--') and not line.endswith(b'--'):
+                boundary = line[2:]
+                break
+        else:
+            raise ValueError("Boundary not found in MHTML")
+    else:
+        boundary = boundary_match.group(1)
+
+    boundary_line = b'--' + boundary
+    parts = mhtml_bytes.split(boundary_line)
+    
+    main_part_index = -1
+    for i in range(1, len(parts) - 1):
+        header_body_split = re.split(rb'\r?\n\r?\n', parts[i], maxsplit=1)
+        headers = header_body_split[0]
+        if b'Content-Type: text/html' in headers or b'content-type: text/html' in headers or b'Content-Type: text/html; charset=' in headers:
+            main_part_index = i
+            break
+            
+    if main_part_index == -1:
+        main_part_index = 1
+
+    header_body_split = re.split(rb'\r?\n\r?\n', parts[main_part_index], maxsplit=1)
+    if len(header_body_split) == 2:
+        part_headers, _ = header_body_split
+    else:
+        part_headers = header_body_split[0]
+
+    qp_bytes = quopri.encodestring(new_html.encode('utf-8'))
+    qp_crlf = qp_bytes.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+
+    if b'Content-Transfer-Encoding:' not in part_headers and b'content-transfer-encoding:' not in part_headers:
+        part_headers = part_headers.rstrip(b'\r\n') + b'\r\nContent-Transfer-Encoding: quoted-printable'
+        
+    parts[main_part_index] = part_headers.rstrip(b'\r\n') + b'\r\n\r\n' + qp_crlf.rstrip(b'\r\n') + b'\r\n'
+
+    return boundary_line.join(parts)
+
+
+def preserve_mhtml(sample_id: str, seed_dir: Path, variant_dir: Path) -> None:
+    raw_mhtml_path = seed_dir / "original" / "raw.mhtml"
+    index_html_path = variant_dir / "index.html"
+    index_mhtml_path = variant_dir / "index.mhtml"
+
+    if not raw_mhtml_path.is_file():
+        return
+
+    if not index_html_path.is_file():
+        return
+
+    print(f"[{sample_id}] preserving MHTML → {variant_dir.name}/index.mhtml")
+    try:
+        new_html = index_html_path.read_text(encoding="utf-8")
+        # Strip Content Security Policy meta tags to prevent local rendering restrictions/blocks on assets
+        new_html = re.sub(r'<meta\s+[^>]*?content-security-policy[^>]*?>', '', new_html, flags=re.IGNORECASE)
+        mhtml_bytes = raw_mhtml_path.read_bytes()
+        updated_mhtml = update_mhtml_content(mhtml_bytes, new_html)
+        index_mhtml_path.write_bytes(updated_mhtml)
+    except Exception as exc:
+        print(f"[{sample_id}] failed to preserve MHTML for {variant_dir.name}: {exc}", file=sys.stderr)
+
+
 def process_sample(
     sample_id: str,
     agent_pipelines: list[PipelineConfig],
@@ -351,8 +428,12 @@ def process_sample(
 
     if not screenshots_only:
         copy_original_variant(sample_dir, seed_dir)
+        original_cfg = PIPELINES["original"]
+        preserve_mhtml(sample_id, seed_dir, sample_dir / original_cfg.folder)
     elif not (sample_dir / "task.json").is_file():
         copy_original_variant(sample_dir, seed_dir)
+        original_cfg = PIPELINES["original"]
+        preserve_mhtml(sample_id, seed_dir, sample_dir / original_cfg.folder)
 
     if not screenshots_only:
         for pipeline in agent_pipelines:
@@ -364,6 +445,7 @@ def process_sample(
                 skip_existing=skip_existing,
                 backend=backend,
             )
+            preserve_mhtml(sample_id, seed_dir, sample_dir / pipeline.folder)
 
     screenshot_sample(
         sample_id,

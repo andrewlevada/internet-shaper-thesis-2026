@@ -1,0 +1,18 @@
+{
+	"rules": [
+		{
+			"label": "Hide bottom help section",
+			"query_selector": ".need-more-help-container",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Add community link after title",
+			"query_selector": "section.article-container > h1",
+			"logic": "if (element.nextElementSibling && element.nextElementSibling.classList.contains('community-link-moved')) return;\nvar link = document.querySelector('.need-more-help-option');\nif (!link) return;\nvar clone = link.cloneNode(true);\nclone.classList.add('community-link-moved');\nclone.style.display = 'flex';\nclone.style.alignItems = 'center';\nclone.style.gap = '12px';\nclone.style.padding = '12px 16px';\nclone.style.marginTop = '16px';\nclone.style.marginBottom = '16px';\nclone.style.borderRadius = '8px';\nclone.style.backgroundColor = '#e8f0fe';\nclone.style.textDecoration = 'none';\nclone.style.color = 'inherit';\nclone.style.cursor = 'pointer';\nclone.style.transition = 'background-color 0.2s';\nvar svgContainer = clone.querySelector('.need-more-help-option__svg-container');\nif (svgContainer) {\n    svgContainer.style.flexShrink = '0';\n}\nvar textWrapper = document.createElement('div');\ntextWrapper.style.display = 'flex';\ntextWrapper.style.flexDirection = 'column';\nvar title = clone.querySelector('.need-more-help-option__title');\nvar snippet = clone.querySelector('.need-more-help-option__snippet');\nif (title) {\n    textWrapper.appendChild(title);\n    title.style.fontWeight = '600';\n    title.style.fontSize = '14px';\n}\nif (snippet) {\n    textWrapper.appendChild(snippet);\n    snippet.style.fontSize = '12px';\n    snippet.style.color = '#5f6368';\n}\nclone.innerHTML = '';\nclone.appendChild(svgContainer || document.createElement('div'));\nclone.appendChild(textWrapper);\nelement.parentNode.insertBefore(clone, element.nextSibling);"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": ""
+	}
+}

@@ -1,0 +1,12 @@
+[
+	{
+		"label": "Move community help to top",
+		"query_selector": ".need-more-help-container",
+		"logic": "const container = document.querySelector('.need-more-help-container');\nconst h1 = document.querySelector('.article-container h1');\nif (container && h1 && h1.parentNode) {\n  h1.parentNode.insertBefore(container, h1.nextSibling);\n}"
+	},
+	{
+		"label": "Move community help to top",
+		"query_selector": ".need-more-help-container",
+		"logic": "const h1 = document.querySelector('.article-container h1');\nif (element.parentNode !== h1.parentNode) {\n  h1.parentNode.insertBefore(element, h1.nextSibling);\n}"
+	}
+]

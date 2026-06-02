@@ -34,6 +34,7 @@ LOGS_DIR = SCRIPT_DIR / "logs"
 SAMPLE_WIDTH = 3
 SAMPLE_DIR_RE = re.compile(r"^\d+$")
 HTML_FILES = ("raw.html", "visible.html")
+HTML_FILES_WITH_PAGE = (*HTML_FILES, "page.html")
 
 
 def parse_args() -> argparse.Namespace:
@@ -118,7 +119,9 @@ def finalize_sample(sample_dir: Path, *, dry_run: bool, log_lines: list[str]) ->
         return False
 
     original_dir = sample_dir / "original"
-    missing = [name for name in HTML_FILES if not (original_dir / name).is_file()]
+    has_mhtml = (original_dir / "raw.mhtml").is_file()
+    active_html_files = HTML_FILES_WITH_PAGE if has_mhtml else HTML_FILES
+    missing = [name for name in active_html_files if not (original_dir / name).is_file()]
     if missing:
         raise FileNotFoundError(
             f"{sample_dir}: missing original/{', '.join(missing)}",
@@ -129,12 +132,12 @@ def finalize_sample(sample_dir: Path, *, dry_run: bool, log_lines: list[str]) ->
 
     if dry_run:
         log_lines.append(
-            f"would finalize {rel}: reserialize {', '.join(HTML_FILES)}, "
+            f"would finalize {rel}: reserialize {', '.join(active_html_files)}, "
             f"finalized_at={finalized_at}",
         )
         return True
 
-    for name in HTML_FILES:
+    for name in active_html_files:
         html_path = original_dir / name
         reserialized = reserialize_html_file(html_path)
         html_path.write_text(reserialized, encoding="utf-8")

@@ -137,9 +137,10 @@ def read_tools_snapshot_note(explore: ExploreTool, action: ActionTool) -> str:
         action_tool = "set_update_rule"
 
     return (
-        f"Read tools ({tools}) always return the original page "
-        f"snapshot. Changes from {action_tool} do not update what read tools "
-        "show on later calls."
+        f"Read tools ({tools}) always return the original page. "
+        f"Changes from {action_tool} do not update what read tools "
+        f"show on later calls. All successfull {action_tool} calls are sequentially "
+        "applied to the page after the chat is concluded"
     )
 
 
@@ -198,12 +199,6 @@ def advice(action: ActionTool) -> str:
 - If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
 - Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
 - Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.""")
-
-    be_thorough_on = "create rules" if action == "set_update_rule" else "apply edits"
-    advice.append(
-        "Be thorough - if there are multiple variations of elements matching the user's "
-        f"request, {be_thorough_on} for each variation."
-    )
 
     return "\n\n".join(advice)
 
