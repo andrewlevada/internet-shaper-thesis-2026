@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide Twitter/X embeds in article",
+      "query_selector": ".twitter-tweet, .twitter-tweet-rendered",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide comments section",
+      "query_selector": "#comments-section",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide share and comment buttons",
+      "query_selector": "[data-testid=\"share-container\"], [data-testid=\"view-comments-button\"]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

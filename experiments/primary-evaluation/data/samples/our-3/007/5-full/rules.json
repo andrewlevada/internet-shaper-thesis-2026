@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Move Shorts grid to top",
+      "query_selector": "ytd-two-column-search-results-renderer ytd-item-section-renderer #contents grid-shelf-view-model",
+      "logic": "const parent = element.parentElement;\nif (parent && element.previousElementSibling) {\n    parent.insertBefore(element, parent.firstElementChild);\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide Rewards medallion",
+      "query_selector": "a#id_rh_w",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide search result icons",
+      "query_selector": ".wr_fav.cico.siteicon, .b_favicon.b_defFavicon",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide verification banner",
+      "query_selector": "div.banner",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

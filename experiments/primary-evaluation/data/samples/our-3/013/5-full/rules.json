@@ -1,0 +1,43 @@
+{
+  "rules": [
+    {
+      "label": "De-emphasize marketing banners",
+      "query_selector": ".s-option-promotion-new-coupon, .s-option-promotion-gift, .hubble-product__offers.product__tradein_offers, .s-option-care, .s-option-finance.s-option-samsungoffer, .bc-financing-data, .pd-financing-table",
+      "logic": "element.style.opacity = '0.35';\nelement.style.filter = 'grayscale(40%)';"
+    },
+    {
+      "label": "Highlight specs and pricing",
+      "query_selector": ".hubble-product__summary-wrap",
+      "logic": "element.style.border = '2px solid #1a73e8';\nelement.style.borderRadius = '12px';\nelement.style.padding = '16px';\nelement.style.boxShadow = '0 4px 24px rgba(26, 115, 232, 0.15)';\nelement.style.background = '#fff';"
+    },
+    {
+      "label": "Highlight hardware features",
+      "query_selector": ".hubble-product__options-features",
+      "logic": "element.style.border = '1px solid #e0e0e0';\nelement.style.borderRadius = '8px';\nelement.style.padding = '12px';\nelement.style.background = '#f8fbff';\nelement.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';"
+    },
+    {
+      "label": "Emphasize price bar",
+      "query_selector": ".hubble-price-bar",
+      "logic": "element.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';\nelement.style.borderBottom = '2px solid #1a73e8';\nelement.style.background = '#fff';"
+    },
+    {
+      "label": "Dim Samsung Rewards cards",
+      "query_selector": ".hubble-product__offer__scroll--card-item",
+      "logic": "element.style.opacity = '0.3';"
+    },
+    {
+      "label": "Dim ecosystem cross-sell",
+      "query_selector": ".s-option-together, .s-option-promotion-coupon, .s-option-purchase, .s-option-upgrade, .s-option-tariff",
+      "logic": "if (element.offsetParent !== null) {\n  element.style.opacity = '0.35';\n  element.style.filter = 'grayscale(40%)';\n}"
+    },
+    {
+      "label": "Highlight total price",
+      "query_selector": ".hubble-product__total",
+      "logic": "element.style.background = '#f0f7ff';\nelement.style.borderRadius = '8px';\nelement.style.padding = '12px 16px';\nelement.style.marginTop = '8px';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

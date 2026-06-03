@@ -1,0 +1,1692 @@
+Timestamp: 2026-06-02T22:56:02.229532+00:00
+Sample: our-3/011
+Pipeline: full (5-full)
+Backend: local
+Model: unsloth/Qwen3.6-27B
+Work page: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-3/011/5-full/work/page.html
+Tools: get_map_of_dom, show_in_dom, set_update_rule
+
+=== Model Request ===
+
+--- System prompt ---
+You are a browser extension agent that modifies web pages based on user requests.
+
+All tools read from and write to the same live page. set_update_rule changes are applied immediately — subsequent read tool calls reflect the updated state.
+
+Workflow:
+1. Call get_map_of_dom() to get an overview of the page structure
+2. Identify candidate elements for the user's request
+3. Use show_in_dom() to examine specific elements if you need more detail
+4. Create update rules with specific selectors (prefer class names, data attributes, or tag names over structural paths)
+
+Rules must be idempotent and deterministic:
+- Running the same logic on the same element multiple times must produce the same result as running it once.
+- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
+- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
+- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
+
+--- Tool definitions ---
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_map_of_dom",
+      "description": "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: 1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. 2. Repeating sibling elements show only the first with a comment indicating count. 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. Can only be called once per session; later calls return the previous result message.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "show_in_dom",
+      "description": "Returns full HTML for the first element matching the query selector.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_selector": {
+            "type": "string",
+            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')"
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. ",
+            "minimum": 0,
+            "default": 3
+          }
+        },
+        "required": [
+          "query_selector"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_update_rule",
+      "description": "Sets a persistent update rule. It is applied to all elements matching the CSS selector immediatly and then every time the page loads. \n\nThe 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \nThe page's 'document' is also available for DOM construction (e.g. document.createElement). \nGlobal APIs like window are not avaliable. \n\nCommon patterns: \n- element.style.display = 'none' - hide the element \n- element.style.opacity = '0.3' - dim the element \n- element.classList.add('hidden') - add a class \n- element.textContent = '' - clear text content \n\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "A short label (~3 words) describing what this rule does, for display in the rule management UI (e.g., 'Hide video ads', 'Remove sidebar', 'Dim suggestions')"
+          },
+          "query_selector": {
+            "type": "string",
+            "description": "A CSS selector matching elements to modify (e.g., '.ad-container', '[data-ad]', 'ytd-ad-slot-renderer')"
+          },
+          "logic": {
+            "type": "string",
+            "description": "Valid JavaScript code with access to 'element' variable only."
+          }
+        },
+        "required": [
+          "label",
+          "query_selector",
+          "logic"
+        ]
+      }
+    }
+  }
+]
+
+=== Agent Chat ===
+
+--- USER ---
+Add direct 'Subscribe' and 'Add to Playlist' action buttons directly on each video item's metadata area in the search results so I do not have to open the three-dot action menu.
+
+--- API REQUEST round 0 ---
+model=unsloth/Qwen3.6-27B messages=2 payload_chars=1,478 cache=none
+
+--- API RESPONSE round 0 ---
+elapsed_s=7.7 prompt_tokens=1153 completion_tokens=37 finish_reason=tool_calls tool_calls=[get_map_of_dom]
+
+--- TOOL CALL: get_map_of_dom ---
+(no input)
+
+--- TOOL RESULT: get_map_of_dom ---
+<body><iframe name="passive_signin"></iframe><ytd-app><yt-guide-manager id="guide-service" class="ytd-app"></yt-guide-manager><yt-mdx-manager class="ytd-app"></yt-mdx-manager><yt-playlist-manager class="ytd-app"></yt-playlist-manager><yt-hotkey-manager class="ytd-app"></yt-hotkey-manager><ytd-miniplayer class="ytdMiniplayerComponentHost"><div class="ytdMiniplayerComponentContent"><!-- -3 wrappers  class="ytDraggableComponentHost ytdMiniplayerComponentDraggable ytdMiniplayerInfoBarHost ytdMiniplayerInfoBarContent"--><h1 class="ytdMiniplayerInfoBarTitle"></h1><div class="ytdMiniplayerInfoBarSubtitle"><h1></h1></div></div><div class="ytdMiniplayerComponentResizers"><yt-draggable class="ytDraggableComponentHost ytdMiniplayerComponentResizer ytdMiniplayerComponentResizerNorth"><div class="ytdMiniplayerComponentResizerCorner ytdMiniplayerComponentResizerNorthCorner"></div></yt-draggable><yt-draggable class="ytDraggableComponentHost ytdMiniplayerComponentResizer ytdMiniplayerComponentResizerDisabled ytdMiniplayerComponentResizerEast"><div class="ytdMiniplayerComponentResizerCorner ytdMiniplayerComponentResizerEastCorner"></div></yt-draggable><yt-draggable class="ytDraggableComponentHost ytdMiniplayerComponentResizer ytdMiniplayerComponentResizerDisabled ytdMiniplayerComponentResizerSouth"><div class="ytdMiniplayerComponentResizerCorner ytdMiniplayerComponentResizerSouthCorner"></div></yt-draggable><yt-draggable class="ytDraggableComponentHost ytdMiniplayerComponentResizer ytdMiniplayerComponentResizerWest"><div class="ytdMiniplayerComponentResizerCorner ytdMiniplayerComponentResizerWestCorner"></div></yt-draggable></div></ytd-miniplayer><div id="content" class="ytd-app"><div id="frosted-glass" class="without-chipbar ytd-app"></div><div id="masthead-container" class="ytd-app"><!-- -1 wrappers  class="masthead-finish" role="banner"--><iron-media-query class="ytd-masthead"></iron-media-query><div id="ticker" class="ytd-masthead"></div><div id="interstitial" class="ytd-masthead"></div><div id="background" class="ytd-masthead"></div><div id="container" class="ytd-masthead"><div id="start" class="ytd-masthead"><yt-icon-button id="back-button" class="ytd-masthead"><button id="button" class="yt-icon-button" aria-label="Back"><yt-icon class="ytd-masthead"></yt-icon></button><yt-interaction id="interaction" class="circular yt-icon-button"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></yt-icon-button><tp-yt-paper-tooltip id="back-button-tooltip" class="ytd-masthead"> Back </tp-yt-paper-tooltip><yt-icon-button id="guide-button" class="ytd-masthead"><button id="button" class="yt-icon-button" aria-label="Guide"><!-- -3 wrappers  class="ytd-masthead yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></button><yt-interaction id="interaction" class="circular yt-icon-button"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></yt-icon-button><ytd-topbar-logo-renderer id="logo" class="ytd-masthead"><a class="yt-simple-endpoint ytd-topbar-logo-renderer" id="logo" title="YouTube Home"><!-- -5 wrappers  class="ytd-logo yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg id="yt-ringo2-svg_yt7" /></a><span id="country-code" class="ytd-topbar-logo-renderer"> NL </span></ytd-topbar-logo-renderer><div id="skip-navigation" class="ytd-masthead"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextTonal ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Skip navigation"--><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Skip navigation</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></div></div><div id="center" class="ytd-masthead"><yt-searchbox role="search" class="ytSearchboxComponentHost ytSearchboxComponentDesktop yt-searchbox-filled-query ytd-masthead"><!-- -1 wrappers  class="ytSearchboxComponentInputContainer"--><div class="ytSearchboxComponentInputBox"><form class="ytSearchboxComponentSearchForm"><input class="ytSearchboxComponentInput yt-searchbox-input title" name="search_query" type="text" role="combobox" placeholder="Search"></form><div class="ytSearchboxComponentClearButtonWrapper"><!-- -1 wrappers  class="ytSearchboxComponentClearButton" aria-label="Clear search query"--><span class="ytIconWrapperHost ytSearchboxComponentClearButtonIcon"><!-- -2 wrappers  class="yt-icon-shape ytSpecIconShapeHost"--><svg /></span><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></div></div><button aria-label="Search" class="ytSearchboxComponentSearchButton" title="Search"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></button></yt-searchbox><yt-icon-button id="search-button-narrow" class="ytd-masthead"><button id="button" class="yt-icon-button" aria-label="Search"><yt-icon class="topbar-icons ytd-masthead"></yt-icon></button><yt-interaction id="interaction" class="circular yt-icon-button"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></yt-icon-button><div id="voice-search-button" class="ytd-masthead"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconOnlyDefault ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Search with your voice"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip role="tooltip" aria-label="tooltip"><div id="tooltip" class="hidden tp-yt-paper-tooltip"> Search with your voice </div></tp-yt-paper-tooltip></div></div><div id="end" class="ytd-masthead"><div id="masthead-skeleton-icons"><div class="masthead-skeleton-icon"></div><!-- -2 siblings --></div><div id="buttons" class="ytd-masthead"><ytd-topbar-menu-button-renderer class="ytd-masthead style-default"><ps-dom-if class="ytd-topbar-menu-button-renderer"><template></template></ps-dom-if><div id="button" class="ytd-topbar-menu-button-renderer"><!-- -2 wrappers  class="yt-simple-endpoint style-default"--><button id="button" class="yt-icon-button" aria-label="Settings"><!-- -3 wrappers  class="ytd-topbar-menu-button-renderer yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></button><yt-interaction id="interaction" class="circular yt-icon-button"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></div></ytd-topbar-menu-button-renderer><ytd-button-renderer class="ytd-masthead"><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextOutline ytSpecButtonShapeNextCallToAction ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconLeading ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Sign in"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Sign in</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></ytd-button-renderer></div></div></div></div><tp-yt-app-drawer id="guide" role="navigation" class="ytd-app"><div id="scrim" class="tp-yt-app-drawer"></div><div id="contentContainer" class="tp-yt-app-drawer"><!-- -1 wrappers  class="ytd-app"--><div id="guide-spacer" class="ytd-app"></div><div id="guide-content" class="ytd-app"><!-- -1 wrappers --><ytd-guide-renderer id="guide-renderer" class="ytd-app"><div id="sections" class="ytd-guide-renderer"><ytd-guide-section-renderer class="ytd-guide-renderer"><!-- -1 wrappers  class="ytd-guide-section-renderer" id="items"--><ytd-guide-entry-renderer class="ytd-guide-section-renderer"><a id="endpoint" class="yt-simple-endpoint ytd-guide-entry-renderer" role="link" title="Home"><!-- -1 wrappers --><yt-icon class="guide-icon ytd-guide-entry-renderer"><!-- -2 wrappers  class="yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></yt-icon><yt-formatted-string class="title ytd-guide-entry-renderer">Home</yt-formatted-string><span class="guide-entry-count ytd-guide-entry-renderer"></span><yt-icon class="guide-entry-badge ytd-guide-entry-renderer"></yt-icon><div id="newness-dot" class="ytd-guide-entry-renderer"></div></a><yt-interaction class="ytd-guide-entry-renderer"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-guide-entry-renderer><!-- -4 siblings --></ytd-guide-section-renderer><ytd-guide-signin-promo-renderer class="ytd-guide-renderer"><yt-formatted-string class="ytd-guide-signin-promo-renderer">Sign in to like videos, comment, and subscribe.</yt-formatted-string><ytd-button-renderer id="sign-in-button" class="ytd-guide-signin-promo-renderer"><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextOutline ytSpecButtonShapeNextCallToAction ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconLeading ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Sign in"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Sign in</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></ytd-button-renderer></ytd-guide-signin-promo-renderer><ytd-guide-section-renderer class="ytd-guide-renderer"><h3 class="ytd-guide-section-renderer"><yt-formatted-string id="guide-section-title" class="ytd-guide-section-renderer">Explore</yt-formatted-string></h3><div id="items" class="ytd-guide-section-renderer"><ytd-guide-entry-renderer class="ytd-guide-section-renderer"><a id="endpoint" class="yt-simple-endpoint ytd-guide-entry-renderer" role="link" title="Music"><!-- -1 wrappers --><yt-icon class="guide-icon ytd-guide-entry-renderer"><!-- -2 wrappers  class="yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></yt-icon><yt-formatted-string class="title ytd-guide-entry-renderer">Music</yt-formatted-string><span class="guide-entry-count ytd-guide-entry-renderer"></span><yt-icon class="guide-entry-badge ytd-guide-entry-renderer"></yt-icon><div id="newness-dot" class="ytd-guide-entry-renderer"></div></a><yt-interaction class="ytd-guide-entry-renderer"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-guide-entry-renderer><!-- -2 siblings --><ytd-guide-collapsible-entry-renderer class="ytd-guide-section-renderer"><ytd-guide-entry-renderer id="expander-item" role="button" class="ytd-guide-collapsible-entry-renderer"><a id="endpoint" class="yt-simple-endpoint ytd-guide-entry-renderer" role="link" title="Show more"><!-- -1 wrappers --><yt-icon class="guide-icon ytd-guide-entry-renderer"><!-- -2 wrappers  class="yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></yt-icon><yt-formatted-string class="title ytd-guide-entry-renderer">Show more</yt-formatted-string><span class="guide-entry-count ytd-guide-entry-renderer"></span><yt-icon class="guide-entry-badge ytd-guide-entry-renderer"></yt-icon><div id="newness-dot" class="ytd-guide-entry-renderer"></div></a><yt-interaction class="ytd-guide-entry-renderer"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-guide-entry-renderer><div id="expanded" class="ytd-guide-collapsible-entry-renderer"><div id="expandable-items" class="ytd-guide-collapsible-entry-renderer"></div><ytd-guide-entry-renderer id="collapser-item" role="button" class="ytd-guide-collapsible-entry-renderer"><a id="endpoint" class="yt-simple-endpoint ytd-guide-entry-renderer" role="link" title="Show less"><!-- -1 wrappers --><yt-icon class="guide-icon ytd-guide-entry-renderer"><!-- -2 wrappers  class="yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></yt-icon><yt-formatted-string class="title ytd-guide-entry-renderer">Show less</yt-formatted-string><span class="guide-entry-count ytd-guide-entry-renderer"></span><yt-icon class="guide-entry-badge ytd-guide-entry-renderer"></yt-icon><div id="newness-dot" class="ytd-guide-entry-renderer"></div></a><yt-interaction class="ytd-guide-entry-renderer"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-guide-entry-renderer></div></ytd-guide-collapsible-entry-renderer></div></ytd-guide-section-renderer><ytd-guide-section-renderer class="ytd-guide-renderer"><h3 class="ytd-guide-section-renderer"><yt-formatted-string id="guide-section-title" class="ytd-guide-section-renderer">More from YouTube</yt-formatted-string></h3><div id="items" class="ytd-guide-section-renderer"><ytd-guide-entry-renderer class="ytd-guide-section-renderer"><a id="endpoint" class="yt-simple-endpoint ytd-guide-entry-renderer" role="link" title="YouTube Premium"><!-- -1 wrappers --><yt-icon class="guide-icon ytd-guide-entry-renderer"><!-- -2 wrappers  class="yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></yt-icon><yt-formatted-string class="title ytd-guide-entry-renderer">YouTube Premium</yt-formatted-string><span class="guide-entry-count ytd-guide-entry-renderer"></span><yt-icon class="guide-entry-badge ytd-guide-entry-renderer"></yt-icon><div id="newness-dot" class="ytd-guide-entry-renderer"></div></a><yt-interaction class="ytd-guide-entry-renderer"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-guide-entry-renderer><!-- -2 siblings --></div></ytd-guide-section-renderer><ytd-guide-section-renderer class="ytd-guide-renderer"><!-- -2 wrappers  class="ytd-guide-section-renderer" id="items"--><a id="endpoint" class="yt-simple-endpoint ytd-guide-entry-renderer" role="link" title="Report history"><!-- -1 wrappers --><yt-icon class="guide-icon ytd-guide-entry-renderer"><!-- -2 wrappers  class="yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></yt-icon><yt-formatted-string class="title ytd-guide-entry-renderer">Report history</yt-formatted-string><span class="guide-entry-count ytd-guide-entry-renderer"></span><yt-icon class="guide-entry-badge ytd-guide-entry-renderer"></yt-icon><div id="newness-dot" class="ytd-guide-entry-renderer"></div></a><yt-interaction class="ytd-guide-entry-renderer"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-guide-section-renderer></div><div id="footer" class="ytd-guide-renderer"><div id="guide-links-primary" class="ytd-guide-renderer"><a>About</a><!-- -6 siblings --></div><div id="guide-links-secondary" class="ytd-guide-renderer"><a>Terms</a><!-- -4 siblings --></div><div id="copyright"><div>© 2026 Google LLC</div><div> YouTube, a Google company</div></div></div></ytd-guide-renderer><dom-if class="ytd-app"><template></template></dom-if></div></div></tp-yt-app-drawer><ytd-page-manager id="page-manager" class="ytd-app"><!-- -1 wrappers  class="ytd-page-manager" role="main"--><div id="container" class="ytd-search"><div id="header" class="ytd-search"><!-- -1 wrappers --><div id="back-button" class="ytd-search-header-renderer"></div><div id="chip-bar" class="ytd-search-header-renderer"><!-- -2 wrappers  class="yt-chip-cloud-renderer"--><div id="left-arrow" class="yt-chip-cloud-renderer"><!-- -2 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconOnlyDefault ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Previous"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></div><div id="scroll-container" class="yt-chip-cloud-renderer"><!-- -1 wrappers  role="tablist"--><yt-chip-cloud-chip-renderer class="yt-chip-cloud-renderer iron-selected"><!-- -4 wrappers  class="yt-chip-cloud-chip-renderer ytChipShapeHost ytChipShapeButtonReset ytChipShapeChip ytChipShapeActive ytChipShapeOnlyTextPadding" id="chip-shape-container" role="tab"--><div>All</div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-chip-cloud-chip-renderer><yt-chip-cloud-chip-renderer class="yt-chip-cloud-renderer"><!-- -4 wrappers  class="yt-chip-cloud-chip-renderer ytChipShapeHost ytChipShapeButtonReset ytChipShapeChip ytChipShapeInactive ytChipShapeOnlyTextPadding" id="chip-shape-container" role="tab"--><div>Unwatched</div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-chip-cloud-chip-renderer><!-- -4 siblings --></div><div id="right-arrow" class="yt-chip-cloud-renderer"><!-- -2 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconOnlyDefault ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Next"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></div></div><div id="about-these-results" class="ytd-search-header-renderer"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconTrailing ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="About these results"--><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">About these results</span></div><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></div><div id="filter-button" class="ytd-search-header-renderer"><!-- -1 wrappers --><yt-button-shape><!-- -1 wrappers  class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconTrailing ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Search filters"--><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Filters</span></div><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></yt-button-shape><tp-yt-paper-tooltip role="tooltip" aria-label="tooltip"><div id="tooltip" class="hidden tp-yt-paper-tooltip"> Search filters </div></tp-yt-paper-tooltip></div></div><ytd-two-column-search-results-renderer class="ytd-search"><!-- -2 wrappers  class="ytd-two-column-search-results-renderer" id="primary"--><div id="header-container" class="ytd-section-list-renderer"><div id="header" class="ytd-section-list-renderer"></div><div id="sub-menu" class="ytd-section-list-renderer"><!-- -2 wrappers  class="ytd-search-sub-menu-renderer"--><div id="container" class="ytd-search-sub-menu-renderer"><ytd-toggle-button-renderer class="ytd-search-sub-menu-renderer"><yt-button-shape></yt-button-shape><tp-yt-paper-tooltip></tp-yt-paper-tooltip></ytd-toggle-button-renderer><ps-dom-if class="ytd-search-sub-menu-renderer"><template></template></ps-dom-if></div><ps-dom-if class="ytd-search-sub-menu-renderer"><template></template></ps-dom-if></div></div><div id="contents" class="ytd-section-list-renderer"><ytd-item-section-renderer class="ytd-section-list-renderer"><div id="header" class="ytd-item-section-renderer"></div><div id="spinner-container" class="ytd-item-section-renderer"><!-- -3 wrappers  class="tp-yt-paper-spinner-lite spinner-layer" aria-label="loading"--><div class="circle-clipper left tp-yt-paper-spinner-lite"><div class="circle tp-yt-paper-spinner-lite"></div></div><div class="circle-clipper right tp-yt-paper-spinner-lite"><div class="circle tp-yt-paper-spinner-lite"></div></div></div><div id="contents" class="ytd-item-section-renderer"><ytd-search-pyv-renderer class="ytd-item-section-renderer"><!-- -8 wrappers  class="ytd-search-pyv-renderer ytd-ad-slot-renderer ytd-in-feed-ad-layout-renderer videoDisplayCompactButtonGroupLayoutViewModelHost ytLockupViewModelWrapper ytLockupViewModelHost ytLockupViewModelHorizontal content-id-4tYJ-4WbtXA ytLockupViewModelRichGridLegacyMargin ytLockupViewModelFlexNone" id="rendering-content"--><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse ytSpecTouchFeedbackShapeThumbnailSizeMedium ytSpecTouchFeedbackShapeTriggerEvents"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape><a class="ytLockupViewModelContentImage"><!-- -1 wrappers  class="ytThumbnailViewModelHost ytThumbnailViewModelAspectRatio16By9 ytThumbnailViewModelMedium"--><div class="ytThumbnailViewModelImage"><img class="ytCoreImageHost ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill ytCoreImageLoaded"></div><thumbnail-overlay-button-view-model class="ytThumbnailOverlayButtonViewModelHost"><!-- -3 wrappers  class="ytThumbnailOverlayButtonViewModelButton ytThumbnailOverlayButtonViewModelButtonBottomEndPosition ytThumbnailOverlayButtonViewModelButtonLegacyIcon ytSpecButtonViewModelHost ytSpecButtonShapeNextHost ytSpecButtonShapeNextTonal ytSpecButtonShapeNextOverlayDark ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconOnlyDefault ytSpecButtonShapeNextEnableBackdropFilterExperiment" title=""--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeOverlayTouchResponseInverse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></thumbnail-overlay-button-view-model><yt-thumbnail-overlay-badge-view-model class="ytThumbnailOverlayBadgeViewModelHost ytThumbnailOverlayBadgeViewModelBottomEnd ytThumbnailOverlayBadgeViewModelMedium"><yt-thumbnail-badge-view-model class="ytThumbnailBadgeViewModelHost ytThumbnailOverlayBadgeViewModelBadge"></yt-thumbnail-badge-view-model></yt-thumbnail-overlay-badge-view-model></a><div class="ytLockupViewModelMetadata"><feed-ad-metadata-view-model class="ytwFeedAdMetadataViewModelHostIsClickableAdComponent"><div class="ytwFeedAdMetadataViewModelHostMetadata"><span class="ytAttributedStringHost ytwFeedAdMetadataViewModelHostTextsStyleCompactHeadline ytwFeedAdMetadataViewModelHostTextsStyleCompactHeadlineSearch ytAttributedStringWhiteSpacePreWrap ytAttributedStringLinkInheritColor"><!-- -1 wrappers  class="ytAttributedStringLink ytAttributedStringLinkCallToActionColor"--><a class="ytAttributedStringLink ytAttributedStringLinkCallToActionColor ytAttributedStringLinkInheritColor">Zin in mountainbiken in Saalbach Hinterglemm?</a></span><span class="ytAttributedStringHost ytwFeedAdMetadataViewModelHostTextsStyleCompactDescription ytwFeedAdMetadataViewModelHostTextsStyleCompactDescriptionSearch ytAttributedStringWhiteSpacePreWrap ytAttributedStringLinkInheritColor"><!-- -1 wrappers  class="ytAttributedStringLink ytAttributedStringLinkCallToActionColor"--><a class="ytAttributedStringLink ytAttributedStringLinkCallToActionColor ytAttributedStringLinkInheritColor">Van relaxed tot sportief: ontdek prachtige mountainbiketours!</a></span><div class="ytwFeedAdMetadataViewModelHostMetadataAdBadgeDetailsLineContainerStyleCompactSearch"><div class="ytwFeedAdMetadataViewModelHostAvatarStyleCompact"><!-- -5 wrappers  class="ytwAdAvatarViewModelHostIsClickableAdComponent ytSpecAvatarShapeHost ytSpecAvatarShapeButton ytSpecAvatarShapeButtonExtraSmall ytSpecAvatarShapeTappable ytSpecAvatarShapeAvatarSizeExtraSmall" aria-label="Saalbach Hinterglemm" role="button"--><img class="ytCoreImageHost ytSpecAvatarShapeImage ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleToFill ytCoreImageLoaded"></div><ad-badge-view-model class="ytwAdBadgeViewModelHostIsClickableAdComponent ytwAdBadgeViewModelHostStyleStandard"><!-- -1 wrappers  class="ytBadgeShapeHost ytBadgeShapeAd ytBadgeShapeAdsIncludeDot ytBadgeShapeTypography"--><div class="ytBadgeShapeText">Sponsored</div></ad-badge-view-model><ad-details-line-view-model class="ytwAdDetailsLineViewModelHostIsClickableAdComponent"><span class="ytAttributedStringHost ytwAdDetailsLineViewModelHostTextStyleStandard ytAttributedStringWhiteSpacePreWrap" role="text">Saalbach Hinterglemm</span></ad-details-line-view-model></div></div><div class="ytwFeedAdMetadataViewModelHostMenuButton"><!-- -2 wrappers  class="ytSpecButtonViewModelHost ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="My Ad Center"--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></div></feed-ad-metadata-view-model><lockup-attachments-view-model class="ytLockupAttachmentsViewModelHost"><!-- -2 wrappers  class="ytLockupAttachmentsViewModelAttachment ytwAdButtonGroupViewModelHost ytwAdButtonGroupViewModelHostCompactWidth"--><div class="ytwAdButtonGroupViewModelHostSecondaryButton ytwAdButtonGroupViewModelHostCompactWidthSecondaryButton"><!-- -2 wrappers  class="ytwAdButtonViewModelHost ytSpecButtonShapeNextHost ytSpecButtonShapeNextTonal ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Watch"--><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Watch</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></div><div class="ytwAdButtonGroupViewModelHostPrimaryButton"><!-- -2 wrappers  class="ytwAdButtonViewModelHost ytSpecButtonShapeNextHost ytSpecButtonShapeNextFilled ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextEnableBackdropFilterExperiment" aria-label="Book now"--><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Book now</span></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponseInverse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></div></lockup-attachments-view-model></div></ytd-search-pyv-renderer><ytd-video-renderer class="ytd-item-section-renderer"><div id="dismissible"><ytd-thumbnail><!-- -1 wrappers  class="yt-simple-endpoint inline-block ytd-thumbnail" id="thumbnail"--><yt-image class="ytd-thumbnail"><img alt="true" class="ytCoreImageHost ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill ytCoreImageLoaded"></yt-image><div id="overlays" class="ytd-thumbnail"><ytd-thumbnail-overlay-time-status-renderer class="ytd-thumbnail"><ytd-badge-supported-renderer class="ytd-thumbnail-overlay-time-status-renderer"><dom-repeat id="repeat" class="ytd-badge-supported-renderer"><template></template></dom-repeat><yt-badge-supported-renderer class="ytd-badge-supported-renderer"></yt-badge-supported-renderer></ytd-badge-supported-renderer><div class="thumbnail-overlay-badge-shape ytd-thumbnail-overlay-time-status-renderer"><!-- -1 wrappers  class="ytBadgeShapeHost ytBadgeShapeThumbnailDefault ytBadgeShapeThumbnailBadge ytBadgeShapeTypography" role="img" aria-label="1 hour, 17 seconds"--><div class="ytBadgeShapeText">1:00:17</div></div></ytd-thumbnail-overlay-time-status-renderer><ytd-thumbnail-overlay-now-playing-renderer class="ytd-thumbnail"><span id="overlay-text" class="ytd-thumbnail-overlay-now-playing-renderer">Now playing</span><ytd-thumbnail-overlay-equalizer class="ytd-thumbnail-overlay-now-playing-renderer"><svg id="equalizer" class="style-scope ytd-thumbnail-overlay-equalizer" /></ytd-thumbnail-overlay-equalizer></ytd-thumbnail-overlay-now-playing-renderer></div><div id="mouseover-overlay" class="ytd-thumbnail"></div><div id="hover-overlays" class="ytd-thumbnail"></div></ytd-thumbnail><div class="text-wrapper"><div id="meta"><div id="title-wrapper"><h3 class="title-and-badge"><!-- -1 wrappers  class="yt-simple-endpoint" id="video-title" title="These CATS are too FUNNY! 🤣 | New Cat Videos 2025" aria-label="These CATS are too FUNNY! 🤣 | New Cat Videos 2025 1 hour"--><yt-formatted-string aria-label="These CATS are too FUNNY! 🤣 | New Cat Videos 2025 1 hour">These CATS are too FUNNY! 🤣 | New Cat Videos 2025</yt-formatted-string></h3><div id="menu"><!-- -1 wrappers --><div id="top-level-buttons-computed" class="top-level-buttons ytd-menu-renderer"></div><div id="flexible-item-buttons" class="ytd-menu-renderer"></div><yt-icon-button id="button" class="dropdown-trigger ytd-menu-renderer"><button id="button" class="yt-icon-button" aria-label="Action menu"><!-- -3 wrappers  class="ytd-menu-renderer yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></button><yt-interaction id="interaction" class="circular yt-icon-button"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></yt-icon-button></div></div><ytd-video-meta-block><div id="metadata" class="ytd-video-meta-block"><!-- -1 wrappers --><span class="inline-metadata-item ytd-video-meta-block">12M views</span><span class="inline-metadata-item ytd-video-meta-block">1 year ago</span><dom-repeat class="ytd-video-meta-block"><template></template></dom-repeat></div><div id="additional-metadata-line" class="ytd-video-meta-block"><!-- -1 wrappers --><template></template></div></ytd-video-meta-block></div><div id="channel-info"><a id="channel-thumbnail" aria-label="Go to channel The Pet Collective"><!-- -1 wrappers  class="no-transition"--><img id="img" class="yt-img-shadow"></a><ytd-channel-name id="channel-name" class="long-byline"><div id="container" class="ytd-channel-name"><div id="text-container" class="ytd-channel-name"><!-- -1 wrappers  title=""--><a class="yt-simple-endpoint yt-formatted-string">The Pet Collective</a></div><tp-yt-paper-tooltip class="ytd-channel-name" role="tooltip" aria-label="tooltip"><div id="tooltip" class="hidden tp-yt-paper-tooltip"> The Pet Collective </div></tp-yt-paper-tooltip></div><ytd-badge-supported-renderer class="ytd-channel-name"><dom-repeat id="repeat" class="ytd-badge-supported-renderer"><template></template></dom-repeat><yt-badge-supported-renderer class="ytBadgeSupportedRendererHost"><!-- -3 wrappers  class="badge-shape ytBadgeSupportedRendererBadgeShape ytBadgeSupportedRendererBadgeShapeStyleTypeVerifiedArtist ytMetadataBadgeRendererHost ytBadgeShapeHost ytBadgeShapeDefault ytBadgeShapeNoText ytBadgeShapeModern ytBadgeShapeTypography" role="img" aria-label="Verified"--><div class="ytBadgeShapeIcon"><!-- -2 wrappers  class="yt-icon-shape ytSpecIconShapeHost"--><svg /></div><div class="ytBadgeShapeText"></div></yt-badge-supported-renderer></ytd-badge-supported-renderer></ytd-channel-name></div><div class="metadata-snippet-container"><yt-formatted-string class="metadata-snippet-text"><span class="yt-formatted-string">You like </span><span class="bold yt-formatted-string">cats</span><span class="yt-formatted-string">? We got em! No dogs! Just </span><span class="bold yt-formatted-string">cats</span><span class="yt-formatted-string">! Seriously, all </span><span class="bold yt-formatted-string">cats</span><span class="yt-formatted-string">! #Funny #fails #</span><span class="bold yt-formatted-string">Cats</span><span class="yt-formatted-string"> ✨ Subscribe to The Scoop for our most...</span></yt-formatted-string><tp-yt-paper-tooltip role="tooltip" aria-label="tooltip"><div id="tooltip" class="hidden tp-yt-paper-tooltip"> From the video description </div></tp-yt-paper-tooltip></div><dom-repeat><template></template></dom-repeat><div id="expandable-metadata"></div><div id="buttons"></div></div></div><div id="dismissed"></div><yt-interaction id="interaction" class="extended"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-video-renderer><ytd-video-renderer class="ytd-item-section-renderer"><div id="dismissible"><ytd-thumbnail><!-- -1 wrappers  class="yt-simple-endpoint inline-block ytd-thumbnail" id="thumbnail"--><yt-image class="ytd-thumbnail"><img alt="true" class="ytCoreImageHost ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill ytCoreImageLoaded"></yt-image><div id="overlays" class="ytd-thumbnail"><ytd-thumbnail-overlay-time-status-renderer class="ytd-thumbnail"><ytd-badge-supported-renderer class="ytd-thumbnail-overlay-time-status-renderer"><dom-repeat id="repeat" class="ytd-badge-supported-renderer"><template></template></dom-repeat><yt-badge-supported-renderer class="ytd-badge-supported-renderer"></yt-badge-supported-renderer></ytd-badge-supported-renderer><div class="thumbnail-overlay-badge-shape ytd-thumbnail-overlay-time-status-renderer"><!-- -1 wrappers  class="ytBadgeShapeHost ytBadgeShapeThumbnailDefault ytBadgeShapeThumbnailBadge ytBadgeShapeTypography" role="img" aria-label="10 minutes, 26 seconds"--><div class="ytBadgeShapeText">10:26</div></div></ytd-thumbnail-overlay-time-status-renderer><ytd-thumbnail-overlay-now-playing-renderer class="ytd-thumbnail"><span id="overlay-text" class="ytd-thumbnail-overlay-now-playing-renderer">Now playing</span><ytd-thumbnail-overlay-equalizer class="ytd-thumbnail-overlay-now-playing-renderer"><svg id="equalizer" class="style-scope ytd-thumbnail-overlay-equalizer" /></ytd-thumbnail-overlay-equalizer></ytd-thumbnail-overlay-now-playing-renderer></div><div id="mouseover-overlay" class="ytd-thumbnail"></div><div id="hover-overlays" class="ytd-thumbnail"></div></ytd-thumbnail><div class="text-wrapper"><div id="meta"><div id="title-wrapper"><h3 class="title-and-badge"><!-- -1 wrappers  class="yt-simple-endpoint" id="video-title" title="Cats Being Absolutely Bonkers" aria-label="Cats Being Absolutely Bonkers 10 minutes, 26 seconds"--><yt-formatted-string aria-label="Cats Being Absolutely Bonkers 10 minutes, 26 seconds">Cats Being Absolutely Bonkers</yt-formatted-string></h3><div id="menu"><!-- -1 wrappers --><div id="top-level-buttons-computed" class="top-level-buttons ytd-menu-renderer"></div><div id="flexible-item-buttons" class="ytd-menu-renderer"></div><yt-icon-button id="button" class="dropdown-trigger ytd-menu-renderer"><button id="button" class="yt-icon-button" aria-label="Action menu"><!-- -3 wrappers  class="ytd-menu-renderer yt-icon-shape yt-icon ytSpecIconShapeHost"--><svg /></button><yt-interaction id="interaction" class="circular yt-icon-button"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></yt-icon-button></div></div><ytd-video-meta-block class="byline-separated"><div id="metadata" class="ytd-video-meta-block"><!-- -1 wrappers --><span class="inline-metadata-item ytd-video-meta-block">403K views</span><span class="inline-metadata-item ytd-video-meta-block">2 months ago</span><dom-repeat class="ytd-video-meta-block"><template></template></dom-repeat></div><div id="additional-metadata-line" class="ytd-video-meta-block"><!-- -1 wrappers --><template></template></div></ytd-video-meta-block></div><div id="channel-info"><a id="channel-thumbnail" aria-label="Go to channel CaD Animals"><!-- -1 wrappers  class="no-transition"--><img id="img" class="yt-img-shadow"></a><ytd-channel-name id="channel-name" class="long-byline"><!-- -1 wrappers  class="ytd-channel-name"--><div id="text-container" class="ytd-channel-name"><!-- -1 wrappers  title=""--><a class="yt-simple-endpoint yt-formatted-string">CaD Animals</a></div><tp-yt-paper-tooltip class="ytd-channel-name" role="tooltip" aria-label="tooltip"><div id="tooltip" class="hidden tp-yt-paper-tooltip"> CaD Animals </div></tp-yt-paper-tooltip></ytd-channel-name></div><div class="metadata-snippet-container"><yt-formatted-string class="metadata-snippet-text"><span class="bold yt-formatted-string">Cats</span><span class="yt-formatted-string"> Being Absolutely Bonkers | Funniest </span><span class="bold yt-formatted-string">Cat</span><span class="yt-formatted-string"> Compilation funny </span><span class="bold yt-formatted-string">cat</span><span class="yt-formatted-string"> videos, </span><span class="bold yt-formatted-string">cat</span><span class="yt-formatted-string"> videos, funny </span><span class="bold yt-formatted-string">cats</span><span class="yt-formatted-string">, funny </span><span class="bold yt-formatted-string">cat</span><span class="yt-formatted-string">, </span><span class="bold yt-formatted-string">cat</span><span class="yt-formatted-string"> funny, </span><span class="bold yt-formatted-string">cats</span><span class="yt-formatted-string"> funny...</span></yt-formatted-string><tp-yt-paper-tooltip role="tooltip" aria-label="tooltip"><div id="tooltip" class="hidden tp-yt-paper-tooltip"> From the video description </div></tp-yt-paper-tooltip></div><dom-repeat><template></template></dom-repeat><div id="expandable-metadata"></div><div id="buttons"></div></div></div><div id="dismissed"></div><yt-interaction id="interaction" class="extended"><div class="stroke yt-interaction"></div><div class="fill yt-interaction"></div></yt-interaction></ytd-video-renderer></div><div id="continuations" class="ytd-item-section-renderer"></div></ytd-item-section-renderer><!-- -4 siblings --><ytd-continuation-item-renderer class="ytd-section-list-renderer"><div id="ghost-cards" class="ytd-continuation-item-renderer"></div><div id="ghost-comment-section" class="ytd-continuation-item-renderer"></div><tp-yt-paper-spinner id="spinner" class="ytd-continuation-item-renderer" aria-label="loading"><!-- -1 wrappers  class="tp-yt-paper-spinner"--><div class="spinner-layer layer-1 tp-yt-paper-spinner"><div class="circle-clipper left tp-yt-paper-spinner"><div class="circle tp-yt-paper-spinner"></div></div><div class="circle-clipper right tp-yt-paper-spinner"><div class="circle tp-yt-paper-spinner"></div></div></div><!-- -3 siblings --></tp-yt-paper-spinner></ytd-continuation-item-renderer></div><div id="action-button" class="ytd-section-list-renderer"><!-- -3 wrappers  class="ytSpecButtonViewModelHost ytSpecButtonShapeNextHost ytSpecButtonShapeNextFilled ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeS ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextOverrideSmallSizeIcon ytSpecButtonShapeNextEnableBackdropFilterExperiment" title=""--><div class="ytSpecButtonShapeNextIcon"><!-- -3 wrappers  class="ytIconWrapperHost yt-icon-shape ytSpecIconShapeHost"--><svg /></div><yt-touch-feedback-shape class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponseInverse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></div><div id="continuations" class="ytd-section-list-renderer"></div></ytd-two-column-search-results-renderer><div id="floating-footer" class="ytd-search"></div></div><div id="survey" class="ytd-search"></div></ytd-page-manager></div><ytd-permission-role-bottom-bar-renderer class="ytd-app"></ytd-permission-role-bottom-bar-renderer><ytd-popup-container class="ytd-app"></ytd-popup-container><ytd-third-party-manager class="ytd-app"></ytd-third-party-manager><snackbar-container class="ytSnackbarContainerHost"></snackbar-container><div id="video-preview" class="ytd-app"><!-- -5 wrappers  class="ytdVideoPreviewLoaderHost ytdVideoPreviewLoaderVideoPreviewContainer ytdVideoPreviewLoaderHidden ytd-video-preview"--><a id="media-container-link" class="yt-simple-endpoint ytd-video-preview"><div id="thumbnail-container" class="ytd-video-preview"></div><div id="player-container-wrapper" class="ytd-video-preview"><!-- -1 wrappers --><ytd-player id="inline-player" class="ytd-video-preview"><!-- -2 wrappers  class="ytd-player html5-video-player ytp-hide-controls ytp-exp-bottom-control-flexbox ytp-modern-caption ytp-exp-ppp-update ytp-livebadge-color ytp-delhi-modern-compact-controls ytp-cards-teaser-dismissible unstarted-mode ytp-hide-info-bar ytp-xsmall-width-mode" data-version="/s/player/9fc68080/player_es6.vflset/en_US/base.js" aria-label="YouTube Video Player"--><div class="html5-video-container" data-layer="0"><video class="video-stream html5-main-video" data-no-fullscreen="true"></video></div><div class="ytp-gradient-top" data-layer="1"></div><div class="ytp-chrome-top" data-layer="1"><div class="ytp-title-channel"><div class="ytp-title-beacon"></div><a class="ytp-title-channel-logo" role="link"></a><div class="ytp-title-expanded-overlay"><!-- -1 wrappers  class="ytp-title-expanded-heading"--><div class="ytp-title-expanded-title"><a></a></div><div class="ytp-title-expanded-subtitle"></div></div></div><div class="ytp-title"><!-- -1 wrappers  class="ytp-title-text"--><a class="ytp-title-link yt-uix-sessionlink" data-sessionlink="feature=player-title"></a><div class="ytp-title-subtext"><a class="ytp-title-channel-name"></a></div></div></div><button class="ytp-unmute ytp-popup ytp-button ytp-unmute-animated ytp-unmute-shrink" data-layer="2"><!-- -1 wrappers  class="ytp-unmute-inner"--><div class="ytp-unmute-icon"><svg /></div><div class="ytp-unmute-text">Tap to unmute</div><div class="ytp-unmute-box"></div></button><div class="ytp-overlay ytp-speedmaster-overlay" data-layer="4"><!-- -1 wrappers  class="ytp-speedmaster-user-edu ytp-speedmaster-has-icon"--><div class="ytp-speedmaster-label">2x</div><div class="ytp-speedmaster-icon"><svg /></div></div><div class="ytp-suggested-action" data-layer="4"><!-- -1 wrappers  class="ytp-button ytp-suggested-action-badge ytp-suggested-action-badge-with-controls"--><div class="ytp-suggested-action-badge-icon-container"></div><div class="ytp-suggested-action-badge-expanded-content-container"><label class="ytp-suggested-action-badge-title"></label><a class="ytp-suggested-action-container"><img class="ytp-suggested-action-badge-img"><div class="ytp-suggested-action-badge-icon"></div><div class="ytp-suggested-action-details"><text class="ytp-suggested-action-title"></text><text class="ytp-suggested-action-subtitle"></text><text class="ytp-suggested-action-metadata-text"></text></div><button class="ytp-suggested-action-badge-dismiss-button-icon ytp-button"></button><button class="ytp-featured-product-overflow-icon ytp-button"></button></a></div></div><div class="ytp-cued-thumbnail-overlay" data-layer="4"><div class="ytp-cued-thumbnail-overlay-image"></div><button class="ytp-large-play-button ytp-button" aria-label="Play" title="Play"><svg /></button></div><div class="ytp-overlays-container" data-layer="4"><div class="ytp-overlay-top-left"></div><div class="ytp-overlay-top-right"><div class="ytp-chrome-top-buttons" data-overlay-order="2"><button class="ytp-button ytp-cards-button" aria-label="Show cards" data-tooltip-opaque="false"><span class="ytp-cards-button-icon-default"><div class="ytp-cards-button-icon"><svg /></div><div class="ytp-cards-button-title">Info</div></span><span class="ytp-cards-button-icon-shopping"><div class="ytp-cards-button-icon"><svg /></div><div class="ytp-cards-button-title">Shopping</div></span></button><div class="ytp-cards-teaser"><div class="ytp-cards-teaser-box"></div><div class="ytp-cards-teaser-text"><button class="ytp-cards-teaser-info-icon" aria-label="Show cards"><svg /></button><img class="ytp-cards-teaser-channel-avatar"><span class="ytp-cards-teaser-label"></span><button class="ytp-cards-teaser-close-button" aria-label="Close"><svg /></button></div></div><button class="ytp-button ytp-overflow-button ytp-overflow-button-visible" data-tooltip-title="More" aria-label="More"><!-- -1 wrappers  class="ytp-overflow-icon"--><svg /></button></div><button class="ytp-playlist-menu-button ytp-button" aria-label="Playlist" data-overlay-order="3"><div class="ytp-playlist-menu-button-icon"><svg /></div><div class="ytp-playlist-menu-button-title"></div><div class="ytp-playlist-menu-button-text"></div></button></div><div class="ytp-overlay-bottom-left"><div class="ytp-suggested-action" data-overlay-order="7"><!-- -1 wrappers  class="ytp-button ytp-suggested-action-badge ytp-suggested-action-badge-with-controls"--><div class="ytp-suggested-action-badge-icon-container"></div><div class="ytp-suggested-action-badge-expanded-content-container"><label class="ytp-suggested-action-badge-title"></label><button class="ytp-suggested-action-badge-dismiss-button-icon ytp-button"></button></div></div><!-- -2 siblings --></div><div class="ytp-overlay-bottom-right"><!-- -1 wrappers  class="ytp-overlay-inline-container" data-overlay-order="0"--><div class="ytp-player-content ytp-timely-actions-content" data-overlay-order="10"></div></div></div><div class="ytp-spinner" data-layer="4"><div class="ytp-spinner-container"><!-- -1 wrappers  class="ytp-spinner-rotator"--><div class="ytp-spinner-left"><div class="ytp-spinner-circle"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle"></div></div></div><div class="ytp-spinner-message">If playback doesn't begin shortly, try restarting your device.</div></div><div data-layer="4"><div class="ytp-bezel-text-wrapper"><div class="ytp-bezel-text"></div></div><div class="ytp-bezel" role="status"><div class="ytp-bezel-icon"></div></div></div><div class="ytp-seek-overlay" data-layer="4"><div class="ytp-seek-overlay-animation ytp-seek-overlay-animation-back"><div class="ytp-seek-overlay-arrow ytp-seek-overlay-arrow-persistent"><svg /></div><div class="ytp-seek-overlay-duration"></div></div><div class="ytp-seek-overlay-animation ytp-seek-overlay-animation-forward"><div class="ytp-seek-overlay-duration"></div><div class="ytp-seek-overlay-arrow ytp-seek-overlay-arrow-persistent"><svg /></div></div><div class="ytp-seek-overlay-message"><div class="ytp-seek-overlay-message-icon"></div><div class="ytp-seek-overlay-message-text"></div></div></div><div data-layer="4"><div class="ytp-tooltip-text-wrapper"><div class="ytp-tooltip-edu"><svg /><span></span></div><div class="ytp-tooltip-image"></div><div class="ytp-tooltip-title"><span></span><div class="ytp-tooltip-keyboard-shortcut"></div></div><div class="ytp-tooltip-bottom-text"><span class="ytp-tooltip-text"></span><div class="ytp-tooltip-keyboard-shortcut"></div></div><div class="ytp-tooltip-progress-bar-pill"><div class="ytp-tooltip-progress-bar-pill-time-stamp"></div><div class="ytp-tooltip-progress-bar-pill-title"></div></div></div><div class="ytp-tooltip-bg"><div class="ytp-tooltip-duration"></div></div></div><div class="ytp-player-content ytp-iv-player-content" data-layer="4"><!-- -1 wrappers  class="ytp-free-preview-countdown-timer"--><span></span><span class="ytp-free-preview-countdown-timer-separator">•</span><span></span></div><div class="ytp-playlist-menu" role="dialog" id="ytp-id-2" data-layer="5"><div class="ytp-playlist-menu-header"><div class="ytp-playlist-menu-title"><a class="ytp-playlist-menu-title-name"></a><button class="ytp-playlist-menu-close ytp-button" aria-label="Close"><svg /></button></div><div class="ytp-playlist-menu-subtitle"></div></div><div class="ytp-playlist-menu-items" role="menu"></div></div><div class="ytp-share-panel" id="ytp-id-5" role="dialog" data-layer="5"><div class="ytp-share-panel-inner-content"><div class="ytp-share-panel-title" id="ytp-id-4">Share</div><a class="ytp-share-panel-link ytp-no-contextmenu" title="Share link"></a><label class="ytp-share-panel-include-playlist"><input class="ytp-share-panel-include-playlist-checkbox" type="checkbox">Include playlist</label><div class="ytp-share-panel-loading-spinner"><!-- -2 wrappers  class="ytp-spinner-container ytp-spinner-rotator"--><div class="ytp-spinner-left"><div class="ytp-spinner-circle"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle"></div></div></div><div class="ytp-share-panel-service-buttons"></div><div class="ytp-share-panel-error">An error occurred while retrieving sharing information. Please try again later.</div></div><button class="ytp-share-panel-close ytp-button" title="Close"><svg /></button></div><div class="ytp-overflow-panel" id="ytp-id-10" role="dialog" data-layer="5"><div class="ytp-overflow-panel-content"><!-- -1 wrappers  class="ytp-overflow-panel-action-buttons"--><button class="ytp-watch-later-button ytp-button" data-tooltip-opaque="false" data-tooltip-title="Watch later" aria-label="Watch later"><div class="ytp-watch-later-icon"><svg /></div><div class="ytp-watch-later-title">Watch later</div></button><button class="ytp-button ytp-share-button" data-tooltip-title="Share" data-tooltip-opaque="false" aria-label="Share"><div class="ytp-share-icon"><svg /></div><div class="ytp-share-title">Share</div></button><button class="ytp-button ytp-copylink-button" data-tooltip-opaque="false" data-tooltip-title="Copy link" aria-label="Copy link"><div class="ytp-copylink-icon"><svg /></div><div class="ytp-copylink-title">Copy link</div></button></div><button class="ytp-overflow-panel-close ytp-button" data-tooltip-title="Close" aria-label="Close"><svg /></button></div></ytd-player><dom-if class="ytd-video-preview"><template></template></dom-if></div><div id="overlays" class="ytd-video-preview"></div></a><div id="player-controls" class="ytd-video-preview"><yt-inline-player-controls class="ytd-video-preview"></yt-inline-player-controls><dom-if class="ytd-video-preview"><template></template></dom-if></div><div id="metadata" class="ytd-video-preview"></div></div><yt-ephemeral-actions class="ytEphemeralActionsHost"></yt-ephemeral-actions><yt-tooltip class="ytTooltipContainerHost"><yt-popover class="ytPopoverComponentHost ytPopoverComponentHostSeeThrough"></yt-popover></yt-tooltip><dom-if class="ytd-app"><template></template></dom-if></ytd-app><svg /><iron-iconset-svg name="backstage"><svg /></iron-iconset-svg><!-- -21 siblings --><iframe></iframe></body>
+
+<!-- Stats: 771 wrappers collapsed, 54 list items truncated -->
+
+
+--- API REQUEST round 1 ---
+model=unsloth/Qwen3.6-27B messages=4 payload_chars=54,948 cache=none
+
+--- API RESPONSE round 1 ---
+elapsed_s=9.6 prompt_tokens=14631 completion_tokens=66 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer",
+  "depth": 5
+}
+
+--- TOOL RESULT: show_in_dom ---
+<ytd-video-renderer class="style-scope ytd-item-section-renderer" bigger-thumbs-style="BIG" lockup="true" is-search="" use-search-ui="" use-standard-config-width="" use-bigger-thumbs="" inline-title-icon=""><div id="dismissible" class="style-scope ytd-video-renderer">
+  <ytd-thumbnail use-hovered-property="" class="style-scope ytd-video-renderer" size="large" loaded=""><a id="thumbnail" class="yt-simple-endpoint inline-block style-scope ytd-thumbnail" aria-hidden="true" tabindex="-1" rel="null" href="https://www.youtube.com/watch?v=3URtTIdnXIk&pp=ygUEY2F0c9IHCQkjCwGHKiGM7w%3D%3D">
+  <yt-image class="style-scope ytd-thumbnail">
+  <img alt="true" class="ytCoreImageHost ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill ytCoreImageLoaded" style="background-color: transparent;" src="https://i.ytimg.com/vi/3URtTIdnXIk/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAWeEAHGZxEfBpGPiiVWvkTK-e-EA"></yt-image>
+  
+  <div id="overlays" class="style-scope ytd-thumbnail"><ytd-thumbnail-overlay-time-status-renderer class="style-scope ytd-thumbnail" hide-time-status="" overlay-style="DEFAULT"><!-- -2 children --></ytd-thumbnail-overlay-time-status-renderer><ytd-thumbnail-overlay-now-playing-renderer class="style-scope ytd-thumbnail">
+
+<!-- -2 children --></ytd-thumbnail-overlay-now-playing-renderer></div>
+  <div id="mouseover-overlay" class="style-scope ytd-thumbnail"></div>
+  <div id="hover-overlays" class="style-scope ytd-thumbnail"></div>
+</a>
+</ytd-thumbnail>
+  <div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        <h3 class="title-and-badge style-scope ytd-video-renderer">
+          
+          
+        <!-- -1 children --></h3>
+        <div id="menu" class="style-scope ytd-video-renderer"><!-- -1 children --></div>
+      </div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+<div id="metadata" class="style-scope ytd-video-meta-block">
+  
+  
+<!-- -1 children --></div>
+<div id="additional-metadata-line" class="style-scope ytd-video-meta-block">
+  
+<!-- -1 children --></div>
+
+</ytd-video-meta-block>
+    </div>
+    <div id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        <yt-img-shadow width="24" class="style-scope ytd-video-renderer no-transition" style="background-color: transparent;" loaded=""><!-- -1 children --></yt-img-shadow>
+      </a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true"><div id="container" class="style-scope ytd-channel-name">
+  
+  
+<!-- -2 children --></div>
+<ytd-badge-supported-renderer class="style-scope ytd-channel-name" system-icons=""><!-- -2 children --></ytd-badge-supported-renderer>
+</ytd-channel-name>
+    </div>
+    
+    
+      <div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><span dir="auto" class="style-scope yt-formatted-string">You like </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">? We got em! No dogs! Just </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">! Seriously, all </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">! #Funny #fails #</span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">Cats</span><span dir="auto" class="style-scope yt-formatted-string"> ✨    Subscribe to The Scoop for our most&#160;...</span></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip"><div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip" style-target="tooltip">
+  From the video description
+</div>
+</tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+</div>
+<div id="dismissed" class="style-scope ytd-video-renderer"></div>
+<yt-interaction id="interaction" class="extended style-scope ytd-video-renderer"><div class="stroke style-scope yt-interaction"></div><div class="fill style-scope yt-interaction"></div></yt-interaction>
+</ytd-video-renderer>
+
+
+--- API REQUEST round 2 ---
+model=unsloth/Qwen3.6-27B messages=6 payload_chars=60,179 cache=none
+
+--- API RESPONSE round 2 ---
+elapsed_s=2.3 prompt_tokens=16122 completion_tokens=66 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#menu",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<g id="menu"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></g>
+
+
+--- API REQUEST round 3 ---
+model=unsloth/Qwen3.6-27B messages=8 payload_chars=60,532 cache=none
+
+--- API RESPONSE round 3 ---
+elapsed_s=1.3 prompt_tokens=16259 completion_tokens=69 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer #menu",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="menu" class="style-scope ytd-video-renderer"><ytd-menu-renderer class="style-scope ytd-video-renderer" safe-area="" menu-active=""><div id="top-level-buttons-computed" class="top-level-buttons style-scope ytd-menu-renderer"></div><div id="flexible-item-buttons" class="style-scope ytd-menu-renderer"></div><yt-icon-button id="button" class="dropdown-trigger style-scope ytd-menu-renderer" style-target="button"><button id="button" class="style-scope yt-icon-button" aria-label="Action menu"><yt-icon class="style-scope ytd-menu-renderer"><!-- -1 children --></yt-icon></button><yt-interaction id="interaction" class="circular style-scope yt-icon-button"><div class="stroke style-scope yt-interaction"></div><div class="fill style-scope yt-interaction"></div></yt-interaction></yt-icon-button></ytd-menu-renderer></div>
+
+
+--- API REQUEST round 4 ---
+model=unsloth/Qwen3.6-27B messages=10 payload_chars=61,642 cache=none
+
+--- API RESPONSE round 4 ---
+elapsed_s=1.8 prompt_tokens=16556 completion_tokens=77 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer .text-wrapper",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        <h3 class="title-and-badge style-scope ytd-video-renderer">
+          
+          
+        <!-- -1 children --></h3>
+        <div id="menu" class="style-scope ytd-video-renderer"><!-- -1 children --></div>
+      </div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+<div id="metadata" class="style-scope ytd-video-meta-block">
+  
+  
+<!-- -1 children --></div>
+<div id="additional-metadata-line" class="style-scope ytd-video-meta-block">
+  
+<!-- -1 children --></div>
+
+</ytd-video-meta-block>
+    </div>
+    <div id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        <yt-img-shadow width="24" class="style-scope ytd-video-renderer no-transition" style="background-color: transparent;" loaded=""><!-- -1 children --></yt-img-shadow>
+      </a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true"><div id="container" class="style-scope ytd-channel-name">
+  
+  
+<!-- -2 children --></div>
+<ytd-badge-supported-renderer class="style-scope ytd-channel-name" system-icons=""><!-- -2 children --></ytd-badge-supported-renderer>
+</ytd-channel-name>
+    </div>
+    
+    
+      <div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><span dir="auto" class="style-scope yt-formatted-string">You like </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">? We got em! No dogs! Just </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">! Seriously, all </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">! #Funny #fails #</span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">Cats</span><span dir="auto" class="style-scope yt-formatted-string"> ✨    Subscribe to The Scoop for our most&#160;...</span></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip"><div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip" style-target="tooltip">
+  From the video description
+</div>
+</tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 5 ---
+model=unsloth/Qwen3.6-27B messages=12 payload_chars=65,051 cache=none
+
+--- API RESPONSE round 5 ---
+elapsed_s=2.4 prompt_tokens=17495 completion_tokens=84 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer .dropdown-trigger",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<yt-icon-button id="button" class="dropdown-trigger style-scope ytd-menu-renderer" style-target="button"><button id="button" class="style-scope yt-icon-button" aria-label="Action menu"><yt-icon class="style-scope ytd-menu-renderer"><span class="yt-icon-shape style-scope yt-icon ytSpecIconShapeHost"><!-- -1 children --></span></yt-icon></button><yt-interaction id="interaction" class="circular style-scope yt-icon-button"><div class="stroke style-scope yt-interaction"></div><div class="fill style-scope yt-interaction"></div></yt-interaction></yt-icon-button>
+
+
+--- API REQUEST round 6 ---
+model=unsloth/Qwen3.6-27B messages=14 payload_chars=65,975 cache=none
+
+--- API RESPONSE round 6 ---
+elapsed_s=1.8 prompt_tokens=17737 completion_tokens=99 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer ytd-video-meta-block #metadata",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="metadata" class="style-scope ytd-video-meta-block">
+  
+  <div id="metadata-line" class="style-scope ytd-video-meta-block">
+    
+    
+    
+    
+      <span class="inline-metadata-item style-scope ytd-video-meta-block">12M views</span>
+    
+      <span class="inline-metadata-item style-scope ytd-video-meta-block">1 year ago</span>
+    <dom-repeat strip-whitespace="" class="style-scope ytd-video-meta-block"><template is="dom-repeat"></template></dom-repeat>
+  </div>
+</div>
+
+
+--- API REQUEST round 7 ---
+model=unsloth/Qwen3.6-27B messages=16 payload_chars=66,892 cache=none
+
+--- API RESPONSE round 7 ---
+elapsed_s=2.1 prompt_tokens=17981 completion_tokens=97 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer #channel-info",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        <yt-img-shadow width="24" class="style-scope ytd-video-renderer no-transition" style="background-color: transparent;" loaded=""><img id="img" draggable="false" class="style-scope yt-img-shadow" alt="" width="24" src="https://yt3.ggpht.com/VRq2TMRPxTzC4FjsGz2vBPyp3y6I2PjzpTsLtMY29pVQRCohVaYVmQudDulN2Ka3SU5yvBNJzQ=s68-c-k-c0x00ffffff-no-rj"></yt-img-shadow>
+      </a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true"><div id="container" class="style-scope ytd-channel-name">
+  <div id="text-container" class="style-scope ytd-channel-name">
+    <yt-formatted-string id="text" link-inherit-color="" respect-lang-dir="" title="" class="style-scope ytd-channel-name" dir="auto" has-link-only_="" style="text-align: left;"><!-- -1 children --></yt-formatted-string>
+  </div>
+  <tp-yt-paper-tooltip aria-hidden="true" fit-to-visible-bounds="" class="style-scope ytd-channel-name" role="tooltip" tabindex="-1" aria-label="tooltip"><div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip" style-target="tooltip">
+  
+    The Pet Collective
+  
+</div>
+</tp-yt-paper-tooltip>
+</div>
+<ytd-badge-supported-renderer class="style-scope ytd-channel-name" system-icons=""><dom-repeat id="repeat" as="badge" class="style-scope ytd-badge-supported-renderer"><template is="dom-repeat"></template></dom-repeat><yt-badge-supported-renderer class="ytBadgeSupportedRendererHost"><div class="badge-shape ytBadgeSupportedRendererBadgeShape ytBadgeSupportedRendererBadgeShapeStyleTypeVerifiedArtist"><!-- -1 children --></div></yt-badge-supported-renderer></ytd-badge-supported-renderer>
+</ytd-channel-name>
+    </div>
+
+
+--- API REQUEST round 8 ---
+model=unsloth/Qwen3.6-27B messages=18 payload_chars=69,249 cache=none
+
+--- API RESPONSE round 8 ---
+elapsed_s=3.5 prompt_tokens=18638 completion_tokens=173 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer yt-interaction.interaction",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+No element found matching selector: ytd-video-renderer yt-interaction.interaction
+
+
+--- API REQUEST round 9 ---
+model=unsloth/Qwen3.6-27B messages=20 payload_chars=70,082 cache=none
+
+--- API RESPONSE round 9 ---
+elapsed_s=0.9 prompt_tokens=18844 completion_tokens=46 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer .extended",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<yt-interaction id="interaction" class="extended style-scope ytd-video-renderer"><div class="stroke style-scope yt-interaction"></div><div class="fill style-scope yt-interaction"></div></yt-interaction>
+
+
+--- API REQUEST round 10 ---
+model=unsloth/Qwen3.6-27B messages=22 payload_chars=70,468 cache=none
+
+--- API RESPONSE round 10 ---
+elapsed_s=2.3 prompt_tokens=18957 completion_tokens=116 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-menu-renderer",
+  "depth": 5
+}
+
+--- TOOL RESULT: show_in_dom ---
+<ytd-menu-renderer class="style-scope ytd-video-renderer" safe-area="" menu-active=""><div id="top-level-buttons-computed" class="top-level-buttons style-scope ytd-menu-renderer"></div><div id="flexible-item-buttons" class="style-scope ytd-menu-renderer"></div><yt-icon-button id="button" class="dropdown-trigger style-scope ytd-menu-renderer" style-target="button"><button id="button" class="style-scope yt-icon-button" aria-label="Action menu"><yt-icon class="style-scope ytd-menu-renderer"><span class="yt-icon-shape style-scope yt-icon ytSpecIconShapeHost"><div style="width: 100%; height: 100%; display: block; fill: currentcolor;"><!-- -1 children --></div></span></yt-icon></button><yt-interaction id="interaction" class="circular style-scope yt-icon-button"><div class="stroke style-scope yt-interaction"></div><div class="fill style-scope yt-interaction"></div></yt-interaction></yt-icon-button></ytd-menu-renderer>
+
+
+--- API REQUEST round 11 ---
+model=unsloth/Qwen3.6-27B messages=24 payload_chars=71,912 cache=none
+
+--- API RESPONSE round 11 ---
+elapsed_s=2.5 prompt_tokens=19333 completion_tokens=131 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer #buttons",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="buttons" class="style-scope ytd-video-renderer"></div>
+
+
+--- API REQUEST round 12 ---
+model=unsloth/Qwen3.6-27B messages=26 payload_chars=72,596 cache=none
+
+--- API RESPONSE round 12 ---
+elapsed_s=2.3 prompt_tokens=19499 completion_tokens=132 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-button-renderer",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<ytd-button-renderer class="style-scope ytd-masthead" button-renderer="" button-next=""><yt-button-shape><button class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextTonal ytSpecButtonShapeNextMono ytSpecButtonShapeNextSizeM ytSpecButtonShapeNextEnableBackdropFilterExperiment" title="" aria-label="Skip navigation" aria-disabled="false"><div class="ytSpecButtonShapeNextButtonTextContent"><span class="ytAttributedStringHost ytAttributedStringWhiteSpaceNoWrap" role="text">Skip navigation</span></div><yt-touch-feedback-shape aria-hidden="true" class="ytSpecTouchFeedbackShapeHost ytSpecTouchFeedbackShapeTouchResponse"><div class="ytSpecTouchFeedbackShapeStroke"></div><div class="ytSpecTouchFeedbackShapeFill"></div></yt-touch-feedback-shape></button></yt-button-shape><tp-yt-paper-tooltip offset="8" disable-upgrade=""></tp-yt-paper-tooltip></ytd-button-renderer>
+
+
+--- API REQUEST round 13 ---
+model=unsloth/Qwen3.6-27B messages=28 payload_chars=74,048 cache=none
+
+--- API RESPONSE round 13 ---
+elapsed_s=4.6 prompt_tokens=19850 completion_tokens=272 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer #title-wrapper",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="title-wrapper" class="style-scope ytd-video-renderer">
+        <h3 class="title-and-badge style-scope ytd-video-renderer">
+          
+          <a id="video-title" class="yt-simple-endpoint style-scope ytd-video-renderer" title="These CATS are too FUNNY! 🤣 | New Cat Videos 2025" aria-label="These CATS are too FUNNY! 🤣 | New Cat Videos 2025 1 hour" href="https://www.youtube.com/watch?v=3URtTIdnXIk&pp=ygUEY2F0c9IHCQkjCwGHKiGM7w%3D%3D">
+            
+            <yt-formatted-string class="style-scope ytd-video-renderer" aria-label="These CATS are too FUNNY! 🤣 | New Cat Videos 2025 1 hour">These CATS are too FUNNY! 🤣 | New Cat Videos 2025</yt-formatted-string>
+          </a>
+        </h3>
+        <div id="menu" class="style-scope ytd-video-renderer"><ytd-menu-renderer class="style-scope ytd-video-renderer" safe-area="" menu-active=""><div id="top-level-buttons-computed" class="top-level-buttons style-scope ytd-menu-renderer"></div><div id="flexible-item-buttons" class="style-scope ytd-menu-renderer"></div><yt-icon-button id="button" class="dropdown-trigger style-scope ytd-menu-renderer" style-target="button"><button id="button" class="style-scope yt-icon-button" aria-label="Action menu"><!-- -1 children --></button><yt-interaction id="interaction" class="circular style-scope yt-icon-button"><!-- -2 children --></yt-interaction></yt-icon-button></ytd-menu-renderer></div>
+      </div>
+
+
+--- API REQUEST round 14 ---
+model=unsloth/Qwen3.6-27B messages=30 payload_chars=76,667 cache=none
+
+--- API RESPONSE round 14 ---
+elapsed_s=20.4 prompt_tokens=20563 completion_tokens=1442 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Subscribe & Playlist buttons",
+  "query_selector": "ytd-video-renderer #channel-info",
+  "logic": "if (element.dataset.customButtonsAdded) return;\nelement.dataset.customButtonsAdded = 'true';\n\nconst channelInfo = element;\nconst textWrapper = channelInfo.parentElement;\n\n// Create button container\nconst btnContainer = document.createElement('div');\nbtnContainer.style.cssText = 'display:flex;gap:8px;margin-top:8px;padding-left:0;';\n\n// Get channel URL for subscribe\nconst channelLink = channelInfo.querySelector('#channel-thumbnail');\nconst channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';\n\n// Create Subscribe button\nconst subscribeBtn = document.createElement('button');\nsubscribeBtn.textContent = 'Subscribe';\nsubscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;';\nsubscribeBtn.addEventListener('mouseenter', () => { subscribeBtn.style.background = '#0b5ad7'; });\nsubscribeBtn.addEventListener('mouseleave', () => { subscribeBtn.style.background = '#065fd4'; });\n\n// Subscribe icon (bell-like SVG)\nconst subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsubIcon.setAttribute('width', '16');\nsubIcon.setAttribute('height', '16');\nsubIcon.setAttribute('viewBox', '0 0 24 24');\nsubIcon.setAttribute('fill', 'white');\nsubIcon.innerHTML = '<path d=\"M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10z\"/>';\nsubscribeBtn.prepend(subIcon);\n\nsubscribeBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    // Navigate to channel page where subscribe button is available\n    if (channelUrl) {\n        window.location.href = channelUrl;\n    }\n});\n\n// Create Add to Playlist button\nconst playlistBtn = document.createElement('button');\nplaylistBtn.textContent = 'Add to playlist';\nplaylistBtn.style.cssText = 'background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;';\nplaylistBtn.addEventListener('mouseenter', () => { playlistBtn.style.background = 'rgba(255,255,255,0.2)'; });\nplaylistBtn.addEventListener('mouseleave', () => { playlistBtn.style.background = 'rgba(255,255,255,0.1)'; });\n\n// Playlist icon SVG\nconst plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nplIcon.setAttribute('width', '16');\nplIcon.setAttribute('height', '16');\nplIcon.setAttribute('viewBox', '0 0 24 24');\nplIcon.setAttribute('fill', 'white');\nplIcon.innerHTML = '<path d=\"M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z\"/>';\nplaylistBtn.prepend(plIcon);\n\nplaylistBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    // Find and click the three-dot menu, then find \"Add to playlist\" in the dropdown\n    const videoRenderer = textWrapper.closest('ytd-video-renderer');\n    if (!videoRenderer) return;\n\n    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger button');\n    if (menuButton) {\n        menuButton.click();\n        // Wait for menu to open and click \"Add to playlist\"\n        setTimeout(() => {\n            const menuItems = document.querySelectorAll('ytd-menu-service-item-renderer, yt-button-shape');\n            for (const item of menuItems) {\n                const text = item.textContent.trim();\n                if (text.includes('Add to playlist') || text.includes('Save')) {\n                    // Find the clickable button inside\n                    const btn = item.querySelector('button') || item;\n                    btn.click();\n                    break;\n                }\n            }\n        }, 300);\n    }\n});\n\nbtnContainer.appendChild(subscribeBtn);\nbtnContainer.appendChild(playlistBtn);\n\ntextWrapper.insertBefore(btnContainer, textWrapper.querySelector('.metadata-snippet-container'));"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#1): "Subscribe & Playlist buttons" - selector="ytd-video-renderer #channel-info"
+
+--- API REQUEST round 15 ---
+model=unsloth/Qwen3.6-27B messages=32 payload_chars=82,095 cache=none
+
+--- API RESPONSE round 15 ---
+elapsed_s=2.2 prompt_tokens=22044 completion_tokens=60 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer .text-wrapper",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        <h3 class="title-and-badge style-scope ytd-video-renderer">
+          
+          
+        <!-- -1 children --></h3>
+        <div id="menu" class="style-scope ytd-video-renderer"><!-- -1 children --></div>
+      </div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+<div id="metadata" class="style-scope ytd-video-meta-block">
+  
+  
+<!-- -1 children --></div>
+<div id="additional-metadata-line" class="style-scope ytd-video-meta-block">
+  
+<!-- -1 children --></div>
+
+</ytd-video-meta-block>
+    </div>
+    <div data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        <yt-img-shadow width="24" class="style-scope ytd-video-renderer no-transition" style="background-color: transparent;" loaded=""><!-- -1 children --></yt-img-shadow>
+      </a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true"><div id="container" class="style-scope ytd-channel-name">
+  
+  
+<!-- -2 children --></div>
+<ytd-badge-supported-renderer class="style-scope ytd-channel-name" system-icons=""><!-- -2 children --></ytd-badge-supported-renderer>
+</ytd-channel-name>
+    </div>
+    
+    
+      <div style="display:flex;gap:8px;margin-top:8px;padding-left:0;"><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;"><svg fill="white" viewBox="0 0 24 24" height="16" width="16"><!-- -1 children --></svg>Subscribe</button><button style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;"><svg fill="white" viewBox="0 0 24 24" height="16" width="16"><!-- -1 children --></svg>Add to playlist</button></div><div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><span dir="auto" class="style-scope yt-formatted-string">You like </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">? We got em! No dogs! Just </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">! Seriously, all </span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">cats</span><span dir="auto" class="style-scope yt-formatted-string">! #Funny #fails #</span><span dir="auto" class="bold style-scope yt-formatted-string" style-target="bold">Cats</span><span dir="auto" class="style-scope yt-formatted-string"> ✨    Subscribe to The Scoop for our most&#160;...</span></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip"><div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip" style-target="tooltip">
+  From the video description
+</div>
+</tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 16 ---
+model=unsloth/Qwen3.6-27B messages=34 payload_chars=86,250 cache=none
+
+--- API RESPONSE round 16 ---
+elapsed_s=24.4 prompt_tokens=23247 completion_tokens=1735 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Subscribe & Playlist buttons",
+  "query_selector": "ytd-video-renderer #channel-info",
+  "logic": "if (element.dataset.customButtonsAdded) return;\nelement.dataset.customButtonsAdded = 'true';\n\nconst channelInfo = element;\nconst textWrapper = channelInfo.parentElement;\n\n// Get channel URL for subscribe\nconst channelLink = channelInfo.querySelector('#channel-thumbnail');\nconst channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';\n\n// Create button container\nconst btnContainer = document.createElement('div');\nbtnContainer.setAttribute('data-custom-btn-container', '');\nbtnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';\n\n// Get computed styles for theming\nconst cs = getComputedStyle(textWrapper);\nconst isDark = cs.color && cs.color.includes('255, 255, 255');\n\nconst primaryBg = '#065fd4';\nconst secondaryBg = 'rgba(128,128,128,0.2)';\nconst secondaryBorder = 'rgba(128,128,128,0.5)';\nconst textColor = '#fff';\n\n// Create Subscribe button\nconst subscribeBtn = document.createElement('button');\nsubscribeBtn.setAttribute('data-custom-subscribe', '');\nsubscribeBtn.textContent = 'Subscribe';\nsubscribeBtn.style.cssText = 'background:' + primaryBg + ';color:' + textColor + ';border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Subscribe icon (person-add SVG)\nconst subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsubIcon.setAttribute('width', '16');\nsubIcon.setAttribute('height', '16');\nsubIcon.setAttribute('viewBox', '0 0 24 24');\nsubIcon.setAttribute('fill', textColor);\nsubIcon.style.flexShrink = '0';\nsubIcon.innerHTML = '<path d=\"M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\"/>';\nsubscribeBtn.prepend(subIcon);\n\nsubscribeBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    if (channelUrl) {\n        window.location.href = channelUrl + '?sub_confirmation=1';\n    }\n});\n\n// Create Add to Playlist button\nconst playlistBtn = document.createElement('button');\nplaylistBtn.setAttribute('data-custom-playlist', '');\nplaylistBtn.textContent = 'Add to playlist';\nplaylistBtn.style.cssText = 'background:' + secondaryBg + ';color:' + textColor + ';border:1px solid ' + secondaryBorder + ';border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Playlist icon SVG\nconst plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nplIcon.setAttribute('width', '16');\nplIcon.setAttribute('height', '16');\nplIcon.setAttribute('viewBox', '0 0 24 24');\nplIcon.setAttribute('fill', textColor);\nplIcon.style.flexShrink = '0';\nplIcon.innerHTML = '<path d=\"M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z\"/>';\nplaylistBtn.prepend(plIcon);\n\nplaylistBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    \n    // Try to use YouTube's internal command system for \"Add to playlist\"\n    const videoRenderer = textWrapper.closest('ytd-video-renderer');\n    if (!videoRenderer) return;\n    \n    // Find the three-dot menu button and click it\n    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');\n    if (menuButton) {\n        menuButton.click();\n        \n        // Wait for menu to open then find \"Add to playlist\" / \"Save\" option\n        setTimeout(() => {\n            // Look in the popup/overlay that appears\n            const popups = document.querySelectorAll('ytd-popup-container *, ytd-menu-popup-renderer, [role=\"menu\"]');\n            \n            // Also check for inline menu items\n            let targetItem = null;\n            \n            // Check menu service items in the popup container\n            const allMenuItems = document.querySelectorAll('ytd-menu-service-item-renderer, ytd-menu-navigation-item-renderer');\n            for (const item of allMenuItems) {\n                const textContent = item.textContent || '';\n                if (textContent.includes('Add to playlist') || textContent.includes('Save playlist') || (textContent.includes('Save') && !textContent.includes('Not interested'))) {\n                    targetItem = item;\n                    break;\n                }\n            }\n            \n            // Also check yt-button-shape elements in popups\n            if (!targetItem) {\n                const popupContainer = document.querySelector('ytd-popup-container');\n                if (popupContainer) {\n                    const buttons = popupContainer.querySelectorAll('yt-button-shape button, ytd-menu-service-item-renderer');\n                    for (const btn of buttons) {\n                        const text = btn.textContent || '';\n                        if (text.includes('Add to playlist') || (text.includes('Save') && !text.includes('Not interested'))) {\n                            targetItem = btn;\n                            break;\n                        }\n                    }\n                }\n            }\n            \n            if (targetItem) {\n                const clickable = targetItem.querySelector('button, yt-button-shape') || targetItem;\n                clickable.click();\n            }\n        }, 400);\n    }\n});\n\nbtnContainer.appendChild(subscribeBtn);\nbtnContainer.appendChild(playlistBtn);\n\n// Insert before the metadata snippet or at end of text-wrapper\nconst snippetContainer = textWrapper.querySelector('.metadata-snippet-container');\nif (snippetContainer) {\n    textWrapper.insertBefore(btnContainer, snippetContainer);\n} else {\n    textWrapper.appendChild(btnContainer);\n}"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#2): "Subscribe & Playlist buttons" - selector="ytd-video-renderer #channel-info"
+
+--- API REQUEST round 17 ---
+model=unsloth/Qwen3.6-27B messages=36 payload_chars=93,179 cache=none
+
+--- API RESPONSE round 17 ---
+elapsed_s=2.3 prompt_tokens=25022 completion_tokens=55 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[data-custom-btn-container]",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+No element found matching selector: [data-custom-btn-container]
+
+
+--- API REQUEST round 18 ---
+model=unsloth/Qwen3.6-27B messages=38 payload_chars=93,485 cache=none
+
+--- API RESPONSE round 18 ---
+elapsed_s=1.4 prompt_tokens=25106 completion_tokens=80 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[data-custom-buttons-added]",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        <yt-img-shadow width="24" class="style-scope ytd-video-renderer no-transition" style="background-color: transparent;" loaded=""><!-- -1 children --></yt-img-shadow>
+      </a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true"><div id="container" class="style-scope ytd-channel-name">
+  
+  
+<!-- -2 children --></div>
+<ytd-badge-supported-renderer class="style-scope ytd-channel-name" system-icons=""><!-- -2 children --></ytd-badge-supported-renderer>
+</ytd-channel-name>
+    </div>
+
+
+--- API REQUEST round 19 ---
+model=unsloth/Qwen3.6-27B messages=40 payload_chars=94,655 cache=none
+
+--- API RESPONSE round 19 ---
+elapsed_s=21.1 prompt_tokens=25419 completion_tokens=1598 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Subscribe & Playlist buttons",
+  "query_selector": "ytd-video-renderer #channel-info",
+  "logic": "// Remove old custom container if exists (from previous rule version)\nconst textWrapper = element.parentElement;\nconst oldContainer = textWrapper.querySelector('[data-custom-btn-container]');\nif (oldContainer) {\n    oldContainer.remove();\n}\n\n// Also check for the old flag pattern - remove old buttons\nconst oldBtns = textWrapper.querySelectorAll('[data-custom-subscribe], [data-custom-playlist]');\nfor (const btn of oldBtns) {\n    if (btn.parentElement && btn.parentElement.style.display === 'flex') {\n        btn.parentElement.remove();\n    }\n}\n\nif (element.dataset.customButtonsAddedV2) return;\nelement.dataset.customButtonsAddedV2 = 'true';\n\n// Get channel URL for subscribe\nconst channelLink = element.querySelector('#channel-thumbnail');\nconst channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';\n\n// Create button container\nconst btnContainer = document.createElement('div');\nbtnContainer.setAttribute('data-custom-btn-container', '');\nbtnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';\n\n// Create Subscribe button\nconst subscribeBtn = document.createElement('button');\nsubscribeBtn.setAttribute('data-custom-subscribe', '');\nsubscribeBtn.textContent = 'Subscribe';\nsubscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Subscribe icon (person-add SVG)\nconst subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsubIcon.setAttribute('width', '16');\nsubIcon.setAttribute('height', '16');\nsubIcon.setAttribute('viewBox', '0 0 24 24');\nsubIcon.setAttribute('fill', '#fff');\nsubIcon.style.flexShrink = '0';\nsubIcon.innerHTML = '<path d=\"M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\"/>';\nsubscribeBtn.prepend(subIcon);\n\nsubscribeBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    if (channelUrl) {\n        window.location.href = channelUrl + '?sub_confirmation=1';\n    }\n});\n\n// Create Add to Playlist button\nconst playlistBtn = document.createElement('button');\nplaylistBtn.setAttribute('data-custom-playlist', '');\nplaylistBtn.textContent = 'Add to playlist';\nplaylistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Playlist icon SVG\nconst plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nplIcon.setAttribute('width', '16');\nplIcon.setAttribute('height', '16');\nplIcon.setAttribute('viewBox', '0 0 24 24');\nplIcon.setAttribute('fill', '#fff');\nplIcon.style.flexShrink = '0';\nplIcon.innerHTML = '<path d=\"M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z\"/>';\nplaylistBtn.prepend(plIcon);\n\nplaylistBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    \n    const videoRenderer = textWrapper.closest('ytd-video-renderer');\n    if (!videoRenderer) return;\n    \n    // Find and click the three-dot menu button\n    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');\n    if (menuButton) {\n        menuButton.click();\n        \n        setTimeout(function() {\n            let targetItem = null;\n            \n            // Search in popup container for \"Add to playlist\" / \"Save\"\n            const popupContainer = document.querySelector('ytd-popup-container');\n            if (popupContainer) {\n                const allItems = popupContainer.querySelectorAll('*');\n                for (const item of allItems) {\n                    const text = (item.textContent || '').trim();\n                    if ((text === 'Add to playlist' || text === 'Save') && item.querySelector && item.closest && !item.closest('button')) {\n                        targetItem = item;\n                        break;\n                    }\n                }\n                // Also try button shapes\n                if (!targetItem) {\n                    const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');\n                    for (const bs of btnShapes) {\n                        const text = (bs.textContent || '').trim();\n                        if (text.includes('Add to playlist') || text === 'Save') {\n                            targetItem = bs;\n                            break;\n                        }\n                    }\n                }\n            }\n            \n            if (targetItem) {\n                const clickable = targetItem.querySelector('button') || targetItem;\n                clickable.click();\n            }\n        }, 500);\n    }\n});\n\nbtnContainer.appendChild(subscribeBtn);\nbtnContainer.appendChild(playlistBtn);\n\n// Insert before the metadata snippet or at end of text-wrapper\nconst snippetContainer = textWrapper.querySelector('.metadata-snippet-container');\nif (snippetContainer) {\n    textWrapper.insertBefore(btnContainer, snippetContainer);\n} else {\n    textWrapper.appendChild(btnContainer);\n}"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#3): "Subscribe & Playlist buttons" - selector="ytd-video-renderer #channel-info"
+
+--- API REQUEST round 20 ---
+model=unsloth/Qwen3.6-27B messages=42 payload_chars=100,913 cache=none
+
+--- API RESPONSE round 20 ---
+elapsed_s=2.3 prompt_tokens=27057 completion_tokens=55 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[data-custom-btn-container]",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div style="display:flex;gap:6px;margin-top:6px;" data-custom-btn-container=""><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;" data-custom-subscribe=""><svg style="flex-shrink:0" fill="#fff" viewBox="0 0 24 24" height="16" width="16"><!-- -1 children --></svg>Subscribe</button><button style="background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;" data-custom-playlist=""><svg style="flex-shrink:0" fill="#fff" viewBox="0 0 24 24" height="16" width="16"><!-- -1 children --></svg>Add to playlist</button></div>
+
+
+--- API REQUEST round 21 ---
+model=unsloth/Qwen3.6-27B messages=44 payload_chars=102,145 cache=none
+
+--- API RESPONSE round 21 ---
+elapsed_s=1.9 prompt_tokens=27457 completion_tokens=78 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(2) #channel-info",
+  "depth": 1
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div data-custom-buttons-added-v2="true" data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@CaDAnimals" aria-label="Go to channel CaD Animals">
+        
+      <!-- -1 children --></a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true">
+
+<!-- -1 children --></ytd-channel-name>
+    </div>
+
+
+--- API REQUEST round 22 ---
+model=unsloth/Qwen3.6-27B messages=46 payload_chars=102,963 cache=none
+
+--- API RESPONSE round 22 ---
+elapsed_s=1.6 prompt_tokens=27688 completion_tokens=85 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(2) [data-custom-btn-container]",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div style="display:flex;gap:6px;margin-top:6px;" data-custom-btn-container=""><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;" data-custom-subscribe=""><svg style="flex-shrink:0" fill="#fff" viewBox="0 0 24 24" height="16" width="16"><!-- -1 children --></svg>Subscribe</button><button style="background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;" data-custom-playlist=""><svg style="flex-shrink:0" fill="#fff" viewBox="0 0 24 24" height="16" width="16"><!-- -1 children --></svg>Add to playlist</button></div>
+
+
+--- API REQUEST round 23 ---
+model=unsloth/Qwen3.6-27B messages=48 payload_chars=104,319 cache=none
+
+--- API RESPONSE round 23 ---
+elapsed_s=2.5 prompt_tokens=28118 completion_tokens=97 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(1) .text-wrapper",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        
+        
+      <!-- -2 children --></div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+
+
+
+<!-- -2 children --></ytd-video-meta-block>
+    </div>
+    <div data-custom-buttons-added-v2="true" data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        
+      <!-- -1 children --></a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true">
+
+<!-- -2 children --></ytd-channel-name>
+    </div>
+    
+    
+      <div style="display:flex;gap:8px;margin-top:8px;padding-left:0;"><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;">Subscribe<!-- -1 children --></button><button style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;">Add to playlist<!-- -1 children --></button></div><div style="display:flex;gap:6px;margin-top:6px;" data-custom-btn-container=""><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;" data-custom-subscribe="">Subscribe<!-- -1 children --></button><button style="background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;" data-custom-playlist="">Add to playlist<!-- -1 children --></button></div><div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><!-- -9 children --></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip">
+<!-- -1 children --></tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 24 ---
+model=unsloth/Qwen3.6-27B messages=50 payload_chars=107,774 cache=none
+
+--- API RESPONSE round 24 ---
+elapsed_s=21.1 prompt_tokens=29122 completion_tokens=1634 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Subscribe & Playlist buttons",
+  "query_selector": "ytd-video-renderer #channel-info",
+  "logic": "const textWrapper = element.parentElement;\n\n// Remove ALL old custom button containers (both old and new versions)\nconst allCustomContainers = textWrapper.querySelectorAll('[data-custom-btn-container], div[style*=\"display:flex\"][style*=\"gap:6px\"], div[style*=\"display:flex\"][style*=\"gap:8px\"]');\nfor (const container of allCustomContainers) {\n    if (container.querySelector('[data-custom-subscribe]') || container.querySelector('[data-custom-playlist]') || container.querySelector('button') && container.querySelector('button').textContent.includes('Subscribe')) {\n        container.remove();\n    }\n}\n\nif (element.dataset.customButtonsAddedV2) return;\nelement.dataset.customButtonsAddedV2 = 'true';\n\n// Get channel URL for subscribe\nconst channelLink = element.querySelector('#channel-thumbnail');\nconst channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';\n\n// Create button container\nconst btnContainer = document.createElement('div');\nbtnContainer.setAttribute('data-custom-btn-container', '');\nbtnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';\n\n// Create Subscribe button\nconst subscribeBtn = document.createElement('button');\nsubscribeBtn.setAttribute('data-custom-subscribe', '');\nsubscribeBtn.textContent = 'Subscribe';\nsubscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Subscribe icon (person-add SVG)\nconst subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsubIcon.setAttribute('width', '16');\nsubIcon.setAttribute('height', '16');\nsubIcon.setAttribute('viewBox', '0 0 24 24');\nsubIcon.setAttribute('fill', '#fff');\nsubIcon.style.flexShrink = '0';\nsubIcon.innerHTML = '<path d=\"M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\"/>';\nsubscribeBtn.prepend(subIcon);\n\nsubscribeBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    if (channelUrl) {\n        window.location.href = channelUrl + '?sub_confirmation=1';\n    }\n});\n\n// Create Add to Playlist button\nconst playlistBtn = document.createElement('button');\nplaylistBtn.setAttribute('data-custom-playlist', '');\nplaylistBtn.textContent = 'Add to playlist';\nplaylistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Playlist icon SVG\nconst plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nplIcon.setAttribute('width', '16');\nplIcon.setAttribute('height', '16');\nplIcon.setAttribute('viewBox', '0 0 24 24');\nplIcon.setAttribute('fill', '#fff');\nplIcon.style.flexShrink = '0';\nplIcon.innerHTML = '<path d=\"M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z\"/>';\nplaylistBtn.prepend(plIcon);\n\nplaylistBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    \n    const videoRenderer = textWrapper.closest('ytd-video-renderer');\n    if (!videoRenderer) return;\n    \n    // Find and click the three-dot menu button\n    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');\n    if (menuButton) {\n        menuButton.click();\n        \n        setTimeout(function() {\n            let targetItem = null;\n            \n            // Search in popup container for \"Add to playlist\" / \"Save\"\n            const popupContainer = document.querySelector('ytd-popup-container');\n            if (popupContainer) {\n                const allItems = popupContainer.querySelectorAll('*');\n                for (const item of allItems) {\n                    const text = (item.textContent || '').trim();\n                    if ((text === 'Add to playlist' || text === 'Save') && item.querySelector && item.closest && !item.closest('button')) {\n                        targetItem = item;\n                        break;\n                    }\n                }\n                // Also try button shapes\n                if (!targetItem) {\n                    const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');\n                    for (const bs of btnShapes) {\n                        const text = (bs.textContent || '').trim();\n                        if (text.includes('Add to playlist') || text === 'Save') {\n                            targetItem = bs;\n                            break;\n                        }\n                    }\n                }\n            }\n            \n            if (targetItem) {\n                const clickable = targetItem.querySelector('button') || targetItem;\n                clickable.click();\n            }\n        }, 500);\n    }\n});\n\nbtnContainer.appendChild(subscribeBtn);\nbtnContainer.appendChild(playlistBtn);\n\n// Insert before the metadata snippet or at end of text-wrapper\nconst snippetContainer = textWrapper.querySelector('.metadata-snippet-container');\nif (snippetContainer) {\n    textWrapper.insertBefore(btnContainer, snippetContainer);\n} else {\n    textWrapper.appendChild(btnContainer);\n}"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#4): "Subscribe & Playlist buttons" - selector="ytd-video-renderer #channel-info"
+
+--- API REQUEST round 25 ---
+model=unsloth/Qwen3.6-27B messages=52 payload_chars=114,247 cache=none
+
+--- API RESPONSE round 25 ---
+elapsed_s=2.5 prompt_tokens=30796 completion_tokens=69 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(1) .text-wrapper",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        
+        
+      <!-- -2 children --></div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+
+
+
+<!-- -2 children --></ytd-video-meta-block>
+    </div>
+    <div data-custom-buttons-added-v2="true" data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        
+      <!-- -1 children --></a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true">
+
+<!-- -2 children --></ytd-channel-name>
+    </div>
+    
+    
+      <div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><!-- -9 children --></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip">
+<!-- -1 children --></tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 26 ---
+model=unsloth/Qwen3.6-27B messages=54 payload_chars=116,085 cache=none
+
+--- API RESPONSE round 26 ---
+elapsed_s=20.2 prompt_tokens=31301 completion_tokens=1573 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Subscribe & Playlist buttons",
+  "query_selector": "ytd-video-renderer #channel-info",
+  "logic": "const textWrapper = element.parentElement;\n\n// Remove ALL old custom button containers first\nconst allCustomContainers = textWrapper.querySelectorAll('[data-custom-btn-container]');\nfor (const container of allCustomContainers) {\n    container.remove();\n}\n\n// Also remove any leftover from previous versions (buttons with Subscribe/Add to playlist text in flex divs without our data attribute)\nconst flexDivs = textWrapper.querySelectorAll('div[style*=\"display:flex\"]');\nfor (const div of flexDivs) {\n    if (!div.hasAttribute('data-custom-btn-container')) {\n        const btns = div.querySelectorAll('button');\n        let isCustom = false;\n        for (const btn of btns) {\n            if (btn.textContent.includes('Subscribe') || btn.textContent.includes('Add to playlist')) {\n                isCustom = true;\n                break;\n            }\n        }\n        if (isCustom) {\n            div.remove();\n        }\n    }\n}\n\n// Always add fresh buttons (don't use flag - just clean and re-add)\n// Get channel URL for subscribe\nconst channelLink = element.querySelector('#channel-thumbnail');\nconst channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';\n\n// Create button container\nconst btnContainer = document.createElement('div');\nbtnContainer.setAttribute('data-custom-btn-container', '');\nbtnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';\n\n// Create Subscribe button\nconst subscribeBtn = document.createElement('button');\nsubscribeBtn.textContent = 'Subscribe';\nsubscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Subscribe icon (person-add SVG)\nconst subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsubIcon.setAttribute('width', '16');\nsubIcon.setAttribute('height', '16');\nsubIcon.setAttribute('viewBox', '0 0 24 24');\nsubIcon.setAttribute('fill', '#fff');\nsubIcon.style.flexShrink = '0';\nsubIcon.innerHTML = '<path d=\"M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\"/>';\nsubscribeBtn.prepend(subIcon);\n\nsubscribeBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    if (channelUrl) {\n        window.location.href = channelUrl + '?sub_confirmation=1';\n    }\n});\n\n// Create Add to Playlist button\nconst playlistBtn = document.createElement('button');\nplaylistBtn.textContent = 'Add to playlist';\nplaylistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Playlist icon SVG\nconst plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nplIcon.setAttribute('width', '16');\nplIcon.setAttribute('height', '16');\nplIcon.setAttribute('viewBox', '0 0 24 24');\nplIcon.setAttribute('fill', '#fff');\nplIcon.style.flexShrink = '0';\nplIcon.innerHTML = '<path d=\"M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z\"/>';\nplaylistBtn.prepend(plIcon);\n\nplaylistBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    \n    const videoRenderer = textWrapper.closest('ytd-video-renderer');\n    if (!videoRenderer) return;\n    \n    // Find and click the three-dot menu button\n    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');\n    if (menuButton) {\n        menuButton.click();\n        \n        setTimeout(function() {\n            let targetItem = null;\n            \n            // Search in popup container for \"Add to playlist\" / \"Save\"\n            const popupContainer = document.querySelector('ytd-popup-container');\n            if (popupContainer) {\n                const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');\n                for (const bs of btnShapes) {\n                    const text = (bs.textContent || '').trim();\n                    if (text.includes('Add to playlist') || text === 'Save') {\n                        targetItem = bs;\n                        break;\n                    }\n                }\n            }\n            \n            if (targetItem) {\n                const clickable = targetItem.querySelector('button') || targetItem;\n                clickable.click();\n            }\n        }, 500);\n    }\n});\n\nbtnContainer.appendChild(subscribeBtn);\nbtnContainer.appendChild(playlistBtn);\n\n// Insert before the metadata snippet or at end of text-wrapper\nconst snippetContainer = textWrapper.querySelector('.metadata-snippet-container');\nif (snippetContainer) {\n    textWrapper.insertBefore(btnContainer, snippetContainer);\n} else {\n    textWrapper.appendChild(btnContainer);\n}"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#5): "Subscribe & Playlist buttons" - selector="ytd-video-renderer #channel-info"
+
+--- API REQUEST round 27 ---
+model=unsloth/Qwen3.6-27B messages=56 payload_chars=122,116 cache=none
+
+--- API RESPONSE round 27 ---
+elapsed_s=2.4 prompt_tokens=32914 completion_tokens=64 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(1) .text-wrapper",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        
+        
+      <!-- -2 children --></div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+
+
+
+<!-- -2 children --></ytd-video-meta-block>
+    </div>
+    <div data-custom-buttons-added-v2="true" data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        
+      <!-- -1 children --></a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true">
+
+<!-- -2 children --></ytd-channel-name>
+    </div>
+    
+    
+      <div style="display:flex;gap:6px;margin-top:6px;" data-custom-btn-container=""><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;">Subscribe<!-- -1 children --></button><button style="background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;">Add to playlist<!-- -1 children --></button></div><div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><!-- -9 children --></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip">
+<!-- -1 children --></tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 28 ---
+model=unsloth/Qwen3.6-27B messages=58 payload_chars=124,702 cache=none
+
+--- API RESPONSE round 28 ---
+elapsed_s=2.2 prompt_tokens=33659 completion_tokens=75 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(2) .text-wrapper",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        
+        
+      <!-- -2 children --></div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer byline-separated">
+
+
+
+<!-- -2 children --></ytd-video-meta-block>
+    </div>
+    <div data-custom-buttons-added-v2="true" data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@CaDAnimals" aria-label="Go to channel CaD Animals">
+        
+      <!-- -1 children --></a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true">
+
+<!-- -1 children --></ytd-channel-name>
+    </div>
+    
+    
+      <div style="display:flex;gap:6px;margin-top:6px;" data-custom-btn-container=""><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;">Subscribe<!-- -1 children --></button><button style="background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;">Add to playlist<!-- -1 children --></button></div><div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><!-- -16 children --></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip">
+<!-- -1 children --></tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 29 ---
+model=unsloth/Qwen3.6-27B messages=60 payload_chars=127,352 cache=none
+
+--- API RESPONSE round 29 ---
+elapsed_s=17.9 prompt_tokens=34420 completion_tokens=1390 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Subscribe & Playlist buttons",
+  "query_selector": "ytd-video-renderer #channel-info",
+  "logic": "const textWrapper = element.parentElement;\n\n// Remove any existing custom button container to ensure clean state\nconst existingContainer = textWrapper.querySelector('[data-custom-btn-container]');\nif (existingContainer) {\n    existingContainer.remove();\n}\n\n// Get channel URL for subscribe\nconst channelLink = element.querySelector('#channel-thumbnail');\nconst channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';\n\n// Create button container\nconst btnContainer = document.createElement('div');\nbtnContainer.setAttribute('data-custom-btn-container', '');\nbtnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';\n\n// Create Subscribe button\nconst subscribeBtn = document.createElement('button');\nsubscribeBtn.textContent = 'Subscribe';\nsubscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Subscribe icon (person-add SVG)\nconst subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nsubIcon.setAttribute('width', '16');\nsubIcon.setAttribute('height', '16');\nsubIcon.setAttribute('viewBox', '0 0 24 24');\nsubIcon.setAttribute('fill', '#fff');\nsubIcon.style.flexShrink = '0';\nsubIcon.innerHTML = '<path d=\"M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\"/>';\nsubscribeBtn.prepend(subIcon);\n\nsubscribeBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    if (channelUrl) {\n        window.location.href = channelUrl + '?sub_confirmation=1';\n    }\n});\n\n// Create Add to Playlist button\nconst playlistBtn = document.createElement('button');\nplaylistBtn.textContent = 'Add to playlist';\nplaylistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';\n\n// Playlist icon SVG\nconst plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\nplIcon.setAttribute('width', '16');\nplIcon.setAttribute('height', '16');\nplIcon.setAttribute('viewBox', '0 0 24 24');\nplIcon.setAttribute('fill', '#fff');\nplIcon.style.flexShrink = '0';\nplIcon.innerHTML = '<path d=\"M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z\"/>';\nplaylistBtn.prepend(plIcon);\n\nplaylistBtn.addEventListener('click', function(e) {\n    e.preventDefault();\n    e.stopPropagation();\n    \n    const videoRenderer = textWrapper.closest('ytd-video-renderer');\n    if (!videoRenderer) return;\n    \n    // Find and click the three-dot menu button\n    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');\n    if (menuButton) {\n        menuButton.click();\n        \n        setTimeout(function() {\n            let targetItem = null;\n            \n            const popupContainer = document.querySelector('ytd-popup-container');\n            if (popupContainer) {\n                const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');\n                for (const bs of btnShapes) {\n                    const text = (bs.textContent || '').trim();\n                    if (text.includes('Add to playlist') || text === 'Save') {\n                        targetItem = bs;\n                        break;\n                    }\n                }\n            }\n            \n            if (targetItem) {\n                const clickable = targetItem.querySelector('button') || targetItem;\n                clickable.click();\n            }\n        }, 500);\n    }\n});\n\nbtnContainer.appendChild(subscribeBtn);\nbtnContainer.appendChild(playlistBtn);\n\n// Insert before the metadata snippet or at end of text-wrapper\nconst snippetContainer = textWrapper.querySelector('.metadata-snippet-container');\nif (snippetContainer) {\n    textWrapper.insertBefore(btnContainer, snippetContainer);\n} else {\n    textWrapper.appendChild(btnContainer);\n}"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#6): "Subscribe & Playlist buttons" - selector="ytd-video-renderer #channel-info"
+
+--- API REQUEST round 30 ---
+model=unsloth/Qwen3.6-27B messages=62 payload_chars=132,578 cache=none
+
+--- API RESPONSE round 30 ---
+elapsed_s=2.5 prompt_tokens=35850 completion_tokens=63 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "ytd-video-renderer:nth-of-type(1) .text-wrapper",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-wrapper style-scope ytd-video-renderer">
+    <div id="meta" class="style-scope ytd-video-renderer">
+      <div id="title-wrapper" class="style-scope ytd-video-renderer">
+        
+        
+      <!-- -2 children --></div>
+      <ytd-video-meta-block class="style-scope ytd-video-renderer">
+
+
+
+<!-- -2 children --></ytd-video-meta-block>
+    </div>
+    <div data-custom-buttons-added-v2="true" data-custom-buttons-added="true" id="channel-info" class="style-scope ytd-video-renderer">
+      <a id="channel-thumbnail" class="style-scope ytd-video-renderer" href="https://www.youtube.com/@petcollective" aria-label="Go to channel The Pet Collective">
+        
+      <!-- -1 children --></a>
+      
+      
+      <ytd-channel-name id="channel-name" class="long-byline style-scope ytd-video-renderer" wrap-text="true">
+
+<!-- -2 children --></ytd-channel-name>
+    </div>
+    
+    
+      <div style="display:flex;gap:6px;margin-top:6px;" data-custom-btn-container=""><button style="background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;">Subscribe<!-- -1 children --></button><button style="background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;">Add to playlist<!-- -1 children --></button></div><div class="metadata-snippet-container style-scope ytd-video-renderer">
+        
+        <yt-formatted-string class="metadata-snippet-text style-scope ytd-video-renderer"><!-- -9 children --></yt-formatted-string>
+        <tp-yt-paper-tooltip class="style-scope ytd-video-renderer" role="tooltip" tabindex="-1" aria-label="tooltip">
+<!-- -1 children --></tp-yt-paper-tooltip>
+      </div>
+    <dom-repeat class="style-scope ytd-video-renderer"><template is="dom-repeat"></template></dom-repeat>
+    
+    <div id="expandable-metadata" class="style-scope ytd-video-renderer"></div>
+    <div id="buttons" class="style-scope ytd-video-renderer"></div>
+  </div>
+
+
+--- API REQUEST round 31 ---
+model=unsloth/Qwen3.6-27B messages=64 payload_chars=135,154 cache=none
+
+--- API RESPONSE round 31 ---
+elapsed_s=4.2 prompt_tokens=36594 completion_tokens=206 finish_reason=stop tool_calls=[(none)]
+
+--- ASSISTANT ---
+The buttons are in place and look clean. Each video item now has exactly one button container with both "Subscribe" and "Add to playlist" buttons positioned between the channel info and the video description snippet. 
+
+Here's a summary of what was implemented:
+
+**Added two action buttons on each video item in search results:**
+
+1. **Subscribe button** (blue, filled style) - Clicking navigates to the channel page with `?sub_confirmation=1` parameter, which triggers YouTube's subscribe confirmation dialog.
+
+2. **Add to playlist button** (semi-transparent, outlined style) - Clicking opens the three-dot action menu and automatically selects "Add to playlist" / "Save" from the dropdown.
+
+Both buttons are positioned directly below the channel name/info area and above the video description snippet, so they're immediately visible without needing to open any menus. They include appropriate icons (person-add for Subscribe, playlist for Add to playlist) and match YouTube's visual style with rounded pill-shaped buttons.
+
+Tokens: 36594 prompt / 206 completion
+
+=== Result ===
+
+6 rule(s) applied:
+[1] Subscribe & Playlist buttons — ytd-video-renderer #channel-info
+    if (element.dataset.customButtonsAdded) return;
+element.dataset.customButtonsAdded = 'true';
+
+const channelInfo = element;
+const textWrapper = channelInfo.parentElement;
+
+// Create button container
+const btnContainer = document.createElement('div');
+btnContainer.style.cssText = 'display:flex;gap:8px;margin-top:8px;padding-left:0;';
+
+// Get channel URL for subscribe
+const channelLink = channelInfo.querySelector('#channel-thumbnail');
+const channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';
+
+// Create Subscribe button
+const subscribeBtn = document.createElement('button');
+subscribeBtn.textContent = 'Subscribe';
+subscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;';
+subscribeBtn.addEventListener('mouseenter', () => { subscribeBtn.style.background = '#0b5ad7'; });
+subscribeBtn.addEventListener('mouseleave', () => { subscribeBtn.style.background = '#065fd4'; });
+
+// Subscribe icon (bell-like SVG)
+const subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+subIcon.setAttribute('width', '16');
+subIcon.setAttribute('height', '16');
+subIcon.setAttribute('viewBox', '0 0 24 24');
+subIcon.setAttribute('fill', 'white');
+subIcon.innerHTML = '<path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10z"/>';
+subscribeBtn.prepend(subIcon);
+
+subscribeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    // Navigate to channel page where subscribe button is available
+    if (channelUrl) {
+        window.location.href = channelUrl;
+    }
+});
+
+// Create Add to Playlist button
+const playlistBtn = document.createElement('button');
+playlistBtn.textContent = 'Add to playlist';
+playlistBtn.style.cssText = 'background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;';
+playlistBtn.addEventListener('mouseenter', () => { playlistBtn.style.background = 'rgba(255,255,255,0.2)'; });
+playlistBtn.addEventListener('mouseleave', () => { playlistBtn.style.background = 'rgba(255,255,255,0.1)'; });
+
+// Playlist icon SVG
+const plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+plIcon.setAttribute('width', '16');
+plIcon.setAttribute('height', '16');
+plIcon.setAttribute('viewBox', '0 0 24 24');
+plIcon.setAttribute('fill', 'white');
+plIcon.innerHTML = '<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>';
+playlistBtn.prepend(plIcon);
+
+playlistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    // Find and click the three-dot menu, then find "Add to playlist" in the dropdown
+    const videoRenderer = textWrapper.closest('ytd-video-renderer');
+    if (!videoRenderer) return;
+
+    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger button');
+    if (menuButton) {
+        menuButton.click();
+        // Wait for menu to open and click "Add to playlist"
+        setTimeout(() => {
+            const menuItems = document.querySelectorAll('ytd-menu-service-item-renderer, yt-button-shape');
+            for (const item of menuItems) {
+                const text = item.textContent.trim();
+                if (text.includes('Add to playlist') || text.includes('Save')) {
+                    // Find the clickable button inside
+                    const btn = item.querySelector('button') || item;
+                    btn.click();
+                    break;
+                }
+            }
+        }, 300);
+    }
+});
+
+btnContainer.appendChild(subscribeBtn);
+btnContainer.appendChild(playlistBtn);
+
+textWrapper.insertBefore(btnContainer, textWrapper.querySelector('.metadata-snippet-container'));
+[2] Subscribe & Playlist buttons — ytd-video-renderer #channel-info
+    if (element.dataset.customButtonsAdded) return;
+element.dataset.customButtonsAdded = 'true';
+
+const channelInfo = element;
+const textWrapper = channelInfo.parentElement;
+
+// Get channel URL for subscribe
+const channelLink = channelInfo.querySelector('#channel-thumbnail');
+const channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';
+
+// Create button container
+const btnContainer = document.createElement('div');
+btnContainer.setAttribute('data-custom-btn-container', '');
+btnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+
+// Get computed styles for theming
+const cs = getComputedStyle(textWrapper);
+const isDark = cs.color && cs.color.includes('255, 255, 255');
+
+const primaryBg = '#065fd4';
+const secondaryBg = 'rgba(128,128,128,0.2)';
+const secondaryBorder = 'rgba(128,128,128,0.5)';
+const textColor = '#fff';
+
+// Create Subscribe button
+const subscribeBtn = document.createElement('button');
+subscribeBtn.setAttribute('data-custom-subscribe', '');
+subscribeBtn.textContent = 'Subscribe';
+subscribeBtn.style.cssText = 'background:' + primaryBg + ';color:' + textColor + ';border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Subscribe icon (person-add SVG)
+const subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+subIcon.setAttribute('width', '16');
+subIcon.setAttribute('height', '16');
+subIcon.setAttribute('viewBox', '0 0 24 24');
+subIcon.setAttribute('fill', textColor);
+subIcon.style.flexShrink = '0';
+subIcon.innerHTML = '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>';
+subscribeBtn.prepend(subIcon);
+
+subscribeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (channelUrl) {
+        window.location.href = channelUrl + '?sub_confirmation=1';
+    }
+});
+
+// Create Add to Playlist button
+const playlistBtn = document.createElement('button');
+playlistBtn.setAttribute('data-custom-playlist', '');
+playlistBtn.textContent = 'Add to playlist';
+playlistBtn.style.cssText = 'background:' + secondaryBg + ';color:' + textColor + ';border:1px solid ' + secondaryBorder + ';border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Playlist icon SVG
+const plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+plIcon.setAttribute('width', '16');
+plIcon.setAttribute('height', '16');
+plIcon.setAttribute('viewBox', '0 0 24 24');
+plIcon.setAttribute('fill', textColor);
+plIcon.style.flexShrink = '0';
+plIcon.innerHTML = '<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>';
+playlistBtn.prepend(plIcon);
+
+playlistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Try to use YouTube's internal command system for "Add to playlist"
+    const videoRenderer = textWrapper.closest('ytd-video-renderer');
+    if (!videoRenderer) return;
+    
+    // Find the three-dot menu button and click it
+    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');
+    if (menuButton) {
+        menuButton.click();
+        
+        // Wait for menu to open then find "Add to playlist" / "Save" option
+        setTimeout(() => {
+            // Look in the popup/overlay that appears
+            const popups = document.querySelectorAll('ytd-popup-container *, ytd-menu-popup-renderer, [role="menu"]');
+            
+            // Also check for inline menu items
+            let targetItem = null;
+            
+            // Check menu service items in the popup container
+            const allMenuItems = document.querySelectorAll('ytd-menu-service-item-renderer, ytd-menu-navigation-item-renderer');
+            for (const item of allMenuItems) {
+                const textContent = item.textContent || '';
+                if (textContent.includes('Add to playlist') || textContent.includes('Save playlist') || (textContent.includes('Save') && !textContent.includes('Not interested'))) {
+                    targetItem = item;
+                    break;
+                }
+            }
+            
+            // Also check yt-button-shape elements in popups
+            if (!targetItem) {
+                const popupContainer = document.querySelector('ytd-popup-container');
+                if (popupContainer) {
+                    const buttons = popupContainer.querySelectorAll('yt-button-shape button, ytd-menu-service-item-renderer');
+                    for (const btn of buttons) {
+                        const text = btn.textContent || '';
+                        if (text.includes('Add to playlist') || (text.includes('Save') && !text.includes('Not interested'))) {
+                            targetItem = btn;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (targetItem) {
+                const clickable = targetItem.querySelector('button, yt-button-shape') || targetItem;
+                clickable.click();
+            }
+        }, 400);
+    }
+});
+
+btnContainer.appendChild(subscribeBtn);
+btnContainer.appendChild(playlistBtn);
+
+// Insert before the metadata snippet or at end of text-wrapper
+const snippetContainer = textWrapper.querySelector('.metadata-snippet-container');
+if (snippetContainer) {
+    textWrapper.insertBefore(btnContainer, snippetContainer);
+} else {
+    textWrapper.appendChild(btnContainer);
+}
+[3] Subscribe & Playlist buttons — ytd-video-renderer #channel-info
+    // Remove old custom container if exists (from previous rule version)
+const textWrapper = element.parentElement;
+const oldContainer = textWrapper.querySelector('[data-custom-btn-container]');
+if (oldContainer) {
+    oldContainer.remove();
+}
+
+// Also check for the old flag pattern - remove old buttons
+const oldBtns = textWrapper.querySelectorAll('[data-custom-subscribe], [data-custom-playlist]');
+for (const btn of oldBtns) {
+    if (btn.parentElement && btn.parentElement.style.display === 'flex') {
+        btn.parentElement.remove();
+    }
+}
+
+if (element.dataset.customButtonsAddedV2) return;
+element.dataset.customButtonsAddedV2 = 'true';
+
+// Get channel URL for subscribe
+const channelLink = element.querySelector('#channel-thumbnail');
+const channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';
+
+// Create button container
+const btnContainer = document.createElement('div');
+btnContainer.setAttribute('data-custom-btn-container', '');
+btnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+
+// Create Subscribe button
+const subscribeBtn = document.createElement('button');
+subscribeBtn.setAttribute('data-custom-subscribe', '');
+subscribeBtn.textContent = 'Subscribe';
+subscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Subscribe icon (person-add SVG)
+const subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+subIcon.setAttribute('width', '16');
+subIcon.setAttribute('height', '16');
+subIcon.setAttribute('viewBox', '0 0 24 24');
+subIcon.setAttribute('fill', '#fff');
+subIcon.style.flexShrink = '0';
+subIcon.innerHTML = '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>';
+subscribeBtn.prepend(subIcon);
+
+subscribeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (channelUrl) {
+        window.location.href = channelUrl + '?sub_confirmation=1';
+    }
+});
+
+// Create Add to Playlist button
+const playlistBtn = document.createElement('button');
+playlistBtn.setAttribute('data-custom-playlist', '');
+playlistBtn.textContent = 'Add to playlist';
+playlistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Playlist icon SVG
+const plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+plIcon.setAttribute('width', '16');
+plIcon.setAttribute('height', '16');
+plIcon.setAttribute('viewBox', '0 0 24 24');
+plIcon.setAttribute('fill', '#fff');
+plIcon.style.flexShrink = '0';
+plIcon.innerHTML = '<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>';
+playlistBtn.prepend(plIcon);
+
+playlistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const videoRenderer = textWrapper.closest('ytd-video-renderer');
+    if (!videoRenderer) return;
+    
+    // Find and click the three-dot menu button
+    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');
+    if (menuButton) {
+        menuButton.click();
+        
+        setTimeout(function() {
+            let targetItem = null;
+            
+            // Search in popup container for "Add to playlist" / "Save"
+            const popupContainer = document.querySelector('ytd-popup-container');
+            if (popupContainer) {
+                const allItems = popupContainer.querySelectorAll('*');
+                for (const item of allItems) {
+                    const text = (item.textContent || '').trim();
+                    if ((text === 'Add to playlist' || text === 'Save') && item.querySelector && item.closest && !item.closest('button')) {
+                        targetItem = item;
+                        break;
+                    }
+                }
+                // Also try button shapes
+                if (!targetItem) {
+                    const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');
+                    for (const bs of btnShapes) {
+                        const text = (bs.textContent || '').trim();
+                        if (text.includes('Add to playlist') || text === 'Save') {
+                            targetItem = bs;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (targetItem) {
+                const clickable = targetItem.querySelector('button') || targetItem;
+                clickable.click();
+            }
+        }, 500);
+    }
+});
+
+btnContainer.appendChild(subscribeBtn);
+btnContainer.appendChild(playlistBtn);
+
+// Insert before the metadata snippet or at end of text-wrapper
+const snippetContainer = textWrapper.querySelector('.metadata-snippet-container');
+if (snippetContainer) {
+    textWrapper.insertBefore(btnContainer, snippetContainer);
+} else {
+    textWrapper.appendChild(btnContainer);
+}
+[4] Subscribe & Playlist buttons — ytd-video-renderer #channel-info
+    const textWrapper = element.parentElement;
+
+// Remove ALL old custom button containers (both old and new versions)
+const allCustomContainers = textWrapper.querySelectorAll('[data-custom-btn-container], div[style*="display:flex"][style*="gap:6px"], div[style*="display:flex"][style*="gap:8px"]');
+for (const container of allCustomContainers) {
+    if (container.querySelector('[data-custom-subscribe]') || container.querySelector('[data-custom-playlist]') || container.querySelector('button') && container.querySelector('button').textContent.includes('Subscribe')) {
+        container.remove();
+    }
+}
+
+if (element.dataset.customButtonsAddedV2) return;
+element.dataset.customButtonsAddedV2 = 'true';
+
+// Get channel URL for subscribe
+const channelLink = element.querySelector('#channel-thumbnail');
+const channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';
+
+// Create button container
+const btnContainer = document.createElement('div');
+btnContainer.setAttribute('data-custom-btn-container', '');
+btnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+
+// Create Subscribe button
+const subscribeBtn = document.createElement('button');
+subscribeBtn.setAttribute('data-custom-subscribe', '');
+subscribeBtn.textContent = 'Subscribe';
+subscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Subscribe icon (person-add SVG)
+const subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+subIcon.setAttribute('width', '16');
+subIcon.setAttribute('height', '16');
+subIcon.setAttribute('viewBox', '0 0 24 24');
+subIcon.setAttribute('fill', '#fff');
+subIcon.style.flexShrink = '0';
+subIcon.innerHTML = '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>';
+subscribeBtn.prepend(subIcon);
+
+subscribeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (channelUrl) {
+        window.location.href = channelUrl + '?sub_confirmation=1';
+    }
+});
+
+// Create Add to Playlist button
+const playlistBtn = document.createElement('button');
+playlistBtn.setAttribute('data-custom-playlist', '');
+playlistBtn.textContent = 'Add to playlist';
+playlistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Playlist icon SVG
+const plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+plIcon.setAttribute('width', '16');
+plIcon.setAttribute('height', '16');
+plIcon.setAttribute('viewBox', '0 0 24 24');
+plIcon.setAttribute('fill', '#fff');
+plIcon.style.flexShrink = '0';
+plIcon.innerHTML = '<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>';
+playlistBtn.prepend(plIcon);
+
+playlistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const videoRenderer = textWrapper.closest('ytd-video-renderer');
+    if (!videoRenderer) return;
+    
+    // Find and click the three-dot menu button
+    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');
+    if (menuButton) {
+        menuButton.click();
+        
+        setTimeout(function() {
+            let targetItem = null;
+            
+            // Search in popup container for "Add to playlist" / "Save"
+            const popupContainer = document.querySelector('ytd-popup-container');
+            if (popupContainer) {
+                const allItems = popupContainer.querySelectorAll('*');
+                for (const item of allItems) {
+                    const text = (item.textContent || '').trim();
+                    if ((text === 'Add to playlist' || text === 'Save') && item.querySelector && item.closest && !item.closest('button')) {
+                        targetItem = item;
+                        break;
+                    }
+                }
+                // Also try button shapes
+                if (!targetItem) {
+                    const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');
+                    for (const bs of btnShapes) {
+                        const text = (bs.textContent || '').trim();
+                        if (text.includes('Add to playlist') || text === 'Save') {
+                            targetItem = bs;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (targetItem) {
+                const clickable = targetItem.querySelector('button') || targetItem;
+                clickable.click();
+            }
+        }, 500);
+    }
+});
+
+btnContainer.appendChild(subscribeBtn);
+btnContainer.appendChild(playlistBtn);
+
+// Insert before the metadata snippet or at end of text-wrapper
+const snippetContainer = textWrapper.querySelector('.metadata-snippet-container');
+if (snippetContainer) {
+    textWrapper.insertBefore(btnContainer, snippetContainer);
+} else {
+    textWrapper.appendChild(btnContainer);
+}
+[5] Subscribe & Playlist buttons — ytd-video-renderer #channel-info
+    const textWrapper = element.parentElement;
+
+// Remove ALL old custom button containers first
+const allCustomContainers = textWrapper.querySelectorAll('[data-custom-btn-container]');
+for (const container of allCustomContainers) {
+    container.remove();
+}
+
+// Also remove any leftover from previous versions (buttons with Subscribe/Add to playlist text in flex divs without our data attribute)
+const flexDivs = textWrapper.querySelectorAll('div[style*="display:flex"]');
+for (const div of flexDivs) {
+    if (!div.hasAttribute('data-custom-btn-container')) {
+        const btns = div.querySelectorAll('button');
+        let isCustom = false;
+        for (const btn of btns) {
+            if (btn.textContent.includes('Subscribe') || btn.textContent.includes('Add to playlist')) {
+                isCustom = true;
+                break;
+            }
+        }
+        if (isCustom) {
+            div.remove();
+        }
+    }
+}
+
+// Always add fresh buttons (don't use flag - just clean and re-add)
+// Get channel URL for subscribe
+const channelLink = element.querySelector('#channel-thumbnail');
+const channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';
+
+// Create button container
+const btnContainer = document.createElement('div');
+btnContainer.setAttribute('data-custom-btn-container', '');
+btnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+
+// Create Subscribe button
+const subscribeBtn = document.createElement('button');
+subscribeBtn.textContent = 'Subscribe';
+subscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Subscribe icon (person-add SVG)
+const subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+subIcon.setAttribute('width', '16');
+subIcon.setAttribute('height', '16');
+subIcon.setAttribute('viewBox', '0 0 24 24');
+subIcon.setAttribute('fill', '#fff');
+subIcon.style.flexShrink = '0';
+subIcon.innerHTML = '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>';
+subscribeBtn.prepend(subIcon);
+
+subscribeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (channelUrl) {
+        window.location.href = channelUrl + '?sub_confirmation=1';
+    }
+});
+
+// Create Add to Playlist button
+const playlistBtn = document.createElement('button');
+playlistBtn.textContent = 'Add to playlist';
+playlistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Playlist icon SVG
+const plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+plIcon.setAttribute('width', '16');
+plIcon.setAttribute('height', '16');
+plIcon.setAttribute('viewBox', '0 0 24 24');
+plIcon.setAttribute('fill', '#fff');
+plIcon.style.flexShrink = '0';
+plIcon.innerHTML = '<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>';
+playlistBtn.prepend(plIcon);
+
+playlistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const videoRenderer = textWrapper.closest('ytd-video-renderer');
+    if (!videoRenderer) return;
+    
+    // Find and click the three-dot menu button
+    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');
+    if (menuButton) {
+        menuButton.click();
+        
+        setTimeout(function() {
+            let targetItem = null;
+            
+            // Search in popup container for "Add to playlist" / "Save"
+            const popupContainer = document.querySelector('ytd-popup-container');
+            if (popupContainer) {
+                const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');
+                for (const bs of btnShapes) {
+                    const text = (bs.textContent || '').trim();
+                    if (text.includes('Add to playlist') || text === 'Save') {
+                        targetItem = bs;
+                        break;
+                    }
+                }
+            }
+            
+            if (targetItem) {
+                const clickable = targetItem.querySelector('button') || targetItem;
+                clickable.click();
+            }
+        }, 500);
+    }
+});
+
+btnContainer.appendChild(subscribeBtn);
+btnContainer.appendChild(playlistBtn);
+
+// Insert before the metadata snippet or at end of text-wrapper
+const snippetContainer = textWrapper.querySelector('.metadata-snippet-container');
+if (snippetContainer) {
+    textWrapper.insertBefore(btnContainer, snippetContainer);
+} else {
+    textWrapper.appendChild(btnContainer);
+}
+[6] Subscribe & Playlist buttons — ytd-video-renderer #channel-info
+    const textWrapper = element.parentElement;
+
+// Remove any existing custom button container to ensure clean state
+const existingContainer = textWrapper.querySelector('[data-custom-btn-container]');
+if (existingContainer) {
+    existingContainer.remove();
+}
+
+// Get channel URL for subscribe
+const channelLink = element.querySelector('#channel-thumbnail');
+const channelUrl = channelLink ? channelLink.getAttribute('href') || channelLink.href : '';
+
+// Create button container
+const btnContainer = document.createElement('div');
+btnContainer.setAttribute('data-custom-btn-container', '');
+btnContainer.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+
+// Create Subscribe button
+const subscribeBtn = document.createElement('button');
+subscribeBtn.textContent = 'Subscribe';
+subscribeBtn.style.cssText = 'background:#065fd4;color:#fff;border:none;border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Subscribe icon (person-add SVG)
+const subIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+subIcon.setAttribute('width', '16');
+subIcon.setAttribute('height', '16');
+subIcon.setAttribute('viewBox', '0 0 24 24');
+subIcon.setAttribute('fill', '#fff');
+subIcon.style.flexShrink = '0';
+subIcon.innerHTML = '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>';
+subscribeBtn.prepend(subIcon);
+
+subscribeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (channelUrl) {
+        window.location.href = channelUrl + '?sub_confirmation=1';
+    }
+});
+
+// Create Add to Playlist button
+const playlistBtn = document.createElement('button');
+playlistBtn.textContent = 'Add to playlist';
+playlistBtn.style.cssText = 'background:rgba(128,128,128,0.2);color:#fff;border:1px solid rgba(128,128,128,0.5);border-radius:18px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:Roboto,Arial,sans-serif;white-space:nowrap;line-height:1;transition:background 0.2s;';
+
+// Playlist icon SVG
+const plIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+plIcon.setAttribute('width', '16');
+plIcon.setAttribute('height', '16');
+plIcon.setAttribute('viewBox', '0 0 24 24');
+plIcon.setAttribute('fill', '#fff');
+plIcon.style.flexShrink = '0';
+plIcon.innerHTML = '<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>';
+playlistBtn.prepend(plIcon);
+
+playlistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const videoRenderer = textWrapper.closest('ytd-video-renderer');
+    if (!videoRenderer) return;
+    
+    // Find and click the three-dot menu button
+    const menuButton = videoRenderer.querySelector('#menu .dropdown-trigger #button');
+    if (menuButton) {
+        menuButton.click();
+        
+        setTimeout(function() {
+            let targetItem = null;
+            
+            const popupContainer = document.querySelector('ytd-popup-container');
+            if (popupContainer) {
+                const btnShapes = popupContainer.querySelectorAll('yt-button-shape, ytd-menu-service-item-renderer');
+                for (const bs of btnShapes) {
+                    const text = (bs.textContent || '').trim();
+                    if (text.includes('Add to playlist') || text === 'Save') {
+                        targetItem = bs;
+                        break;
+                    }
+                }
+            }
+            
+            if (targetItem) {
+                const clickable = targetItem.querySelector('button') || targetItem;
+                clickable.click();
+            }
+        }, 500);
+    }
+});
+
+btnContainer.appendChild(subscribeBtn);
+btnContainer.appendChild(playlistBtn);
+
+// Insert before the metadata snippet or at end of text-wrapper
+const snippetContainer = textWrapper.querySelector('.metadata-snippet-container');
+if (snippetContainer) {
+    textWrapper.insertBefore(btnContainer, snippetContainer);
+} else {
+    textWrapper.appendChild(btnContainer);
+}
+

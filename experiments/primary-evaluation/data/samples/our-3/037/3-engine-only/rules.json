@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide Copilot search tab",
+      "query_selector": "#b-scopeListItem-copilotsearch",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide collapsed Copilot chat",
+      "query_selector": "#b_copilot_search",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Copilot follow-up textarea",
+      "query_selector": "#b_copilot_composer_2",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

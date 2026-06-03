@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Hide all ad containers",
+      "query_selector": ".adContainer, .regionTopAds",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Taboola sponsored feed",
+      "query_selector": "#taboola-below-content-thumbnails-article, .tbl-feed-container, [data-module-id=\"699dd0fee79a3a36dddafa62\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide sidebar ad slot",
+      "query_selector": "[data-region=\"sidebar\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Force single-column layout",
+      "query_selector": "[data-layout=\"responsive-sidebar\"]",
+      "logic": "element.style.gridTemplateColumns = '1fr';\nelement.style.gridTemplateAreas = '\"contentTop\" \"main\"';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

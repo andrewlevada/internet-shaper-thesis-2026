@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Highlight Save discount text",
+      "query_selector": ".productModule span.text-base.font-bold",
+      "logic": "element.style.fontSize = '1.5rem';\nelement.style.fontWeight = '900';\nelement.style.color = '#16a34a';\nelement.style.background = '#dcfce7';\nelement.style.padding = '2px 8px';\nelement.style.borderRadius = '4px';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

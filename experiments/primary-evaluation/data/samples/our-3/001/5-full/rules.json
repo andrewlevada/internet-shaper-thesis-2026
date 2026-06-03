@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Hide Top Stories section",
+      "query_selector": "#WxuContentMedia-main-8e6eec31-8272-410f-94b7-dc3c262ec5d2",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Trending section",
+      "query_selector": "#WxuContentMedia-main-7a64efde-4532-4374-acd9-6061b0a92b95",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Lonely Planet section",
+      "query_selector": "#WxuContentMedia-main-93e78c6f-fbe9-47e1-ae14-07a7ca30cac0",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Keeping You Healthy section",
+      "query_selector": "#WxuContentMedia-sidebar-c0cdff4e-ec2c-4f92-98d3-3cb37bacf3e4",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

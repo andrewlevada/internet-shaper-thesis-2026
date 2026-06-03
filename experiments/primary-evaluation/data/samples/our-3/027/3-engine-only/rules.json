@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Show pin info always",
+      "query_selector": "[data-test-id=\"pin\"]",
+      "logic": "if (element.querySelector('.pin-info-always-visible')) return;\n\nvar ariaLabel = element.getAttribute('aria-label') || '';\nif (!ariaLabel || ariaLabel === 'Pin card') return;\n\nvar pinLink = element.querySelector('[data-test-id=\"deeplink-wrapper\"] a');\nif (!pinLink) return;\nvar title = pinLink.getAttribute('aria-label') || '';\nif (!title || title === 'Pin' || title === 'Pin card') return;\n\nvar infoContainer = document.createElement('div');\ninfoContainer.className = 'pin-info-always-visible';\ninfoContainer.style.cssText = 'padding: 8px 4px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;';\n\nvar titleEl = document.createElement('div');\ntitleEl.style.cssText = 'font-size: 12px; font-weight: 600; color: #111; line-height: 1.3; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;';\ntitleEl.textContent = title;\n\ninfoContainer.appendChild(titleEl);\n\nelement.appendChild(infoContainer);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

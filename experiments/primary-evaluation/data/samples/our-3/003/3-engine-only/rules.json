@@ -1,0 +1,33 @@
+{
+  "rules": [
+    {
+      "label": "Move videos to top",
+      "query_selector": "section:has(h2:contains(\"Vídeos em alta\"))",
+      "logic": "if (element.querySelector('h2') && element.querySelector('h2').textContent.includes('Vídeos em alta')) {\n  const header = document.getElementById('header-section');\n  if (header && header.nextSibling) {\n    header.parentNode.insertBefore(element, header.nextSibling);\n  }\n}"
+    },
+    {
+      "label": "Enlarge video player",
+      "query_selector": "bs-player",
+      "logic": "element.style.width = '100%';\nelement.style.maxWidth = '1200px';\nelement.style.minHeight = '500px';"
+    },
+    {
+      "label": "Widen video section",
+      "query_selector": ".video-grid-franja-player-escuro__container",
+      "logic": "element.style.maxWidth = '100%';\nelement.style.width = '100%';"
+    },
+    {
+      "label": "Enlarge player container",
+      "query_selector": ".post-player",
+      "logic": "element.style.width = '100%';\nelement.style.maxWidth = '1200px';"
+    },
+    {
+      "label": "Move videos to top",
+      "query_selector": "section[data-tracking-category=\"franja-videos-1\"]",
+      "logic": "const header = document.getElementById('header-section');\nif (header && element.parentNode !== header.parentNode) {\n  const refNode = header.nextSibling ? header.nextSibling.nextSibling : null;\n  header.parentNode.insertBefore(element, refNode);\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

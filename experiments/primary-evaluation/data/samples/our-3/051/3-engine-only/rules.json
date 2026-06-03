@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Highlight Your Friends tab",
+      "query_selector": "#friends-tab",
+      "logic": "element.style.backgroundColor = '#FF9900';\nelement.style.color = '#000000';\nelement.style.fontWeight = 'bold';\nelement.style.borderRadius = '4px 4px 0 0';\nelement.style.padding = '8px 16px';\nelement.style.boxShadow = '0 -2px 6px rgba(255, 153, 0, 0.4)';\n\n// Add a collaborative users icon (people/users emoji as visual indicator)\nconst link = element.querySelector('a');\nif (link) {\n  // Check if we already added the icon to avoid duplicates\n  if (!link.querySelector('.friends-tab-icon')) {\n    const iconSpan = document.createElement('span');\n    iconSpan.className = 'friends-tab-icon';\n    iconSpan.textContent = '👥 ';\n    iconSpan.style.marginRight = '4px';\n    link.prepend(iconSpan);\n  }\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

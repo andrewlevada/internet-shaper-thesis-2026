@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Add category tags under headline",
+      "query_selector": "h1.flatplan_header[data-testid=\"video-headline\"]",
+      "logic": "if (element.dataset.categoryTagsAdded) return;\nelement.dataset.categoryTagsAdded = \"true\";\n\nvar tagContainer = document.createElement(\"div\");\ntagContainer.className = \"flex flex-wrap gap-2 mt-1 mb-3 category-tags-bar\";\n\nvar tags = [\n  { label: \"Space\", href: \"/space\" },\n  { label: \"Astronomy\", href: \"/astronomy\" },\n  { label: \"Exoplanets\", href: \"/exoplanets\" },\n  { label: \"NASA\", href: \"/nasa\" },\n  { label: \"Hubble Telescope\", href: \"/hubble-telescope\" }\n];\n\ntags.forEach(function(tag) {\n  var link = document.createElement(\"a\");\n  link.href = tag.href;\n  link.textContent = tag.label;\n  link.className = \"inline-block px-3 py-1 text-xs font-bold rounded-full bg-blue-600 text-white no-underline hover:bg-blue-700 transition-colors duration-200 shadow-sm\";\n  link.style.borderRadius = \"9999px\";\n  link.style.whiteSpace = \"nowrap\";\n  tagContainer.appendChild(link);\n});\n\nelement.parentNode.insertBefore(tagContainer, element.nextSibling);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

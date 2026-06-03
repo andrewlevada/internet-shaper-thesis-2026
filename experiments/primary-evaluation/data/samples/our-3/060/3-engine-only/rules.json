@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Language filter for streams",
+      "query_selector": "section#directory-game-main-content",
+      "logic": "if (element.querySelector('.language-filter-bar')) return;\n\nvar section = element;\nvar tower = section.querySelector('.tw-tower');\nif (!tower) return;\n\n// Collect all language tags from stream cards\nvar articles = section.querySelectorAll('article.ghbJdj');\nvar langMap = {};\narticles.forEach(function(article) {\n  var tags = article.querySelectorAll('[class*=\"ScTag-sc-ajnfk3\"]');\n  tags.forEach(function(tagLink) {\n    var target = tagLink.getAttribute('data-a-target');\n    if (target) {\n      langMap[target] = true;\n    }\n  });\n});\n\nvar languages = Object.keys(langMap).sort();\nif (languages.length === 0) return;\n\n// Create filter bar\nvar filterBar = document.createElement('div');\nfilterBar.className = 'language-filter-bar';\nfilterBar.style.cssText = 'display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;margin-bottom:0.5rem;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;font-family:var(--font-body);';\n\nvar label = document.createElement('span');\nlabel.style.cssText = 'color:#fff;font-weight:600;font-size:0.9rem;white-space:nowrap;';\nlabel.textContent = '🌐 Filter by language:';\nfilterBar.appendChild(label);\n\nvar select = document.createElement('select');\nselect.id = 'language-filter-select';\nselect.style.cssText = 'padding:0.4rem 2rem 0.4rem 0.6rem;border-radius:4px;border:1px solid #555;background:#0e0e1a;color:#fff;font-size:0.85rem;cursor:pointer;min-width:140px;appearance:auto;';\n\nvar allOption = document.createElement('option');\nallOption.value = '__all__';\nallOption.textContent = 'All languages';\nselect.appendChild(allOption);\n\nlanguages.forEach(function(lang) {\n  var opt = document.createElement('option');\n  opt.value = lang;\n  opt.textContent = lang;\n  select.appendChild(opt);\n});\n\nfilterBar.appendChild(select);\n\n// Insert before tower\ntower.parentNode.insertBefore(filterBar, tower);\n\n// Apply filter function\nfunction applyFilter() {\n  var selectedLang = select.value;\n  articles.forEach(function(article) {\n    if (selectedLang === '__all__') {\n      article.style.display = '';\n      return;\n    }\n    var hasTag = false;\n    var tags = article.querySelectorAll('[class*=\"ScTag-sc-ajnfk3\"]');\n    tags.forEach(function(tagLink) {\n      if (tagLink.getAttribute('data-a-target') === selectedLang) {\n        hasTag = true;\n      }\n    });\n    article.style.display = hasTag ? '' : 'none';\n  });\n}\n\nselect.addEventListener('change', applyFilter);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

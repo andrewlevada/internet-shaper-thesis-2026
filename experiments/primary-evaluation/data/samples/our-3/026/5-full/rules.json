@@ -1,0 +1,38 @@
+{
+  "rules": [
+    {
+      "label": "Hide Explore featured boards",
+      "query_selector": "[data-grid-item-idx=\"0\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide pin metadata text",
+      "query_selector": "[data-test-id=\"pin\"] .To17G1",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide board card metadata",
+      "query_selector": ".MJ_eMy.XC5OnJ.eOQXgz",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide showing more results text",
+      "query_selector": "[data-test-id=\"masonry\"] [aria-live=\"polite\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide pin overlay buttons",
+      "query_selector": "[data-test-id=\"pin\"] .fzhuLt",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide content layer overlays",
+      "query_selector": "[data-test-id=\"contentLayer\"]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

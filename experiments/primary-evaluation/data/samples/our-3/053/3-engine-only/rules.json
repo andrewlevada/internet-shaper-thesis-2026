@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Hide TFA archive grid",
+      "query_selector": "div.hlist[style=\"margin-bottom:1em; text-align:center;\"]",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Expand search bar full width",
+      "query_selector": ".vector-header-start",
+      "logic": "element.style.display = 'none';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

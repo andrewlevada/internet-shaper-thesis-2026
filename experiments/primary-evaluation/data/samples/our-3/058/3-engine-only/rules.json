@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Highlight viewer counts",
+      "query_selector": ".tw-media-card-stat",
+      "logic": "element.style.fontSize = '1.4rem';\nelement.style.fontWeight = '900';\nelement.style.color = '#FFD700';\nelement.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.8), 0 0 16px rgba(255, 0, 0, 0.5)';\nelement.style.background = 'rgba(0, 0, 0, 0.75)';\nelement.style.borderRadius = '6px';\nelement.style.padding = '4px 10px';\nelement.style.border = '2px solid #FFD700';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

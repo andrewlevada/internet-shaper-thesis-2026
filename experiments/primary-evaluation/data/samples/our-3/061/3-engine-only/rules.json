@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Highlight and move tags to top",
+      "query_selector": "article.Layout-sc-1xcs6mc-0.ghbJdj",
+      "logic": "(function() {\n  const card = element;\n  const textWrapper = card.querySelector('.ScTextWrapper-sc-10mto54-1');\n  if (!textWrapper) return;\n\n  const tagsContainer = textWrapper.querySelector('.fsLBGq');\n  if (!tagsContainer) return;\n\n  // Move tags container to the top of the text wrapper\n  textWrapper.insertBefore(tagsContainer, textWrapper.firstChild);\n\n  // Highlight each tag with a bright background and border\n  const tags = tagsContainer.querySelectorAll('.tw-tag');\n  tags.forEach(function(tag) {\n    tag.style.backgroundColor = '#9147ff';\n    tag.style.color = '#ffffff';\n    tag.style.borderRadius = '4px';\n    tag.style.padding = '2px 8px';\n    tag.style.fontWeight = 'bold';\n    tag.style.display = 'inline-block';\n    tag.style.marginRight = '6px';\n    tag.style.marginBottom = '6px';\n    tag.style.border = '1px solid #9147ff';\n    tag.style.textDecoration = 'none';\n  });\n})();"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

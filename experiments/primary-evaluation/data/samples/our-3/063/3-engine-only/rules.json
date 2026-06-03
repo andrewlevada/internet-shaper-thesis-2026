@@ -1,0 +1,48 @@
+{
+  "rules": [
+    {
+      "label": "Hide rich cards & expandables",
+      "query_selector": "div.cUnQKe, div.Lv2Cle, div.vtSz8d, div.oIk2Cb, div.GUyUUb[data-hb=\"b\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide related search suggestions",
+      "query_selector": "div.S6Ggif.Ww4FFb.vt6azd, div.HBvJzb, ul.UJttZc.KMCtw",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide image rows inline",
+      "query_selector": "div.x7cRLb, div.aQ9ZH.yIw0Od.p8FEIf.U48fD, div.DeKlx.jEgXc.yIw0Od",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide video carousel rows",
+      "query_selector": "div.Ea5p3b, div.bQwQK.p8FEIf.U48fD",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide AI overview cards",
+      "query_selector": "div.hICk5e, div.qRuFed, div.u16Ss.RECdmd.qVSwkc",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide related question pairs",
+      "query_selector": "div.wQiwMc.related-question-pair, div.related-question-pair",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide ads containers",
+      "query_selector": "div#tads, div#bottomads, div#tvcap, div.GUyUUb[data-hb=\"t\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide slim appbar notification",
+      "query_selector": "div#slim_appbar",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

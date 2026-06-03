@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "De-emphasize marketing banners",
+      "query_selector": "[class*=\"banner\"], [class*=\"promo\"], [class*=\"ecosystem\"], [class*=\"marketing\"], [class*=\"hero-banner\"], [class*=\"campaign\"], [class*=\"brand-story\"], [data-testid*=\"banner\"], [class*=\"ad-container\"], [class*=\"advertisement\"]",
+      "logic": "element.style.opacity = '0.4';\nelement.style.filter = 'grayscale(60%)';"
+    },
+    {
+      "label": "De-emphasize brand promos",
+      "query_selector": "[class*=\"galaxy\"], [class*=\"ecosystem\"], [class*=\"trade-in\"], [class*=\"upgrade-program\"], [class*=\"free-trial\"]",
+      "logic": "if (element.children.length < 5) {\n  element.style.opacity = '0.3';\n}"
+    },
+    {
+      "label": "Highlight specs and pricing",
+      "query_selector": "[class*=\"spec\"], [class*=\"specs\"], [class*=\"price\"], [class*=\"pricing\"], [class*=\"hardware\"], [class*=\"technical\"], [class*=\"details\"], [class*=\"features\"]",
+      "logic": "element.style.opacity = '1';\nelement.style.filter = 'none';\nif (element.parentElement) {\n  element.style.order = '-1';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

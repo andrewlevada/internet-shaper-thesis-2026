@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Promote entertainment content",
+      "query_selector": "#column-list",
+      "logic": "(function() {\n  var container = element;\n  if (!container) return;\n  \n  // Find the three column containers and separators\n  var children = Array.from(container.children);\n  var jornalismoCol = null;\n  var esporteCol = null;\n  var entretenimentoCol = null;\n  var separators = [];\n  \n  for (var i = 0; i < children.length; i++) {\n    var child = children[i];\n    if (child.id === 'coluna-jornalismo') {\n      jornalismoCol = child;\n    } else if (child.id === 'coluna-esporte') {\n      esporteCol = child;\n    } else if (child.id === 'coluna-entretenimento') {\n      entretenimentoCol = child;\n    } else if (child.tagName === 'HR' && child.classList.contains('outer-separator')) {\n      separators.push(child);\n    }\n  }\n  \n  // Only proceed if we found all three columns\n  if (!jornalismoCol || !esporteCol || !entretenimentoCol) return;\n  \n  // Reorder: Entretenimento first, then Jornalismo, then Esporte\n  // Clear container and re-append in new order\n  while (container.firstChild) {\n    container.removeChild(container.firstChild);\n  }\n  \n  // Add entretenimento column first\n  container.appendChild(entretenimentoCol);\n  if (separators.length > 0) container.appendChild(separators[0]);\n  // Then jornalismo\n  container.appendChild(jornalismoCol);\n  if (separators.length > 1) container.appendChild(separators[1]);\n  // Then esporte\n  container.appendChild(esporteCol);\n})();"
+    },
+    {
+      "label": "Move video sections up",
+      "query_selector": "body",
+      "logic": "(function() {\n  var body = element;\n  if (!body) return;\n\n  // Find the key sections\n  var colunasSection = null;\n  var hrAfterColunas = null;\n  var videoBbbSection = null;\n  var franjaVideoSection = null;\n\n  var children = Array.from(body.children);\n\n  for (var i = 0; i < children.length; i++) {\n    var child = children[i];\n    if (child.classList && child.classList.contains('area-colunas')) {\n      colunasSection = child;\n      // The HR after it should be the next sibling\n      if (i + 1 < children.length && children[i + 1].tagName === 'HR') {\n        hrAfterColunas = children[i + 1];\n      }\n    }\n    if (child.classList && child.classList.contains('area-video-bbb')) {\n      videoBbbSection = child;\n    }\n    if (child.id === 'franja-video') {\n      franjaVideoSection = child;\n    }\n  }\n\n  // Only proceed if we found the sections\n  if (!colunasSection || !videoBbbSection || !franjaVideoSection) return;\n\n  // Move video sections before the colunas section\n  // First, remove them from their current positions\n  var parent = videoBbbSection.parentNode;\n  if (parent === body) {\n    body.removeChild(videoBbbSection);\n  }\n  parent = franjaVideoSection.parentNode;\n  if (parent === body) {\n    body.removeChild(franjaVideoSection);\n  }\n\n  // Insert them before the colunas section\n  body.insertBefore(videoBbbSection, colunasSection);\n  body.insertBefore(franjaVideoSection, colunasSection);\n})();"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

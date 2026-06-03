@@ -1,0 +1,34 @@
+{
+	"request-prompt": "Add an easily accessible quick-settings toolbar directly on the page header (with sliders for font size, layout width, and instant dark mode toggle) so I don't have to navigate into a separate preferences menu.",
+	"goal": "I highly value deep personalization options like light/dark themes and custom font sizes, and I will immediately look for ways to adjust them to my liking on any platform.",
+	"jobs": [
+		"I want to learn how to sign up for a Fandom account",
+		"I want to know how to customize my Fandom user preferences and settings",
+		"I want to learn how to switch between light and dark themes on Fandom",
+		"I want to find out the next steps to start contributing to Fandom wikis or joining discussions",
+		"I want to read other users' comments or ask a question about getting started on Fandom"
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer to figure out website settings and registration on my own through trial and error, rather than reading step-by-step tutorials.",
+			"b": "I heavily rely on visual, step-by-step guides with screenshots to help me navigate and configure new websites."
+		},
+		{
+			"a": "I only use wikis to read and consume information passively, and I prefer to avoid signing up or joining any community spaces.",
+			"b": "I want to actively contribute, customize my profile, and engage in discussion boards on platforms I use regularly."
+		},
+		{
+			"a": "I highly value deep personalization options like light/dark themes and custom font sizes, and I will immediately look for ways to adjust them to my liking on any platform.",
+			"b": "I rarely customize website settings and prefer to use whatever default display options the platform provides without changing them."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I highly value deep personalization options like light/dark themes and custom font sizes, and I will immediately look for ways to adjust them to my liking on any platform.",
+	"source-snapshot": "070",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
+	"final-url": "https://community.fandom.com/wiki/User_blog:Marphimon/Getting_Started_With_Fandom:_Signing_Up_%26_Personalization",
+	"protected_at": 1780344967683,
+	"finalized_at": 1780352301250
+}

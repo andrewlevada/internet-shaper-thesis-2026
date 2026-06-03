@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Collapse product descriptions",
+      "query_selector": ".productModule .commerce-desc",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

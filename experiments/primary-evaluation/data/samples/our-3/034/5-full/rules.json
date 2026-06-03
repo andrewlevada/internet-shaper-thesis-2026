@@ -1,0 +1,63 @@
+{
+  "rules": [
+    {
+      "label": "Click Show more in Explore",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more] #expander-item a#endpoint",
+      "logic": "element.click();"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "var root = element.shadowRoot;\nif (!root) return;\nvar expanderLink = root.querySelector('#expander-item a#endpoint');\nif (expanderLink && !element._isExpanded) {\n  expanderLink.click();\n}"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "if (typeof element.showMore === 'function') {\n  element.showMore();\n} else if (typeof element.toggleExpanded === 'function') {\n  element.toggleExpanded();\n}"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "// Try setting internal state directly\nelement.setAttribute('expanded', '');\nif (element._isExpanded === false || element._isExpanded === undefined) {\n  element._isExpanded = true;\n}\n// Also try notifying Polymer of the change\nif (typeof element.fire === 'function') {\n  element.fire('toggle-expanded');\n}"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "var root = element.shadowRoot;\nif (!root) return;\nvar expanderLink = root.querySelector('#expander-item a#endpoint');\nif (!expanderLink) return;\n\n// Try dispatching from the shadow root's document context\ntry {\n  var clickEvent = new root.ownerDocument.defaultView.MouseEvent('click', { bubbles: true, cancelable: true });\n  expanderLink.dispatchEvent(clickEvent);\n} catch(e) {\n  // fallback\n  try {\n    var evt = root.ownerDocument.createEvent('MouseEvents');\n    evt.initMouseEvent('click', true, true, root.ownerDocument.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);\n    expanderLink.dispatchEvent(evt);\n  } catch(e2) {\n    expanderLink.click();\n  }\n}"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "// Check what methods are available on the element\nvar methods = [];\nfor (var key in element) {\n  if (typeof element[key] === 'function') {\n    methods.push(key);\n  }\n}\nelement.textContent = ''; // temp debug - won't actually work on custom elements"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "// Try to access internal properties that might hold the continuation token\nif (element.items && element.items.length > 0) {\n  // items already loaded\n}\n// Check for endpoint/continuation data\nvar root = element.shadowRoot;\nif (root) {\n  var expander = root.querySelector('#expander-item');\n  if (expander && expander.endpoint) {\n    // There might be an endpoint we can use\n  }\n}"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "var root = element.shadowRoot;\nif (!root) return;\n\n// Try clicking the yt-interaction element instead\nvar interaction = root.querySelector('#expander-item yt-interaction');\nif (interaction) {\n  var innerDiv = interaction.querySelector('div.stroke');\n  if (innerDiv) {\n    innerDiv.click();\n  }\n}\n\n// Also try the tp-yt-paper-item\nvar paperItem = root.querySelector('#expander-item tp-yt-paper-item');\nif (paperItem) {\n  paperItem.click();\n}"
+    },
+    {
+      "label": "Hide Show more/less buttons",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "var root = element.shadowRoot;\nif (!root) return;\n\n// Hide the \"Show more\" expander button\nvar expanderItem = root.querySelector('#expander-item');\nif (expanderItem) {\n  expanderItem.style.display = 'none';\n}\n\n// Hide the \"Show less\" collapser button\nvar collapserItem = root.querySelector('#collapser-item');\nif (collapserItem) {\n  collapserItem.style.display = 'none';\n}\n\n// Make the expanded area visible and ensure items container is shown\nvar expanded = root.querySelector('#expanded');\nif (expanded) {\n  expanded.style.display = 'block';\n}\n\nvar expandableItems = root.querySelector('#expandable-items');\nif (expandableItems) {\n  expandableItems.style.display = 'block';\n}\n\n// Set expanded attribute to keep it in expanded state\nelement.setAttribute('expanded', '');"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "// Try to find and use the continuation endpoint\nvar root = element.shadowRoot;\nif (!root) return;\n\n// Check if items are already loaded in expandable-items\nvar expandableItems = root.querySelector('#expandable-items');\nif (expandableItems && expandableItems.children.length > 0) {\n  return; // Already expanded\n}\n\n// Try to get the endpoint from the expander\nvar expanderLink = root.querySelector('#expander-item a#endpoint');\nif (expanderLink && expanderLink.href) {\n  // The href might contain the continuation or navigation endpoint\n  // YouTube uses inner API for these\n}\n\n// Check element properties for continuation info\nif (element.endpoint) {\n  // There's an endpoint property\n}"
+    },
+    {
+      "label": "Expand Explore categories",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more]",
+      "logic": "// Try various internal methods that Polymer/Lit elements might have\nvar methodsToTry = ['showMore', 'toggleExpanded', '_handleShowMore', '_toggleExpanded', 'expand', 'open'];\nfor (var i = 0; i < methodsToTry.length; i++) {\n  var method = methodsToTry[i];\n  if (typeof element[method] === 'function') {\n    try {\n      element[method]();\n    } catch(e) {}\n  }\n}\n\n// Also try setting properties that might trigger the expansion\nif (!element.expanded) {\n  element.expanded = true;\n}\nif (typeof element.set === 'function') {\n  try { element.set('expanded', true); } catch(e) {}\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

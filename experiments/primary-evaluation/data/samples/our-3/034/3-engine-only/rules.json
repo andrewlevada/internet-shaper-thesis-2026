@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide Show more button",
+      "query_selector": "ytd-guide-collapsible-entry-renderer[can-show-more] #expander-item",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide Show less button",
+      "query_selector": "ytd-guide-collapsible-entry-renderer #collapser-item",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Expand collapsible section",
+      "query_selector": "ytd-guide-collapsible-entry-renderer #expanded",
+      "logic": "element.style.display = 'block';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

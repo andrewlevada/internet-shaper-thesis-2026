@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Hide Entertainment column",
+      "query_selector": "#coluna-entretenimento",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide horoscope widget",
+      "query_selector": ".widget-horoscopo",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide entertainment highlight column",
+      "query_selector": ".post-column-2",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Add content filter menu",
+      "query_selector": ".hui-container.header-grid",
+      "logic": "if (element.querySelector('.globo-filter-menu')) return;\n\nvar menu = document.createElement('div');\nmenu.className = 'globo-filter-menu';\nmenu.setAttribute('data-filter-menu', 'true');\nmenu.innerHTML = '<div class=\"globo-filter-menu__toggle\" data-filter-toggle=\"true\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"4\" y1=\"6\" x2=\"20\" y2=\"6\"/><line x1=\"8\" y1=\"12\" x2=\"20\" y2=\"12\"/><line x1=\"4\" y1=\"18\" x2=\"20\" y2=\"18\"/></svg> Filtros</div><div class=\"globo-filter-menu__panel\" data-filter-panel=\"true\"><h4 class=\"globo-filter-menu__title\">Filtrar conteúdo</h4><label class=\"globo-filter-menu__item\" data-filter-item=\"entertainment-column\"><input type=\"checkbox\" checked /> Coluna Entretenimento</label><label class=\"globo-filter-menu__item\" data-filter-item=\"horoscope-widget\"><input type=\"checkbox\" checked /> Horóscopo</label><label class=\"globo-filter-menu__item\" data-filter-item=\"celebrity-gossip\"><input type=\"checkbox\" checked /> Fofoca de celebridades</label></div>';\n\nelement.style.position = 'relative';\nelement.appendChild(menu);\n\nvar style = document.createElement('style');\nstyle.textContent = \n  '.globo-filter-menu { position: absolute; top: 8px; right: 10px; z-index: 9999; font-family: Arial, sans-serif; }' +\n  '.globo-filter-menu__toggle { display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: rgba(0,0,0,0.75); color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; user-select: none; }' +\n  '.globo-filter-menu__toggle:hover { background: rgba(0,0,0,0.9); }' +\n  '.globo-filter-menu__panel { display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); padding: 16px; min-width: 240px; }' +\n  '.globo-filter-menu__panel.open { display: block; }' +\n  '.globo-filter-menu__title { margin: 0 0 12px 0; font-size: 14px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; }' +\n  '.globo-filter-menu__item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; color: #555; cursor: pointer; }' +\n  '.globo-filter-menu__item input[type=\"checkbox\"] { width: 16px; height: 16px; accent-color: #006eg8; cursor: pointer; }';\n\ndocument.head.appendChild(style);\n\nvar toggle = menu.querySelector('[data-filter-toggle]');\nvar panel = menu.querySelector('[data-filter-panel]');\n\ntoggle.addEventListener('click', function() {\n  panel.classList.toggle('open');\n});\n\nmenu.querySelectorAll('[data-filter-item]').forEach(function(item) {\n  var cb = item.querySelector('input[type=\"checkbox\"]');\n  var filterName = item.getAttribute('data-filter-item');\n\n  cb.addEventListener('change', function() {\n    var checked = cb.checked;\n    if (filterName === 'entertainment-column') {\n      var col = document.getElementById('coluna-entretenimento');\n      if (col) col.style.display = checked ? '' : 'none';\n    } else if (filterName === 'horoscope-widget') {\n      var horo = document.querySelector('.widget-horoscopo');\n      if (horo) horo.style.display = checked ? '' : 'none';\n    } else if (filterName === 'celebrity-gossip') {\n      var gossip = document.querySelector('.post-column-2');\n      if (gossip) gossip.style.display = checked ? '' : 'none';\n    }\n  });\n});"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Highlight Your Friends tab",
+      "query_selector": "#friends-tab a",
+      "logic": "element.style.backgroundColor = '#FFD700';\nelement.style.color = '#000000';\nelement.style.fontWeight = 'bold';\nelement.style.borderRadius = '4px';\nelement.style.padding = '6px 12px';\nelement.style.boxShadow = '0 0 8px rgba(255, 215, 0, 0.6)';\nif (!element.querySelector('.friends-icon')) {\n  var icon = document.createElement('span');\n  icon.className = 'friends-icon';\n  icon.textContent = '👥 ';\n  icon.style.marginRight = '4px';\n  element.prepend(icon);\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Move help community to sidebar",
+      "query_selector": ".need-more-help-container",
+      "logic": "(function() {\n    // Avoid running multiple times on the same element\n    if (element.dataset.sidebarMoved === 'true') return;\n\n    var helpguide = document.getElementById('helpguide');\n    if (!helpguide) return;\n\n    // Clone and move the need-more-help-container to the sidebar\n    var movedContainer = element.cloneNode(true);\n    movedContainer.style.display = 'block';\n    movedContainer.style.position = 'sticky';\n    movedContainer.style.top = '16px';\n    movedContainer.style.width = '280px';\n    movedContainer.style.padding = '16px';\n    movedContainer.style.marginLeft = '16px';\n    movedContainer.style.flexShrink = '0';\n\n    helpguide.appendChild(movedContainer);\n    helpguide.style.display = 'block';\n\n    // Make page-width-container a flex container to put sidebar next to main content\n    var pageWidth = document.getElementById('page-width-container');\n    if (pageWidth) {\n        pageWidth.style.display = 'flex';\n        pageWidth.style.flexDirection = 'row';\n    }\n\n    // Ensure main-content doesn't take all space\n    var mainContent = document.querySelector('.main-content');\n    if (mainContent) {\n        mainContent.style.flex = '1';\n        mainContent.style.minWidth = '0';\n    }\n\n    // Hide the original by collapsing it\n    element.style.display = 'none';\n    element.dataset.sidebarMoved = 'true';\n})();"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

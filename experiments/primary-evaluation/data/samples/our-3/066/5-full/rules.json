@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Move images/videos to top",
+      "query_selector": "#rso",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Move images/videos to top",
+      "query_selector": "#rso",
+      "logic": "var rso = element;\nif (!rso || !rso.children || rso.children.length === 0) return;\n\nvar firstChild = rso.children[0];\nvar ulsxyfElements = [];\n\nfor (var i = 0; i < rso.children.length; i++) {\n    var child = rso.children[i];\n    if (child.classList && child.classList.contains('ULSxyf')) {\n        var hasImages = child.querySelector('.x7cRLb');\n        var hasVideos = child.querySelector('.UjLRDc');\n        if (hasImages || hasVideos) {\n            ulsxyfElements.push(child);\n        }\n    }\n}\n\nfor (var j = 0; j < ulsxyfElements.length; j++) {\n    rso.insertBefore(ulsxyfElements[j], firstChild);\n}\n"
+    },
+    {
+      "label": "Move images/videos to top",
+      "query_selector": "#rso",
+      "logic": "var rso = element;\nif (!rso || !rso.children || rso.children.length === 0) return;\n\nvar firstChild = rso.children[0];\nvar ulsxyfElements = [];\n\nfor (var i = 0; i < rso.children.length; i++) {\n    var child = rso.children[i];\n    if (child.classList && child.classList.contains('ULSxyf')) {\n        var hasImages = child.querySelector('.x7cRLb');\n        var hasVideos = child.querySelector('.UjLRDc');\n        if (hasImages || hasVideos) {\n            ulsxyfElements.push(child);\n        }\n    }\n}\n\nfor (var j = 0; j < ulsxyfElements.length; j++) {\n    rso.insertBefore(ulsxyfElements[j], firstChild);\n}\n"
+    },
+    {
+      "label": "Move images/videos to top",
+      "query_selector": "#rso",
+      "logic": "element.style.display = '';\n\nvar rso = element;\nif (!rso || !rso.children || rso.children.length === 0) return;\n\nvar firstChild = rso.children[0];\nvar ulsxyfElements = [];\n\nfor (var i = 0; i < rso.children.length; i++) {\n    var child = rso.children[i];\n    if (child.classList && child.classList.contains('ULSxyf')) {\n        var hasImages = child.querySelector('.x7cRLb');\n        var hasVideos = child.querySelector('.UjLRDc');\n        if (hasImages || hasVideos) {\n            ulsxyfElements.push(child);\n        }\n    }\n}\n\nfor (var j = 0; j < ulsxyfElements.length; j++) {\n    rso.insertBefore(ulsxyfElements[j], firstChild);\n}\n"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

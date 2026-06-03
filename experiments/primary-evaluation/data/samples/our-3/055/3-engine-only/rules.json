@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Style Talk and Edit as buttons",
+      "query_selector": "#ca-talk > a, #ca-edit > a",
+      "logic": "element.style.display = 'inline-flex';\nelement.style.alignItems = 'center';\nelement.style.justifyContent = 'center';\nelement.style.padding = '6px 14px';\nelement.style.margin = '0 4px';\nelement.style.borderRadius = '4px';\nelement.style.backgroundColor = '#3366cc';\nelement.style.color = '#ffffff';\nelement.style.fontWeight = 'bold';\nelement.style.textDecoration = 'none';\nelement.style.border = '1px solid #2a4b8d';\nelement.style.boxShadow = '0 1px 3px rgba(0,0,0,0.15)';\nelement.style.transition = 'background-color 0.15s ease';\nelement.style.cursor = 'pointer';\n\nconst originalMouseOver = function() {\n    element.style.backgroundColor = '#2a4b8d';\n};\nconst originalMouseOut = function() {\n    element.style.backgroundColor = '#3366cc';\n};\n\nelement.addEventListener('mouseover', originalMouseOver);\nelement.addEventListener('mouseout', originalMouseOut);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

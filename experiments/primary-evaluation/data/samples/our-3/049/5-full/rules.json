@@ -1,0 +1,38 @@
+{
+  "rules": [
+    {
+      "label": "Replace feed with category grid",
+      "query_selector": "main[aria-label=\"Top stories and Stories for you\"]",
+      "logic": "element.style.display = 'none'\n\nvar parent = element.parentElement;\nif (!parent || element.dataset.gridInjected) return;\nelement.dataset.gridInjected = 'true';\n\nvar grid = document.createElement('div');\ngrid.className = 'm-auto mt-6 mb-12 max-w-[760px] md:px-6 lg:max-w-[1000px] lg:px-6';\ngrid.setAttribute('data-custom-grid', 'true');\n\nvar heading = document.createElement('h2');\nheading.className = 'text-xl font-bold mb-4 text-gray-800 dark:text-ymp-uh-grey-hair';\nheading.textContent = 'Browse by Category';\ngrid.appendChild(heading);\n\nvar categories = [\n  { name: 'News', icon: '📰', url: 'https://news.yahoo.com/' },\n  { name: 'Finance', icon: '💰', url: 'https://finance.yahoo.com/' },\n  { name: 'Sports', icon: '⚽', url: 'https://sports.yahoo.com/' },\n  { name: 'Weather', icon: '🌤️', url: 'https://weather.yahoo.com/' },\n  { name: 'Entertainment', icon: '🎬', url: 'https://entertainment.yahoo.com/' },\n  { name: 'Tech', icon: '💻', url: 'https://tech.yahoo.com/' },\n  { name: 'Health', icon: '❤️', url: 'https://health.yahoo.com/' },\n  { name: 'Shopping', icon: '🛒', url: 'https://shopping.yahoo.com/' },\n  { name: 'Travel', icon: '✈️', url: 'https://travel.yahoo.com/' },\n  { name: 'Lifestyle', icon: '🏠', url: 'https://life.yahoo.com/' },\n  { name: 'Autos', icon: '🚗', url: 'https://autos.yahoo.com/' },\n  { name: 'Gaming', icon: '🎮', url: 'https://gaming.yahoo.com/' },\n];\n\nvar gridContainer = document.createElement('div');\ngridContainer.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4';\n\ncategories.forEach(function(cat) {\n  var btn = document.createElement('a');\n  btn.href = cat.url;\n  btn.className = 'flex flex-col items-center justify-center rounded-xl bg-white dark:bg-uds-secondary-dark border border-ymp-uh-dirty-seagull dark:border-gray-700 p-6 hover:border-purple-500 hover:shadow-lg transition-all duration-200 cursor-pointer text-decoration-none';\n  btn.setAttribute('data-category-btn', cat.name.toLowerCase());\n\n  var icon = document.createElement('div');\n  icon.className = 'text-4xl mb-3';\n  icon.textContent = cat.icon;\n  btn.appendChild(icon);\n\n  var label = document.createElement('span');\n  label.className = 'font-medium text-gray-800 dark:text-ymp-uh-grey-hair text-base';\n  label.textContent = cat.name;\n  btn.appendChild(label);\n\n  gridContainer.appendChild(btn);\n});\n\ngrid.appendChild(gridContainer);\nparent.insertBefore(grid, element.nextSibling);"
+    },
+    {
+      "label": "Hide hero carousel",
+      "query_selector": "#ntk",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide ads",
+      "query_selector": ".ad-container, [data-google-query-id], iframe[title=\"3rd party ad content\"], .trc_related_container, [id^=\"taboola-stream-\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide left rail sections",
+      "query_selector": "#stacked-list",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide right sidebar",
+      "query_selector": "aside[aria-label=\"Weather, games, newsletter sign up, and more\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide bottom sticky ad",
+      "query_selector": "[data-bottom-sticky-ad]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

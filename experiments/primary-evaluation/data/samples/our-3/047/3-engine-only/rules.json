@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide horoscope card",
+      "query_selector": "#conbar-content > div:has([data-ylk*=\"subsec:horoscope\"])",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide What to Watch card",
+      "query_selector": "#conbar-content > div:has([data-ylk*=\"subsec:what-to-watch\"])",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide lifestyle feed items",
+      "query_selector": "#strm li.list-none",
+      "logic": "if (!element || !element.querySelector) return;\n\nvar categoryEl = element.querySelector('.text-link, .text-magenta-9, .text-rose-9');\nif (!categoryEl) return;\n\nvar text = (categoryEl.textContent || '').trim().toLowerCase();\nvar lifestyleCategories = ['relationships', 'fashion', 'music', 'lifestyle', 'style', 'food', 'health'];\n\nvar isLifestyle = false;\nfor (var i = 0; i < lifestyleCategories.length; i++) {\n    if (text === lifestyleCategories[i]) {\n        isLifestyle = true;\n        break;\n    }\n}\n\nif (isLifestyle) {\n    element.style.display = 'none';\n} else {\n    element.style.display = '';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

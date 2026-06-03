@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Move the 'Shorts' grid shelves to the very top of the search results page, above the standard video results, so I can immediately access quick-form clips.",
+	"goal": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
+	"jobs": [
+		"I want to watch long-form funny cat compilations to entertain myself.",
+		"I want to watch quick, bite-sized cat clips (Shorts) for rapid entertainment.",
+		"I want to filter my search results to only show unwatched or recently uploaded cat videos.",
+		"I want to refine my search to look for specific cat breeds, such as Siamese or Persian cats, using the suggested search terms.",
+		"I want to sign in to my account so that I can subscribe to cat-centric channels, save videos to my playlists, and leave comments.",
+		"I want to find other popular animal videos (like dog or horse videos) suggested in the related search section."
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
+			"b": "I prefer long-form, comprehensive videos (like full-length compilations or documentaries) that I can sit back and watch for a long time."
+		},
+		{
+			"a": "I rely heavily on search filters and precise categorization to find exactly the type of video content I am in the mood for.",
+			"b": "I prefer to passively browse the default search recommendations without tweaking any filters or options."
+		},
+		{
+			"a": "I always sign in so I can actively engage with content creators by subscribing, liking, and saving videos to personal playlists.",
+			"b": "I prefer to browse anonymously and passively without signing in to keep my viewing history private and uncluttered."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "a",
+	"preference": "I prefer short, quick, highly-engaging video formats (like Shorts) that I can swipe through rapidly for quick entertainment.",
+	"source-snapshot": "004",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://youtube.com/results?search_query=cats",
+	"final-url": "https://www.youtube.com/results?search_query=cats",
+	"protected_at": 1780344967649,
+	"finalized_at": 1780352296243
+}

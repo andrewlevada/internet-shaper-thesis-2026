@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Expand In this story TOC",
+      "query_selector": "section#article-toc-49c602cd-c78b-4ee9-b39d-a432d255789c details",
+      "logic": "element.setAttribute('open', 'open');\nvar summary = element.querySelector('summary');\nif (summary) {\n  summary.style.pointerEvents = 'none';\n  summary.style.cursor = 'default';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

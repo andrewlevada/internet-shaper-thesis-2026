@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Hide Your Friends tab",
+      "query_selector": "#friends-tab",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Shop with friends card",
+      "query_selector": ".intro-page-benefits-list",
+      "logic": "const title = element.querySelector('.intro-page-benefits-title');\nif (title && title.textContent.trim() === 'Shop with friends') {\n  element.style.display = 'none';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

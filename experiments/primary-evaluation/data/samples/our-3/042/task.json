@@ -1,0 +1,34 @@
+{
+	"request-prompt": "Move the 'What's new on Pinterest' section to the very top of the page, above the editorial board banners, so the absolute latest trends load first.",
+	"goal": "I am always looking for the newest trends, viral hacks, and aesthetic fads to stay up-to-date.",
+	"jobs": [
+		"I want to search for specific ideas, recipes, or style inspiration using the search bar",
+		"I want to browse curated trending topics and hacks to find immediate creative inspiration",
+		"I want to explore ideas categorized by my specific interests, like Home Decor or Art, to discover new trends",
+		"I want to view the newest pins on the platform to see what people are currently sharing",
+		"I want to sign up or log in to Pinterest so that I can start saving and organizing the ideas I find"
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer browsing highly visual grids and curated categories passively to spark my creativity.",
+			"b": "I am a highly goal-oriented user who prefers typing precise queries into a search bar to find immediate answers."
+		},
+		{
+			"a": "I love meticulously organizing, saving, and categorizing visual ideas into boards for future planning.",
+			"b": "I prefer consuming ideas for quick, immediate inspiration and rarely save or organize things for later."
+		},
+		{
+			"a": "I am always looking for the newest trends, viral hacks, and aesthetic fads to stay up-to-date.",
+			"b": "I prefer timeless, practical, and classic designs or recipes, and tend to ignore fleeting online trends."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I am always looking for the newest trends, viral hacks, and aesthetic fads to stay up-to-date.",
+	"source-snapshot": "052",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.pinterest.com/ideas",
+	"final-url": "https://www.pinterest.com/ideas/",
+	"protected_at": 1780344967701,
+	"finalized_at": 1780352303294
+}

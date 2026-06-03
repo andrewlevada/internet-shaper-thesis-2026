@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Move comments to top",
+      "query_selector": "#articleComments",
+      "logic": "(function() {\n  if (element.parentElement && element.parentElement.id === 'mw-data-after-content') {\n    var content = document.getElementById('content');\n    if (content && content.parentNode) {\n      content.parentNode.insertBefore(element, content);\n    }\n  }\n})();"
+    },
+    {
+      "label": "Style comments section prominently",
+      "query_selector": "#articleComments",
+      "logic": "(function() {\n  element.style.marginBottom = '24px';\n  element.style.padding = '16px';\n  element.style.borderRadius = '8px';\n  element.style.backgroundColor = '#f0f4ff';\n  element.style.border = '2px solid #361170';\n  element.style.boxShadow = '0 2px 8px rgba(54, 17, 112, 0.15)';\n  element.style.display = 'block';\n\n  var section = element.querySelector('section');\n  if (section) {\n    section.style.padding = '0';\n    section.style.margin = '0';\n  }\n})();"
+    },
+    {
+      "label": "Highlight comments button",
+      "query_selector": "a[data-tracking-label=\"comments-button\"]",
+      "logic": "(function() {\n  element.style.fontWeight = '700';\n  element.style.color = '#361170';\n  element.style.border = '2px solid #361170';\n  element.style.borderRadius = '4px';\n  element.style.padding = '6px 12px';\n})();"
+    },
+    {
+      "label": "Highlight Discuss buttons",
+      "query_selector": "a[aria-label=\"Discuss\"]",
+      "logic": "(function() {\n  element.style.fontWeight = '700';\n  element.style.color = '#361170';\n  element.style.border = '2px solid #361170';\n  element.style.borderRadius = '4px';\n  element.style.padding = '6px 12px';\n})();"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

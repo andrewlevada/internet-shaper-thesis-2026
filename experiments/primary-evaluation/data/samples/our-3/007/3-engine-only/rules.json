@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Move Shorts to top",
+      "query_selector": "ytd-section-list-renderer #contents ytd-item-section-renderer:has(grid-shelf-view-model)",
+      "logic": "element.style.order = '-1';"
+    },
+    {
+      "label": "Move Shorts to top",
+      "query_selector": "ytd-section-list-renderer #contents ytd-item-section-renderer:has(grid-shelf-view-model)",
+      "logic": "const parent = element.parentNode;\nif (parent && element._shortsMoved !== true) {\n  element._shortsMoved = true;\n  parent.prepend(element);\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

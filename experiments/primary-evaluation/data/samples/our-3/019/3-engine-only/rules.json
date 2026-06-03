@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Add category tags under headline",
+      "query_selector": "h1.flatplan_header",
+      "logic": "element.style.position = 'relative';\n\nif (element.querySelector('.category-tags-bar')) return;\n\nconst bar = document.createElement('div');\nbar.className = 'category-tags-bar';\nbar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;margin-bottom:4px;';\n\nconst categories = [\n  { label: 'Space', href: 'https://weather.com/news/space' },\n  { label: 'Astronomy', href: 'https://weather.com/news/astronomy' },\n  { label: 'Exoplanets', href: 'https://weather.com/news/exoplanets' },\n  { label: 'NASA', href: 'https://weather.com/news/nasa' },\n  { label: 'Hubble Telescope', href: 'https://weather.com/news/hubble-telescope' }\n];\n\ncategories.forEach(function(cat) {\n  const a = document.createElement('a');\n  a.href = cat.href;\n  a.textContent = cat.label;\n  a.target = '_blank';\n  a.rel = 'noopener noreferrer';\n  a.style.cssText = 'display:inline-block;padding:4px 12px;font-size:13px;font-weight:700;color:#ffffff;background-color:#003399;border-radius:9999px;text-decoration:none;transition:background-color 0.2s,opacity 0.2s;white-space:nowrap;line-height:1.4;';\n  a.onmouseover = function() { this.style.backgroundColor = '#0050d4'; };\n  a.onmouseout = function() { this.style.backgroundColor = '#003399'; };\n  bar.appendChild(a);\n});\n\nelement.parentNode.insertBefore(bar, element.nextSibling);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

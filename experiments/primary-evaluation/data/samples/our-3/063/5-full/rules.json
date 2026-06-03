@@ -1,0 +1,48 @@
+{
+  "rules": [
+    {
+      "label": "Hide right sidebar knowledge panel",
+      "query_selector": "#rhs",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide rich cards and special sections",
+      "query_selector": ".ULSxyf",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide bottom people also search",
+      "query_selector": "#bres",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide shopping suggestions",
+      "query_selector": "#HbKV2c, .S6Ggif",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide slim appbar notification",
+      "query_selector": "#slim_appbar",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide top ads container",
+      "query_selector": "#tads, #tvcap",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide bottom ads container",
+      "query_selector": "#tadsb",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide inline video results",
+      "query_selector": ".A6K0A.PmEWq",
+      "logic": "element.style.display = 'none';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

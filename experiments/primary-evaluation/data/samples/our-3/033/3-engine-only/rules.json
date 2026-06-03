@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Hide left sidebar",
+      "query_selector": "tp-yt-app-drawer#guide",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Enlarge search bar",
+      "query_selector": "yt-searchbox.ytSearchboxComponentDesktop",
+      "logic": "element.style.maxWidth = '700px'\nelement.style.width = '100%'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Move More from YouTube to top",
+      "query_selector": "ytd-guide-section-renderer h3 yt-formatted-string#guide-section-title",
+      "logic": "const titleEl = element;\nif (titleEl.textContent.trim() !== 'More from YouTube') return;\nconst section = titleEl.closest('ytd-guide-section-renderer');\nif (!section) return;\nconst parent = section.parentElement;\nif (!parent || !parent.firstChild) return;\nif (parent.firstChild === section) return;\nparent.insertBefore(section, parent.firstChild);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

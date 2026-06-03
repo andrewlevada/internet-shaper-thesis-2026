@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Hide TFA archive grid",
+      "query_selector": "div.hlist:has(> span > b > a[href*=\"Today's featured article\"])",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide logo for full-width search",
+      "query_selector": ".vector-header-start .mw-logo",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide main menu for full-width search",
+      "query_selector": ".vector-header-start .vector-main-menu-landmark",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide user links for full-width search",
+      "query_selector": ".vector-header-end .vector-user-links",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

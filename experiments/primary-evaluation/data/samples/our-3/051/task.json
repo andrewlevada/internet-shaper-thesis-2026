@@ -1,0 +1,36 @@
+{
+	"request-prompt": "Make the 'Your Friends' tab in the top tab-bar stand out visually with a high-contrast color and a collaborative user icon.",
+	"goal": "I love sharing my shopping plans and gift ideas with friends and family to collaborate on what to buy.",
+	"jobs": [
+		"I want to sign in to access, view, and organize my existing Amazon wishlists and shopping lists",
+		"I want to create a wedding registry so that my guests can easily find and purchase the wedding gifts we want",
+		"I want to set up a baby registry to organize what I need for my newborn and share the list with friends and family",
+		"I want to create a custom gift list for a special occasion like a birthday or milestone celebration",
+		"I want to learn how to manage and sync my shopping list using an Alexa-enabled device",
+		"I want to find and view lists that my friends or family members have shared with me",
+		"I want to contact customer support or visit the help section to troubleshoot an issue with my list or registry"
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer to plan all my life milestones and shopping needs far in advance using highly organized, structured registries and wishlists.",
+			"b": "I prefer to shop spontaneously or ask for gifts informally as the need arises, without keeping structured wishlists or registries."
+		},
+		{
+			"a": "I love sharing my shopping plans and gift ideas with friends and family to collaborate on what to buy.",
+			"b": "I prefer to keep my shopping lists and desired items strictly private, avoiding any social sharing or collaborative list-building."
+		},
+		{
+			"a": "I prefer managing my shopping tasks using voice-activated smart assistants and integrated smart home ecosystems for hands-free convenience.",
+			"b": "I prefer typing or writing down my shopping lists manually on a screen or paper rather than using voice assistants or connected smart tech."
+		}
+	],
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I love sharing my shopping plans and gift ideas with friends and family to collaborate on what to buy.",
+	"source-snapshot": "023",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.amazon.com/hz/wishlist/ls",
+	"final-url": "https://www.amazon.com/hz/wishlist/intro",
+	"protected_at": 1780344967728,
+	"finalized_at": 1780352305378
+}

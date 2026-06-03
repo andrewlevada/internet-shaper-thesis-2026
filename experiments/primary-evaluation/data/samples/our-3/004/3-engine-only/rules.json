@@ -1,0 +1,88 @@
+{
+  "rules": [
+    {
+      "label": "Hide side columns in highlight",
+      "query_selector": ".post-column-1, .post-column-2",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide economy widget",
+      "query_selector": ".widget-economia, #widget-economia",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide horoscope widget",
+      "query_selector": ".widget-horoscopo",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide sports agenda widget",
+      "query_selector": ".widget-sports, #widget-sports",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide all banner ads",
+      "query_selector": "banner-ad, banner-ad-fn, .ad-container, .shopping__widget, touchpoint-ad",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide weather bar",
+      "query_selector": ".area-previsao-do-tempo, .previsao-separator",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide push notification",
+      "query_selector": ".push-web-container, .push-web-notification",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Stack columns vertically",
+      "query_selector": ".column-container-jornalismo, .column-container-esporte, .column-container-entretenimento",
+      "logic": "element.style.display = 'block'; element.style.width = '100%'; element.style.float = 'none'"
+    },
+    {
+      "label": "Full-width main post row",
+      "query_selector": ".post-row.with-6-posts",
+      "logic": "element.style.width = '100%'"
+    },
+    {
+      "label": "Hide trailer carousel",
+      "query_selector": ".destaque-trilho, #trilho-destaque",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide video sections",
+      "query_selector": ".area-franja-de-videos, .area-video-bbb, #franja-video",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide TV schedule grid",
+      "query_selector": ".grade-programacao",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide outer separators",
+      "query_selector": ".outer-separator",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Full-width column content",
+      "query_selector": ".area-colunas__container, .column-content",
+      "logic": "element.style.display = 'block'; element.style.width = '100%'; element.style.maxWidth = '100%'"
+    },
+    {
+      "label": "Hide more links in columns",
+      "query_selector": ".more-container",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Widen main content container",
+      "query_selector": ".hui-container",
+      "logic": "element.style.maxWidth = '100%'; element.style.width = '100%'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

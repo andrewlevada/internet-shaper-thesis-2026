@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide More from YouTube section",
+      "query_selector": "ytd-guide-section-renderer",
+      "logic": "const titleEl = element.querySelector('h3 yt-formatted-string#guide-section-title');\nif (titleEl && titleEl.textContent.trim() === 'More from YouTube') {\n  element.style.display = 'none';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

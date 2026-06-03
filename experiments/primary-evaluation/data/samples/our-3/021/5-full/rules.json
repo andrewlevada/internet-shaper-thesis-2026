@@ -1,0 +1,88 @@
+{
+  "rules": [
+    {
+      "label": "Style Sponsored section header",
+      "query_selector": "[data-slot=\"card\"][data-module-id] [data-slot=\"card-header\"]",
+      "logic": "element.style.cssText = `\n  display: flex;\n  align-items: center;\n  padding: 0 !important;\n  margin: 0 0 16px 0 !important;\n  border-top: none !important;\n  grid-template-rows: none !important;\n  gap: 0 !important;\n`;\nconst h2 = element.querySelector('h2');\nif (h2) {\n  h2.style.cssText = `\n    font-size: 20px !important;\n    font-weight: 700 !important;\n    line-height: normal !important;\n    letter-spacing: -0.01em !important;\n    color: #111827 !important;\n    margin: 0 !important;\n  `;\n}"
+    },
+    {
+      "label": "Match Sponsored card container style",
+      "query_selector": "[data-slot=\"card\"][data-module-id]",
+      "logic": "element.style.cssText = `\n  display: flex !important;\n  flex-direction: column !important;\n  background-color: white !important;\n  border-radius: 0 !important;\n  gap: 0 !important;\n  padding: 0 !important;\n  margin-top: 32px !important;\n`;\nelement.className = element.className.replace(/rounded-xl/g, '');"
+    },
+    {
+      "label": "Restyle Taboola feed grid layout",
+      "query_selector": "#taboola-below-content-thumbnails-video",
+      "logic": "element.style.cssText = `\n  display: grid !important;\n  grid-template-columns: repeat(4, 1fr) !important;\n  gap: 24px !important;\n  padding: 0 !important;\n  margin: 0 !important;\n`;"
+    },
+    {
+      "label": "Hide Taboola card wrappers",
+      "query_selector": ".tbl-feed-card.trc_related_container",
+      "logic": "element.style.cssText = `\n  display: contents !important;\n  padding: 0 !important;\n  margin: 0 !important;\n`;"
+    },
+    {
+      "label": "Restyle Taboola inner rbox container",
+      "query_selector": ".trc_rbox_container, .trc_rbox, .trc_rbox_outer, .trc_rbox_div, [id^=\"internal_trc_\"]",
+      "logic": "element.style.cssText = `\n  display: contents !important;\n  padding: 0 !important;\n  margin: 0 !important;\n  border: none !important;\n  overflow: visible !important;\n`;"
+    },
+    {
+      "label": "Hide Taboola card headers and footers",
+      "query_selector": ".trc_rbox_header, .trc_clearer, .tbl-feed-header, .tbl-batch-anchor, .trc_exclude_overlay, .trc_exclude_undo_btn, .trc_user_exclude_btn",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide Taboola branding and attribution",
+      "query_selector": ".trc_attribution_position_top, .trc_attribution_position_after_branding, .logoDiv.link-attribution, .logoDiv.link-disclosure, .attribution-disclosure-link-sponsored, .trc_desktop_attribution_link, .trc_mobile_attribution_link, .trc_desktop_disclosure_link, .trc_mobile_disclosure_link",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Restyle Taboola video cards as native",
+      "query_selector": ".videoCube.trc_spotlight_item",
+      "logic": "element.style.cssText = `\n  display: flex !important;\n  flex-direction: column !important;\n  gap: 16px !important;\n  padding: 0 !important;\n  margin: 0 !important;\n  width: 100% !important;\n  float: none !important;\n  clear: none !important;\n`;\n\n// Style the thumbnail link to match native card image wrapper\nconst thumbLink = element.querySelector('.item-thumbnail-href');\nif (thumbLink) {\n  thumbLink.style.cssText = `\n    display: block !important;\n    position: relative !important;\n    overflow: hidden !important;\n    border-radius: 16px !important;\n    transition: box-shadow 0.15s ease !important;\n  `;\n}\n\n// Style the thumbBlock to match native image styling\nconst thumbBlock = element.querySelector('.thumbBlock');\nif (thumbBlock) {\n  thumbBlock.style.cssText = `\n    display: block !important;\n    width: 100% !important;\n    padding-top: 100% !important;\n    border-radius: 8px !important;\n    transform: scale(1.01) !important;\n    transition: transform 0.15s ease !important;\n    background-size: cover !important;\n    background-position: center !important;\n  `;\n}\n\n// Style the videoCube_aspect to set aspect ratio\nconst aspect = element.querySelector('.videoCube_aspect');\nif (aspect) {\n  aspect.style.cssText = `\n    display: none !important;\n  `;\n}\n\n// Add hover effect wrapper - wrap in a group-like container\nelement.classList.add('group');\nelement.classList.add('no-underline');\nelement.classList.add('rounded');\nelement.classList.add('focus-visible\\\\:outline-2');\n\n// Style the label link to match native card text\nconst labelLink = element.querySelector('.item-label-href');\nif (labelLink) {\n  labelLink.style.cssText = `\n    display: flex !important;\n    flex-direction: column !important;\n    width: 100% !important;\n    text-decoration: none !important;\n    padding: 0 !important;\n    margin: 0 !important;\n  `;\n}\n\n// Style the video title to match native headline\nconst titleLabel = element.querySelector('.video-title.trc_ellipsis');\nif (titleLabel) {\n  titleLabel.style.cssText = `\n    font-weight: 700 !important;\n    color: #111827 !important;\n    font-size: 16px !important;\n    line-height: 1.5 !important;\n    letter-spacing: -0.01em !important;\n    display: -webkit-box !important;\n    -webkit-line-clamp: 4 !important;\n    -webkit-box-orient: vertical !important;\n    overflow: hidden !important;\n    margin-bottom: 4px !important;\n    padding-bottom: 2px !important;\n  `;\n}\n\n// Hide the branding span to match native cards (no source labels)\nconst branding = element.querySelector('.branding');\nif (branding) {\n  branding.style.display = 'none';\n}\n\n// Hide video description if present\nconst descLabel = element.querySelector('.video-description');\nif (descLabel) {\n  descLabel.style.display = 'none';\n}\n\n// Style the label box\nconst labelBox = element.querySelector('.video-label-box');\nif (labelBox) {\n  labelBox.style.cssText = `\n    display: flex !important;\n    flex-direction: column !important;\n    padding: 0 !important;\n    margin: 0 !important;\n    width: 100% !important;\n  `;\n}\n\n// Add hover shadow effect via a pseudo-element simulation\nconst thumbHolder = element.querySelector('.thumbBlock_holder');\nif (thumbHolder) {\n  thumbHolder.style.cssText = `\n    display: block !important;\n    overflow: hidden !important;\n    border-radius: 16px !important;\n    transition: box-shadow 0.15s ease !important;\n  `;\n}"
+    },
+    {
+      "label": "Hide Taboola feed header logo",
+      "query_selector": ".tbl-feed-header-logo, .trc_header_ext",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide spotlight injected items",
+      "query_selector": "#taboola-below-content-thumbnails-video-sca1",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Fix Sponsored card content wrapper",
+      "query_selector": "[data-slot=\"card\"][data-module-id] [data-slot=\"card-content\"]",
+      "logic": "element.style.cssText = `\n  padding: 0 16px 16px 16px !important;\n  margin: 0 !important;\n`;"
+    },
+    {
+      "label": "Add hover effects to Taboola thumbnails",
+      "query_selector": ".videoCube.trc_spotlight_item .thumbBlock_holder",
+      "logic": "element.style.cssText = `\n  border-radius: 16px !important;\n  transition: box-shadow 0.15s ease, transform 0.15s ease !important;\n`;\n\n// Add a hover handler for shadow effect\nelement.parentElement.addEventListener('mouseenter', function() {\n  element.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';\n});\nelement.parentElement.addEventListener('mouseleave', function() {\n  element.style.boxShadow = 'none';\n});"
+    },
+    {
+      "label": "Hide Google AdX Taboola slots",
+      "query_selector": ".tbl-g-adx-slot",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Add subtle sponsored label to cards",
+      "query_selector": ".videoCube.trc_spotlight_item .video-label-box",
+      "logic": "// Only add if not already added\nif (element.querySelector('.sponsored-native-label')) return;\n\nconst label = document.createElement('span');\nlabel.className = 'sponsored-native-label';\nlabel.style.cssText = `\n  font-size: 11px !important;\n  color: #9CA3AF !important;\n  font-weight: 500 !important;\n  margin-top: 4px !important;\n`;\nlabel.textContent = 'Sponsored';\nelement.appendChild(label);"
+    },
+    {
+      "label": "Flatten Taboola rbox inner divs",
+      "query_selector": ".trc_rbox_container > div, .trc_rbox_border_elm",
+      "logic": "// Only apply to elements that are inside Taboola feed and not already styled\nif (element.closest('#taboola-below-content-thumbnails-video')) {\n  element.style.cssText = `\n    display: contents !important;\n    padding: 0 !important;\n    margin: 0 !important;\n    border: none !important;\n    overflow: visible !important;\n  `;\n}"
+    },
+    {
+      "label": "Responsive Taboola grid on small screens",
+      "query_selector": "#taboola-below-content-thumbnails-video",
+      "logic": "// Use CSS media queries via element's style - this won't work directly.\n// Instead, use a more flexible grid that adapts naturally.\nelement.style.cssText = `\n  display: grid !important;\n  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;\n  gap: 24px !important;\n  padding: 0 !important;\n  margin: 0 !important;\n`;"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

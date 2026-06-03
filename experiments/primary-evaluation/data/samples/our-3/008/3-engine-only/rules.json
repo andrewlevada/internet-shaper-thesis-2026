@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide Shorts grid shelves",
+      "query_selector": "grid-shelf-view-model",
+      "logic": "const header = element.querySelector('.ytShelfHeaderLayoutTitle');\nif (!header) return;\nconst titleText = header.textContent || '';\nif (titleText.trim() === 'Shorts') {\n  element.style.display = 'none';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "rules": [
+    {
+      "label": "Move videos section to top",
+      "query_selector": "#videos-recomendados",
+      "logic": "if (element.parentElement && element.parentElement.id === 'franja-video') {\n    var header = document.getElementById('header-section');\n    if (header && header.nextSibling !== element) {\n        header.parentNode.insertBefore(element, header.nextSibling);\n    }\n}"
+    },
+    {
+      "label": "Enlarge video player",
+      "query_selector": ".post-player",
+      "logic": "element.style.maxWidth = '100%';\nelement.style.width = '100%';"
+    },
+    {
+      "label": "Enlarge bs-player element",
+      "query_selector": "bs-player#player-container",
+      "logic": "element.style.maxWidth = '100%';\nelement.style.width = '100%';\nelement.style.height = 'auto';"
+    },
+    {
+      "label": "Widen video grid section",
+      "query_selector": ".video-grid-franja-player-escuro__container",
+      "logic": "element.style.maxWidth = '100%';\nelement.style.width = '100%';"
+    },
+    {
+      "label": "Widen video grid section wrapper",
+      "query_selector": ".video-grid-franja-player-escuro",
+      "logic": "element.style.maxWidth = '100%';\nelement.style.width = '100%';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Add Save button on pins",
+      "query_selector": ".PinCard__imageWrapper",
+      "logic": "if (element.querySelector('.custom-save-btn')) return;\n\nvar btn = document.createElement('button');\nbtn.className = 'custom-save-btn';\nbtn.type = 'button';\nbtn.textContent = 'Save';\nbtn.style.cssText = 'position:absolute;top:8px;right:8px;z-index:10;background:#E60023;color:#fff;border:none;border-radius:18px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.25);transition:background 0.2s;pointer-events:auto;line-height:1;';\n\nbtn.addEventListener('mouseenter', function() { btn.style.background = '#ad081b'; });\nbtn.addEventListener('mouseleave', function() { btn.style.background = '#E60023'; });\n\nvar pinCard = element.closest('[data-test-id=\"pin\"]');\nif (pinCard) {\n  var pinId = pinCard.getAttribute('data-test-pin-id');\n  if (pinId) {\n    btn.addEventListener('click', function(e) {\n      e.preventDefault();\n      e.stopPropagation();\n      // Trigger the save by clicking the existing more-actions button or opening the pin\n      var deeplink = pinCard.querySelector('[data-test-id=\"deeplink-wrapper\"] a');\n      if (deeplink) {\n        window.open(deeplink.href, '_blank');\n      }\n    });\n  }\n}\n\nelement.style.position = 'relative';\nelement.appendChild(btn);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

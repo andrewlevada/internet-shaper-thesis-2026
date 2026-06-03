@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "label": "Move What's new to top",
+      "query_selector": "section[data-test-id=\"tier1-pin-feed\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Move What's new to top",
+      "query_selector": "section[data-test-id=\"tier1-pin-feed\"]",
+      "logic": "// do nothing - will be handled by parent rule"
+    },
+    {
+      "label": "Move What's new to top",
+      "query_selector": "section[data-test-id=\"tier1-pin-feed\"]",
+      "logic": "var parent = element.parentNode;\nif (parent && parent.firstChild !== element) {\n  parent.insertBefore(element, parent.firstChild);\n}"
+    },
+    {
+      "label": "Fix visibility",
+      "query_selector": "section[data-test-id=\"tier1-pin-feed\"]",
+      "logic": "element.style.display = '';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

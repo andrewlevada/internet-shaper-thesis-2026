@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Expand TOC dropdown",
+      "query_selector": "section[id^=\"article-toc\"] details",
+      "logic": "element.setAttribute('open', 'open');"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

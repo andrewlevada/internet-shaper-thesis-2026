@@ -1,0 +1,53 @@
+{
+  "rules": [
+    {
+      "label": "Hide automated feed content",
+      "query_selector": "#nca-homepage > div:first-child > div:nth-child(2)",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide trending sidebar",
+      "query_selector": "#stacked-list",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide main feed area",
+      "query_selector": "main[aria-label=\"Top stories and Stories for you\"]",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide right sidebar",
+      "query_selector": "aside[aria-label=\"Weather, games, newsletter sign up, and more\"]",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide convenience bar",
+      "query_selector": "section[aria-label=\"Features bar\"]",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide top ads",
+      "query_selector": "div[style*=\"--feature-bar-margin\"] > div:first-child",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide explore hub sidebar",
+      "query_selector": "#explore-hub",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide trending search",
+      "query_selector": "#trending-search",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Inject category directory grid",
+      "query_selector": "#nca-homepage > div:first-child > div:nth-child(2)",
+      "logic": "if (element.querySelector('.custom-directory-grid')) return;\n\nvar grid = document.createElement('div');\ngrid.className = 'custom-directory-grid';\ngrid.style.cssText = 'max-width:900px;margin:40px auto;padding:20px;';\n\nvar title = document.createElement('h1');\ntitle.textContent = 'Choose a Category';\ntitle.style.cssText = 'font-size:2rem;font-weight:700;text-align:center;margin-bottom:32px;color:#1d1d1f;';\ngrid.appendChild(title);\n\nvar gridContainer = document.createElement('div');\ngridContainer.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;';\n\nvar categories = [\n  { name: 'News', url: 'https://www.yahoo.com/news/', icon: '📰', color: '#7c3aed' },\n  { name: 'Finance', url: 'https://finance.yahoo.com/', icon: '📈', color: '#059669' },\n  { name: 'Sports', url: 'https://sports.yahoo.com/', icon: '⚽', color: '#dc2626' },\n  { name: 'Weather', url: 'https://weather.yahoo.com/', icon: '🌤️', color: '#0ea5e9' },\n  { name: 'Entertainment', url: 'https://www.yahoo.com/entertainment/', icon: '🎬', color: '#db2777' },\n  { name: 'Technology', url: 'https://tech.yahoo.com/', icon: '💻', color: '#6366f1' },\n  { name: 'Health', url: 'https://health.yahoo.com/', icon: '❤️', color: '#ef4444' },\n  { name: 'Lifestyle', url: 'https://www.yahoo.com/lifestyle/', icon: '🌿', color: '#16a34a' },\n  { name: 'Shopping', url: 'https://shopping.yahoo.com/', icon: '🛒', color: '#f59e0b' },\n  { name: 'Games', url: 'https://www.yahoo.com/games/', icon: '🎮', color: '#8b5cf6' },\n  { name: 'Search', url: 'https://search.yahoo.com/', icon: '🔍', color: '#0891b2' },\n  { name: 'Mail', url: 'https://mail.yahoo.com/', icon: '✉️', color: '#a855f7' }\n];\n\ncategories.forEach(function(cat) {\n  var btn = document.createElement('a');\n  btn.href = cat.url;\n  btn.target = '_blank';\n  btn.rel = 'noopener noreferrer';\n  btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;border-radius:16px;text-decoration:none;font-weight:600;font-size:1.1rem;color:#fff;background:' + cat.color + ';transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 2px 8px rgba(0,0,0,0.15);cursor:pointer;';\n  \n  var icon = document.createElement('div');\n  icon.textContent = cat.icon;\n  icon.style.cssText = 'font-size:2.5rem;margin-bottom:12px;';\n  \n  var label = document.createElement('span');\n  label.textContent = cat.name;\n  \n  btn.appendChild(icon);\n  btn.appendChild(label);\n  \n  btn.addEventListener('mouseenter', function() {\n    btn.style.transform = 'translateY(-4px)';\n    btn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.25)';\n  });\n  btn.addEventListener('mouseleave', function() {\n    btn.style.transform = 'translateY(0)';\n    btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';\n  });\n  \n  gridContainer.appendChild(btn);\n});\n\ngrid.appendChild(gridContainer);\nelement.innerHTML = '';\nelement.style.display = 'block';\nelement.appendChild(grid);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

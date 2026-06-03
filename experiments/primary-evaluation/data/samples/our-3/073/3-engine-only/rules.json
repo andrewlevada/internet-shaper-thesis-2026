@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide left article sidebar",
+      "query_selector": "aside.article-sidebar",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

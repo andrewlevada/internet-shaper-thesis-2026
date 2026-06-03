@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Move comments to top",
+      "query_selector": "#articleComments",
+      "logic": "element.style.display = 'none'\nif (!document.getElementById('comments-prominent')) {\n  var container = document.createElement('div');\n  container.id = 'comments-prominent';\n  container.innerHTML = '<h2 style=\"margin: 1em 0; font-size: 1.5em;\">💬 Community Discussion</h2>';\n  container.appendChild(element.cloneNode(true));\n  var pageHeader = document.querySelector('.page-header');\n  if (pageHeader) {\n    pageHeader.parentNode.insertBefore(container, pageHeader.nextSibling);\n  }\n}"
+    },
+    {
+      "label": "Promote Discuss button",
+      "query_selector": ".fandom-community-header .wiki-tools a[title=\"Discuss\"]",
+      "logic": "if (element.parentNode) {\n  element.style.fontSize = '1.2em';\n  element.style.padding = '8px 16px';\n  element.style.borderRadius = '8px';\n  element.style.backgroundColor = '#FA005A';\n  element.style.color = '#fff';\n  element.style.fontWeight = 'bold';\n  element.style.display = 'inline-flex';\n  element.style.alignItems = 'center';\n  element.style.gap = '6px';\n  element.style.transition = 'background-color 0.2s, transform 0.1s';\n  element.style.textDecoration = 'none';\n  var label = document.createElement('span');\n  label.textContent = 'Discuss';\n  if (!element.querySelector('span')) {\n    element.appendChild(label);\n  }\n}"
+    },
+    {
+      "label": "Highlight comments button",
+      "query_selector": "#article-comments-button",
+      "logic": "if (element.parentNode) {\n  element.style.fontSize = '1.2em';\n  element.style.fontWeight = 'bold';\n  element.style.color = '#FA005A';\n  element.style.padding = '6px 12px';\n  element.style.borderRadius = '6px';\n  element.style.backgroundColor = '#fff0f5';\n  element.style.border = '2px solid #FA005A';\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

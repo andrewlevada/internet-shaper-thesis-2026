@@ -1,0 +1,43 @@
+{
+  "rules": [
+    {
+      "label": "Hide content below header",
+      "query_selector": "#nca-homepage, #benji-dashboard-root, [data-bottom-sticky-ad]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide top ad banner",
+      "query_selector": "#module-uh + div > div",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide footer",
+      "query_selector": "footer.px-2.pb-4.lg\\:hidden, aside[aria-label=\"Weather, games, newsletter sign up, and more\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide convenience bar",
+      "query_selector": "#convenience-bar, section[aria-label=\"Features bar\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide navigation rail",
+      "query_selector": "#ybar-l1-nav",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide skip links",
+      "query_selector": "#module-uh > ul",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide sign-in button",
+      "query_selector": "a[href*=\"login.yahoo.com\"]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

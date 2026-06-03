@@ -1,0 +1,123 @@
+{
+  "rules": [
+    {
+      "label": "Restyle Taboola container",
+      "query_selector": "#taboola-below-content-thumbnails-video",
+      "logic": "element.style.display = 'grid';\nelement.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';\nelement.style.gap = '16px';\nelement.style.padding = '0';"
+    },
+    {
+      "label": "Hide Taboola row wrappers",
+      "query_selector": "div[tbl-feed-card]",
+      "logic": "element.style.display = 'contents';\nelement.style.padding = '0';\nelement.style.margin = '0';"
+    },
+    {
+      "label": "Restyle Taboola inner wrapper",
+      "query_selector": ".trc_rbox_container, .trc_rbox_outer, #rbox-blended, [id^=\"internal_trc_\"]",
+      "logic": "element.style.display = 'contents';\nelement.style.padding = '0';\nelement.style.margin = '0';\nelement.style.overflow = 'visible';"
+    },
+    {
+      "label": "Style Taboola cards as native",
+      "query_selector": ".videoCube.trc_spotlight_item",
+      "logic": "// Match native card link style\nelement.style.display = 'block';\nelement.style.textDecoration = 'none';\nelement.style.borderRadius = '8px';\nelement.style.cursor = 'pointer';\nelement.style.transition = 'box-shadow 0.15s ease';\nelement.style.outline = 'none';\n\n// On hover, add shadow like native cards\nelement.onmouseenter = function() {\n  element.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';\n};\nelement.onmouseleave = function() {\n  element.style.boxShadow = 'none';\n};"
+    },
+    {
+      "label": "Style Taboola thumbnails",
+      "query_selector": ".thumbBlock_holder",
+      "logic": "element.style.position = 'relative';\nelement.style.overflow = 'hidden';\nelement.style.borderRadius = '16px';\nelement.style.transition = 'box-shadow 0.15s ease';\nelement.style.aspectRatio = '1 / 1';"
+    },
+    {
+      "label": "Style Taboola thumbnail images",
+      "query_selector": ".thumbBlock",
+      "logic": "element.style.display = 'block';\nelement.style.width = '100%';\nelement.style.height = '100%';\nelement.style.backgroundSize = 'cover';\nelement.style.backgroundPosition = 'center';\nelement.style.borderRadius = '12px';\nelement.style.transform = 'scale(1.01)';\nelement.style.transition = 'transform 0.15s ease';"
+    },
+    {
+      "label": "Remove Taboola video overlay",
+      "query_selector": ".thumbnail-overlay, .videoCube_aspect",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Style Taboola title text",
+      "query_selector": ".video-label-box.trc-main-label",
+      "logic": "element.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.width = '100%';\nelement.style.paddingTop = '8px';\nelement.style.gap = '4px';"
+    },
+    {
+      "label": "Style Taboola video titles",
+      "query_selector": ".video-label.video-title.trc_ellipsis",
+      "logic": "element.style.fontFamily = 'inherit';\nelement.style.fontSize = '14px';\nelement.style.fontWeight = '700';\nelement.style.lineHeight = '1.5';\nelement.style.letterSpacing = '-0.015em';\nelement.style.color = '#111827';\nelement.style.display = '-webkit-box';\nelement.style.webkitLineClamp = '2';\nelement.style.webkitBoxOrient = 'vertical';\nelement.style.overflow = 'hidden';\nelement.style.marginBottom = '4px';\nelement.style.paddingBottom = '2px';"
+    },
+    {
+      "label": "Style Taboola branding badge",
+      "query_selector": ".branding[slot=\"branding\"], .composite-branding",
+      "logic": "element.style.fontSize = '11px';\nelement.style.fontWeight = '500';\nelement.style.color = '#6B7280';\nelement.style.display = 'flex';\nelement.style.alignItems = 'center';\nelement.style.gap = '4px';"
+    },
+    {
+      "label": "Hide Taboola headers and extras",
+      "query_selector": ".trc_rbox_header, .trc_clearer, .tbl-feed-header, .tbl-batch-anchor, .trc_user_exclude_btn, .trc_exclude_overlay, .trc_exclude_undo_btn",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide Taboola sponsored labels",
+      "query_selector": ".trc-content-sponsored, .attribution-disclosure-link-sponsored, .link-attribution, .branding-icon",
+      "logic": "// Keep the content but remove visual \"sponsored\" badges for unified look\nif (element.classList.contains('trc-content-sponsored')) {\n  element.style.overflow = 'visible';\n} else {\n  element.style.display = 'none';\n}"
+    },
+    {
+      "label": "Restyle Sponsored Content section header",
+      "query_selector": "[data-module-key=\"main-block-2\"] section",
+      "logic": "element.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.background = '#fff';\nelement.style.borderRadius = '0';\nelement.style.padding = '0';\nelement.style.gap = '0';"
+    },
+    {
+      "label": "Match Sponsored header to native",
+      "query_selector": "[data-slot=\"card-header\"] h2",
+      "logic": "element.style.fontSize = '20px';\nelement.style.fontWeight = '700';\nelement.style.letterSpacing = '-0.015em';\nelement.style.lineHeight = '1.5';\nelement.style.color = '#111827';\nelement.style.paddingBottom = '16px';"
+    },
+    {
+      "label": "Style Taboola card links",
+      "query_selector": ".item-thumbnail-href, .item-label-href",
+      "logic": "element.style.textDecoration = 'none';\nelement.style.color = 'inherit';"
+    },
+    {
+      "label": "Hide Google ADX empty slots",
+      "query_selector": ".tbl-g-adx-slot",
+      "logic": "// Only hide if it's truly empty (no child content)\nif (!element.innerHTML.trim()) {\n  element.style.display = 'none';\n}"
+    },
+    {
+      "label": "Style Taboola inline branding",
+      "query_selector": ".branding-inner.inline-branding",
+      "logic": "element.style.fontSize = '11px';\nelement.style.fontWeight = '500';\nelement.style.color = '#9CA3AF';\nelement.style.textTransform = 'uppercase';\nelement.style.letterSpacing = '0.05em';"
+    },
+    {
+      "label": "Hide branding separator pipe",
+      "query_selector": ".branding-separator",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Restyle Taboola card content area",
+      "query_selector": "[data-slot=\"card-content\"]",
+      "logic": "element.style.padding = '0 0 16px 0';\nelement.style.position = 'static';"
+    },
+    {
+      "label": "Add hover scale to thumbnails",
+      "query_selector": ".videoCube.trc_spotlight_item .thumbBlock_holder",
+      "logic": "// Add hover effect to match native cards\nelement.style.overflow = 'hidden';\n\nvar holder = element;\nholder.onmouseenter = function() {\n  var img = this.querySelector('.thumbBlock');\n  if (img) {\n    img.style.transform = 'scale(1.05)';\n  }\n  this.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';\n};\nholder.onmouseleave = function() {\n  var img = this.querySelector('.thumbBlock');\n  if (img) {\n    img.style.transform = 'scale(1.01)';\n  }\n  this.style.boxShadow = 'none';\n};"
+    },
+    {
+      "label": "Add unified section styling",
+      "query_selector": "[data-module-key=\"main-block-2\"]",
+      "logic": "element.style.marginTop = '0';"
+    },
+    {
+      "label": "Style card wrapper padding",
+      "query_selector": "[data-slot=\"card\"]",
+      "logic": "element.style.background = '#fff';\nelement.style.borderRadius = '0';\nelement.style.paddingTop = '0';\nelement.style.gap = '0';"
+    },
+    {
+      "label": "Hide card header border",
+      "query_selector": "[data-slot=\"card-header\"]",
+      "logic": "element.style.paddingTop = '24px';\nelement.style.paddingBottom = '16px';\nelement.style.marginBottom = '0';\nelement.style.borderBottom = 'none';\nelement.style.paddingLeft = '0';\nelement.style.paddingRight = '0';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

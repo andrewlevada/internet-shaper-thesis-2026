@@ -1,0 +1,33 @@
+{
+  "rules": [
+    {
+      "label": "Hide explore featured boards",
+      "query_selector": "div[data-grid-item-idx=\"0\"]",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide pin metadata below images",
+      "query_selector": ".To17G1.ekBBbl",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide board card metadata",
+      "query_selector": ".MJ_eMy.XC5OnJ.eOQXgz.gSktR2",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide explore featured boards title",
+      "query_selector": ".m1e23k.yH1eVZ",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide search results info text",
+      "query_selector": "div[aria-live=\"polite\"].iWgz2P.sA6yWk",
+      "logic": "element.style.display = 'none';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

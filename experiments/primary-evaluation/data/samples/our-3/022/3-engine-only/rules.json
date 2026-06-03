@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide keyword suggestions bar",
+      "query_selector": "section[data-test-id=\"scrollable-one-bar-root\"]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

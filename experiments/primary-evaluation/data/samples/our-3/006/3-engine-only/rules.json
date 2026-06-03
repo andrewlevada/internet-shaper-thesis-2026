@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Promote Entertainment column",
+      "query_selector": "#column-list",
+      "logic": "var entretenimento = document.getElementById('coluna-entretenimento');\nif (entretenimento && entretenimento.parentNode === element) {\n  element.insertBefore(entretenimento, element.firstChild);\n}"
+    },
+    {
+      "label": "Promote reality TV videos",
+      "query_selector": "section.area-video-bbb",
+      "logic": "if (!element._moved) {\n  element._moved = true;\n  var columnSection = document.querySelector('.area-colunas');\n  if (columnSection && element.parentNode) {\n    element.parentNode.insertBefore(element, columnSection);\n  }\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide horoscope in features bar",
+      "query_selector": "#conbar-content > div",
+      "logic": "(function() {\n  const tooltipEl = element.querySelector('[data-tooltip-id=\"horoscope-dropdown\"]');\n  const linkEl = element.querySelector('a[data-ylk*=\"subsec:horoscope\"]');\n  if (tooltipEl || linkEl) {\n    element.style.display = 'none';\n  }\n})();"
+    },
+    {
+      "label": "Hide What to Watch in features bar",
+      "query_selector": "#conbar-content > div",
+      "logic": "(function() {\n  const linkEl = element.querySelector('a[data-ylk*=\"subsec:what-to-watch\"]');\n  if (linkEl) {\n    element.style.display = 'none';\n  }\n})();"
+    },
+    {
+      "label": "Prioritize hard news in For You feed",
+      "query_selector": "#strm ul:first-of-type",
+      "logic": "(function() {\n  const HARD_NEWS_CATEGORIES = ['politics', 'world', 'u.s.', 'us', 'news', 'business', 'science', 'health'];\n  \n  const items = Array.from(element.children).filter(li => {\n    return li.classList.contains('list-none') || li.classList.contains('border-tertiary');\n  });\n  \n  if (items.length === 0) return;\n  \n  function getCategoryText(li) {\n    const labelEl = li.querySelector('.label-m-emphasized');\n    if (labelEl) {\n      return labelEl.textContent.trim().toLowerCase();\n    }\n    const dataYga = li.querySelector('a[data-yga]');\n    if (dataYga) {\n      try {\n        const parsed = JSON.parse(dataYga.getAttribute('data-yga'));\n        if (parsed && parsed.yContentCategory) {\n          return parsed.yContentCategory.toLowerCase();\n        }\n      } catch(e) {}\n    }\n    return '';\n  }\n  \n  function isHardNews(categoryText) {\n    return HARD_NEWS_CATEGORIES.some(cat => categoryText.includes(cat));\n  }\n  \n  const hardNewsItems = [];\n  const otherItems = [];\n  \n  items.forEach(li => {\n    const cat = getCategoryText(li);\n    if (isHardNews(cat)) {\n      hardNewsItems.push(li);\n    } else {\n      otherItems.push(li);\n    }\n  });\n  \n  const allOrdered = hardNewsItems.concat(otherItems);\n  \n  element.innerHTML = '';\n  allOrdered.forEach(li => element.appendChild(li));\n})();"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

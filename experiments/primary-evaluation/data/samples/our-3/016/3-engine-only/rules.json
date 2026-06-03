@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Move comments above article",
+      "query_selector": "#comments-section",
+      "logic": "element.style.display = 'none'\nvar header = document.querySelector('[data-testid=\"article-header\"]')\nif (!header) return\nvar shareRow = header.querySelector('.mt-2.mb-4.flex.items-center.gap-2')\nif (!shareRow) return\nvar clone = element.cloneNode(true)\nclone.style.display = 'block'\nshareRow.parentNode.insertBefore(clone, shareRow.nextSibling)"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

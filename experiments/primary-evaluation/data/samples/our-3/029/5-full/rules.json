@@ -1,0 +1,38 @@
+{
+  "rules": [
+    {
+      "label": "Hide global nav sign-in/register buttons",
+      "query_selector": ".global-top-navigation__action-wrapper",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide sticky header sign-in button",
+      "query_selector": ".community-navigation .global-action__item.sign-in",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide side save button",
+      "query_selector": "#collections-save-button-side-tool",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide header sign-in to save button",
+      "query_selector": "#collections-save-button",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide anonymous comments sign-in prompt",
+      "query_selector": ".ArticleAnonymousComments_anonymousCommentsContent__uSoxq",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide sign-in to edit links",
+      "query_selector": ".mw-editsection-visualeditor[data-tracking-label=\"log-in-edit-section\"]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

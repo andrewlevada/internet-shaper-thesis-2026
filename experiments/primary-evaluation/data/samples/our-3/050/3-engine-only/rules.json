@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Move community to top",
+      "query_selector": ".need-more-help-container",
+      "logic": "if (element.dataset.moved === 'true') return;\nelement.dataset.moved = 'true';\n\nvar communityLink = element.querySelector('.need-more-help-option');\nif (!communityLink) return;\n\nvar clonedLink = communityLink.cloneNode(true);\n\n// Style the moved link to look like a sidebar option\nclonedLink.style.display = 'flex';\nclonedLink.style.alignItems = 'center';\nclonedLink.style.gap = '12px';\nclonedLink.style.padding = '12px 16px';\nclonedLink.style.marginTop = '12px';\nclonedLink.style.marginBottom = '16px';\nclonedLink.style.borderRadius = '8px';\nclonedLink.style.backgroundColor = '#f1f3f4';\nclonedLink.style.textDecoration = 'none';\nclonedLink.style.color = 'inherit';\nclonedLink.style.flexDirection = 'row';\n\n// Insert after the h1 in the article-container\nvar articleContainer = element.closest('.main-content')?.querySelector('.article-container');\nif (articleContainer) {\n    var h1 = articleContainer.querySelector('h1');\n    if (h1 && h1.nextSibling) {\n        articleContainer.insertBefore(clonedLink, h1.nextSibling);\n    } else if (h1) {\n        articleContainer.appendChild(clonedLink);\n    }\n}\n\n// Hide the original need-more-help-container at the bottom\nelement.style.display = 'none';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "label": "Move What's new to top",
+      "query_selector": "section[data-test-id=\"tier1-pin-feed\"]",
+      "logic": "element.style.order = '-1'"
+    },
+    {
+      "label": "Move What's new to top",
+      "query_selector": "section[data-test-id=\"tier1-pin-feed\"]",
+      "logic": "if (element.parentElement && element.previousElementSibling) {\n  const editorialSection = element.parentElement.querySelector('[data-test-id=\"ideas-root-today-articles\"]');\n  if (editorialSection && element !== editorialSection.previousElementSibling) {\n    element.parentElement.insertBefore(element, editorialSection);\n  }\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

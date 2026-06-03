@@ -1,0 +1,699 @@
+Timestamp: 2026-06-03T10:22:45.125793+00:00
+Sample: our-3/043
+Pipeline: map-only (4-map-only)
+Backend: local
+Model: unsloth/Qwen3.6-27B
+Work page: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-3/043/4-map-only/work/page.html
+Tools: get_map_of_dom, show_in_dom, edit
+
+=== Model Request ===
+
+--- System prompt ---
+You are a browser extension agent that modifies web pages based on user requests.
+
+All tools read from and write to the same live page. edit changes are applied immediately — subsequent read tool calls reflect the updated state.
+
+Workflow:
+1. Call get_map_of_dom() to get an overview of the page structure
+2. Identify candidate elements for the user's request
+3. Use show_in_dom() to examine specific elements if you need more detail
+4. Before each edit(), call show_in_dom() on the target element with enough depth to include all HTML you will change, that is, without `<!-- -n children -->` comments
+5. Use that show_in_dom output for edits[].oldText verbatim. If the edits[].oldText has comments, the tool call will fail.
+6. Use edit() to change the page based on the user's request
+
+
+
+--- Tool definitions ---
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_map_of_dom",
+      "description": "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: 1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. 2. Repeating sibling elements show only the first with a comment indicating count. 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. Can only be called once per session; later calls return the previous result message.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "show_in_dom",
+      "description": "Returns full HTML for the first element matching the query selector.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_selector": {
+            "type": "string",
+            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')"
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. ",
+            "minimum": 0,
+            "default": 3
+          }
+        },
+        "required": [
+          "query_selector"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "edit",
+      "description": "Edit the page snapshot using text replacement. Whitespace and newlines in oldText do not need to match exactly. Every edits[].oldText must still match a unique, non-overlapping region of the original file. If two changes affect the same block or nearby lines, merge them into one edit instead of emitting overlapping edits. Do not include large unchanged regions just to connect distant changes.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "edits": {
+            "type": "array",
+            "description": "One or more targeted replacements. Each edit is matched against the original file, not incrementally. Do not include overlapping or nested edits. If two changes touch the same block or nearby lines, merge them into one edit instead.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "oldText": {
+                  "type": "string",
+                  "description": "Text to replace. Whitespace and newlines may differ from the snapshot; include enough surrounding HTML to make the match unique and non-overlapping with other edits in the same call."
+                },
+                "newText": {
+                  "type": "string",
+                  "description": "Replacement text for this targeted edit."
+                }
+              },
+              "required": [
+                "oldText",
+                "newText"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "edits"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+]
+
+=== Agent Chat ===
+
+--- USER ---
+In the product modules, make the 'Save $X' discount text significantly larger and highlighted in green to instantly emphasize the monetary value over the product's brand.
+
+--- API REQUEST round 0 ---
+model=unsloth/Qwen3.6-27B messages=2 payload_chars=957 cache=none
+
+--- API RESPONSE round 0 ---
+elapsed_s=7.8 prompt_tokens=1022 completion_tokens=33 finish_reason=tool_calls tool_calls=[get_map_of_dom]
+
+--- TOOL CALL: get_map_of_dom ---
+(no input)
+
+--- TOOL RESULT: get_map_of_dom ---
+<body></body>
+
+<!-- Stats: 483 wrappers collapsed, 144 list items truncated -->
+
+
+--- API REQUEST round 1 ---
+model=unsloth/Qwen3.6-27B messages=4 payload_chars=1,253 cache=none
+
+--- API RESPONSE round 1 ---
+elapsed_s=1.1 prompt_tokens=1095 completion_tokens=74 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".product-module, .product-card, .product, [class*=\"product\"]",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce productModule [&+.productModule]:mt-9 [&+.productModule]:border-t [&+.productModule]:border-dirty-seagull [&+.productModule]:pt-2 [&+:not(.productModule)]:mt-10 col-body" id="24109d24-3e66-4b9b-9b61-3a19857634dd"><div class="mt-6 text-batcave @container/p dark:text-grey-hair"><div class="block @xl/p:flex @xl/p:gap-6"><div class="relative mb-4 w-full overflow-hidden rounded-lg border border-grey-hair pb-[75%] @xl/p:mb-0 @xl/p:h-[165px] @xl/p:w-[220px] @xl/p:flex-none @xl/p:pb-0"><!-- -2 children --></div><div class="mx-0 my-auto overflow-visible @xl/p:grow"><!-- -2 children --></div></div><div><div class="commerce-desc mt-2 space-y-6 text-base/relaxed md:text-lg/8"><!-- -1 children --></div><div class="mt-5 text-center @xl/p:flex @xl/p:items-center @xl/p:text-left"></div><div class="mt-5"><!-- -1 children --></div></div></div></div>
+
+
+--- API REQUEST round 2 ---
+model=unsloth/Qwen3.6-27B messages=6 payload_chars=2,424 cache=none
+
+--- API RESPONSE round 2 ---
+elapsed_s=1.4 prompt_tokens=1489 completion_tokens=66 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule",
+  "depth": 5
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce productModule [&+.productModule]:mt-9 [&+.productModule]:border-t [&+.productModule]:border-dirty-seagull [&+.productModule]:pt-2 [&+:not(.productModule)]:mt-10 col-body" id="24109d24-3e66-4b9b-9b61-3a19857634dd"><div class="mt-6 text-batcave @container/p dark:text-grey-hair"><div class="block @xl/p:flex @xl/p:gap-6"><div class="relative mb-4 w-full overflow-hidden rounded-lg border border-grey-hair pb-[75%] @xl/p:mb-0 @xl/p:h-[165px] @xl/p:w-[220px] @xl/p:flex-none @xl/p:pb-0"><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:$45 at Amazon;pkgt:horizontal-img;pos:1;uuid:bsnQHbUWUm88ShLC8282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yPackageType&quot;:&quot;horizontal-img&quot;,&quot;yPosition&quot;:1,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=bsnQHbUWUm88ShLC8282" class="rapid-with-clickid group absolute size-full @xl/p:relative" rel="noopener sponsored" target="_blank" aria-label="Image for the small product module" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="120" data-aps-status="read"><img alt="Image for the small product module" class="mx-auto my-0 size-full bg-white object-contain @xl/p:transition-transform @xl/p:duration-300 @xl/p:ease-in-out @xl/p:group-hover:scale-110 @xl/p:motion-reduce:group-hover:transition-none" src="https://s.yimg.com/lo/mysterio/api/f74ddf487ed6334ec37c0c9df19743ead5eb0968bbf74e1f19388fad149adb7e/lightyear_networkapi/resizefit_w440_h330;format_webp/https:%2F%2Fd29szjachogqwa.cloudfront.net%2Fimages%2Fuser-uploaded%2Fproduct-module%2F5ae8d63e0c1313ab1ba52ab72498a17ff8d8617bb68c19fcf1151eeaeed24e24.jpeg" loading="lazy" height="330" width="440"></a><p class="absolute -right-0.5 bottom-0 rounded-bl-none rounded-br-lg rounded-tl-lg rounded-tr-none bg-white/90 px-3 py-2 text-[10px]/3 text-battleship @xl/p:left-0 @xl/p:right-auto @xl/p:rounded-bl-lg @xl/p:rounded-br-none @xl/p:rounded-tl-none @xl/p:rounded-tr-lg">Amazon</p></div><div class="mx-0 my-auto overflow-visible @xl/p:grow"><div><h3 class="mb-1 text-xl/[1.3] font-bold @xl/p:text-2xl/tight" id="anker-soundcore-2-portable-bluetooth-speaker-1"><!-- -1 children --></h3></div><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:$45 at Amazon;pkgt:horizontal-discountcallout;pos:3;uuid:N4qerj5yG4nYNdZU10282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yPackageType&quot;:&quot;horizontal-discountcallout&quot;,&quot;yPosition&quot;:3,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=N4qerj5yG4nYNdZU10282" rel="noopener sponsored" target="_blank" class="rapid-with-clickid flex hover:no-underline" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="122" data-aps-status="read"><div class="mt-4 flex flex-wrap items-center border-t-4 border-t-batcave pr-2 pt-2 text-batcave dark:border-grey-hair dark:text-grey-hair"><!-- -1 children --></div></a></div></div><div><div class="commerce-desc mt-2 space-y-6 text-base/relaxed md:text-lg/8"><p>Amongst Yahoo Tech editor’s <a data-ylk="slk:favorite 50 gadgets under $50;elm:context_link;itc:0;sec:small-product;cpos:1;pos:9;_E:mb_qualified_link;ct:story;outcm:mb_qualified_link;subsec:commlist;pkgt:horizontal-editorial;" data-yga="{&quot;yLinkText&quot;:&quot;favorite 50 gadgets under $50&quot;,&quot;yLinkElement&quot;:&quot;context_link&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkPosition&quot;:1,&quot;yPosition&quot;:9,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yPackageType&quot;:&quot;horizontal-editorial&quot;}" href="https://tech.yahoo.com/general/article/our-editors-favorite-50-gadgets-under-50-the-best-affordable-tech-weve-tested-120000207.html" class="link" data-rapid_p="123">favorite 50 gadgets under $50</a> is this unassuming little box. Our Senior Reporter, Sam Chapman, likes this older model that “gets the job done” with clear treble and deep bass.&#160;</p></div><div class="mt-5 text-center @xl/p:flex @xl/p:items-center @xl/p:text-left"></div><div class="mt-5"><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;pos:4;sec:small-product;elm:affiliate_link;itc:0;pkgt:horizontal-cta-1;slk:$45 at Amazon;uuid:x3wZcMPCDS1B9r4511282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yDynamicOffer&quot;:&quot;productoffer-manual&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yPosition&quot;:4,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yPackageType&quot;:&quot;horizontal-cta-1&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=x3wZcMPCDS1B9r4511282" class="peer clear-right box-border block w-full min-w-60 rounded-[40px] px-7 text-center hover:no-underline hover:opacity-100 active:opacity-60 @xl/p:w-9/12 rapid-with-clickid commerce-cta-btn-primary bg-article-ui-button py-3 font-semibold leading-5 text-article-ui-button-label hover:bg-article-ui-button-hover hover:text-grey-hair active:bg-article-ui-button-hover active:text-grey-hair peer-[&]:mt-3 dark:bg-white dark:text-batcave dark:hover:bg-bob dark:focus:bg-bob dark:active:bg-bob" rel="noopener sponsored" target="_blank" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="124" data-aps-status="read">$45 at Amazon</a></div></div></div></div>
+
+
+--- API REQUEST round 3 ---
+model=unsloth/Qwen3.6-27B messages=8 payload_chars=12,723 cache=none
+
+--- API RESPONSE round 3 ---
+elapsed_s=3.9 prompt_tokens=5731 completion_tokens=94 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule .flex.flex-wrap.items-center",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="mt-4 flex flex-wrap items-center border-t-4 border-t-batcave pr-2 pt-2 text-batcave dark:border-grey-hair dark:text-grey-hair"><div class="mr-2 text-lg/6 font-bold">$45</div></div>
+
+
+--- API REQUEST round 4 ---
+model=unsloth/Qwen3.6-27B messages=10 payload_chars=13,327 cache=none
+
+--- API RESPONSE round 4 ---
+elapsed_s=1.8 prompt_tokens=5905 completion_tokens=105 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule .mt-5.text-center, .productModule div[class*=\"text-center\"]",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="mt-5 text-center @xl/p:flex @xl/p:items-center @xl/p:text-left"></div>
+
+
+--- API REQUEST round 5 ---
+model=unsloth/Qwen3.6-27B messages=12 payload_chars=13,857 cache=none
+
+--- API RESPONSE round 5 ---
+elapsed_s=1.4 prompt_tokens=6053 completion_tokens=74 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "span, small, sup, sub",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<span class="relative flex size-5 items-center justify-center transition-transform group-hover/miniNavItem:scale-110"><!-- -2 children --></span>
+
+
+--- API REQUEST round 6 ---
+model=unsloth/Qwen3.6-27B messages=14 payload_chars=14,307 cache=none
+
+--- API RESPONSE round 6 ---
+elapsed_s=1.2 prompt_tokens=6177 completion_tokens=71 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule h3",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<h3 class="mb-1 text-xl/[1.3] font-bold @xl/p:text-2xl/tight" id="anker-soundcore-2-portable-bluetooth-speaker-1"><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:Anker Soundcore 2 Portable Bluetooth Speaker;pkgt:horizontal-title;pos:2;uuid:OFKN2c1DhAx4NzHi9282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yPackageType&quot;:&quot;horizontal-title&quot;,&quot;yPosition&quot;:2,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=OFKN2c1DhAx4NzHi9282" class="rapid-with-clickid line-clamp-2 text-ellipsis text-article-ui-header hover:no-underline dark:text-thanos @xl/p:line-clamp-3" rel="noopener sponsored" target="_blank" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="121" data-aps-status="read">Anker Soundcore 2 Portable Bluetooth Speaker</a></h3>
+
+
+--- API REQUEST round 7 ---
+model=unsloth/Qwen3.6-27B messages=16 payload_chars=17,095 cache=none
+
+--- API RESPONSE round 7 ---
+elapsed_s=2.6 prompt_tokens=7337 completion_tokens=116 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce productModule [&+.productModule]:mt-9 [&+.productModule]:border-t [&+.productModule]:border-dirty-seagull [&+.productModule]:pt-2 [&+:not(.productModule)]:mt-10 col-body" id="24109d24-3e66-4b9b-9b61-3a19857634dd"><!-- -1 children --></div>
+
+
+--- API REQUEST round 8 ---
+model=unsloth/Qwen3.6-27B messages=18 payload_chars=17,825 cache=none
+
+--- API RESPONSE round 8 ---
+elapsed_s=1.0 prompt_tokens=7570 completion_tokens=65 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[class*=\"productModule\"], [class*=\"ProductModule\"], [class*=\"product-module\"], [class*=\"commerce\"]",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce" data-pw="disclosure"><!-- -1 children --></div>
+
+
+--- API REQUEST round 9 ---
+model=unsloth/Qwen3.6-27B messages=20 payload_chars=18,172 cache=none
+
+--- API RESPONSE round 9 ---
+elapsed_s=1.5 prompt_tokens=7671 completion_tokens=71 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "body",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<body class="__variable_698a5f __variable_1cb636 [--uds-font-size-body1-emphasized:1rem] [--uds-line-height-body1-emphasized:1.5rem] site-font antialiased" style="--subnav-rendered: 1;"><!-- -9 children --></body>
+
+
+--- API REQUEST round 10 ---
+model=unsloth/Qwen3.6-27B messages=22 payload_chars=18,683 cache=none
+
+--- API RESPONSE round 10 ---
+elapsed_s=0.7 prompt_tokens=7830 completion_tokens=40 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "body",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<body class="__variable_698a5f __variable_1cb636 [--uds-font-size-body1-emphasized:1rem] [--uds-line-height-body1-emphasized:1.5rem] site-font antialiased" style="--subnav-rendered: 1;"><div id="didomi-host" class="didomi-host" data-nosnippet="true" lang="nl" data-lang-dir="ltr" aria-hidden="true"><div class="notranslate didomi-screen-large didomi-consent-popup__f5623e34-377a-419c-8bb7-3928cebffbc9"></div></div><div class="relative flex md:[--sidebar-width:85px] antialiased"><aside id="uh-miniSidebar" class="font-yahoosans sticky top-0 z-15 hidden h-dvh flex-col border-r border-r-ymp-gray-3 bg-white px-0.5 md:flex dark:border-r-gray-700 dark:bg-ymp-uh-midnight"><!-- -2 children --></aside><div class="grid min-h-dvh w-full min-w-0 flex-1 grid-cols-1 grid-rows-[auto_1fr_auto]"><!-- -3 children --></div></div><iframe name="__uspapiLocator" style="display: none;"></iframe><iframe name="__tcfapiLocator" style="display: none;"></iframe><iframe name="__gppLocator" style="display: none;"></iframe><next-route-announcer style="position: absolute;"><template shadowmode="open"><!-- -1 children --></template></next-route-announcer><iframe marginwidth="0" marginheight="0" scrolling="no" frameborder="0" id="104688a0306afa8" width="0" height="0" src="cid:frame-E172308ABBA310F671141489CA2ED05D@mhtml.blink" name="__pb_locator__" style="display: none; height: 0px; width: 0px; border: 0px;"></iframe><iframe frameborder="0" height="0" width="0" src="cid:frame-E5C954D1E3C774CDC24A41CA15859FE5@mhtml.blink" style="display: none;"></iframe><iframe src="cid:frame-B25CA285E2DEDE51C1CD6A1E80846ECB@mhtml.blink" width="0" height="0" style="display: none;"></iframe></body>
+
+
+--- API REQUEST round 11 ---
+model=unsloth/Qwen3.6-27B messages=24 payload_chars=20,513 cache=none
+
+--- API RESPONSE round 11 ---
+elapsed_s=1.7 prompt_tokens=8470 completion_tokens=65 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "div.grid.min-h-dvh.w-full",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="grid min-h-dvh w-full min-w-0 flex-1 grid-cols-1 grid-rows-[auto_1fr_auto]"><header id="module-uh" data-version="1.3.6" class="bg-white dark:bg-uds-secondary-dark top-0 flex w-full flex-col items-center justify-start font-yahoosans md:max-h-[136px] md:min-h-16 sticky z-20"><div class="mx-auto inline-flex w-full items-center justify-around h-14 md:ml-0 md:block md:h-auto px-3 md:pl-[14px] md:pr-6"><div class="w-full m-0 inline-flex items-center justify-between md:gap-3 py-3 md:flex"><!-- -6 children --></div></div><div id="ybar-navigation" class="pointer-events-auto translate-y-0 opacity-100 [transition:_transform_0.2s_ease,opacity_0.2s_ease-in,margin_0.2s_ease] hidden md:inline-flex w-full items-center justify-around bg-[linear-gradient(0deg,_#FFF_0%,_#F8FAFB_100%)] dark:bg-none"><div class="md:hidden lg:block lg:px-8 xl:px-14 hidden md:flex mx-auto h-10 w-full items-center bg-[linear-gradient(0deg,_#FFF_0%,_#F8FAFB_100%)] dark:bg-none max-w-uh-custom"><!-- -1 children --></div></div></header><div><main class="bg-white pt-0"><div class="text-batcave md:bg-white md:pb-[30px] pt-10"><!-- -2 children --></div></main></div><footer id="footer" class="bg-gray-100"><div class="mx-auto w-full max-w-[1504px] items-center justify-between p-8" id="footer" data-ylk="itc:0;mpos:2;sec:footer;"><h2><!-- -1 children --></h2><div class="flex pb-6 max-w-[970px] grow flex-col sm:flex-row"><!-- -4 children --></div><p class="text-primary uds-font-family-caption1 uds-font-size-caption1 uds-font-weight-caption1 uds-line-height-caption1 uds-text-transform-caption1 uds-letter-spacing-caption1 uds-text-lg">© 2026 Yahoo. All rights reserved.</p></div></footer></div>
+
+
+--- API REQUEST round 12 ---
+model=unsloth/Qwen3.6-27B messages=26 payload_chars=22,459 cache=none
+
+--- API RESPONSE round 12 ---
+elapsed_s=1.4 prompt_tokens=9105 completion_tokens=61 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "main .text-batcave",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="text-batcave md:bg-white md:pb-[30px] pt-10"><div data-pw="top-center-ad" class="top-[92px] md:top-16 my-4"><section aria-label="Top Center Ad" class="bg-white mx-auto flex items-center overflow-x-hidden min-h-[50px] md:min-h-[90px] justify-center"><div class="flex items-center justify-center"><!-- -3 children --></div></section></div><div class="relative"><div class="relative mx-auto box-border w-full max-w-[1312px] bg-white pb-4 dark:bg-inkwell md:pb-10 lg:rounded-2xl"><nav aria-label="Trending" class="topic-subnavigation-non-sticky z-[13] mx-[calc(50%-50vw+var(--sidebar-width,0px)/2)] bg-white dark:bg-inkwell fixed left-[var(--sidebar-width,0px)] right-0 !mx-0 border-b-0 duration-300 ease-in-out md:border-b md:border-carbon/3 transition-none before:absolute before:top-[-44px] before:block before:h-[76px] before:w-screen before:bg-white before:content-['']" id="topic-subnav" style="top: 108px;"><!-- -1 children --></nav><div><!-- -1 children --></div><div class="mx-auto max-w-[1220px] px-4 md:px-10"><!-- -1 children --></div></div></div></div>
+
+
+--- API REQUEST round 13 ---
+model=unsloth/Qwen3.6-27B messages=28 payload_chars=23,776 cache=none
+
+--- API RESPONSE round 13 ---
+elapsed_s=1.4 prompt_tokens=9531 completion_tokens=68 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".mx-auto.max-w-\\[1220px\\]",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="mx-auto max-w-[1220px] px-4 md:px-10"><div class="flex flex-row justify-between"><div class="w-[calc(100vw-2rem)] max-w-[750px] flex-1 overflow-hidden md:w-full" id="_R_5kluaiv5tmlb_"><div class="py-3 mx-auto md:mx-0 max-w-screen-sm"><div class="mb-6 flex flex-row flex-nowrap items-center"><!-- -1 children --></div><div aria-busy="false" aria-labelledby="_R_tkluaiv5tmlb_" class="flex flex-col flex-nowrap" id="stream-_R_tkluaiv5tmlb_" role="feed"><!-- -25 children --></div></div></div><aside class="hidden flex-none md:block ml-8" style="max-height: 4943px; min-height: 600px; width: 300px;"><div class="flex size-full flex-col flex-nowrap"><div class="flex-auto" style="margin-top: 0px;"><!-- -1 children --></div></div></aside></div></div>
+
+
+--- API REQUEST round 14 ---
+model=unsloth/Qwen3.6-27B messages=30 payload_chars=24,797 cache=none
+
+--- API RESPONSE round 14 ---
+elapsed_s=1.4 prompt_tokens=9875 completion_tokens=69 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#stream-_R_tkluaiv5tmlb_",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div aria-busy="false" aria-labelledby="_R_tkluaiv5tmlb_" class="flex flex-col flex-nowrap" id="stream-_R_tkluaiv5tmlb_" role="feed"><article class="mb-3 md:mb-6" aria-posinset="1" aria-setsize="25"><a data-ylk="cpos:1;ct:story;elm:hdln;g:5dd8e65c-3fdd-4139-8cf9-9b2b8b444a97;itc:0;pos:1;sec:strm;slk:The best streaming deals of the week Dont miss a moment of summer sports like the World Cup and the NBA Final with an ESPNFox One bundle;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best streaming deals of the week Dont miss a moment of summer sports like the World Cup and the NBA Final with an ESPNFox One bundle&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/streaming/deals/article/the-best-streaming-deals-of-the-week-dont-miss-a-moment-of-summer-sports-like-the-world-cup-and-the-nba-final-with-an-espnfox-one-bundle-214042262.html" aria-describedby="_r_k_" aria-labelledby="_r_l_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="1"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="2" aria-setsize="25"><a data-ylk="cpos:2;ct:story;elm:hdln;g:964717b9-5c7e-4d56-887b-7d6eb7096d74;itc:0;pos:1;sec:strm;slk:The best microSD cards for 2026;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:2,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best microSD cards for 2026&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/computing/article/best-microsd-card-160000699.html" aria-describedby="_r_m_" aria-labelledby="_r_n_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="2"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="3" aria-setsize="25"><a data-ylk="cpos:3;ct:story;elm:hdln;g:b1369bba-9306-4907-8ee6-3b3f8b17f9f3;itc:0;pos:1;sec:strm;slk:The best budget TVs of 2026 Big screens low prices and more features than youd expect;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:3,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best budget TVs of 2026 Big screens low prices and more features than youd expect&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/home-entertainment/tvs/article/best-budget-tvs-145149609.html" aria-describedby="_r_o_" aria-labelledby="_r_p_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="3"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="4" aria-setsize="25"><a data-ylk="cpos:4;ct:story;elm:hdln;g:0de3c0a2-73ae-4f9f-84a7-08d7cd712d0d;itc:0;pos:1;sec:strm;slk:How to stream Dutton Ranch When all the new episodes of the Yellowstone spinoff come out and how to watch the record-breaking series on Paramount;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:4,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;How to stream Dutton Ranch When all the new episodes of the Yellowstone spinoff come out and how to watch the record-breaking series on Paramount&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/streaming/article/how-to-stream-dutton-ranch-when-all-the-new-episodes-of-the-yellowstone-spinoff-come-out-and-how-to-watch-the-record-breaking-series-on-paramount-210545898.html" aria-describedby="_r_q_" aria-labelledby="_r_r_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="4"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="5" aria-setsize="25"><a data-ylk="cpos:5;ct:story;elm:hdln;g:7f1826f3-970f-48b3-84dc-1d404c3a6820;itc:0;pos:1;sec:strm;slk:How to set up a VPN on any device;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:5,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;How to set up a VPN on any device&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/vpn/article/how-to-set-up-a-vpn-on-any-device-170000896.html" aria-describedby="_r_s_" aria-labelledby="_r_t_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="5"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="6" aria-setsize="25"><a data-ylk="cpos:6;ct:story;elm:hdln;g:293a0c70-bea0-4ba6-8667-b06c436f78df;itc:0;pos:1;sec:strm;slk:The best gaming handhelds for 2026;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:6,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best gaming handhelds for 2026&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/gaming/article/the-best-gaming-handhelds-for-2026-180000267.html" aria-describedby="_r_u_" aria-labelledby="_r_v_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="6"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="7" aria-setsize="25"><a data-ylk="cpos:7;ct:story;elm:hdln;g:4a5ea465-e18d-48ff-8266-e4ac1db5c5cf;itc:0;pos:1;sec:strm;slk:What exactly is the difference between 10 and 100 earbuds;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:7,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;What exactly is the difference between 10 and 100 earbuds&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/audio/article/what-exactly-is-the-difference-between-10-and-100-earbuds-192114894.html" aria-describedby="_r_10_" aria-labelledby="_r_11_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="7"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="8" aria-setsize="25"><a data-ylk="cpos:8;ct:story;elm:hdln;g:4074d7b7-357f-44cb-8767-6bb0f55be3a7;itc:0;pos:1;sec:strm;slk:The best USB-C hubs for 2026 Add more ports without breaking the bank;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:8,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best USB-C hubs for 2026 Add more ports without breaking the bank&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/computing/article/best-usb-c-hubs-160000648.html" aria-describedby="_r_12_" aria-labelledby="_r_13_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="8"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="9" aria-setsize="25"><a data-ylk="cpos:9;ct:story;elm:hdln;g:4d57fcfd-55ba-4c09-b524-0c3eb6a8da0b;itc:0;pos:1;sec:strm;slk:The new Oura Ring 5 is 40 smaller than its predecessor;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:9,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The new Oura Ring 5 is 40 smaller than its predecessor&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/wearables/article/the-new-oura-ring-5-is-40-smaller-than-its-predecessor-144129464.html" aria-describedby="_r_14_" aria-labelledby="_r_15_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="9"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="10" aria-setsize="25"><a data-ylk="cpos:10;ct:story;elm:hdln;g:f6e0c5e8-14f0-439b-9410-359ad6b2a2f9;itc:0;pos:1;sec:strm;slk:12 boring tech gadgets that actually make all the difference according to an expert;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:10,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;12 boring tech gadgets that actually make all the difference according to an expert&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/general/article/12-boring-tech-gadgets-that-actually-make-all-the-difference-according-to-an-expert-205524638.html" aria-describedby="_r_16_" aria-labelledby="_r_17_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="10"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="11" aria-setsize="25"><a data-ylk="cpos:11;ct:story;elm:hdln;g:1fc11ae3-b1f9-40d2-83fb-d2cd464423e5;itc:0;pos:1;sec:strm;slk:The best wireless earbuds of 2026 from Apple Bose Sony and more tested and reviewed;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:11,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best wireless earbuds of 2026 from Apple Bose Sony and more tested and reviewed&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/audio/article/best-wireless-earbuds-191737075.html" aria-describedby="_r_18_" aria-labelledby="_r_19_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="11"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="12" aria-setsize="25"><a data-ylk="cpos:12;ct:story;elm:hdln;g:7fb1e39e-4278-478f-bd45-faf84b8a158a;itc:0;pos:1;sec:strm;slk:Buying a new laptop Heres what a tech expert says most people get wrong;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:12,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Buying a new laptop Heres what a tech expert says most people get wrong&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/computing/article/buying-a-new-laptop-heres-what-a-tech-expert-says-most-people-get-wrong-194028888.html" aria-describedby="_r_1a_" aria-labelledby="_r_1b_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="12"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="13" aria-setsize="25"><a data-ylk="cpos:13;ct:story;elm:hdln;g:89acb6bc-e306-447c-832b-e066fab4fc6b;itc:0;pos:1;sec:strm;slk:How to disable a VPN on any device;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:13,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;How to disable a VPN on any device&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/vpn/article/how-to-disable-a-vpn-on-any-device-193000949.html" aria-describedby="_r_1c_" aria-labelledby="_r_1d_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="13"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="14" aria-setsize="25"><a data-ylk="cpos:14;ct:story;elm:hdln;g:63b00ced-9cfb-48eb-b9c7-8633d62e78e3;itc:0;pos:1;sec:strm;slk:Steam Deck OLED is back in stock but its a lot more expensive now;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:14,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Steam Deck OLED is back in stock but its a lot more expensive now&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/gaming/article/steam-deck-oled-is-back-in-stock-but-its-a-lot-more-expensive-now-183529778.html" aria-describedby="_r_1e_" aria-labelledby="_r_1f_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="14"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="15" aria-setsize="25"><a data-ylk="cpos:15;ct:story;elm:hdln;g:07ca7515-095e-4821-8fdc-5aef4589553a;itc:0;pos:1;sec:strm;slk:The best VPNs in 2026 Which ones actually work;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:15,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best VPNs in 2026 Which ones actually work&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/vpn/article/best-vpn-120000856.html" aria-describedby="_r_1g_" aria-labelledby="_r_1h_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="15"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="16" aria-setsize="25"><a data-ylk="cpos:16;ct:story;elm:hdln;g:a7f2c2d0-3739-499e-bc54-2235427d24e1;itc:0;pos:1;sec:strm;slk:The best VPN deals you can grab right now;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:16,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best VPN deals you can grab right now&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/deals/article/the-best-vpn-deals-you-can-grab-right-now-155032344.html" aria-describedby="_r_1i_" aria-labelledby="_r_1j_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="16"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="17" aria-setsize="25"><a data-ylk="cpos:17;ct:story;elm:hdln;g:b52ad4a7-a33c-4fa9-a1ee-05362e46cf55;itc:0;pos:1;sec:strm;slk:The best MacBook to buy in 2026 Which Apple laptop is right for you;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:17,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The best MacBook to buy in 2026 Which Apple laptop is right for you&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/computing/article/the-best-macbook-to-buy-in-2026-which-apple-laptop-is-right-for-you-130000568.html" aria-describedby="_r_1k_" aria-labelledby="_r_1l_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="17"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="18" aria-setsize="25"><a data-ylk="cpos:18;ct:story;elm:hdln;g:21afa43b-7d25-42e2-8878-6aeb7e2775bd;itc:0;pos:1;sec:strm;slk:12 subscriptions that are no longer worth paying for in 2026;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:18,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;12 subscriptions that are no longer worth paying for in 2026&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/general/article/12-subscriptions-that-are-no-longer-worth-paying-for-in-2026-193848926.html" aria-describedby="_r_1m_" aria-labelledby="_r_1n_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="18"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="19" aria-setsize="25"><a data-ylk="cpos:19;ct:story;elm:hdln;g:af5c124c-1e9e-4541-9682-875ed688c97b;itc:0;pos:1;sec:strm;slk:Tech is supposed to make life easier  here are the gadgets that actually do;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:19,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Tech is supposed to make life easier  here are the gadgets that actually do&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/general/article/tech-is-supposed-to-make-life-easier--here-are-the-gadgets-that-actually-do-205701142.html" aria-describedby="_r_1o_" aria-labelledby="_r_1p_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="19"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="20" aria-setsize="25"><a data-ylk="cpos:20;ct:story;elm:hdln;g:49c602cd-c78b-4ee9-b39d-a432d255789c;itc:0;pos:1;sec:strm;slk:Memorial Day sales on tech are still available shop extended deals up to 50 off from Amazon Apple Best Buy and more;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:20,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Memorial Day sales on tech are still available shop extended deals up to 50 off from Amazon Apple Best Buy and more&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/deals/breaking-news/article/memorial-day-sales-on-tech-are-still-available-shop-extended-deals-up-to-50-off-from-amazon-apple-best-buy-and-more-181434135.html" aria-describedby="_r_1q_" aria-labelledby="_r_1r_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="20"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="21" aria-setsize="25"><a data-ylk="cpos:21;ct:story;elm:hdln;g:cbe1d3dc-8c70-451c-82e3-d5c6da185be0;itc:0;pos:1;sec:strm;slk:Fitbit Air review A cozy wearable with a promising yet highly ambitious app;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:21,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Fitbit Air review A cozy wearable with a promising yet highly ambitious app&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/wearables/review/fitbit-air-review-a-cozy-wearable-with-a-promising-yet-highly-ambitious-app-130000902.html" aria-describedby="_r_1s_" aria-labelledby="_r_1t_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="21"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="22" aria-setsize="25"><a data-ylk="cpos:22;ct:story;elm:hdln;g:7698cbad-c175-4726-a094-66af4df1bde3;itc:0;pos:1;sec:strm;slk:Apple Memorial Day sales are here We found sweet deals on MacBooks AirPods iPads and more;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:22,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Apple Memorial Day sales are here We found sweet deals on MacBooks AirPods iPads and more&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/deals/breaking-news/article/apple-memorial-day-sales-are-here-we-found-sweet-deals-on-macbooks-airpods-ipads-and-more-134656841.html" aria-describedby="_r_1u_" aria-labelledby="_r_1v_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="22"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="23" aria-setsize="25"><a data-ylk="cpos:23;ct:story;elm:hdln;g:b23cda72-7f95-46a7-949a-262a061beb62;itc:0;pos:1;sec:strm;slk:Memorial Day TV sales are happening now We found the best deals up to 55 off from Amazon Samsung TCL and more;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:23,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Memorial Day TV sales are happening now We found the best deals up to 55 off from Amazon Samsung TCL and more&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/home-entertainment/tvs/deals/breaking-news/article/memorial-day-tv-sales-are-happening-now-we-found-the-best-deals-up-to-55-off-from-amazon-samsung-tcl-and-more-155000987.html" aria-describedby="_r_20_" aria-labelledby="_r_21_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="23"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="24" aria-setsize="25"><a data-ylk="cpos:24;ct:story;elm:hdln;g:91ad42c0-e1fa-4b3a-9abe-e5bb0d2ec3d7;itc:0;pos:1;sec:strm;slk:Memorial Day tech deals under 50 include big savings on Anker chargers Baseus earbuds and more;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:24,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;Memorial Day tech deals under 50 include big savings on Anker chargers Baseus earbuds and more&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/deals/breaking-news/article/memorial-day-tech-deals-under-50-include-big-savings-on-anker-chargers-baseus-earbuds-and-more-144931076.html" aria-describedby="_r_22_" aria-labelledby="_r_23_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="24"><!-- -2 children --></a></article><article class="mb-3 md:mb-6" aria-posinset="25" aria-setsize="25"><a data-ylk="cpos:25;ct:story;elm:hdln;g:ea9e61a9-abc8-4481-879a-2fd516c25133;itc:0;pos:1;sec:strm;slk:The Best Buy Memorial Day sale is live We found the best deals worth your money on TVs laptops headphones and more;subsec:moreforyou;" data-yga="{&quot;yLinkPosition&quot;:25,&quot;yLinkElement&quot;:&quot;hdln&quot;,&quot;yPosition&quot;:1,&quot;yModuleName&quot;:&quot;strm&quot;,&quot;yLinkText&quot;:&quot;The Best Buy Memorial Day sale is live We found the best deals worth your money on TVs laptops headphones and more&quot;,&quot;ySubModuleName&quot;:&quot;moreforyou&quot;}" href="https://tech.yahoo.com/deals/breaking-news/article/the-best-buy-memorial-day-sale-is-live-we-found-the-best-deals-worth-your-money-on-tvs-laptops-headphones-and-more-134016160.html" aria-describedby="_r_24_" aria-labelledby="_r_25_" class="group/card flex flex-row flex-nowrap rounded-xl border border-[rgba(0,0,0,0.03)] bg-[#fcfbfb] p-3 hover:shadow-elevation-3 lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:hover:shadow-none" data-rapid_p="25"><!-- -2 children --></a></article></div>
+
+
+--- API REQUEST round 15 ---
+model=unsloth/Qwen3.6-27B messages=32 payload_chars=50,571 cache=none
+
+--- API RESPONSE round 15 ---
+elapsed_s=7.9 prompt_tokens=18960 completion_tokens=140 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#_R_5kluaiv5tmlb_",
+  "depth": 1
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="w-[calc(100vw-2rem)] max-w-[750px] flex-1 overflow-hidden md:w-full" id="_R_5kluaiv5tmlb_"><div class="py-3 mx-auto md:mx-0 max-w-screen-sm"><!-- -2 children --></div></div>
+
+
+--- API REQUEST round 16 ---
+model=unsloth/Qwen3.6-27B messages=34 payload_chars=51,346 cache=none
+
+--- API RESPONSE round 16 ---
+elapsed_s=1.0 prompt_tokens=19189 completion_tokens=55 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#_R_5kluaiv5tmlb_ .py-3",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="py-3 mx-auto md:mx-0 max-w-screen-sm"><div class="mb-6 flex flex-row flex-nowrap items-center"><h2 aria-hidden="true" class="stream-medium flex-auto text-[15px]/[20px] text-pfs-text-primary dark:text-marshmallow" id="_R_tkluaiv5tmlb_">Recommended articles</h2></div><div aria-busy="false" aria-labelledby="_R_tkluaiv5tmlb_" class="flex flex-col flex-nowrap" id="stream-_R_tkluaiv5tmlb_" role="feed"><article class="mb-3 md:mb-6" aria-posinset="1" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="2" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="3" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="4" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="5" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="6" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="7" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="8" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="9" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="10" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="11" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="12" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="13" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="14" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="15" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="16" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="17" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="18" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="19" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="20" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="21" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="22" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="23" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="24" aria-setsize="25"><!-- -1 children --></article><article class="mb-3 md:mb-6" aria-posinset="25" aria-setsize="25"><!-- -1 children --></article></div></div>
+
+
+--- API REQUEST round 17 ---
+model=unsloth/Qwen3.6-27B messages=36 payload_chars=54,364 cache=none
+
+--- API RESPONSE round 17 ---
+elapsed_s=2.8 prompt_tokens=20239 completion_tokens=107 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".relative.mx-auto.box-border.w-full.max-w-\\[1312px\\]",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="relative mx-auto box-border w-full max-w-[1312px] bg-white pb-4 dark:bg-inkwell md:pb-10 lg:rounded-2xl"><nav aria-label="Trending" class="topic-subnavigation-non-sticky z-[13] mx-[calc(50%-50vw+var(--sidebar-width,0px)/2)] bg-white dark:bg-inkwell fixed left-[var(--sidebar-width,0px)] right-0 !mx-0 border-b-0 duration-300 ease-in-out md:border-b md:border-carbon/3 transition-none before:absolute before:top-[-44px] before:block before:h-[76px] before:w-screen before:bg-white before:content-['']" id="topic-subnav" style="top: 108px;"><div class="relative md:mx-auto no-scrollbar mx-auto max-w-uh-custom overflow-scroll pl-3 pr-8 sm:px-5 md:overflow-visible lg:px-10 xl:px-16"><div class="no-scrollbar w-full overflow-x-auto overflow-y-hidden flex h-[32px]"><!-- -1 children --></div><button type="button" disabled aria-label="Scroll left" class="invisible top-0 z-1 md:left-10 absolute size-8 items-center justify-center rounded-full border border-carbon/3 bg-primary dark:border-charcoal" data-ylk="cid:Trending;elm:arrow;itc:0;sec:topic-subnav;slk:prev;" data-rapid_p="6" data-rapid-intersected-vis-hidden="true"><!-- -1 children --></button><button type="button" aria-label="Scroll right" class="invisible flex md:visible top-0 z-1 md:right-10 absolute size-8 items-center justify-center rounded-full border border-carbon/3 bg-primary dark:border-charcoal" data-ylk="cid:Trending;elm:arrow;itc:0;sec:topic-subnav;slk:next;" data-rapid_p="7" data-v9y="1"><!-- -1 children --></button><div class="pointer-events-none absolute inset-y-0 w-12 from-white to-transparent dark:from-inkwell md:bottom-0.5 md:w-20 md:via-white right-0 bg-gradient-to-l md:right-10"></div></div></nav><div><div><div><!-- -3 children --></div><div class="my-8 box-border h-[720px] w-full scroll-mt-[80px] bg-white px-4" id="article-7fb1e39e-4278-478f-bd45-faf84b8a158a"><!-- -1 children --></div><div class="my-8 box-border h-[720px] w-full scroll-mt-[80px] bg-white px-4" id="article-b55d7fdc-a6c0-31be-9024-26aa98a1f633"><!-- -1 children --></div><div class="my-8 box-border h-[720px] w-full scroll-mt-[80px] bg-white px-4" id="article-2407a114-7d26-393c-a727-a712b8f85e07"><!-- -1 children --></div><div class="my-8 box-border h-[720px] w-full scroll-mt-[80px] bg-white px-4" id="article-bb14bb1c-3a46-3aa7-a673-3e94aa7bf809"><!-- -1 children --></div><div class="my-8 box-border h-[720px] w-full scroll-mt-[80px] bg-white px-4" id="article-63b83fa2-4849-3e79-af52-09b4780d2cd6"><!-- -1 children --></div></div></div><div class="mx-auto max-w-[1220px] px-4 md:px-10"><div class="flex flex-row justify-between"><div class="w-[calc(100vw-2rem)] max-w-[750px] flex-1 overflow-hidden md:w-full" id="_R_5kluaiv5tmlb_"><!-- -1 children --></div><aside class="hidden flex-none md:block ml-8" style="max-height: 4943px; min-height: 600px; width: 300px;"><!-- -1 children --></aside></div></div></div>
+
+
+--- API REQUEST round 18 ---
+model=unsloth/Qwen3.6-27B messages=38 payload_chars=57,709 cache=none
+
+--- API RESPONSE round 18 ---
+elapsed_s=2.7 prompt_tokens=21414 completion_tokens=105 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "div.relative.mx-auto.box-border.w-full.max-w-\\[1312px\\] > div > div > div:first-child",
+  "depth": 5
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div><article id="article-49c602cd-c78b-4ee9-b39d-a432d255789c"><div><div class="mx-auto md:px-10 md:max-w-[1118px]"><nav class="relative mx-4 mb-2 md:mx-0" aria-label="breadcrumbs"><ol class="no-scrollbar overflow-scroll whitespace-nowrap text-battleship"><!-- -3 children --></ol><div class="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent dark:from-inkwell md:w-24"></div></nav><header class="px-4 md:px-0"><h1 class="uds-text-lg mb-2 font-bold text-spectrum-color-carbon-13 uds-font-size-title4 uds-line-height-title4 md:text-[48px]/[48px]">Memorial Day sales on tech are still available: shop extended deals up to 50% off from Amazon, Apple, Best Buy and more</h1><h2 class="uds-text-lg mb-4 max-w-[830px] text-spectrum-color-carbon-13 uds-font-size-label2 uds-line-height-label2">With discounts on everything from laptops and headphones to smart home gadgets and TV, these lingering Memorial Day tech deals are the real thing.</h2><div id="article-byline" class="flex-col items-start lg:flex lg:flex-row lg:items-center lg:justify-between"><!-- -2 children --></div><div class="hidden lg:block"><!-- -1 children --></div></header><div class="mb-4 px-4 md:px-0"><div class="commerce" data-pw="disclosure"><!-- -1 children --></div></div></div><div data-toc-sticky="true" class="shadow-[0_1px_25px_1px_rgba(0,0,0,0.25)] fixed left-[var(--sidebar-width,0px)] right-0 z-[14] my-0 box-border rounded-b-2xl transition-opacity duration-200 xl:hidden hidden opacity-0 pointer-events-none md:shadow-none top-12 md:top-16"><details><summary class="flex h-12 w-full cursor-pointer items-center gap-2 bg-white px-6 py-3 text-left"><!-- -2 children --></summary><nav class="flex flex-col overflow-auto rounded-b-2xl border border-dirty-seagull bg-white py-5 pr-6"><!-- -1 children --></nav></details></div><div><nav aria-label="In this story" class="fixed left-[var(--sidebar-width,0px)] right-0 z-[19] border-b-0 bg-white duration-300 ease-in-out dark:bg-inkwell md:border-b md:border-carbon/3 transition-opacity pointer-events-none opacity-0 before:absolute before:top-[-44px] before:block before:h-[76px] before:w-screen before:bg-white before:content-['']" style="top: 108px;"><div class="no-scrollbar relative mx-auto max-w-uh-custom overflow-scroll pl-3 pr-8 sm:px-5 md:overflow-visible lg:px-10 xl:px-16"><!-- -4 children --></div></nav></div><div id="article-outer-49c602cd-c78b-4ee9-b39d-a432d255789c" class="grid grid-cols-1 gap-x-12 mx-auto md:max-w-[1118px] md:px-10 md:grid-cols-[[main-start]_1fr_[main-end_right-start]_min-content_[right-end]]"><div class="md:col-main" data-i13n-boundary="true"><div id="article-body-49c602cd-c78b-4ee9-b39d-a432d255789c"><!-- -1 children --></div></div><aside class="hidden flex-none h-full md:block col-right" style="min-height:600px;width:300px"><div class="flex size-full flex-col flex-nowrap"><!-- -10 children --></div></aside><div id="article-comments-49c602cd-c78b-4ee9-b39d-a432d255789c" class="md:col-main"><div class="grid grid-cols-article-mobile-fixed md:grid-cols-article-fullspan md:max-w-[690px]"><!-- -1 children --></div></div><div class="md:col-main grid grid-cols-article-mobile-fixed md:grid-cols-article-fullspan md:max-w-[690px]"><div class="no-scrollbar col-body mx-4 mb-8 mt-2.5 overflow-x-scroll whitespace-nowrap md:mx-0 md:max-w-[750px] md:overflow-x-visible md:hidden"><!-- -2 children --></div></div></div></div></article><div class="mx-auto mb-6 mt-5 min-h-[250px] max-w-full items-center justify-center md:min-h-[90px]" id="_R_5klckluaiv5tmlbH1_"><div class="hidden" id="_R_5klckluaiv5tmlb_"></div><div class="flex size-full items-center justify-center bg-marshmallow text-center leading-3" style="height:50px;width:320px">Advertisement</div></div><div class="mx-auto mb-6 mt-5 min-h-[250px] max-w-full items-center justify-center md:min-h-[90px]" id="_R_9klckluaiv5tmlbH1_"><div class="hidden" id="_R_9klckluaiv5tmlb_"></div><div class="flex size-full items-center justify-center bg-marshmallow text-center leading-3" style="height:90px;width:728px">Advertisement</div></div></div>
+
+
+--- API REQUEST round 19 ---
+model=unsloth/Qwen3.6-27B messages=40 payload_chars=62,260 cache=none
+
+--- API RESPONSE round 19 ---
+elapsed_s=3.2 prompt_tokens=22876 completion_tokens=144 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#article-body-49c602cd-c78b-4ee9-b39d-a432d255789c",
+  "depth": 1
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div id="article-body-49c602cd-c78b-4ee9-b39d-a432d255789c"><div class="grid grid-cols-article-mobile-fixed md:grid-cols-article-fullspan md:max-w-[690px]"><!-- -57 children --></div></div>
+
+
+--- API REQUEST round 20 ---
+model=unsloth/Qwen3.6-27B messages=42 payload_chars=62,857 cache=none
+
+--- API RESPONSE round 20 ---
+elapsed_s=1.8 prompt_tokens=23111 completion_tokens=108 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#article-body-49c602cd-c78b-4ee9-b39d-a432d255789c .productModule",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce productModule [&+.productModule]:mt-9 [&+.productModule]:border-t [&+.productModule]:border-dirty-seagull [&+.productModule]:pt-2 [&+:not(.productModule)]:mt-10 col-body" id="24109d24-3e66-4b9b-9b61-3a19857634dd"><!-- -1 children --></div>
+
+
+--- API REQUEST round 21 ---
+model=unsloth/Qwen3.6-27B messages=44 payload_chars=63,488 cache=none
+
+--- API RESPONSE round 21 ---
+elapsed_s=2.3 prompt_tokens=23336 completion_tokens=124 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#article-body-49c602cd-c78b-4ee9-b39d-a432d255789c .productModule a.flex.hover\\:no-underline",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:$45 at Amazon;pkgt:horizontal-discountcallout;pos:3;uuid:N4qerj5yG4nYNdZU10282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yPackageType&quot;:&quot;horizontal-discountcallout&quot;,&quot;yPosition&quot;:3,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=N4qerj5yG4nYNdZU10282" rel="noopener sponsored" target="_blank" class="rapid-with-clickid flex hover:no-underline" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="122" data-aps-status="read"><div class="mt-4 flex flex-wrap items-center border-t-4 border-t-batcave pr-2 pt-2 text-batcave dark:border-grey-hair dark:text-grey-hair"><div class="mr-2 text-lg/6 font-bold">$45</div></div></a>
+
+
+--- API REQUEST round 22 ---
+model=unsloth/Qwen3.6-27B messages=46 payload_chars=66,306 cache=none
+
+--- API RESPONSE round 22 ---
+elapsed_s=3.9 prompt_tokens=24532 completion_tokens=196 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#article-body-49c602cd-c78b-4ee9-b39d-a432d255789c .commerce, #article-body-49c602cd-c78b-4ee9-b39d-a432d255789c .productModule",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce productModule [&+.productModule]:mt-9 [&+.productModule]:border-t [&+.productModule]:border-dirty-seagull [&+.productModule]:pt-2 [&+:not(.productModule)]:mt-10 col-body" id="24109d24-3e66-4b9b-9b61-3a19857634dd"><!-- -1 children --></div>
+
+
+--- API REQUEST round 23 ---
+model=unsloth/Qwen3.6-27B messages=48 payload_chars=67,185 cache=none
+
+--- API RESPONSE round 23 ---
+elapsed_s=1.6 prompt_tokens=24845 completion_tokens=78 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "aside.col-right .productModule, aside.col-right .commerce",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+No element found matching selector: aside.col-right .productModule, aside.col-right .commerce
+
+
+--- API REQUEST round 24 ---
+model=unsloth/Qwen3.6-27B messages=50 payload_chars=67,629 cache=none
+
+--- API RESPONSE round 24 ---
+elapsed_s=3.7 prompt_tokens=24958 completion_tokens=248 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#article-body-49c602cd-c78b-4ee9-b39d-a432d255789c .productModule .flex.flex-wrap.items-center",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="mt-4 flex flex-wrap items-center border-t-4 border-t-batcave pr-2 pt-2 text-batcave dark:border-grey-hair dark:text-grey-hair"><div class="mr-2 text-lg/6 font-bold">$45</div></div>
+
+
+--- API REQUEST round 25 ---
+model=unsloth/Qwen3.6-27B messages=52 payload_chars=68,792 cache=none
+
+--- API RESPONSE round 25 ---
+elapsed_s=3.1 prompt_tokens=25286 completion_tokens=176 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule p.absolute",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<p class="absolute -right-0.5 bottom-0 rounded-bl-none rounded-br-lg rounded-tl-lg rounded-tr-none bg-white/90 px-3 py-2 text-[10px]/3 text-battleship @xl/p:left-0 @xl/p:right-auto @xl/p:rounded-bl-lg @xl/p:rounded-br-none @xl/p:rounded-tl-none @xl/p:rounded-tr-lg">Amazon</p>
+
+
+--- API REQUEST round 26 ---
+model=unsloth/Qwen3.6-27B messages=54 payload_chars=69,818 cache=none
+
+--- API RESPONSE round 26 ---
+elapsed_s=3.3 prompt_tokens=25572 completion_tokens=201 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".productModule",
+  "depth": 6
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="commerce productModule [&+.productModule]:mt-9 [&+.productModule]:border-t [&+.productModule]:border-dirty-seagull [&+.productModule]:pt-2 [&+:not(.productModule)]:mt-10 col-body" id="24109d24-3e66-4b9b-9b61-3a19857634dd"><div class="mt-6 text-batcave @container/p dark:text-grey-hair"><div class="block @xl/p:flex @xl/p:gap-6"><div class="relative mb-4 w-full overflow-hidden rounded-lg border border-grey-hair pb-[75%] @xl/p:mb-0 @xl/p:h-[165px] @xl/p:w-[220px] @xl/p:flex-none @xl/p:pb-0"><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:$45 at Amazon;pkgt:horizontal-img;pos:1;uuid:bsnQHbUWUm88ShLC8282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yPackageType&quot;:&quot;horizontal-img&quot;,&quot;yPosition&quot;:1,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=bsnQHbUWUm88ShLC8282" class="rapid-with-clickid group absolute size-full @xl/p:relative" rel="noopener sponsored" target="_blank" aria-label="Image for the small product module" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="120" data-aps-status="read"><img alt="Image for the small product module" class="mx-auto my-0 size-full bg-white object-contain @xl/p:transition-transform @xl/p:duration-300 @xl/p:ease-in-out @xl/p:group-hover:scale-110 @xl/p:motion-reduce:group-hover:transition-none" src="https://s.yimg.com/lo/mysterio/api/f74ddf487ed6334ec37c0c9df19743ead5eb0968bbf74e1f19388fad149adb7e/lightyear_networkapi/resizefit_w440_h330;format_webp/https:%2F%2Fd29szjachogqwa.cloudfront.net%2Fimages%2Fuser-uploaded%2Fproduct-module%2F5ae8d63e0c1313ab1ba52ab72498a17ff8d8617bb68c19fcf1151eeaeed24e24.jpeg" loading="lazy" height="330" width="440"></a><p class="absolute -right-0.5 bottom-0 rounded-bl-none rounded-br-lg rounded-tl-lg rounded-tr-none bg-white/90 px-3 py-2 text-[10px]/3 text-battleship @xl/p:left-0 @xl/p:right-auto @xl/p:rounded-bl-lg @xl/p:rounded-br-none @xl/p:rounded-tl-none @xl/p:rounded-tr-lg">Amazon</p></div><div class="mx-0 my-auto overflow-visible @xl/p:grow"><div><h3 class="mb-1 text-xl/[1.3] font-bold @xl/p:text-2xl/tight" id="anker-soundcore-2-portable-bluetooth-speaker-1"><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:Anker Soundcore 2 Portable Bluetooth Speaker;pkgt:horizontal-title;pos:2;uuid:OFKN2c1DhAx4NzHi9282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yPackageType&quot;:&quot;horizontal-title&quot;,&quot;yPosition&quot;:2,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=OFKN2c1DhAx4NzHi9282" class="rapid-with-clickid line-clamp-2 text-ellipsis text-article-ui-header hover:no-underline dark:text-thanos @xl/p:line-clamp-3" rel="noopener sponsored" target="_blank" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="121" data-aps-status="read">Anker Soundcore 2 Portable Bluetooth Speaker</a></h3></div><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;sec:small-product;elm:affiliate_link;itc:0;slk:$45 at Amazon;pkgt:horizontal-discountcallout;pos:3;uuid:N4qerj5yG4nYNdZU10282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yPackageType&quot;:&quot;horizontal-discountcallout&quot;,&quot;yPosition&quot;:3,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=N4qerj5yG4nYNdZU10282" rel="noopener sponsored" target="_blank" class="rapid-with-clickid flex hover:no-underline" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="122" data-aps-status="read"><div class="mt-4 flex flex-wrap items-center border-t-4 border-t-batcave pr-2 pt-2 text-batcave dark:border-grey-hair dark:text-grey-hair"><div class="mr-2 text-lg/6 font-bold">$45</div></div></a></div></div><div><div class="commerce-desc mt-2 space-y-6 text-base/relaxed md:text-lg/8"><p>Amongst Yahoo Tech editor’s <a data-ylk="slk:favorite 50 gadgets under $50;elm:context_link;itc:0;sec:small-product;cpos:1;pos:9;_E:mb_qualified_link;ct:story;outcm:mb_qualified_link;subsec:commlist;pkgt:horizontal-editorial;" data-yga="{&quot;yLinkText&quot;:&quot;favorite 50 gadgets under $50&quot;,&quot;yLinkElement&quot;:&quot;context_link&quot;,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkPosition&quot;:1,&quot;yPosition&quot;:9,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yPackageType&quot;:&quot;horizontal-editorial&quot;}" href="https://tech.yahoo.com/general/article/our-editors-favorite-50-gadgets-under-50-the-best-affordable-tech-weve-tested-120000207.html" class="link" data-rapid_p="123">favorite 50 gadgets under $50</a> is this unassuming little box. Our Senior Reporter, Sam Chapman, likes this older model that “gets the job done” with clear treble and deep bass.&#160;</p></div><div class="mt-5 text-center @xl/p:flex @xl/p:items-center @xl/p:text-left"></div><div class="mt-5"><a data-ylk="aid:amazon_B01MTB55WH;cpos:1;itmId:$45;ll3:product-available;ll4:productoffer-manual;pdid:Anker Soundcore 2 Portable Bluetooth Speaker;pid:amazon_B01MTB55WH;subsec:commlist;elmt:chooseForMe;sellerN:Amazon;pos:4;sec:small-product;elm:affiliate_link;itc:0;pkgt:horizontal-cta-1;slk:$45 at Amazon;uuid:x3wZcMPCDS1B9r4511282" data-yga="{&quot;yLinkPosition&quot;:1,&quot;yDiscountedPrice&quot;:&quot;$45&quot;,&quot;yMerchantAvailability&quot;:&quot;product-available&quot;,&quot;yDynamicOffer&quot;:&quot;productoffer-manual&quot;,&quot;yRetailProductName&quot;:&quot;Anker Soundcore 2 Portable Bluetooth Speaker&quot;,&quot;yRetailProductID&quot;:&quot;amazon_B01MTB55WH&quot;,&quot;ySubModuleName&quot;:&quot;commlist&quot;,&quot;yAffiliateService&quot;:&quot;chooseForMe&quot;,&quot;ySellerName&quot;:&quot;Amazon&quot;,&quot;yPosition&quot;:4,&quot;yModuleName&quot;:&quot;small-product&quot;,&quot;yLinkElement&quot;:&quot;affiliate_link&quot;,&quot;yPackageType&quot;:&quot;horizontal-cta-1&quot;,&quot;yLinkText&quot;:&quot;$45 at Amazon&quot;,&quot;yHasCommerce&quot;:true}" href="https://shopping.yahoo.com/rdlw?merchantId=66ea567a-c987-4c2e-a2ff-02904efde6ea&itemId=amazon_B01MTB55WH&siteId=us-tech&pageId=pnr-product-module&contentUuid=49c602cd-c78b-4ee9-b39d-a432d255789c&featureId=product-url&itemName=Anker+Soundcore+2+Portable+Bluetooth+Speaker&merchantName=Amazon&custData=eyJzb3VyY2VOYW1lIjoiV2ViLURlc2t0b3AtVmVyaXpvbiIsImxhbmRpbmdVcmwiOiJodHRwczovL3d3dy5hbWF6b24uY29tL2RwL0IwMU1UQjU1V0g_dGFnPXRlY2gtMjAiLCJjb250ZW50VXVpZCI6IjQ5YzYwMmNkLWM3OGItNGVlOS1iMzlkLWE0MzJkMjU1Nzg5YyIsIm9yaWdpbmFsVXJsIjoiaHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC9CMDFNVEI1NVdIIiwiZHluYW1pY0NlbnRyYWxUcmFja2luZ0lkIjp0cnVlLCJzaXRlSWQiOiJ1cy10ZWNoIiwicGFnZUlkIjoicG5yLXByb2R1Y3QtbW9kdWxlIiwiZmVhdHVyZUlkIjoicHJvZHVjdC11cmwifQ&signature=AQAAAQMEnmUu1hV6Qo9Jt9vjG8XpEDPXPa6sxv_ixaMWwTfa&gcReferrer=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB01MTB55WH&spaceId=1197810144&itemSourceId=B01MTB55WH&salePrice=44.99&price=44.99&uuid=x3wZcMPCDS1B9r4511282" class="peer clear-right box-border block w-full min-w-60 rounded-[40px] px-7 text-center hover:no-underline hover:opacity-100 active:opacity-60 @xl/p:w-9/12 rapid-with-clickid commerce-cta-btn-primary bg-article-ui-button py-3 font-semibold leading-5 text-article-ui-button-label hover:bg-article-ui-button-hover hover:text-grey-hair active:bg-article-ui-button-hover active:text-grey-hair peer-[&]:mt-3 dark:bg-white dark:text-batcave dark:hover:bg-bob dark:focus:bg-bob dark:active:bg-bob" rel="noopener sponsored" target="_blank" data-aps-asin="B01MTB55WH" data-aps-asc-tag="tech-p-v-apo-20" data-rapid_p="124" data-aps-status="read">$45 at Amazon</a></div></div></div></div>
+
+
+--- API REQUEST round 27 ---
+model=unsloth/Qwen3.6-27B messages=56 payload_chars=83,040 cache=none
+
+--- API RESPONSE round 27 ---
+elapsed_s=7.0 prompt_tokens=30983 completion_tokens=197 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "head",
+  "depth": 1
+}
+
+--- TOOL RESULT: show_in_dom ---
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="cid:css-c68420ca-2523-4790-91b7-55e965bfd48d@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-89359bca-4e70-46df-beed-2a5ef2a6c4df@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-0699b7f0-bf5e-4bf4-ad57-31f2f766f035@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-a41a257c-fb8d-458e-a81e-15f3d6e0b497@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-e4515b5f-aa80-4279-8511-45465e162d10@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-3f71b42b-51e9-4632-8e24-43883a5f4538@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-ae6ee5cb-0b72-4f01-9f38-60303a3dbd5f@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-8534b3d8-0d48-45ec-aaad-787edee64dfe@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-024e1e09-7c6d-4c4d-a83f-0f6b5c378944@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-98930b16-761d-4af4-ae13-a272176269b6@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-2a226a49-ed24-4b1e-9f2d-479d9d10a1d3@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-c2071e06-fa3c-46d8-a5c1-b26fe769be17@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-43ad5004-5b43-4e52-92fa-be89c18d31b2@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-dba1e880-5dbc-468c-8e4a-e00170a3398b@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-dc3b8ef4-337c-4c88-a2bf-5f249f6ce07d@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-7935a5be-713f-4a45-8031-0fbd90375846@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-af9124d4-9cfa-440e-aa99-b83c69946dd0@mhtml.blink"><link rel="stylesheet" type="text/css" href="cid:css-fddf14ac-d258-4b8e-9f60-650e13213a7e@mhtml.blink"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preload" as="image" href="https://s.yimg.com/lo/mysterio/api/bbee83c6b5f2ddf1aa3101cc791e1ae1d18a2f534d6fc5b259e752f8efc96ad1/lightyear_networkapi/resizefill_w976;quality_80;format_webp/https:%2F%2Fd29szjachogqwa.cloudfront.net%2Fimages%2Fuser-uploaded%2Fmemorial-day-yahoo-tech_6588.png"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/184f07a59b1c10d1.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/90658bacbb124827.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/8cd7bd014154c275.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/2371c40ea8a0cc37.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/850e6aca6d74a5d2.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/35b0c480bf572eb0.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/0376ad8a013e30cf.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/e51fa066b1200dfb.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/8e1f3cf0fabc811e.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/f1828791f25ee308.css" data-precedence="next"><link rel="stylesheet" href="https://tech.yahoo.com/_next/static/css/69fcfb2fa821a390.css" data-precedence="next"><link rel="preload" as="script" fetchpriority="low" href="https://tech.yahoo.com/_next/static/chunks/webpack-90300af9585ae350.js"><link rel="preconnect" as="script" href="https://ec.yimg.com/didomi/"><link rel="dns-prefetch" as="script" href="https://ec.yimg.com/didomi/"><link rel="preload" href="https://s.yimg.com/du/benji/benji-2.js" as="script"><link rel="preload" href="https://s.yimg.com/tp/f/composer.js" as="script"><link rel="preload" href="https://consent.cmp.oath.com/version/7.0.0/cmp.js" as="script"><link rel="preload" href="https://tech.yahoo.com/_next/static/chunks/3985.0ed132ee10f9d2fc.js" as="script" fetchpriority="low"><link rel="preload" href="https://s.yimg.com/oa/consent.js" as="script"><meta name="next-size-adjust" content=""><meta name="dd-trace-id" content="16746358850322708309"><meta name="dd-trace-time" content="1780314890178"><meta name="appVersion" content="v1.509.0"><meta name="conf:cjs:consent-host" content="guce.yahoo.com"><meta name="oath:guce:consent-host" content="guce.yahoo.com"><link rel="preload" href="https://connect.facebook.net/en_US/fbevents.js" as="script"><link rel="preload" href="https://s.yimg.com/du/ay/wnsrvbjmeprtfrnfx.js" as="script"><link rel="preload" href="https://securepubads.g.doubleclick.net/tag/js/gpt.js" as="script"><link rel="preload" href="https://s.yimg.com/aaq/prebid/prebid-2.0.js" as="script"><link rel="preload" href="https://s.yimg.com/eh/prebid-config/tech-us-desktop.json" as="fetch" crossorigin="anonymous"><link rel="preload" href="https://s.yimg.com/aaq/f10d509c/d9pmsg6mvxzz6.js" as="script"><title>Memorial Day sales on tech are still available: shop extended deals up to 50% off from Amazon, Apple, Best Buy and more</title><meta name="description" content="With discounts on everything from laptops and headphones to smart home gadgets and TV, these lingering Memorial Day tech deals are the real thing."><meta name="keywords" content="Memorial Day, Apple earbuds"><meta name="robots" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"><meta name="conf:cjs:consent-flow" content="dmi"><meta name="conf:cjs:consent-host" content="guce.yahoo.com"><meta name="conf:cjs:locale" content="en-US"><meta name="oath:guce:consent-host" content="guce.yahoo.com"><meta name="twitter:dnt" content="on"><link rel="canonical" href="https://tech.yahoo.com/deals/breaking-news/article/memorial-day-sales-on-tech-are-still-available-shop-extended-deals-up-to-50-off-from-amazon-apple-best-buy-and-more-181434135.html"><meta property="og:title" content="Memorial Day sales on tech are still available: shop extended deals up to 50% off from Amazon, Apple, Best Buy and more"><meta property="og:description" content="With discounts on everything from laptops and headphones to smart home gadgets and TV, these lingering Memorial Day tech deals are the real thing."><meta property="og:url" content="https://tech.yahoo.com/deals/breaking-news/article/memorial-day-sales-on-tech-are-still-available-shop-extended-deals-up-to-50-off-from-amazon-apple-best-buy-and-more-181434135.html"><meta property="og:site_name" content="Yahoo Tech"><meta property="og:image" content="https://s.yimg.com/lo/mysterio/api/747d4f5e83ef5207d79b60b910878d0b148f039f01df7ba34ddb0ffdb4956430/lightyear_networkapi/resizefill_w1200;quality_80;format_webp/https:%2F%2Fd29szjachogqwa.cloudfront.net%2Fimages%2Fuser-uploaded%2Fmemorial-day-yahoo-tech_6588.png"><meta property="og:image:type" content="image/webp"><meta property="og:image:height" content="675"><meta property="og:image:width" content="1200"><meta property="og:type" content="article"><meta property="article:published_time" content="2026-05-14T18:14:34+00:00"><meta property="article:modified_time" content="2026-05-26T13:31:22+00:00"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Memorial Day sales on tech are still available: shop extended deals up to 50% off from Amazon, Apple, Best Buy and more"><meta name="twitter:description" content="With discounts on everything from laptops and headphones to smart home gadgets and TV, these lingering Memorial Day tech deals are the real thing."><meta name="twitter:image" content="https://s.yimg.com/lo/mysterio/api/747d4f5e83ef5207d79b60b910878d0b148f039f01df7ba34ddb0ffdb4956430/lightyear_networkapi/resizefill_w1200;quality_80;format_webp/https:%2F%2Fd29szjachogqwa.cloudfront.net%2Fimages%2Fuser-uploaded%2Fmemorial-day-yahoo-tech_6588.png"><meta name="twitter:image:type" content="image/webp"><meta name="twitter:image:height" content="675"><meta name="twitter:image:width" content="1200"><meta property="al:ios:app_name" content="Yahoo"><meta property="al:ios:app_store_id" content="304158842"><meta property="al:ios:url" content="yahoo://article/view?uuid=49c602cd-c78b-4ee9-b39d-a432d255789c&src=web"><meta property="al:android:app_name" content="Yahoo"><meta property="al:android:package" content="com.yahoo.mobile.client.android.yahoo"><meta property="al:android:url" content="yahoo://article/view?uuid=49c602cd-c78b-4ee9-b39d-a432d255789c&src=web"><link rel="icon" href="https://tech.yahoo.com/favicon.ico" type="image/x-icon" sizes="32x32"><link rel="preload" href="https://tech.yahoo.com/_next/static/media/4c5a69d047c2b2dc-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="https://tech.yahoo.com/_next/static/media/6563b172ef52338e-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="https://tech.yahoo.com/_next/static/media/acc10bdbcacce389-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="https://tech.yahoo.com/_next/static/media/f0b1e3f007006b62-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="https://tech.yahoo.com/_next/static/media/f35b5e6220b536eb-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="dns-prefetch" href="https://ncp-gw-frontpage.media.yahoo.com/"><link rel="preconnect" href="https://ncp-gw-frontpage.media.yahoo.com/"><link rel="dns-prefetch" href="https://nexus-gateway-prod.media.yahoo.com/"><link rel="preconnect" href="https://nexus-gateway-prod.media.yahoo.com/"><link rel="dns-prefetch" href="https://s.yimg.com/"><link rel="preconnect" href="https://s.yimg.com/"><link rel="dns-prefetch" href="https://consent.cmp.oath.com/"><link rel="preconnect" href="https://consent.cmp.oath.com/"><link rel="dns-prefetch" href="https://udc.yahoo.com/"><link rel="preconnect" href="https://udc.yahoo.com/"><link rel="preload" href="https://s.yimg.com/ss/analytics3.js" as="script"><link rel="preconnect" href="https://c.aps.amazon-adsystem.com/"><link rel="preload" href="https://config.aps.amazon-adsystem.com/configs/5161" as="script" fetchpriority="high"><link rel="preload" href="https://s.yimg.com/cv/apiv2/amazon_nca/publisher_1751429095907.js" as="script" fetchpriority="high"><link rel="preload" href="https://s.yimg.com/cv/apiv2/as/cb/cb_v1.js" as="script"><link rel="preload" href="https://s.yimg.com/cx/pv/perf-vitals_4.1.0.js" as="script"><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><link href="https://securepubads.g.doubleclick.net/pagead/managed/dict/m202605280101/gpt" rel="compression-dictionary"></head>
+
+
+--- API REQUEST round 28 ---
+model=unsloth/Qwen3.6-27B messages=58 payload_chars=96,167 cache=none
+
+--- API RESPONSE round 28 ---
+elapsed_s=11.6 prompt_tokens=36178 completion_tokens=558 finish_reason=tool_calls tool_calls=[edit]
+
+--- TOOL CALL: edit ---
+{
+  "edits": [
+    {
+      "oldText": "<title>Memorial Day sales on tech are still available: shop extended deals up to 50% off from Amazon, Apple, Best Buy and more</title>",
+      "newText": "<style>\n/* Highlight 'Save $X' discount text in product modules - significantly larger and green */\n.productModule :where(div, span, p, a, small, strong, em)[class*=\"save\" i],\n.productModule :where(*):has(> *):has-text(\"Save\"),\n.productModule [class*=\"discount\"],\n.productModule [class*=\"savings\"],\n.productModule [data-testid*=\"save\"],\n.productModule [data-testid*=\"discount\"] {\n  font-size: 1.75rem !important;\n  font-weight: 800 !important;\n  color: #16a34a !important;\n  background-color: #dcfce7 !important;\n  padding: 4px 10px !important;\n  border-radius: 6px !important;\n  display: inline-block !important;\n}\n/* Also target any text node containing \"Save\" pattern via attribute selectors */\n.productModule [aria-label*=\"Save\"],\n.productModule [title*=\"Save\"] {\n  font-size: 1.75rem !important;\n  font-weight: 800 !important;\n  color: #16a34a !important;\n  background-color: #dcfce7 !important;\n  padding: 4px 10px !important;\n  border-radius: 6px !important;\n}\n/* Target the flex container's children that show savings */\n.productModule .flex.flex-wrap.items-center > div:not(:first-child),\n.productModule .flex.flex-wrap.items-center > span:not(:first-child) {\n  font-size: 1.75rem !important;\n  font-weight: 800 !important;\n  color: #16a34a !important;\n}\n</style>\n<title>Memorial Day sales on tech are still available: shop extended deals up to 50% off from Amazon, Apple, Best Buy and more</title>"
+    }
+  ]
+}
+
+--- TOOL RESULT: edit ---
+Successfully replaced 1 block(s).
+
+--- API REQUEST round 29 ---
+model=unsloth/Qwen3.6-27B messages=60 payload_chars=98,194 cache=none
+
+--- API RESPONSE round 29 ---
+elapsed_s=2.4 prompt_tokens=36760 completion_tokens=111 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "head style",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<style>
+/* Highlight 'Save $X' discount text in product modules - significantly larger and green */
+.productModule :where(div, span, p, a, small, strong, em)[class*="save" i],
+.productModule :where(*):has(> *):has-text("Save"),
+.productModule [class*="discount"],
+.productModule [class*="savings"],
+.productModule [data-testid*="save"],
+.productModule [data-testid*="discount"] {
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  color: #16a34a !important;
+  background-color: #dcfce7 !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  display: inline-block !important;
+}
+/* Also target any text node containing "Save" pattern via attribute selectors */
+.productModule [aria-label*="Save"],
+.productModule [title*="Save"] {
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  color: #16a34a !important;
+  background-color: #dcfce7 !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+}
+/* Target the flex container's children that show savings */
+.productModule .flex.flex-wrap.items-center > div:not(:first-child),
+.productModule .flex.flex-wrap.items-center > span:not(:first-child) {
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  color: #16a34a !important;
+}
+</style>
+
+
+--- API REQUEST round 30 ---
+model=unsloth/Qwen3.6-27B messages=62 payload_chars=99,948 cache=none
+
+--- API RESPONSE round 30 ---
+elapsed_s=14.0 prompt_tokens=37286 completion_tokens=1050 finish_reason=tool_calls tool_calls=[edit]
+
+--- TOOL CALL: edit ---
+{
+  "edits": [
+    {
+      "oldText": "<style>\n/* Highlight 'Save $X' discount text in product modules - significantly larger and green */\n.productModule :where(div, span, p, a, small, strong, em)[class*=\"save\" i],\n.productModule :where(*):has(> *):has-text(\"Save\"),\n.productModule [class*=\"discount\"],\n.productModule [class*=\"savings\"],\n.productModule [data-testid*=\"save\"],\n.productModule [data-testid*=\"discount\"] {\n  font-size: 1.75rem !important;\n  font-weight: 800 !important;\n  color: #16a34a !important;\n  background-color: #dcfce7 !important;\n  padding: 4px 10px !important;\n  border-radius: 6px !important;\n  display: inline-block !important;\n}\n/* Also target any text node containing \"Save\" pattern via attribute selectors */\n.productModule [aria-label*=\"Save\"],\n.productModule [title*=\"Save\"] {\n  font-size: 1.75rem !important;\n  font-weight: 800 !important;\n  color: #16a34a !important;\n  background-color: #dcfce7 !important;\n  padding: 4px 10px !important;\n  border-radius: 6px !important;\n}\n/* Target the flex container's children that show savings */\n.productModule .flex.flex-wrap.items-center > div:not(:first-child),\n.productModule .flex.flex-wrap.items-center > span:not(:first-child) {\n  font-size: 1.75rem !important;\n  font-weight: 800 !important;\n  color: #16a34a !important;\n}\n</style>",
+      "newText": "<style>\n/* Highlight 'Save $X' discount text in product modules - significantly larger and green */\n.productModule .save-highlight {\n  font-size: 2rem !important;\n  font-weight: 900 !important;\n  color: #16a34a !important;\n  background-color: #dcfce7 !important;\n  padding: 6px 14px !important;\n  border-radius: 8px !important;\n  display: inline-block !important;\n  line-height: 1.2 !important;\n  text-decoration: none !important;\n}\n/* Target elements with discount/save-related classes */\n.productModule [class*=\"save\"],\n.productModule [class*=\"discount\"],\n.productModule [class*=\"savings\"] {\n  font-size: 2rem !important;\n  font-weight: 900 !important;\n  color: #16a34a !important;\n  background-color: #dcfce7 !important;\n  padding: 6px 14px !important;\n  border-radius: 8px !important;\n}\n/* Target aria-label or title containing Save */\n.productModule [aria-label*=\"Save\"],\n.productModule [title*=\"Save\"] {\n  font-size: 2rem !important;\n  font-weight: 900 !important;\n  color: #16a34a !important;\n}\n</style>\n<script>\n(function() {\n  // Find and highlight any \"Save $X\" text in product modules\n  function highlightSaveText() {\n    document.querySelectorAll('.productModule').forEach(function(module) {\n      module.querySelectorAll('div, span, p, a, small, strong, em').forEach(function(el) {\n        var text = el.childNodes[0]?.textContent || '';\n        if (/^\\s*Save \\$\\d+/.test(text.trim()) && !el.classList.contains('save-highlight')) {\n          el.classList.add('save-highlight');\n        }\n      });\n    });\n  }\n  // Run on load and observe for dynamic content\n  highlightSaveText();\n  var observer = new MutationObserver(highlightSaveText);\n  observer.observe(document.body, { childList: true, subtree: true });\n})();\n</script>"
+    }
+  ]
+}
+
+--- TOOL RESULT: edit ---
+Successfully replaced 1 block(s).
+
+--- API REQUEST round 31 ---
+model=unsloth/Qwen3.6-27B messages=64 payload_chars=103,755 cache=none
+
+--- API RESPONSE round 31 ---
+elapsed_s=2.1 prompt_tokens=38360 completion_tokens=57 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "head style",
+  "depth": 0
+}
+
+--- TOOL RESULT: show_in_dom ---
+<style>
+/* Highlight 'Save $X' discount text in product modules - significantly larger and green */
+.productModule .save-highlight {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  color: #16a34a !important;
+  background-color: #dcfce7 !important;
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
+  display: inline-block !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+}
+/* Target elements with discount/save-related classes */
+.productModule [class*="save"],
+.productModule [class*="discount"],
+.productModule [class*="savings"] {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  color: #16a34a !important;
+  background-color: #dcfce7 !important;
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
+}
+/* Target aria-label or title containing Save */
+.productModule [aria-label*="Save"],
+.productModule [title*="Save"] {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  color: #16a34a !important;
+}
+</style>
+
+
+--- ASSISTANT ---
+Now let me verify the changes are properly applied by checking the head again:
+
+Tokens: 38360 prompt / 57 completion
+
+=== Result ===
+
+(edited raw.html → index.html)
+

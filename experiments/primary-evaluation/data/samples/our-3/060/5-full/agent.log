@@ -1,0 +1,672 @@
+Timestamp: 2026-06-03T11:56:46.514642+00:00
+Sample: our-3/060
+Pipeline: full (5-full)
+Backend: local
+Model: unsloth/Qwen3.6-27B
+Work page: /home/ubuntu/internet-shaper-thesis-2026/experiments/primary-evaluation/data/samples/our-3/060/5-full/work/page.html
+Tools: get_map_of_dom, show_in_dom, set_update_rule
+
+=== Model Request ===
+
+--- System prompt ---
+You are a browser extension agent that modifies web pages based on user requests.
+
+All tools read from and write to the same live page. set_update_rule changes are applied immediately — subsequent read tool calls reflect the updated state.
+
+Workflow:
+1. Call get_map_of_dom() to get an overview of the page structure
+2. Identify candidate elements for the user's request
+3. Use show_in_dom() to examine specific elements if you need more detail
+4. Create update rules with specific selectors (prefer class names, data attributes, or tag names over structural paths)
+
+Rules must be idempotent and deterministic:
+- Running the same logic on the same element multiple times must produce the same result as running it once.
+- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
+- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
+- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
+
+--- Tool definitions ---
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_map_of_dom",
+      "description": "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: 1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. 2. Repeating sibling elements show only the first with a comment indicating count. 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. Can only be called once per session; later calls return the previous result message.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "show_in_dom",
+      "description": "Returns full HTML for the first element matching the query selector.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_selector": {
+            "type": "string",
+            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')"
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. ",
+            "minimum": 0,
+            "default": 3
+          }
+        },
+        "required": [
+          "query_selector"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_update_rule",
+      "description": "Sets a persistent update rule. It is applied to all elements matching the CSS selector immediatly and then every time the page loads. \n\nThe 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \nThe page's 'document' is also available for DOM construction (e.g. document.createElement). \nGlobal APIs like window are not avaliable. \n\nCommon patterns: \n- element.style.display = 'none' - hide the element \n- element.style.opacity = '0.3' - dim the element \n- element.classList.add('hidden') - add a class \n- element.textContent = '' - clear text content \n\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "A short label (~3 words) describing what this rule does, for display in the rule management UI (e.g., 'Hide video ads', 'Remove sidebar', 'Dim suggestions')"
+          },
+          "query_selector": {
+            "type": "string",
+            "description": "A CSS selector matching elements to modify (e.g., '.ad-container', '[data-ad]', 'ytd-ad-slot-renderer')"
+          },
+          "logic": {
+            "type": "string",
+            "description": "Valid JavaScript code with access to 'element' variable only."
+          }
+        },
+        "required": [
+          "label",
+          "query_selector",
+          "logic"
+        ]
+      }
+    }
+  }
+]
+
+=== Agent Chat ===
+
+--- USER ---
+Add a prominent language-filter selector at the top of the stream list to automatically hide all streams that do not match my primary language tag.
+
+--- API REQUEST round 0 ---
+model=unsloth/Qwen3.6-27B messages=2 payload_chars=1,448 cache=none
+
+--- API RESPONSE round 0 ---
+elapsed_s=3.7 prompt_tokens=1142 completion_tokens=16 finish_reason=tool_calls tool_calls=[get_map_of_dom]
+
+--- TOOL CALL: get_map_of_dom ---
+(no input)
+
+--- TOOL RESULT: get_map_of_dom ---
+<body><!-- -1 wrappers  class="root" id="root"--><div class="bBgSPF"><div class="hodpZn"><nav class="kjJPRk top-nav" data-a-target="top-nav-container"><!-- -1 wrappers  class="cRMumF top-nav__menu"--><div class="itDlPz"><div class="kvrzxX skip-to-dropdown"><!-- -2 wrappers  class="ScCoreButton-sc-ocjdkq-0 yezmM ScCoreButtonLabel-sc-s7h2b7-0 OyGFd" title="Menu for skipping to content (Alt+P)"--><div data-a-target="tw-core-button-label-text" class="gIMAUE">Skip to...<div class="bGneRp"><div class="ScKeyboardPromptContainer-sc-gsbomr-0 qeoye"><span class="ScKeyboardPromptText-sc-gsbomr-1 jRgBrS">⌥</span></div><div class="ScKeyboardPromptContainer-sc-gsbomr-0 qeoye"><span class="ScKeyboardPromptText-sc-gsbomr-1 jRgBrS">P</span></div></div></div><div class="kvrzxX"><!-- -2 wrappers  class="ScCoreButtonIcon-sc-ypak37-0 gcsIzP tw-core-button-icon ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg" data-a-selector="tw-core-button-icon"--><svg /></div></div><a data-a-target="home-link" aria-label="Twitch Home" class="ScCoreLink-sc-16kq0mq-0 jUiaVy hEMSNZ tw-link"><!-- -2 wrappers  class="ScLogoContainer-sc-mx5axi-0 cQNZGg tw-animated-glitch-logo ScFigure-sc-mx5axi-1 fPRJhj"--><svg class="ScSvg-sc-mx5axi-2 jpMUBG" /></a><div><!-- -2 wrappers  class="pbocV fRzsnK"--><div class="issCWA"><!-- -2 wrappers  class="navigation-link active" aria-label="Browse" data-a-target="browse-link" data-test-selector="top-nav__browse-link" label="Browse"--><div class="bBIuqB"><p class="ScTitleText-sc-d9mj2s-0 bqyYtA lbYztg irzZLq tw-title">Browse</p></div><div aria-label="Browse" class="eCIYeh"><!-- -2 wrappers  class="iDMNUO ScSvgWrapper-sc-wkgzod-0 bdoMMZ tw-svg"--><svg /></div></div><div class="navigation-link__indicator-container"><div class="navigation-link__active-indicator"></div></div></div><div class="jNQxNh"><!-- -6 wrappers  class="bkOPih iDMNUO ScCoreButton-sc-ocjdkq-0 glPhvE ScButtonIcon-sc-9yap0r-0 dgVYJo ButtonIconFigure-sc-1emm8lf-0 lnTwMD ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg" data-test-selector="toggle-balloon-wrapper__mouse-enter-detector" aria-label="More Options" data-a-target="ellipsis-button"--><svg role="presentation" /></div></div><div class="hCMJIV"><!-- -5 wrappers  class="iXOjvk top-nav__search-container search-box dEtuSs" data-a-target="nav-search-box" role="search"--><div class="bMcAyM"><!-- -1 wrappers  class="fIxYas tw-combo-input" data-a-target="tray-search-input"--><div class="ScInputWrapper-sc-1fxjr4l-0 krWfpF tw-combo-input__input"><!-- -2 wrappers  class="ScInputContainer-sc-vu7u7d-3 eKplGl AoXTY" data-a-target="tray-search-input"--><input id="tw-d31fed1878aa4182a6edce2453c298f7" aria-label="Search Input" type="search" class="ScInputBase-sc-vu7u7d-0 ScInput-sc-19xfhag-0 fFIkct dWLTZt bEKQKp tw-input tw-input--large" placeholder="Search" data-a-target="tw-input"></div><div class="eLLosC"><!-- -4 wrappers  class="ScCoreButton-sc-ocjdkq-0 kSVPky iUSlUt tw-combo-input__button-icon tw-combo-input__button-icon--large ScButtonIconWrapper-sc-1fxjr4l-1 fBOZNQ ScCoreButtonIcon-sc-ypak37-0 byftla tw-core-button-icon ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg" type="secondary" aria-label="Search Button" data-a-selector="tw-core-button-icon"--><svg /></div></div><div class="ijRpXh"><!-- -4 wrappers  class="jJdyrt ScInputContainer-sc-vu7u7d-3 eKplGl AoXTY"--><input id="tw-d31fed1878aa4182a6edce2453c298f7-hidden" type="search" class="ScInputBase-sc-vu7u7d-0 ScInput-sc-19xfhag-0 fFIkct gUZOV bEKQKp tw-input tw-input--large" data-a-target="tw-input"></div></div><div class="bZYcrx"><div class="gfxEDq"><!-- -6 wrappers  class="AoXTY iDMNUO ScCoreButton-sc-ocjdkq-0 glPhvE ScButtonIcon-sc-9yap0r-0 dgVYJo ButtonIconFigure-sc-1emm8lf-0 lnTwMD ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg" data-toggle-balloon-id="f3460922-2c18-4fec-925c-0748015419be" data-test-selector="toggle-balloon-wrapper__mouse-enter-detector" aria-label="Search" title="Search"--><svg role="presentation" /></div><div class="VxLcr top-nav__prime"><!-- -1 wrappers  class="AoXTY prime-offers"--><div class="bkOPih"><!-- -6 wrappers  class="iDMNUO ScCoreButton-sc-ocjdkq-0 glPhvE ScButtonIcon-sc-9yap0r-0 dgVYJo ButtonIconFigure-sc-1emm8lf-0 lnTwMD ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg" data-test-selector="test_selector_prime_tracking_button_wrapper" aria-label="Prime offers" data-a-target="prime-offers-icon" data-target="prime-offers-icon"--><svg role="presentation" /></div><div class="bAVEXw prime-offers__pill"><!-- -2 wrappers  class="ScAnimation-sc-s60rmz-0 jGelnR tw-animation ScNumberBadgeMask-sc-qi0rbw-0 kjWTWh ewzioX tw-number-badge" data-a-target="tw-animation-target"--><div class="ScNumberBadge-sc-qi0rbw-1 bAgbYH tw-number-badge__badge">30</div></div></div><div class="hdaUxc"><!-- -1 wrappers  class="inMpaR"--><div class="inMpaR anon-user" data-a-target="user-card"><div class="gJICsA"><!-- -2 wrappers  class="ScCoreButton-sc-ocjdkq-0 yezmM ScCoreButtonLabel-sc-s7h2b7-0 OyGFd" data-a-target="login-button" data-test-selector="anon-user-menu__login-button"--><div data-a-target="tw-core-button-label-text" class="iBachR">Log In</div></div><div class="gJICsA"><!-- -2 wrappers  class="ScCoreButton-sc-ocjdkq-0 cikFpu ScCoreButtonLabel-sc-s7h2b7-0 OyGFd" data-a-target="signup-button" data-test-selector="anon-user-menu__sign-up-button"--><div data-a-target="tw-core-button-label-text" class="iBachR">Sign Up</div></div></div><div data-a-target="dropdown-up" class="hyoRML"><!-- -2 wrappers  class="bkOPih" data-test-selector="toggle-balloon-wrapper__mouse-enter-detector"--><button data-a-target="user-menu-toggle" data-test-selector="user-menu__toggle" aria-label="User Menu"></button><button class="ScCoreButton-sc-ocjdkq-0 glPhvE ScButtonIcon-sc-9yap0r-0 dgVYJo" aria-label="User Menu"><!-- -2 wrappers  class="ButtonIconFigure-sc-1emm8lf-0 lnTwMD ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg"--><svg role="presentation" /></button></div></div></div></nav><div class="ebWabz"><div><!-- -4 wrappers  class="kHqXhd side-nav side-nav--expanded LJevC scrollable-area Akwmp side-nav__scrollable_content" data-test-selector="side-nav" data-a-target="side-nav-bar" role="complementary"--><div class="jdNosq collapse-toggle"><!-- -4 wrappers  class="iDMNUO ScCoreButton-sc-ocjdkq-0 glPhvE ScButtonIcon-sc-9yap0r-0 dgVYJo ButtonIconFigure-sc-1emm8lf-0 lnTwMD ScSvgWrapper-sc-wkgzod-0 kccyMt tw-svg" aria-label="Collapse Side Nav" data-a-target="side-nav-arrow"--><svg role="presentation" /></div><div class="bMcAyM side-bar-contents"><!-- -3 wrappers  class="skip-to-target NJtht" id="side-nav" aria-label="Left Navigation"--><div><!-- -1 wrappers  class="iGMbNn side-nav-section" aria-label="Live Channels" role="group"--><div class="fxkdFl side-nav-header" data-a-target="side-nav-header-expanded"><h3 class="dzXkjr">Live Channels</h3></div><div class="cpWPwm tw-transition-group"><div class="ScTransitionBase-sc-hx4quq-0 jaUBmE tw-transition"><!-- -3 wrappers  class="AoXTY side-nav-card ScCoreLink-sc-16kq0mq-0 fytYW cnzybN side-nav-card__link tw-link" data-a-id="recommended-channel-0" data-test-selector="recommended-channel"--><div class="kErOMx side-nav-card__avatar"><!-- -1 wrappers  class="ScAvatar-sc-144b42z-0 dLsNfm tw-avatar"--><img class="fAYJcN tw-image tw-image-avatar"></div><div class="bLlihH"><!-- -1 wrappers  class="dJfBsr"--><div data-a-target="side-nav-card-metadata" class="ffUuNa"><div class="kvrzxX side-nav-card__title"><p title="Jynxzi" data-a-target="side-nav-title" class="dTdgXA hnBAak">Jynxzi</p></div><div class="dWQoKW side-nav-card__metadata"><p title="I'm Only Sleeping" class="iMyVXK">I'm Only Sleeping</p></div></div><div class="cXMAQb side-nav-card__live-status" data-a-target="side-nav-live-status"><!-- -1 wrappers  class="kvrzxX"--><div class="ScChannelStatusIndicator-sc-bjn067-0 fJwlvq tw-channel-status-indicator"></div><p class="cWFBTs cdydzE">Live</p><div class="dqfEBK"><span class="fYAAA-D">17.4K</span><p class="cWFBTs cdydzE">17.4K viewers</p></div></div></div><div class="dJfBsr"><!-- -1 wrappers  class="side-nav-card__link__tooltip-arrow"--><div class="ScSvgWrapper-sc-wkgzod-0 dVDUDh tw-svg"><svg /></div><p class="cWFBTs cdydzE">Use the Right Arrow Key to show more information.</p></div></div><!-- -8 siblings --></div></div><div class="side-info-container"><div id="1e207a25422942f4ae42e5bfc11fe15d"></div></div></div></div><main class="ggZLvP twilight-main"><header id="twilight-sticky-header-root"></header><div class="scrollable-area root-scrollable root-scrollable__content" data-a-target="root-scroller"><!-- -5 wrappers  class="igZqfU root-scrollable__wrapper dcDDVJ common-centered-column skip-to-target" id="directory-game-main-content" aria-label="Main Content"--><div class="ibRGZe"><h1 class="ScTitleText-sc-d9mj2s-0 gfKkXK lbYztg tw-title">Just Chatting &amp; IRL</h1><p class="cWFBTs">Whether it's talking, traveling, or touching grass, these Just Chatting &amp; IRL streams have something for everyone.</p></div><div class="eLLosC"><!-- -1 wrappers  class="ScTower-sc-1sjzzes-0 hTjsYU tw-tower"--><div class="kpalQF"><!-- -4 wrappers  class="ghbJdj"--><div class="cexlzi"><!-- -1 wrappers  class="iKmojN"--><div class="ScTextWrapper-sc-10mto54-1 fzKxJT"><a data-focusable="true" data-test-selector="TitleAndChannel" data-a-target="preview-card-channel-link" aria-label="alveussanctuary (Verified) streaming Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon" class="ScCoreLink-sc-16kq0mq-0 fytYW preview-card-channel-link tw-link"><h4 title="Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon" class="gfsA-dt">Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon</h4><div class="hIpyjY"><p data-a-target="preview-card-channel-link" class="kdDAY"></p><div class="lfuVkX"><!-- -1 wrappers  class="lvgXe"--><p title="AlveusSanctuary" class="kdDAY">AlveusSanctuary</p><div class="iDMNUO"><!-- -3 wrappers  class="cbxBks ScSvgWrapper-sc-wkgzod-0 cKdklD tw-svg" role="img"--><title>Verified</title></div></div><p></p></div></a><p class="bfhuDn"><a data-test-selector="GameLink" data-a-target="preview-card-game-link" class="ScCoreLink-sc-16kq0mq-0 kLgTJj tw-link">Just Chatting</a></p><div class="fsLBGq"><!-- -1 wrappers  class="cYTUJE"--><div class="resize-detector"><div class="resize-detector"><div class="resize-detector__grow"></div></div><div class="resize-detector"><div class="resize-detector__shrink"></div></div></div><div class="jLHva-d"><!-- -3 wrappers  class="ScTag-sc-ajnfk3-0 biuEEk tw-tag ScTagContent-sc-ajnfk3-1 iLlvwz ScTruncateText-sc-i3kjgq-0 iSVEtN" aria-label="Tag, English" data-a-target="English"--><span class="ScTruncateTextContent-sc-i3kjgq-1 eGkFBs">English</span></div><div class="jLHva-d"><!-- -3 wrappers  class="ScTag-sc-ajnfk3-0 biuEEk tw-tag ScTagContent-sc-ajnfk3-1 iLlvwz ScTruncateText-sc-i3kjgq-0 iSVEtN" aria-label="Tag, TogetherForGood" data-a-target="TogetherForGood"--><span class="ScTruncateTextContent-sc-i3kjgq-1 eGkFBs">TogetherForGood</span></div><div class="keosFZ"><!-- -3 wrappers  class="ScTag-sc-ajnfk3-0 biuEEk tw-tag ScTagContent-sc-ajnfk3-1 iLlvwz ScTruncateText-sc-i3kjgq-0 iSVEtN" aria-label="Tag, purplemartins" data-a-target="purplemartins"--><span class="ScTruncateTextContent-sc-i3kjgq-1 eGkFBs">purplemartins</span></div></div></div><div class="ScImageWrapper-sc-10mto54-0 cZRMEH"><!-- -2 wrappers  class="ScCoreLink-sc-16kq0mq-0 jUiaVy preview-card-avatar tw-link ScAspectRatio-sc-18km980-1 fZZRTL tw-aspect" data-test-selector="preview-card-avatar"--><div class="ScAspectSpacer-sc-18km980-0 dYMszt"></div><div class="ScAvatar-sc-144b42z-0 jxTziW tw-avatar"><img class="fAYJcN tw-image tw-image-avatar" alt="alveussanctuary"></div></div></div><div class="ScWrapper-sc-1wvuch4-0 jfmtUL tw-hover-accent-effect"><div class="ScTransformWrapper-sc-1wvuch4-1 ScCornerTop-sc-1wvuch4-2 htPomk bZxWsv"></div><div class="ScTransformWrapper-sc-1wvuch4-1 ScCornerBottom-sc-1wvuch4-3 jJEbMY DEyfW"></div><div class="ScTransformWrapper-sc-1wvuch4-1 ScEdgeLeft-sc-1wvuch4-4 jyahvM iPELDE"></div><div class="ScTransformWrapper-sc-1wvuch4-1 ScEdgeBottom-sc-1wvuch4-5 cOVWho erduTI"></div><div class="ScTransformWrapper-sc-1wvuch4-1 iOIbVE"><!-- -2 wrappers  class="ScCoreLink-sc-16kq0mq-0 jUiaVy preview-card-image-link tw-link vvTZA ScLayoutCssVars-sc-1pn65j5-0 fSZTy kDsKkP" data-a-target="preview-card-image-link"--><div class="ScAspectRatio-sc-18km980-1 jgpfbi tw-aspect"><div class="ScAspectSpacer-sc-18km980-0 jtztGm"></div><img alt="Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon - alveussanctuary" class="tw-image"></div><div class="ScPositionCorner-sc-1shjvnv-1 cwtMFl"><!-- -1 wrappers  class="ScChannelStatusTextIndicator-sc-qtgrnb-0 ilvRlP tw-channel-status-text-indicator"--><span class="eZDPwN">LIVE</span></div><div class="ScPositionCorner-sc-1shjvnv-1 fSNsjF"><div class="ScMediaCardStatWrapper-sc-anph5i-0 kMBPhM tw-media-card-stat">2.7K viewers</div></div></div></div></div><!-- -8 siblings --><div class="resize-detector"><div class="resize-detector"><div class="resize-detector__grow"></div></div><div class="resize-detector"><div class="resize-detector__shrink"></div></div></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><!-- -19 siblings --></div><div class="scrollable-trigger__wrapper"><div class="scrollable-trigger__trigger-area scrollable-trigger__trigger-area--up"></div></div></div><div class="gaYDgh snackbar-list__container snackbar-overlay__list"><!-- -1 wrappers  class="fxPZea"--><div class="cpWPwm snackbar-overlay__items tw-transition-group"></div></div></main><div id="66bb3d2d8a9f45b8bb8af67c292462ae"></div><div></div><div></div><div class="celebration__overlay csjPxT"></div></div><footer id="twilight-sticky-footer-root"><!-- -1 wrappers --><article class="ffPTzE"><!-- -7 wrappers  class="ScLayoutCssVars-sc-1pn65j5-0 jfyitl kDsKkP egqCnl gPNLhS dtSdDz ScCalloutMessage-sc-23utpo-0 hYyLfz tw-callout-message bwtGga kvrzxX"--><div class="kFLrqZ"><img alt="CoolCat" class="tw-image upsell-bottom-banner__coolcat"></div><div class="kFLrqZ"><strong class="dBjVUO">Join the Twitch community!</strong></div><p class="eKMTRC">Discover the best live streams anywhere.</p><div class="kUhxNg"><!-- -2 wrappers  class="ScCoreButton-sc-ocjdkq-0 cikFpu datCtY ScCoreButtonLabel-sc-s7h2b7-0 OyGFd"--><div data-a-target="tw-core-button-label-text" class="iBachR">Sign Up</div></div></article><div class="resize-detector"><div class="resize-detector"><div class="resize-detector__grow"></div></div><div class="resize-detector"><div class="resize-detector__shrink"></div></div></div></footer></div><div><iframe title="No Content"></iframe><div></div></div></div><div role="status" class="ScSrOnly-sc-2u0278-0 gzigVO"></div><div role="alert" class="ScSrOnly-sc-2u0278-0 gzigVO"></div></body>
+
+<!-- Stats: 371 wrappers collapsed, 35 list items truncated -->
+
+
+--- API REQUEST round 1 ---
+model=unsloth/Qwen3.6-27B messages=4 payload_chars=16,438 cache=none
+
+--- API RESPONSE round 1 ---
+elapsed_s=3.7 prompt_tokens=6277 completion_tokens=49 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".ScTower-sc-1sjzzes-0",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="ScTower-sc-1sjzzes-0 hTjsYU tw-tower" style="position: relative;"><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><div><div class="Layout-sc-1xcs6mc-0"><!-- -1 children --></div></div></div><div class="resize-detector"><div class="resize-detector"><div class="resize-detector__grow" style="width: 100000px; height: 100000px;"></div></div><div class="resize-detector"><div class="resize-detector__shrink"></div></div></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div></div>
+
+
+--- API REQUEST round 2 ---
+model=unsloth/Qwen3.6-27B messages=6 payload_chars=19,135 cache=none
+
+--- API RESPONSE round 2 ---
+elapsed_s=1.4 prompt_tokens=7272 completion_tokens=44 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".iKmojN",
+  "depth": 5
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="Layout-sc-1xcs6mc-0 iKmojN"><div class="ScTextWrapper-sc-10mto54-1 fzKxJT"><a data-focusable="true" data-test-selector="TitleAndChannel" data-a-target="preview-card-channel-link" aria-label="alveussanctuary (Verified) streaming Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon" class="ScCoreLink-sc-16kq0mq-0 fytYW preview-card-channel-link tw-link" href="https://www.twitch.tv/alveussanctuary"><h4 dir="auto" title="Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon" class="CoreText-sc-1txzju1-0 gfsA-dt" style="font-family: var(--font-body);">Alveus Subathon (Day 8 / 30+) | !alveus !institute !pixel !schedule !video !subathon</h4><div class="Layout-sc-1xcs6mc-0 hIpyjY"><p data-a-target="preview-card-channel-link" tabindex="-1" class="CoreText-sc-1txzju1-0 kdDAY"></p><div class="Layout-sc-1xcs6mc-0 lfuVkX"><div class="Layout-sc-1xcs6mc-0 lvgXe"><!-- -2 children --></div></div><p></p></div></a><p class="CoreText-sc-1txzju1-0 bfhuDn"><a data-test-selector="GameLink" data-a-target="preview-card-game-link" class="ScCoreLink-sc-16kq0mq-0 kLgTJj tw-link" href="https://www.twitch.tv/directory/category/just-chatting">Just Chatting</a></p><div class="Layout-sc-1xcs6mc-0 fsLBGq"><div class="InjectLayout-sc-1i43xsx-0 cYTUJE" style="position: relative;"><div class="resize-detector"><div class="resize-detector"><!-- -1 children --></div><div class="resize-detector"><!-- -1 children --></div></div><div class="InjectLayout-sc-1i43xsx-0 jLHva-d"><a aria-label="Tag, English" data-a-target="English" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/English"><!-- -1 children --></a></div><div class="InjectLayout-sc-1i43xsx-0 jLHva-d"><a aria-label="Tag, TogetherForGood" data-a-target="TogetherForGood" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/TogetherForGood"><!-- -1 children --></a></div><div class="InjectLayout-sc-1i43xsx-0 keosFZ"><a aria-label="Tag, purplemartins" data-a-target="purplemartins" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/purplemartins"><!-- -1 children --></a></div></div></div></div><div class="ScImageWrapper-sc-10mto54-0 cZRMEH"><a data-test-selector="preview-card-avatar" tabindex="-1" class="ScCoreLink-sc-16kq0mq-0 jUiaVy preview-card-avatar tw-link" href="https://www.twitch.tv/alveussanctuary/videos"><div class="ScAspectRatio-sc-18km980-1 fZZRTL tw-aspect"><div class="ScAspectSpacer-sc-18km980-0 dYMszt"></div><div class="ScAvatar-sc-144b42z-0 jxTziW tw-avatar"><img class="InjectLayout-sc-1i43xsx-0 fAYJcN tw-image tw-image-avatar" alt="alveussanctuary" src="https://static-cdn.jtvnw.net/jtv_user_pictures/4384f6c4-6608-48f4-b3a7-36d0eb6efbd3-profile_image-50x50.png" style="object-fit: cover;"></div></div></a></div></div>
+
+
+--- API REQUEST round 3 ---
+model=unsloth/Qwen3.6-27B messages=8 payload_chars=22,170 cache=none
+
+--- API RESPONSE round 3 ---
+elapsed_s=1.8 prompt_tokens=8355 completion_tokens=61 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".fsLBGq",
+  "depth": 4
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="Layout-sc-1xcs6mc-0 fsLBGq"><div class="InjectLayout-sc-1i43xsx-0 cYTUJE" style="position: relative;"><div class="resize-detector"><div class="resize-detector"><div class="resize-detector__grow" style="width: 100000px; height: 100000px;"></div></div><div class="resize-detector"><div class="resize-detector__shrink"></div></div></div><div class="InjectLayout-sc-1i43xsx-0 jLHva-d"><a aria-label="Tag, English" data-a-target="English" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/English"><div class="ScTagContent-sc-ajnfk3-1 iLlvwz"><!-- -1 children --></div></a></div><div class="InjectLayout-sc-1i43xsx-0 jLHva-d"><a aria-label="Tag, TogetherForGood" data-a-target="TogetherForGood" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/TogetherForGood"><div class="ScTagContent-sc-ajnfk3-1 iLlvwz"><!-- -1 children --></div></a></div><div class="InjectLayout-sc-1i43xsx-0 keosFZ"><a aria-label="Tag, purplemartins" data-a-target="purplemartins" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/purplemartins"><div class="ScTagContent-sc-ajnfk3-1 iLlvwz"><!-- -1 children --></div></a></div></div></div>
+
+
+--- API REQUEST round 4 ---
+model=unsloth/Qwen3.6-27B messages=10 payload_chars=23,658 cache=none
+
+--- API RESPONSE round 4 ---
+elapsed_s=1.1 prompt_tokens=8863 completion_tokens=45 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "[data-a-target=\"English\"]",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<a aria-label="Tag, English" data-a-target="English" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/English"><div class="ScTagContent-sc-ajnfk3-1 iLlvwz"><div class="ScTruncateText-sc-i3kjgq-0 iSVEtN"><!-- -1 children --></div></div></a>
+
+
+--- API REQUEST round 5 ---
+model=unsloth/Qwen3.6-27B messages=12 payload_chars=24,122 cache=none
+
+--- API RESPONSE round 5 ---
+elapsed_s=1.2 prompt_tokens=9024 completion_tokens=72 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#directory-game-main-content",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<section class="Layout-sc-1xcs6mc-0 skip-to-target" id="directory-game-main-content" aria-label="Main Content" aria-hidden="false"><div class="Layout-sc-1xcs6mc-0 ibRGZe" style="max-width: 200rem; gap: 5px;"><h1 class="CoreText-sc-1txzju1-0 ScTitleText-sc-d9mj2s-0 gfKkXK lbYztg tw-title">Just Chatting &amp; IRL</h1><p class="CoreText-sc-1txzju1-0 cWFBTs">Whether it's talking, traveling, or touching grass, these Just Chatting &amp; IRL streams have something for everyone.</p></div><div class="Layout-sc-1xcs6mc-0 eLLosC"><div class="ScTower-sc-1sjzzes-0 hTjsYU tw-tower" style="position: relative;"><!-- -30 children --></div></div><div class="scrollable-trigger__wrapper"><div class="scrollable-trigger__trigger-area scrollable-trigger__trigger-area--up" style="height: 500px;"></div></div></section>
+
+
+--- API REQUEST round 6 ---
+model=unsloth/Qwen3.6-27B messages=14 payload_chars=25,240 cache=none
+
+--- API RESPONSE round 6 ---
+elapsed_s=2.1 prompt_tokens=9381 completion_tokens=95 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".ibRGZe",
+  "depth": 1
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div class="Layout-sc-1xcs6mc-0 ibRGZe" style="max-width: 200rem; gap: 5px;"><h1 class="CoreText-sc-1txzju1-0 ScTitleText-sc-d9mj2s-0 gfKkXK lbYztg tw-title">Just Chatting &amp; IRL</h1><p class="CoreText-sc-1txzju1-0 cWFBTs">Whether it's talking, traveling, or touching grass, these Just Chatting &amp; IRL streams have something for everyone.</p></div>
+
+
+--- API REQUEST round 7 ---
+model=unsloth/Qwen3.6-27B messages=16 payload_chars=25,982 cache=none
+
+--- API RESPONSE round 7 ---
+elapsed_s=2.4 prompt_tokens=9625 completion_tokens=148 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": ".tw-tag[data-a-target]",
+  "depth": 1
+}
+
+--- TOOL RESULT: show_in_dom ---
+<a aria-label="Tag, English" data-a-target="English" class="ScTag-sc-ajnfk3-0 biuEEk tw-tag" href="https://www.twitch.tv/directory/all/tags/English"><div class="ScTagContent-sc-ajnfk3-1 iLlvwz"><!-- -1 children --></div></a>
+
+
+--- API REQUEST round 8 ---
+model=unsloth/Qwen3.6-27B messages=18 payload_chars=26,851 cache=none
+
+--- API RESPONSE round 8 ---
+elapsed_s=11.9 prompt_tokens=9865 completion_tokens=877 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Language filter for streams",
+  "query_selector": "#directory-game-main-content",
+  "logic": "(function() {\n  if (document.getElementById('tw-lang-filter-container')) return;\n\n  var header = document.querySelector('.ibRGZe');\n  if (!header) return;\n\n  var container = document.createElement('div');\n  container.id = 'tw-lang-filter-container';\n  container.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;';\n\n  var label = document.createElement('span');\n  label.textContent = '🌐 Filter by language:';\n  label.style.cssText = 'color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;';\n\n  var select = document.createElement('select');\n  select.id = 'tw-lang-filter-select';\n  select.style.cssText = 'padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;';\n\n  var allOption = document.createElement('option');\n  allOption.value = 'all';\n  allOption.textContent = 'All languages';\n  select.appendChild(allOption);\n\n  var langMap = {};\n  var tags = document.querySelectorAll('.iKmojN .tw-tag[data-a-target]');\n  var knownLangs = ['English', 'Spanish', 'Portuguese', 'French', 'German', 'Japanese', 'Korean', 'Chinese', 'Russian', 'Turkish', 'Italian', 'Polish', 'Arabic', 'Hindi', 'Dutch', 'Swedish', 'Norwegian', 'Danish', 'Finnish', 'Czech', 'Hungarian', 'Romanian', 'Greek', 'Thai', 'Vietnamese', 'Indonesian', 'Tagalog', 'Hebrew', 'Ukrainian', 'Bengali'];\n\n  tags.forEach(function(tag) {\n    var lang = tag.getAttribute('data-a-target');\n    if (lang && !langMap[lang]) {\n      langMap[lang] = true;\n    }\n  });\n\n  knownLangs.forEach(function(lang) {\n    if (langMap[lang]) {\n      var opt = document.createElement('option');\n      opt.value = lang;\n      opt.textContent = lang;\n      select.appendChild(opt);\n      delete langMap[lang];\n    }\n  });\n\n  Object.keys(langMap).forEach(function(lang) {\n    var opt = document.createElement('option');\n    opt.value = lang;\n    opt.textContent = lang;\n    select.appendChild(opt);\n  });\n\n  container.appendChild(label);\n  container.appendChild(select);\n  header.parentNode.insertBefore(container, header.nextSibling);\n\n  select.addEventListener('change', function() {\n    var selected = select.value;\n    var cards = document.querySelectorAll('.iKmojN');\n    cards.forEach(function(card) {\n      if (selected === 'all') {\n        card.style.display = '';\n        return;\n      }\n      var langTag = card.querySelector('.tw-tag[data-a-target=\"' + selected + '\"]');\n      card.style.display = langTag ? '' : 'none';\n    });\n  });\n})();"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#1): "Language filter for streams" - selector="#directory-game-main-content"
+
+--- API REQUEST round 9 ---
+model=unsloth/Qwen3.6-27B messages=20 payload_chars=30,258 cache=none
+
+--- API RESPONSE round 9 ---
+elapsed_s=1.5 prompt_tokens=10778 completion_tokens=44 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#tw-lang-filter-container",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;" id="tw-lang-filter-container"><span style="color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;">🌐 Filter by language:</span><select style="padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;" id="tw-lang-filter-select"><option value="all">All languages</option><option value="English">English</option><option value="TogetherForGood">TogetherForGood</option><option value="purplemartins">purplemartins</option><option value="IRL">IRL</option><option value="Outdoors">Outdoors</option><option value="Exploration">Exploration</option><option value="Travel">Travel</option><option value="pokemon">pokemon</option><option value="pokemonScarletViolet">pokemonScarletViolet</option><option value="Nederlands">Nederlands</option><option value="Stream">Stream</option><option value="Database">Database</option><option value="Badge">Badge</option><option value="findom">findom</option><option value="Goddess">Goddess</option><option value="ASMR">ASMR</option><option value="Woman">Woman</option><option value="Tokyo">Tokyo</option><option value="Japan">Japan</option><option value="Cycling">Cycling</option><option value="DutchButSpeakingEnglish">DutchButSpeakingEnglish</option><option value="dutch">dutch</option></select></div>
+
+
+--- API REQUEST round 10 ---
+model=unsloth/Qwen3.6-27B messages=22 payload_chars=31,943 cache=none
+
+--- API RESPONSE round 10 ---
+elapsed_s=24.4 prompt_tokens=11273 completion_tokens=1959 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Language filter for streams",
+  "query_selector": "#directory-game-main-content",
+  "logic": "(function() {\n  if (document.getElementById('tw-lang-filter-container')) return;\n\n  var header = document.querySelector('.ibRGZe');\n  if (!header) return;\n\n  var container = document.createElement('div');\n  container.id = 'tw-lang-filter-container';\n  container.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;';\n\n  var label = document.createElement('span');\n  label.textContent = '🌐 Filter by language:';\n  label.style.cssText = 'color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;';\n\n  var select = document.createElement('select');\n  select.id = 'tw-lang-filter-select';\n  select.style.cssText = 'padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;';\n\n  var allOption = document.createElement('option');\n  allOption.value = 'all';\n  allOption.textContent = 'All languages';\n  select.appendChild(allOption);\n\n  var knownLangs = {\n    'English': true, 'Spanish': true, 'Español': true, 'Portuguese': true, 'Português': true,\n    'French': true, 'Français': true, 'German': true, 'Deutsch': true, 'Japanese': true,\n    '日本語': true, 'Korean': true, '한국어': true, 'Chinese': true, '中文': true,\n    'Mandarin': true, 'Russian': true, 'Русский': true, 'Turkish': true, 'Türkçe': true,\n    'Italian': true, 'Italiano': true, 'Polish': true, 'Polski': true, 'Arabic': true,\n    'العربية': true, 'Hindi': true, 'हिन्दी': true, 'Dutch': true, 'Nederlands': true,\n    'Swedish': true, 'Svenska': true, 'Norwegian': true, 'Norsk': true, 'Danish': true,\n    'Dansk': true, 'Finnish': true, 'Suomi': true, 'Czech': true, 'Čeština': true,\n    'Hungarian': true, 'Magyar': true, 'Romanian': true, 'Română': true, 'Greek': true,\n    'Ελληνικά': true, 'Thai': true, 'ไทย': true, 'Vietnamese': true, 'Tiếng Việt': true,\n    'Indonesian': true, 'Bahasa Indonesia': true, 'Tagalog': true, 'Filipino': true,\n    'Hebrew': true, 'עברית': true, 'Ukrainian': true, 'Українська': true, 'Bengali': true,\n    'বাংলা': true, 'Catalan': true, 'Català': true, 'Latvian': true, 'Lietuvių': true,\n    'Estonian': true, 'Eesti': true, 'Slovenian': true, 'Slovene': true, 'Serbian': true,\n    'Srpski': true, 'Croatian': true, 'Hrvatski': true, 'Bulgarian': true, 'Български': true,\n    'Lithuanian': true, 'Slovak': true, 'Slovenčina': true, 'Urdu': true, 'اردو': true,\n    'Persian': true, 'فارسی': true, 'Farsi': true, 'Malay': true, 'Bahasa Melayu': true,\n    'Swahili': true, 'Kiswahili': true, 'Amharic': true, 'Tamil': true, 'தமிழ்': true,\n    'Telugu': true, 'తెలుగు': true, 'Marathi': true, 'मराठी': true, 'Gujarati': true,\n    'ગુજરાતી': true, 'Kannada': true, 'ಕನ್ನಡ': true, 'Malayalam': true, 'മലയാളം': true,\n    'Punjabi': true, 'ਪੰਜਾਬੀ': true, 'Nepali': true, 'नेपाली': true, 'Khmer': true,\n    'ខ្មែរ': true, 'Laotian': true, 'Lao': true, 'Myanmar': true, 'Burmese': true,\n    'Mongolian': true, 'Монгол': true, 'Georgian': true, 'ქართული': true,\n    'Armenian': true, 'Հայերեն': true, 'Azerbaijani': true, 'Azərbaycan': true,\n    'Kazakh': true, 'Қазақ': true, 'Uzbek': true, 'Oʻzbek': true, 'Kyrgyz': true,\n    'Tajik': true, 'Turkmen': true, 'Pashto': true, 'پښتو': true, 'Sinhala': true,\n    'සිංහල': true, 'Basque': true, 'Euskara': true, 'Galician': true, 'Galego': true,\n    'Welsh': true, 'Cymraeg': true, 'Irish': true, 'Gaeilge': true, 'Scottish Gaelic': true,\n    'Breton': true, 'Icelandic': true, 'Íslenska': true, 'Maltese': true, 'Malti': true,\n    'Albanian': true, 'Shqip': true, 'Macedonian': true, 'Македонски': true,\n    'Bosnian': true, 'Bosanski': true, 'Luxembourgish': true, 'Lëtzebuergesch': true,\n    'Afrikaans': true, 'Somali': true, 'Hausa': true, 'Yoruba': true, 'Igbo': true,\n    'Zulu': true, 'isiZulu': true, 'Xhosa': true, 'isiXhosa': true, 'Shona': true,\n    'Tswana': true, 'Setswana': true, 'Sesotho': true, 'Tsonga': true, 'Venda': true,\n    'Ndebele': true, 'isiNdebele': true, 'Kinyarwanda': true, 'Kirundi': true,\n    'DutchButSpeakingEnglish': true, 'dutch': true, 'português-br': true,\n    'Español-Latam': true, 'Spanish-Latam': true, 'Portuguese-BR': true\n  };\n\n  var langMap = {};\n  var tags = document.querySelectorAll('.iKmojN .tw-tag[data-a-target]');\n  tags.forEach(function(tag) {\n    var lang = tag.getAttribute('data-a-target');\n    if (lang && knownLangs[lang] && !langMap[lang]) {\n      langMap[lang] = true;\n    }\n  });\n\n  Object.keys(langMap).sort().forEach(function(lang) {\n    var opt = document.createElement('option');\n    opt.value = lang;\n    opt.textContent = lang;\n    select.appendChild(opt);\n  });\n\n  container.appendChild(label);\n  container.appendChild(select);\n  header.parentNode.insertBefore(container, header.nextSibling);\n\n  select.addEventListener('change', function() {\n    var selected = select.value;\n    var cards = document.querySelectorAll('.iKmojN');\n    cards.forEach(function(card) {\n      if (selected === 'all') {\n        card.style.display = '';\n        return;\n      }\n      var langTag = card.querySelector('.tw-tag[data-a-target=\"' + selected + '\"]');\n      card.style.display = langTag ? '' : 'none';\n    });\n  });\n})();"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#2): "Language filter for streams" - selector="#directory-game-main-content"
+
+--- API REQUEST round 11 ---
+model=unsloth/Qwen3.6-27B messages=24 payload_chars=37,997 cache=none
+
+--- API RESPONSE round 11 ---
+elapsed_s=2.1 prompt_tokens=13268 completion_tokens=44 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#tw-lang-filter-container",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;" id="tw-lang-filter-container"><span style="color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;">🌐 Filter by language:</span><select style="padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;" id="tw-lang-filter-select"><option value="all">All languages</option><option value="English">English</option><option value="TogetherForGood">TogetherForGood</option><option value="purplemartins">purplemartins</option><option value="IRL">IRL</option><option value="Outdoors">Outdoors</option><option value="Exploration">Exploration</option><option value="Travel">Travel</option><option value="pokemon">pokemon</option><option value="pokemonScarletViolet">pokemonScarletViolet</option><option value="Nederlands">Nederlands</option><option value="Stream">Stream</option><option value="Database">Database</option><option value="Badge">Badge</option><option value="findom">findom</option><option value="Goddess">Goddess</option><option value="ASMR">ASMR</option><option value="Woman">Woman</option><option value="Tokyo">Tokyo</option><option value="Japan">Japan</option><option value="Cycling">Cycling</option><option value="DutchButSpeakingEnglish">DutchButSpeakingEnglish</option><option value="dutch">dutch</option></select></div>
+
+
+--- API REQUEST round 12 ---
+model=unsloth/Qwen3.6-27B messages=26 payload_chars=39,682 cache=none
+
+--- API RESPONSE round 12 ---
+elapsed_s=2.7 prompt_tokens=13763 completion_tokens=137 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Remove old lang filter",
+  "query_selector": "#tw-lang-filter-container",
+  "logic": "element.style.display = 'none';"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#3): "Remove old lang filter" - selector="#tw-lang-filter-container"
+
+--- API REQUEST round 13 ---
+model=unsloth/Qwen3.6-27B messages=28 payload_chars=40,359 cache=none
+
+--- API RESPONSE round 13 ---
+elapsed_s=34.5 prompt_tokens=13936 completion_tokens=2792 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Language filter for streams",
+  "query_selector": "#directory-game-main-content",
+  "logic": "(function() {\n  var existing = document.getElementById('tw-lang-filter-container');\n  if (existing) {\n    existing.remove();\n  }\n\n  var header = document.querySelector('.ibRGZe');\n  if (!header) return;\n\n  var container = document.createElement('div');\n  container.id = 'tw-lang-filter-container';\n  container.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;';\n\n  var label = document.createElement('span');\n  label.textContent = '\\u{1F310} Filter by language:';\n  label.style.cssText = 'color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;';\n\n  var select = document.createElement('select');\n  select.id = 'tw-lang-filter-select';\n  select.style.cssText = 'padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;';\n\n  var allOption = document.createElement('option');\n  allOption.value = 'all';\n  allOption.textContent = 'All languages';\n  select.appendChild(allOption);\n\n  var knownLangs = {\n    'English': true, 'Spanish': true, 'Espa\\u00f1ol': true, 'Portuguese': true, 'Portugu\\u00eas': true,\n    'French': true, 'Fran\\u00e7ais': true, 'German': true, 'Deutsch': true, 'Japanese': true,\n    '\\u65e5\\u672c\\u8a9e': true, 'Korean': true, '\\ud55c\\uad6d\\uc5b4': true, 'Chinese': true,\n    '\\u4e2d\\u6587': true, 'Mandarin': true, 'Russian': true, '\\u0420\\u0443\\u0441\\u0441\\u043a\\u0438\\u0439': true,\n    'Turkish': true, 'T\\u00fcrk\\u00e7e': true, 'Italian': true, 'Italiano': true, 'Polish': true,\n    'Polski': true, 'Arabic': true, '\\u0627\\u0644\\u0639\\u0631\\u0628\\u064a\\u0629': true, 'Hindi': true,\n    '\\u0939\\u093f\\u0928\\u094d\\u0926\\u0940': true, 'Dutch': true, 'Nederlands': true, 'Swedish': true,\n    'Svenska': true, 'Norwegian': true, 'Norsk': true, 'Danish': true, 'Dansk': true,\n    'Finnish': true, 'Suomi': true, 'Czech': true, '\\u010ce\\u0161tina': true, 'Hungarian': true,\n    'Magyar': true, 'Romanian': true, 'Rom\\u00e2n\\u0103': true, 'Greek': true,\n    '\\u0395\\u03bb\\u03bb\\u03b7\\u03bd\\u03b9\\u03ba\\u03ac': true, 'Thai': true, '\\u0e44\\u0e17\\u0e22': true,\n    'Vietnamese': true, 'Ti\\u1ebfng Vi\\u1ec7t': true, 'Indonesian': true, 'Bahasa Indonesia': true,\n    'Tagalog': true, 'Filipino': true, 'Hebrew': true, '\\u05e2\\u05d1\\u05e8\\u05d9\\u05ea': true,\n    'Ukrainian': true, '\\u0423\\u043a\\u0440\\u0430\\u0457\\u043d\\u0441\\u044c\\u043a\\u0430': true, 'Bengali': true,\n    '\\u09ac\\u09be\\u0982\\u09b2\\u09be': true, 'Catalan': true, 'Catal\\u00e0': true, 'Latvian': true,\n    'Lietuvi\\u0173': true, 'Estonian': true, 'Eesti': true, 'Slovenian': true, 'Slovene': true,\n    'Serbian': true, 'Srpski': true, 'Croatian': true, 'Hrvatski': true, 'Bulgarian': true,\n    '\\u0411\\u044a\\u043b\\u0433\\u0430\\u0440\\u0441\\u043a\\u0438': true, 'Lithuanian': true, 'Slovak': true,\n    'Sloven\\u010dina': true, 'Urdu': true, '\\u0627\\u0631\\u062f\\u0648': true, 'Persian': true,\n    '\\u0641\\u0627\\u0631\\u0633\\u06cc': true, 'Farsi': true, 'Malay': true, 'Bahasa Melayu': true,\n    'Swahili': true, 'Kiswahili': true, 'Amharic': true, 'Tamil': true, '\\u0ba4\\u0bae\\u0bbf\\u0bb4\\u0bcd': true,\n    'Telugu': true, '\\u0c24\\u0c46\\u0c32\\u0c41\\u0c17\\u0c41': true, 'Marathi': true, '\\u092e\\u0930\\u093e\\u0920\\u0940': true,\n    'Gujarati': true, '\\u0a97\\u0ac1\\u0a9c\\u0ab0\\u0abe\\u0aa4\\u0ac0': true, 'Kannada': true,\n    '\\u0c95\\u0ca8\\u0ccd\\u0ca8\\u0ca1': true, 'Malayalam': true, '\\u0d2e\\u0d32\\u0d2f\\u0d3e\\u0d33\\u0d02': true,\n    'Punjabi': true, '\\u0a2a\\u0a70\\u0a1c\\u0a3e\\u0a2c\\u0a40': true, 'Nepali': true, '\\u0928\\u0947\\u092a\\u093e\\u0932\\u0940': true,\n    'Khmer': true, '\\u1781\\u17d2\\u1798\\u17c6\\u179b': true, 'Laotian': true, 'Lao': true,\n    'Myanmar': true, 'Burmese': true, 'Mongolian': true, '\\u041c\\u043e\\u043d\\u0433\\u043e\\u043b': true,\n    'Georgian': true, '\\u10e5\\u10d0\\u10e0\\u10d7\\u10e3\\u10da\\u10d8': true, 'Armenian': true,\n    '\\u0540\\u0561\\u0575\\u0565\\u0580\\u0565\\u0576': true, 'Azerbaijani': true, 'Az\\u0259rbaycan': true,\n    'Kazakh': true, '\\u041a\\u0430\\u0437\\u0430\\u043a': true, 'Uzbek': true, 'O\\u02bbzbek': true,\n    'Kyrgyz': true, 'Tajik': true, 'Turkmen': true, 'Pashto': true, '\\u067e\\u069a\\u062a\\u0648': true,\n    'Sinhala': true, '\\u0dc3\\u0dd2\\u0d82\\u0dc4\\u0dbd': true, 'Basque': true, 'Euskara': true,\n    'Galician': true, 'Galego': true, 'Welsh': true, 'Cymraeg': true, 'Irish': true,\n    'Gaeilge': true, 'Scottish Gaelic': true, 'Breton': true, 'Icelandic': true,\n    '\\u00cdslenska': true, 'Maltese': true, 'Malti': true, 'Albanian': true, 'Shqip': true,\n    'Macedonian': true, '\\u041c\\u0430\\u043a\\u0435\\u0434\\u043e\\u043d\\u0441\\u043a\\u0438': true,\n    'Bosnian': true, 'Bosanski': true, 'Luxembourgish': true, 'L\\u00ebtzebuergesch': true,\n    'Afrikaans': true, 'Somali': true, 'Hausa': true, 'Yoruba': true, 'Igbo': true,\n    'Zulu': true, 'isiZulu': true, 'Xhosa': true, 'isiXhosa': true, 'Shona': true,\n    'Tswana': true, 'Setswana': true, 'Sesotho': true, 'Tsonga': true, 'Venda': true,\n    'Ndebele': true, 'isiNdebele': true, 'Kinyarwanda': true, 'Kirundi': true,\n    'DutchButSpeakingEnglish': true, 'dutch': true, 'portugu\\u00eas-br': true,\n    'Espa\\u00f1ol-Latam': true, 'Spanish-Latam': true, 'Portuguese-BR': true\n  };\n\n  var langMap = {};\n  var tags = document.querySelectorAll('.iKmojN .tw-tag[data-a-target]');\n  tags.forEach(function(tag) {\n    var lang = tag.getAttribute('data-a-target');\n    if (lang && knownLangs[lang] && !langMap[lang]) {\n      langMap[lang] = true;\n    }\n  });\n\n  Object.keys(langMap).sort().forEach(function(lang) {\n    var opt = document.createElement('option');\n    opt.value = lang;\n    opt.textContent = lang;\n    select.appendChild(opt);\n  });\n\n  container.appendChild(label);\n  container.appendChild(select);\n  header.parentNode.insertBefore(container, header.nextSibling);\n\n  select.addEventListener('change', function() {\n    var selected = select.value;\n    var cards = document.querySelectorAll('.iKmojN');\n    cards.forEach(function(card) {\n      if (selected === 'all') {\n        card.style.display = '';\n        return;\n      }\n      var langTag = card.querySelector('.tw-tag[data-a-target=\"' + selected + '\"]');\n      card.style.display = langTag ? '' : 'none';\n    });\n  });\n})();"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#4): "Language filter for streams" - selector="#directory-game-main-content"
+
+--- API REQUEST round 14 ---
+model=unsloth/Qwen3.6-27B messages=30 payload_chars=47,962 cache=none
+
+--- API RESPONSE round 14 ---
+elapsed_s=2.6 prompt_tokens=16764 completion_tokens=44 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#tw-lang-filter-container",
+  "depth": 2
+}
+
+--- TOOL RESULT: show_in_dom ---
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;" id="tw-lang-filter-container"><span style="color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;">🌐 Filter by language:</span><select style="padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;" id="tw-lang-filter-select"><option value="all">All languages</option><option value="DutchButSpeakingEnglish">DutchButSpeakingEnglish</option><option value="English">English</option><option value="Nederlands">Nederlands</option><option value="dutch">dutch</option></select></div>
+
+
+--- API REQUEST round 15 ---
+model=unsloth/Qwen3.6-27B messages=32 payload_chars=48,897 cache=none
+
+--- API RESPONSE round 15 ---
+elapsed_s=2.0 prompt_tokens=17063 completion_tokens=105 finish_reason=tool_calls tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "label": "Show lang filter",
+  "query_selector": "#tw-lang-filter-container",
+  "logic": "element.style.display = 'flex';"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#5): "Show lang filter" - selector="#tw-lang-filter-container"
+
+--- API REQUEST round 16 ---
+model=unsloth/Qwen3.6-27B messages=34 payload_chars=49,423 cache=none
+
+--- API RESPONSE round 16 ---
+elapsed_s=0.8 prompt_tokens=17203 completion_tokens=44 finish_reason=tool_calls tool_calls=[show_in_dom]
+
+--- TOOL CALL: show_in_dom ---
+{
+  "query_selector": "#directory-game-main-content",
+  "depth": 3
+}
+
+--- TOOL RESULT: show_in_dom ---
+<section class="Layout-sc-1xcs6mc-0 skip-to-target" id="directory-game-main-content" aria-label="Main Content" aria-hidden="false"><div class="Layout-sc-1xcs6mc-0 ibRGZe" style="max-width: 200rem; gap: 5px;"><h1 class="CoreText-sc-1txzju1-0 ScTitleText-sc-d9mj2s-0 gfKkXK lbYztg tw-title">Just Chatting &amp; IRL</h1><p class="CoreText-sc-1txzju1-0 cWFBTs">Whether it's talking, traveling, or touching grass, these Just Chatting &amp; IRL streams have something for everyone.</p></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a" id="tw-lang-filter-container"><span style="color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;">🌐 Filter by language:</span><select style="padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;" id="tw-lang-filter-select"><option value="all">All languages</option><option value="DutchButSpeakingEnglish">DutchButSpeakingEnglish</option><option value="English">English</option><option value="Nederlands">Nederlands</option><option value="dutch">dutch</option></select></div><div class="Layout-sc-1xcs6mc-0 eLLosC"><div class="ScTower-sc-1sjzzes-0 hTjsYU tw-tower" style="position: relative;"><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="Layout-sc-1xcs6mc-0 kpalQF"><!-- -1 children --></div><div class="resize-detector"><!-- -2 children --></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div><div class="ScTowerPlaceholder-sc-1sjzzes-1 bgVjFT"></div></div></div><div class="scrollable-trigger__wrapper"><div class="scrollable-trigger__trigger-area scrollable-trigger__trigger-area--up" style="height: 500px;"></div></div></section>
+
+
+--- API REQUEST round 17 ---
+model=unsloth/Qwen3.6-27B messages=36 payload_chars=52,953 cache=none
+
+--- API RESPONSE round 17 ---
+elapsed_s=4.4 prompt_tokens=18422 completion_tokens=218 finish_reason=stop tool_calls=[(none)]
+
+--- ASSISTANT ---
+The language filter is now in place and working. Here's what was implemented:
+
+1. **A prominent language filter selector** (`🌐 Filter by language:`) has been added right below the page header ("Just Chatting & IRL") and above the stream grid. It has a dark background with purple accent text to match Twitch's theme.
+
+2. **It auto-detects available languages** from the visible stream cards by looking at their language tags (e.g., `[data-a-target="English"]`). Only actual language tags are included — non-language tags like "TogetherForGood" or "ASMR" are filtered out using a comprehensive known-languages dictionary.
+
+3. **When you select a language**, all streams that don't have that language tag are hidden (`display: none`). Selecting "All languages" restores the full list.
+
+4. **The filter is persistent** — it will be recreated whenever the page loads or the content refreshes, and it always rebuilds from scratch to pick up any newly loaded streams' languages.
+
+Tokens: 18422 prompt / 218 completion
+
+=== Result ===
+
+5 rule(s) applied:
+[1] Language filter for streams — #directory-game-main-content
+    (function() {
+  if (document.getElementById('tw-lang-filter-container')) return;
+
+  var header = document.querySelector('.ibRGZe');
+  if (!header) return;
+
+  var container = document.createElement('div');
+  container.id = 'tw-lang-filter-container';
+  container.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;';
+
+  var label = document.createElement('span');
+  label.textContent = '🌐 Filter by language:';
+  label.style.cssText = 'color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;';
+
+  var select = document.createElement('select');
+  select.id = 'tw-lang-filter-select';
+  select.style.cssText = 'padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;';
+
+  var allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'All languages';
+  select.appendChild(allOption);
+
+  var langMap = {};
+  var tags = document.querySelectorAll('.iKmojN .tw-tag[data-a-target]');
+  var knownLangs = ['English', 'Spanish', 'Portuguese', 'French', 'German', 'Japanese', 'Korean', 'Chinese', 'Russian', 'Turkish', 'Italian', 'Polish', 'Arabic', 'Hindi', 'Dutch', 'Swedish', 'Norwegian', 'Danish', 'Finnish', 'Czech', 'Hungarian', 'Romanian', 'Greek', 'Thai', 'Vietnamese', 'Indonesian', 'Tagalog', 'Hebrew', 'Ukrainian', 'Bengali'];
+
+  tags.forEach(function(tag) {
+    var lang = tag.getAttribute('data-a-target');
+    if (lang && !langMap[lang]) {
+      langMap[lang] = true;
+    }
+  });
+
+  knownLangs.forEach(function(lang) {
+    if (langMap[lang]) {
+      var opt = document.createElement('option');
+      opt.value = lang;
+      opt.textContent = lang;
+      select.appendChild(opt);
+      delete langMap[lang];
+    }
+  });
+
+  Object.keys(langMap).forEach(function(lang) {
+    var opt = document.createElement('option');
+    opt.value = lang;
+    opt.textContent = lang;
+    select.appendChild(opt);
+  });
+
+  container.appendChild(label);
+  container.appendChild(select);
+  header.parentNode.insertBefore(container, header.nextSibling);
+
+  select.addEventListener('change', function() {
+    var selected = select.value;
+    var cards = document.querySelectorAll('.iKmojN');
+    cards.forEach(function(card) {
+      if (selected === 'all') {
+        card.style.display = '';
+        return;
+      }
+      var langTag = card.querySelector('.tw-tag[data-a-target="' + selected + '"]');
+      card.style.display = langTag ? '' : 'none';
+    });
+  });
+})();
+[2] Language filter for streams — #directory-game-main-content
+    (function() {
+  if (document.getElementById('tw-lang-filter-container')) return;
+
+  var header = document.querySelector('.ibRGZe');
+  if (!header) return;
+
+  var container = document.createElement('div');
+  container.id = 'tw-lang-filter-container';
+  container.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;';
+
+  var label = document.createElement('span');
+  label.textContent = '🌐 Filter by language:';
+  label.style.cssText = 'color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;';
+
+  var select = document.createElement('select');
+  select.id = 'tw-lang-filter-select';
+  select.style.cssText = 'padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;';
+
+  var allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'All languages';
+  select.appendChild(allOption);
+
+  var knownLangs = {
+    'English': true, 'Spanish': true, 'Español': true, 'Portuguese': true, 'Português': true,
+    'French': true, 'Français': true, 'German': true, 'Deutsch': true, 'Japanese': true,
+    '日本語': true, 'Korean': true, '한국어': true, 'Chinese': true, '中文': true,
+    'Mandarin': true, 'Russian': true, 'Русский': true, 'Turkish': true, 'Türkçe': true,
+    'Italian': true, 'Italiano': true, 'Polish': true, 'Polski': true, 'Arabic': true,
+    'العربية': true, 'Hindi': true, 'हिन्दी': true, 'Dutch': true, 'Nederlands': true,
+    'Swedish': true, 'Svenska': true, 'Norwegian': true, 'Norsk': true, 'Danish': true,
+    'Dansk': true, 'Finnish': true, 'Suomi': true, 'Czech': true, 'Čeština': true,
+    'Hungarian': true, 'Magyar': true, 'Romanian': true, 'Română': true, 'Greek': true,
+    'Ελληνικά': true, 'Thai': true, 'ไทย': true, 'Vietnamese': true, 'Tiếng Việt': true,
+    'Indonesian': true, 'Bahasa Indonesia': true, 'Tagalog': true, 'Filipino': true,
+    'Hebrew': true, 'עברית': true, 'Ukrainian': true, 'Українська': true, 'Bengali': true,
+    'বাংলা': true, 'Catalan': true, 'Català': true, 'Latvian': true, 'Lietuvių': true,
+    'Estonian': true, 'Eesti': true, 'Slovenian': true, 'Slovene': true, 'Serbian': true,
+    'Srpski': true, 'Croatian': true, 'Hrvatski': true, 'Bulgarian': true, 'Български': true,
+    'Lithuanian': true, 'Slovak': true, 'Slovenčina': true, 'Urdu': true, 'اردو': true,
+    'Persian': true, 'فارسی': true, 'Farsi': true, 'Malay': true, 'Bahasa Melayu': true,
+    'Swahili': true, 'Kiswahili': true, 'Amharic': true, 'Tamil': true, 'தமிழ்': true,
+    'Telugu': true, 'తెలుగు': true, 'Marathi': true, 'मराठी': true, 'Gujarati': true,
+    'ગુજરાતી': true, 'Kannada': true, 'ಕನ್ನಡ': true, 'Malayalam': true, 'മലയാളം': true,
+    'Punjabi': true, 'ਪੰਜਾਬੀ': true, 'Nepali': true, 'नेपाली': true, 'Khmer': true,
+    'ខ្មែរ': true, 'Laotian': true, 'Lao': true, 'Myanmar': true, 'Burmese': true,
+    'Mongolian': true, 'Монгол': true, 'Georgian': true, 'ქართული': true,
+    'Armenian': true, 'Հայերեն': true, 'Azerbaijani': true, 'Azərbaycan': true,
+    'Kazakh': true, 'Қазақ': true, 'Uzbek': true, 'Oʻzbek': true, 'Kyrgyz': true,
+    'Tajik': true, 'Turkmen': true, 'Pashto': true, 'پښتو': true, 'Sinhala': true,
+    'සිංහල': true, 'Basque': true, 'Euskara': true, 'Galician': true, 'Galego': true,
+    'Welsh': true, 'Cymraeg': true, 'Irish': true, 'Gaeilge': true, 'Scottish Gaelic': true,
+    'Breton': true, 'Icelandic': true, 'Íslenska': true, 'Maltese': true, 'Malti': true,
+    'Albanian': true, 'Shqip': true, 'Macedonian': true, 'Македонски': true,
+    'Bosnian': true, 'Bosanski': true, 'Luxembourgish': true, 'Lëtzebuergesch': true,
+    'Afrikaans': true, 'Somali': true, 'Hausa': true, 'Yoruba': true, 'Igbo': true,
+    'Zulu': true, 'isiZulu': true, 'Xhosa': true, 'isiXhosa': true, 'Shona': true,
+    'Tswana': true, 'Setswana': true, 'Sesotho': true, 'Tsonga': true, 'Venda': true,
+    'Ndebele': true, 'isiNdebele': true, 'Kinyarwanda': true, 'Kirundi': true,
+    'DutchButSpeakingEnglish': true, 'dutch': true, 'português-br': true,
+    'Español-Latam': true, 'Spanish-Latam': true, 'Portuguese-BR': true
+  };
+
+  var langMap = {};
+  var tags = document.querySelectorAll('.iKmojN .tw-tag[data-a-target]');
+  tags.forEach(function(tag) {
+    var lang = tag.getAttribute('data-a-target');
+    if (lang && knownLangs[lang] && !langMap[lang]) {
+      langMap[lang] = true;
+    }
+  });
+
+  Object.keys(langMap).sort().forEach(function(lang) {
+    var opt = document.createElement('option');
+    opt.value = lang;
+    opt.textContent = lang;
+    select.appendChild(opt);
+  });
+
+  container.appendChild(label);
+  container.appendChild(select);
+  header.parentNode.insertBefore(container, header.nextSibling);
+
+  select.addEventListener('change', function() {
+    var selected = select.value;
+    var cards = document.querySelectorAll('.iKmojN');
+    cards.forEach(function(card) {
+      if (selected === 'all') {
+        card.style.display = '';
+        return;
+      }
+      var langTag = card.querySelector('.tw-tag[data-a-target="' + selected + '"]');
+      card.style.display = langTag ? '' : 'none';
+    });
+  });
+})();
+[3] Remove old lang filter — #tw-lang-filter-container
+    element.style.display = 'none';
+[4] Language filter for streams — #directory-game-main-content
+    (function() {
+  var existing = document.getElementById('tw-lang-filter-container');
+  if (existing) {
+    existing.remove();
+  }
+
+  var header = document.querySelector('.ibRGZe');
+  if (!header) return;
+
+  var container = document.createElement('div');
+  container.id = 'tw-lang-filter-container';
+  container.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 16px;background:#1a1a2a;border-radius:8px;border:1px solid #3a3a4a;';
+
+  var label = document.createElement('span');
+  label.textContent = '\u{1F310} Filter by language:';
+  label.style.cssText = 'color:#bf94ff;font-weight:700;font-size:14px;white-space:nowrap;';
+
+  var select = document.createElement('select');
+  select.id = 'tw-lang-filter-select';
+  select.style.cssText = 'padding:8px 12px;border-radius:6px;border:1px solid #535353;background:#0e0e10;color:#efeff1;font-size:14px;font-weight:600;cursor:pointer;outline:none;min-width:160px;';
+
+  var allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'All languages';
+  select.appendChild(allOption);
+
+  var knownLangs = {
+    'English': true, 'Spanish': true, 'Espa\u00f1ol': true, 'Portuguese': true, 'Portugu\u00eas': true,
+    'French': true, 'Fran\u00e7ais': true, 'German': true, 'Deutsch': true, 'Japanese': true,
+    '\u65e5\u672c\u8a9e': true, 'Korean': true, '\ud55c\uad6d\uc5b4': true, 'Chinese': true,
+    '\u4e2d\u6587': true, 'Mandarin': true, 'Russian': true, '\u0420\u0443\u0441\u0441\u043a\u0438\u0439': true,
+    'Turkish': true, 'T\u00fcrk\u00e7e': true, 'Italian': true, 'Italiano': true, 'Polish': true,
+    'Polski': true, 'Arabic': true, '\u0627\u0644\u0639\u0631\u0628\u064a\u0629': true, 'Hindi': true,
+    '\u0939\u093f\u0928\u094d\u0926\u0940': true, 'Dutch': true, 'Nederlands': true, 'Swedish': true,
+    'Svenska': true, 'Norwegian': true, 'Norsk': true, 'Danish': true, 'Dansk': true,
+    'Finnish': true, 'Suomi': true, 'Czech': true, '\u010ce\u0161tina': true, 'Hungarian': true,
+    'Magyar': true, 'Romanian': true, 'Rom\u00e2n\u0103': true, 'Greek': true,
+    '\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac': true, 'Thai': true, '\u0e44\u0e17\u0e22': true,
+    'Vietnamese': true, 'Ti\u1ebfng Vi\u1ec7t': true, 'Indonesian': true, 'Bahasa Indonesia': true,
+    'Tagalog': true, 'Filipino': true, 'Hebrew': true, '\u05e2\u05d1\u05e8\u05d9\u05ea': true,
+    'Ukrainian': true, '\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430': true, 'Bengali': true,
+    '\u09ac\u09be\u0982\u09b2\u09be': true, 'Catalan': true, 'Catal\u00e0': true, 'Latvian': true,
+    'Lietuvi\u0173': true, 'Estonian': true, 'Eesti': true, 'Slovenian': true, 'Slovene': true,
+    'Serbian': true, 'Srpski': true, 'Croatian': true, 'Hrvatski': true, 'Bulgarian': true,
+    '\u0411\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438': true, 'Lithuanian': true, 'Slovak': true,
+    'Sloven\u010dina': true, 'Urdu': true, '\u0627\u0631\u062f\u0648': true, 'Persian': true,
+    '\u0641\u0627\u0631\u0633\u06cc': true, 'Farsi': true, 'Malay': true, 'Bahasa Melayu': true,
+    'Swahili': true, 'Kiswahili': true, 'Amharic': true, 'Tamil': true, '\u0ba4\u0bae\u0bbf\u0bb4\u0bcd': true,
+    'Telugu': true, '\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41': true, 'Marathi': true, '\u092e\u0930\u093e\u0920\u0940': true,
+    'Gujarati': true, '\u0a97\u0ac1\u0a9c\u0ab0\u0abe\u0aa4\u0ac0': true, 'Kannada': true,
+    '\u0c95\u0ca8\u0ccd\u0ca8\u0ca1': true, 'Malayalam': true, '\u0d2e\u0d32\u0d2f\u0d3e\u0d33\u0d02': true,
+    'Punjabi': true, '\u0a2a\u0a70\u0a1c\u0a3e\u0a2c\u0a40': true, 'Nepali': true, '\u0928\u0947\u092a\u093e\u0932\u0940': true,
+    'Khmer': true, '\u1781\u17d2\u1798\u17c6\u179b': true, 'Laotian': true, 'Lao': true,
+    'Myanmar': true, 'Burmese': true, 'Mongolian': true, '\u041c\u043e\u043d\u0433\u043e\u043b': true,
+    'Georgian': true, '\u10e5\u10d0\u10e0\u10d7\u10e3\u10da\u10d8': true, 'Armenian': true,
+    '\u0540\u0561\u0575\u0565\u0580\u0565\u0576': true, 'Azerbaijani': true, 'Az\u0259rbaycan': true,
+    'Kazakh': true, '\u041a\u0430\u0437\u0430\u043a': true, 'Uzbek': true, 'O\u02bbzbek': true,
+    'Kyrgyz': true, 'Tajik': true, 'Turkmen': true, 'Pashto': true, '\u067e\u069a\u062a\u0648': true,
+    'Sinhala': true, '\u0dc3\u0dd2\u0d82\u0dc4\u0dbd': true, 'Basque': true, 'Euskara': true,
+    'Galician': true, 'Galego': true, 'Welsh': true, 'Cymraeg': true, 'Irish': true,
+    'Gaeilge': true, 'Scottish Gaelic': true, 'Breton': true, 'Icelandic': true,
+    '\u00cdslenska': true, 'Maltese': true, 'Malti': true, 'Albanian': true, 'Shqip': true,
+    'Macedonian': true, '\u041c\u0430\u043a\u0435\u0434\u043e\u043d\u0441\u043a\u0438': true,
+    'Bosnian': true, 'Bosanski': true, 'Luxembourgish': true, 'L\u00ebtzebuergesch': true,
+    'Afrikaans': true, 'Somali': true, 'Hausa': true, 'Yoruba': true, 'Igbo': true,
+    'Zulu': true, 'isiZulu': true, 'Xhosa': true, 'isiXhosa': true, 'Shona': true,
+    'Tswana': true, 'Setswana': true, 'Sesotho': true, 'Tsonga': true, 'Venda': true,
+    'Ndebele': true, 'isiNdebele': true, 'Kinyarwanda': true, 'Kirundi': true,
+    'DutchButSpeakingEnglish': true, 'dutch': true, 'portugu\u00eas-br': true,
+    'Espa\u00f1ol-Latam': true, 'Spanish-Latam': true, 'Portuguese-BR': true
+  };
+
+  var langMap = {};
+  var tags = document.querySelectorAll('.iKmojN .tw-tag[data-a-target]');
+  tags.forEach(function(tag) {
+    var lang = tag.getAttribute('data-a-target');
+    if (lang && knownLangs[lang] && !langMap[lang]) {
+      langMap[lang] = true;
+    }
+  });
+
+  Object.keys(langMap).sort().forEach(function(lang) {
+    var opt = document.createElement('option');
+    opt.value = lang;
+    opt.textContent = lang;
+    select.appendChild(opt);
+  });
+
+  container.appendChild(label);
+  container.appendChild(select);
+  header.parentNode.insertBefore(container, header.nextSibling);
+
+  select.addEventListener('change', function() {
+    var selected = select.value;
+    var cards = document.querySelectorAll('.iKmojN');
+    cards.forEach(function(card) {
+      if (selected === 'all') {
+        card.style.display = '';
+        return;
+      }
+      var langTag = card.querySelector('.tw-tag[data-a-target="' + selected + '"]');
+      card.style.display = langTag ? '' : 'none';
+    });
+  });
+})();
+[5] Show lang filter — #tw-lang-filter-container
+    element.style.display = 'flex';
+

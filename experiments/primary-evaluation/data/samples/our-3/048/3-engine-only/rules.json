@@ -1,0 +1,43 @@
+{
+  "rules": [
+    {
+      "label": "Move horoscope to top",
+      "query_selector": "#convenience-bar",
+      "logic": "element.style.order = '-1'"
+    },
+    {
+      "label": "Filter political news articles",
+      "query_selector": "li.list-none",
+      "logic": "const categoryEl = element.querySelector('[class*=\"label-m-emphasized\"]');\nif (!categoryEl) return;\nconst text = categoryEl.textContent.trim().toLowerCase();\nconst politicalKeywords = ['politics', 'military', 'defense', 'war', 'army', 'navy', 'marines', 'air force', 'congress', 'senate', 'house', 'trump', 'biden', 'iran', 'strike', 'drone'];\nconst isPolitical = politicalKeywords.some(keyword => text.includes(keyword));\nif (isPolitical) {\n    element.style.display = 'none';\n}"
+    },
+    {
+      "label": "Move shopping section up",
+      "query_selector": "li.relative.border-tertiary.sm\\:border-muted.sm\\:border-y",
+      "logic": "if (element.textContent.includes('From Our Shopping Experts')) {\n    element.style.order = '-1';\n}"
+    },
+    {
+      "label": "Hide political/military articles",
+      "query_selector": "article[role=\"group\"]",
+      "logic": "const text = element.textContent.toLowerCase();\nconst politicalKeywords = ['politics', 'military', 'defense', 'war', 'army', 'navy', 'marines', 'air force', 'congress', 'senate', 'trump', 'biden', 'iran strike', 'drone', 'missile', 'military sites', 'tehran'];\nconst isPolitical = politicalKeywords.some(keyword => text.includes(keyword));\nif (isPolitical) {\n    element.style.display = 'none';\n}"
+    },
+    {
+      "label": "Hide political feed stories",
+      "query_selector": "#strm li.list-none",
+      "logic": "const headline = element.querySelector('h3 a');\nif (!headline) return;\nconst text = (headline.textContent || '').toLowerCase();\nconst categoryEl = element.querySelector('[class*=\"label-m-emphasized\"]');\nconst categoryText = categoryEl ? categoryEl.textContent.toLowerCase() : '';\nconst politicalCategories = ['politics', 'military'];\nconst politicalKeywords = ['trump', 'biden', 'congress', 'senate', 'iran', 'strike', 'missile', 'drone', 'military', 'war', 'army', 'navy', 'marines', 'defense', 'ballroom', 'kennedy center'];\nconst isPoliticalCategory = politicalCategories.some(cat => categoryText.includes(cat));\nconst isPoliticalContent = politicalKeywords.some(kw => text.includes(kw));\nif (isPoliticalCategory || isPoliticalContent) {\n    element.style.display = 'none';\n}"
+    },
+    {
+      "label": "Move horoscope & shopping top",
+      "query_selector": "#convenience-bar",
+      "logic": "const header = document.getElementById('module-uh');\nif (header && element.parentNode !== header.nextSibling) {\n    const targetContainer = document.getElementById('nca-homepage');\n    if (targetContainer) {\n        const clone = element.cloneNode(true);\n        element.style.display = 'none';\n        clone.style.display = 'block';\n        clone.id = 'convenience-bar-top';\n        targetContainer.insertBefore(clone, targetContainer.firstChild);\n    }\n}"
+    },
+    {
+      "label": "Position convenience bar top",
+      "query_selector": "#convenience-bar",
+      "logic": "element.style.position = 'relative';\nelement.style.zIndex = '100';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

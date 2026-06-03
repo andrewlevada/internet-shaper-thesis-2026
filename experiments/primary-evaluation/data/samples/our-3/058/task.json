@@ -1,0 +1,35 @@
+{
+	"request-prompt": "Make the viewer count indicator in the bottom-right corner of each stream thumbnail much larger and colored in a bright contrasting highlight so I can immediately identify the most popular streams.",
+	"goal": "I prefer watching large, highly popular broadcasters where the chat is fast-paced and I feel like part of a massive community event.",
+	"jobs": [
+		"I want to find a live Just Chatting or IRL stream to watch for entertainment right now",
+		"I want to find streams in a specific language or with specific tags, such as Travel or Outdoors, to match my current interests",
+		"I want to see which streams are currently popular based on their live viewer counts",
+		"I want to log in or sign up to Twitch so that I can follow channels, participate in chat, and customize my experience",
+		"I want to search for a specific streamer or category using the search tool",
+		"I want to browse recommended live channels on the sidebar to discover new creators"
+	],
+	"preference-pairs": [
+		{
+			"a": "I prefer watching large, highly popular broadcasters where the chat is fast-paced and I feel like part of a massive community event.",
+			"b": "I prefer watching smaller, cozy broadcasters where the viewer count is low and I can have genuine, direct conversations with the streamer."
+		},
+		{
+			"a": "I am an active, highly interactive viewer who loves chatting, using emotes, subscribing, and participating in stream events.",
+			"b": "I am a passive viewer (a 'lurker') who prefers to keep streams on in the background as white noise or secondary entertainment without ever interacting in chat."
+		},
+		{
+			"a": "I only watch content in my own local language and actively avoid streams broadcasting in languages I am not fully fluent in.",
+			"b": "I enjoy watching international streams and creators from around the world, even if they speak a different language or broadcast from another country."
+		}
+	],
+	"preference-pair-index": 1,
+	"preference-side": "a",
+	"preference": "I prefer watching large, highly popular broadcasters where the chat is fast-paced and I feel like part of a massive community event.",
+	"source-snapshot": "055",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
+	"final-url": "https://www.twitch.tv/directory/collection/just-chatting-irl-streams",
+	"protected_at": 1780344967736,
+	"finalized_at": 1780352306691
+}

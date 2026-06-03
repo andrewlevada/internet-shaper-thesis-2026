@@ -1,0 +1,78 @@
+{
+  "rules": [
+    {
+      "label": "Hide side columns in highlight",
+      "query_selector": ".post-column-1, .post-column-2",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide economy widget",
+      "query_selector": "#widget-economia",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide horoscope widget",
+      "query_selector": ".widget-horoscopo",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide sports agenda widget",
+      "query_selector": "#widget-sports",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide category column containers",
+      "query_selector": ".column-container-jornalismo, .column-container-esporte, .column-container-entretenimento",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide weather forecast bar",
+      "query_selector": ".area-previsao-do-tempo, .previsao-separator",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide all banner ads",
+      "query_selector": ".ad-container, banner-ad, banner-ad-fn, .shopping.shopping__widget",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide trilho/scrolling highlight",
+      "query_selector": ".destaque-trilho",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide video franja section",
+      "query_selector": ".area-franja-de-videos, .area-video-bbb, .grade-programacao",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide outer separators",
+      "query_selector": "hr.outer-separator",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide push notification bar",
+      "query_selector": ".push-web-container, .push-web",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide more-container links",
+      "query_selector": ".more-container",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Full-width single column feed",
+      "query_selector": ".post-row.with-6-posts .wrapper",
+      "logic": "element.style.display = 'block';\nelement.style.width = '100%';\nelement.style.flex = 'none';\nelement.style.maxWidth = '100%';"
+    },
+    {
+      "label": "Stack post-row as vertical feed",
+      "query_selector": ".post-row.with-6-posts",
+      "logic": "element.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.gap = '0';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

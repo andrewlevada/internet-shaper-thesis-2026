@@ -1,0 +1,58 @@
+{
+  "rules": [
+    {
+      "label": "Wider multi-column sidebar",
+      "query_selector": "[data-layout=\"responsive-sidebar\"]",
+      "logic": "element.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 680px)';"
+    },
+    {
+      "label": "Move sponsored content to sidebar",
+      "query_selector": "[data-module-key=\"main-block-1\"] section",
+      "logic": "var sponsoredSection = element;\nif (!sponsoredSection) return;\n\nvar sidebarRegion = document.querySelector('[data-region=\"sidebar\"] > div');\nif (!sidebarRegion) return;\n\nvar sidebarContent = sidebarRegion.querySelector('.flex.flex-col.gap-12') || sidebarRegion.firstElementChild;\nif (!sidebarContent) return;\n\n// Clone the sponsored content section into the sidebar\nvar clone = sponsoredSection.cloneNode(true);\nclone.style.width = '100%';\nsidebarContent.appendChild(clone);\n\n// Hide the original in the main area\nsponsoredSection.style.display = 'none';"
+    },
+    {
+      "label": "Multi-column sponsored layout",
+      "query_selector": "[data-region=\"sidebar\"] .trc_rbox_outer",
+      "logic": "element.style.display = 'grid';\nelement.style.gridTemplateColumns = '1fr 1fr';\nelement.style.gap = '12px';"
+    },
+    {
+      "label": "Wider sponsored cards",
+      "query_selector": "[data-region=\"sidebar\"] .videoCube",
+      "logic": "element.style.width = '100%';\nelement.style.maxWidth = '100%';"
+    },
+    {
+      "label": "Style sidebar sponsored header",
+      "query_selector": "[data-region=\"sidebar\"] [data-slot=\"card\"]",
+      "logic": "element.style.width = '100%';\nelement.style.maxWidth = '100%';\nelement.style.borderRadius = '12px';\nelement.style.padding = '16px';"
+    },
+    {
+      "label": "Hide original sponsored block",
+      "query_selector": "[data-module-key=\"main-block-1\"]",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Sidebar column layout",
+      "query_selector": "[data-region=\"sidebar\"] > div",
+      "logic": "element.style.gap = '16px';"
+    },
+    {
+      "label": "Multi-column sponsored layout",
+      "query_selector": "[data-region=\"sidebar\"] #internal_trc_8259016901",
+      "logic": "element.style.display = 'grid';\nelement.style.gridTemplateColumns = '1fr 1fr';\nelement.style.gap = '12px';"
+    },
+    {
+      "label": "Multi-column sponsored layout",
+      "query_selector": "[data-region=\"sidebar\"] .trc_rbox_outer",
+      "logic": "// Apply grid to the innermost container holding the cards\nvar inner = element.querySelector('.trc_rbox_div > div') || element.firstElementChild;\nif (inner) {\n    inner.style.display = 'grid';\n    inner.style.gridTemplateColumns = '1fr 1fr';\n    inner.style.gap = '12px';\n}"
+    },
+    {
+      "label": "Multi-column sponsored layout",
+      "query_selector": "[data-region=\"sidebar\"] #internal_trc_8259016901",
+      "logic": "// No-op - replaced by class-based rule"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Move comments below headline",
+      "query_selector": "#comments-section",
+      "logic": "var commentsSection = element;\nif (!commentsSection) return;\n\nvar articleHeader = document.querySelector('[data-testid=\"article-header\"]');\nif (!articleHeader) return;\n\n// Get the parent and check current position\nvar parent = commentsSection.parentNode;\nif (!parent) return;\n\n// Check if already in the correct position (right after article-header)\nvar nextSiblingOfHeader = articleHeader.nextSibling;\nif (nextSiblingOfHeader === commentsSection) return;\n\n// Move the comments section right after the article header\narticleHeader.parentNode.insertBefore(commentsSection, articleHeader.nextSibling);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

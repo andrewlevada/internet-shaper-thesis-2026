@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide sign-in promo in drawer",
+      "query_selector": "ytd-guide-signin-promo-renderer",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide sign-in button in header",
+      "query_selector": "#end ytd-button-renderer[aria-label=\"Sign in\"], #end ytd-button-renderer yt-button-shape a[aria-label=\"Sign in\"]",
+      "logic": "if (element.getAttribute('aria-label') === 'Sign in') {\n  element.style.display = 'none'\n} else if (element.tagName === 'A' && element.getAttribute('aria-label') === 'Sign in') {\n  const renderer = element.closest('ytd-button-renderer')\n  if (renderer) renderer.style.display = 'none'\n}"
+    },
+    {
+      "label": "Hide sign-in button in header",
+      "query_selector": "#end ytd-button-renderer yt-button-shape a[aria-label=\"Sign in\"]",
+      "logic": "const renderer = element.closest('ytd-button-renderer')\nif (renderer) {\n  renderer.style.display = 'none'\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

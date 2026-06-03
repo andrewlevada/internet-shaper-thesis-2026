@@ -1,0 +1,36 @@
+{
+	"request-prompt": "Hide all advertisement containers, sponsored recommendation grids like the Taboola feed, and the sticky sidebar ad slot to create a distraction-free, single-column reading layout.",
+	"goal": "I want a clean, ad-free, and distraction-free interface that allows me to focus solely on the main article text.",
+	"jobs": [
+		"I want to find out why the Indy 500 qualifying was delayed and when it has been rescheduled.",
+		"I want to check the weather forecast for Indianapolis to see if Sunday's activities will also be impacted by rain.",
+		"I want to share this news article with other racing fans or friends.",
+		"I want to read and participate in the community discussion about the qualifying delay.",
+		"I want to check the weather forecast or interactive radar for my current location.",
+		"I want to access official details on the modified qualifying procedures for Sunday.",
+		"I want to browse other trending weather stories and news updates."
+	],
+	"preference-pairs": [
+		{
+			"a": "I am a dedicated sports fan who seeks highly detailed schedule updates, technical details, and official racing regulations.",
+			"b": "I am a general news reader who only cares about how major weather events disrupt public gatherings and daily life, with no interest in sport-specific details."
+		},
+		{
+			"a": "I trust only official, professionally written editorial content and verified meteorological reports when consuming news.",
+			"b": "I prefer reading community comments, social media embeds, and real-time public reactions to get an unfiltered feel for what's happening."
+		},
+		{
+			"a": "I want a clean, ad-free, and distraction-free interface that allows me to focus solely on the main article text.",
+			"b": "I enjoy browsing through sponsored links, trending widgets, and recommended 'around the web' articles to discover other interesting topics to read."
+		}
+	],
+	"preference-pair-index": 3,
+	"preference-side": "a",
+	"preference": "I want a clean, ad-free, and distraction-free interface that allows me to focus solely on the main article text.",
+	"source-snapshot": "050",
+	"model": "google/gemini-3.5-flash",
+	"url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"final-url": "https://weather.com/2026/05/16/news/weather/rain-delays-qualifying-for-the-indy-500",
+	"protected_at": 1780344967666,
+	"finalized_at": 1780352298620
+}

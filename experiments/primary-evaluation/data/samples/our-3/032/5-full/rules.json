@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide sign-in promo",
+      "query_selector": "ytd-background-promo-renderer",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

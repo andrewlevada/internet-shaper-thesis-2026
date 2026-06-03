@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Style Talk and Edit as buttons",
+      "query_selector": "#ca-talk > a, #ca-edit > a",
+      "logic": "element.style.display = 'inline-block';\nelement.style.padding = '4px 12px';\nelement.style.background = '#36c';\nelement.style.color = '#fff';\nelement.style.borderRadius = '4px';\nelement.style.fontWeight = 'bold';\nelement.style.textDecoration = 'none';\nelement.style.transition = 'background 0.15s ease';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

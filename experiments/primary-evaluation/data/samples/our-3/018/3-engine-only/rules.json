@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Wider multi-column sidebar widget",
+      "query_selector": "[data-layout=\"responsive-sidebar\"]",
+      "logic": "element.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 520px)';"
+    },
+    {
+      "label": "Multi-column Taboola feed grid",
+      "query_selector": ".trc_rbox_outer",
+      "logic": "if (!element.dataset.multiColumnApplied) {\n  element.dataset.multiColumnApplied = 'true';\n  element.style.display = 'grid';\n  element.style.gridTemplateColumns = '1fr 1fr';\n  element.style.gap = '12px';\n}"
+    },
+    {
+      "label": "Wider sponsored video cards",
+      "query_selector": ".videoCube",
+      "logic": "element.style.width = '100%';\nelement.style.minWidth = '200px';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

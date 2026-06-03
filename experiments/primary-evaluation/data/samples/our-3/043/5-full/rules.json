@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Enlarge Save discount text",
+      "query_selector": ".productModule span.font-bold",
+      "logic": "if (!element.textContent || !element.textContent.trim().startsWith('Save')) return;\nelement.style.fontSize = '1.75rem';\nelement.style.fontWeight = '900';\nelement.style.color = '#16a34a';\nelement.style.backgroundColor = '#dcfce7';\nelement.style.padding = '2px 8px';\nelement.style.borderRadius = '4px';\nelement.style.display = 'inline-block';\nelement.style.whiteSpace = 'nowrap';"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

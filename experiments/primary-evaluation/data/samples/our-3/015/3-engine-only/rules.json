@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide Twitter/X embeds",
+      "query_selector": ".twitter-tweet, .twitter-tweet-rendered",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide reaction widgets",
+      "query_selector": "[data-spotim-app=\"reactions\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide comments section",
+      "query_selector": "#comments-section",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

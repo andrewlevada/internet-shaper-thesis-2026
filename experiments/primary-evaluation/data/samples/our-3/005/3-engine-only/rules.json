@@ -1,0 +1,38 @@
+{
+  "rules": [
+    {
+      "label": "Hide entertainment column",
+      "query_selector": "#coluna-entretenimento",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide horoscope widget",
+      "query_selector": ".widget-horoscopo",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide entertainment header link",
+      "query_selector": "a.homeui-tc-entretenimento",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide entertainment highlight posts",
+      "query_selector": ".post-column-2 .theme-entretenimento",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Add filter toggle UI",
+      "query_selector": "body",
+      "logic": "if (document.getElementById('globo-filter-menu')) return;\nvar menu = document.createElement('div');\nmenu.id = 'globo-filter-menu';\nmenu.innerHTML = '<style>#globo-filter-menu{position:fixed;top:80px;right:16px;z-index:9999;font-family:sans-serif}#globo-filter-btn{background:#0031FF;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.25)}#globo-filter-btn:hover{background:#0024cc}#globo-filter-panel{display:none;background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.18);padding:16px;width:260px;margin-top:6px}#globo-filter-panel.open{display:block}#globo-filter-panel h4{margin:0 0 12px;font-size:13px;color:#555;text-transform:uppercase;letter-spacing:.5px}.filter-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}.filter-row:last-child{border:none}.filter-row label{font-size:14px;color:#222;cursor:pointer}.toggle{position:relative;width:36px;height:20px;background:#ccc;border-radius:10px;cursor:pointer;transition:.3s}.toggle.on{background:#0031FF}.toggle::after{content:\"\";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.3s}.toggle.on::after{left:18px}</style><button id=\"globo-filter-btn\">⚙ Filtros</button><div id=\"globo-filter-panel\"><h4>Ocultar conteúdo</h4><div class=\"filter-row\"><label for=\"f-ent\">Entretenimento</label><div class=\"toggle on\" data-target=\"f-ent\"></div></div><div class=\"filter-row\"><label for=\"f-horo\">Horóscopo</label><div class=\"toggle on\" data-target=\"f-horo\"></div></div><div class=\"filter-row\"><label for=\"f-gossip\">Fofocas de celebridades</label><div class=\"toggle on\" data-target=\"f-gossip\"></div></div></div>';\ndocument.body.appendChild(menu);\nvar btn = document.getElementById('globo-filter-btn');\nvar panel = document.getElementById('globo-filter-panel');\nbtn.addEventListener('click', function() { panel.classList.toggle('open'); });\nvar toggles = panel.querySelectorAll('.toggle');\ntoggles.forEach(function(t) {\n  t.addEventListener('click', function() {\n    var isOn = this.classList.toggle('on');\n    var target = this.getAttribute('data-target');\n    if (target === 'f-ent') {\n      document.querySelectorAll('#coluna-entretenimento, a.homeui-tc-entretenimento').forEach(function(el) { el.style.display = isOn ? '' : 'none'; });\n    }\n    if (target === 'f-horo') {\n      document.querySelectorAll('.widget-horoscopo').forEach(function(el) { el.style.display = isOn ? '' : 'none'; });\n    }\n    if (target === 'f-gossip') {\n      document.querySelectorAll('.post-column-2 .theme-entretenimento').forEach(function(el) { el.style.display = isOn ? '' : 'none'; });\n    }\n  });\n});"
+    },
+    {
+      "label": "Hide entertainment bullets",
+      "query_selector": "[data-tracking-action*=\"entretenimento|bullet\"] .post",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

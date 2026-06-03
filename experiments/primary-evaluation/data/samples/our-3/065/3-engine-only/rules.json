@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Prominent English button",
+      "query_selector": "div.WE0UJf",
+      "logic": "element.style.display = 'none';\nvar link = element.querySelector('a[href*=\"hl=en\"]');\nif (!link) return;\nvar href = link.getAttribute('href');\nvar searchContainer = document.querySelector('.A8SBwf');\nif (!searchContainer) return;\nvar btn = document.createElement('a');\nbtn.href = href;\nbtn.textContent = '🌐 English';\nbtn.className = 'change-lang-btn';\nbtn.setAttribute('data-ved', link.getAttribute('data-ved') || '');\nbtn.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:8px 16px;margin-left:12px;background:#1a73e8;color:#fff;border:none;border-radius:24px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:background 0.2s;';\nbtn.onmouseover = function() { this.style.background = '#1557b0'; };\nbtn.onmouseout = function() { this.style.background = '#1a73e8'; };\nvar form = searchContainer.querySelector('form.tsf');\nif (form) {\n  form.parentNode.insertBefore(btn, form.nextSibling);\n} else {\n  searchContainer.appendChild(btn);\n}"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

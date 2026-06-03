@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide utility tabs (Talk/Edit/History/Tools)",
+      "query_selector": "#right-navigation",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

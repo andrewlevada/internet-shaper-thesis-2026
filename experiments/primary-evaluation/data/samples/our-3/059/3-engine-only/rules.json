@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Sort streams by viewers",
+      "query_selector": "div.ibRGZe",
+      "logic": "if (element.querySelector('.cozy-sort-dropdown')) return;\n\nvar dropdown = document.createElement('select');\ndropdown.className = 'cozy-sort-dropdown';\ndropdown.style.cssText = 'margin-top:12px;padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #a0a0aa;background:#1f1f23;color:#efeff1;cursor:pointer;outline:none;font-family:var(--font-body);';\ndropdown.innerHTML = '<option value=\"default\">🔽 Sort by viewers (default)</option><option value=\"asc\">☕ Lowest viewers first (cozy)</option><option value=\"desc\">🔥 Highest viewers first</option>';\n\nelement.appendChild(dropdown);\n\nvar tower = element.parentElement.querySelector('.tw-tower');\nif (!tower) return;\n\nfunction parseViewerCount(text) {\n  if (!text) return 0;\n  text = text.replace(/[^0-9.]/g, '');\n  var num = parseFloat(text);\n  if (isNaN(num)) return 0;\n  if (text.includes('M')) return num * 1000000;\n  if (text.includes('K') || text.includes('k')) return num * 1000;\n  return num;\n}\n\nfunction applySort() {\n  var articles = Array.from(tower.querySelectorAll('article.ghbJdj'));\n  if (articles.length === 0) return;\n\n  var val = dropdown.value;\n  if (val === 'default') {\n    // Restore original order by re-appending in document order from saved original indices\n    if (!element._originalOrder) return;\n    element._originalOrder.forEach(function(idx) {\n      var el = articles[idx];\n      if (el && el.parentElement === tower) tower.appendChild(el);\n    });\n    return;\n  }\n\n  // Save original order on first sort\n  if (!element._originalOrder) {\n    element._originalOrder = Array.from(tower.querySelectorAll('article.ghbJdj')).map(function(a, i) { return i; });\n  }\n\n  var streamData = articles.map(function(article, index) {\n    var viewerEl = article.querySelector('.tw-media-card-stat');\n    var viewers = parseViewerCount(viewerEl ? viewerEl.textContent : '');\n    return { el: article, viewers: viewers };\n  });\n\n  if (val === 'asc') {\n    streamData.sort(function(a, b) { return a.viewers - b.viewers; });\n  } else if (val === 'desc') {\n    streamData.sort(function(a, b) { return b.viewers - a.viewers; });\n  }\n\n  streamData.forEach(function(item) {\n    tower.appendChild(item.el);\n  });\n}\n\ndropdown.addEventListener('change', applySort);\n\n// Save original order immediately\nsetTimeout(function() {\n  var articles = Array.from(tower.querySelectorAll('article.ghbJdj'));\n  element._originalOrder = articles.map(function(a, i) { return i; });\n}, 100);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

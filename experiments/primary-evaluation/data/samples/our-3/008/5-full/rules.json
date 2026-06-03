@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Hide Shorts grid shelves",
+      "query_selector": "grid-shelf-view-model",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

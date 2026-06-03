@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "label": "Add Save button to pins",
+      "query_selector": ".PinCard__imageWrapper",
+      "logic": "if (element.querySelector('.custom-save-btn')) return;\n\nvar btn = document.createElement('button');\nbtn.className = 'custom-save-btn';\nbtn.type = 'button';\nbtn.textContent = 'Save';\nbtn.setAttribute('aria-label', 'Save pin');\nbtn.style.cssText = 'position:absolute;top:8px;right:8px;z-index:10;background:#e60023;color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.25);line-height:1;opacity:0.95;transition:opacity 0.15s;';\n\nbtn.addEventListener('mouseenter', function() { btn.style.opacity = '1'; });\nbtn.addEventListener('mouseleave', function() { btn.style.opacity = '0.95'; });\n\nvar pinEl = element.closest('[data-test-id=\"pin\"]');\nif (pinEl) {\n  var pinId = pinEl.getAttribute('data-test-pin-id') || '';\n  btn.setAttribute('data-pin-id', pinId);\n}\n\nbtn.addEventListener('click', function(e) {\n  e.preventDefault();\n  e.stopPropagation();\n\n  var moreBtn = element.closest('[data-test-id=\"pin\"]').querySelector('[data-test-id=\"more-actions-button\"]');\n  if (moreBtn) {\n    moreBtn.click();\n  }\n\n  btn.style.background = '#45b6fe';\n  btn.textContent = 'Saved';\n  setTimeout(function() {\n    btn.style.background = '#e60023';\n    btn.textContent = 'Save';\n  }, 1500);\n});\n\nelement.style.position = 'relative';\nelement.appendChild(btn);"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}

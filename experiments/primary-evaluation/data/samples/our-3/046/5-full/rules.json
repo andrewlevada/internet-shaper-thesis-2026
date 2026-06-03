@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "label": "Hide content below header",
+      "query_selector": ".grid.min-h-dvh > :not(header#module-uh)",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide bottom sticky ad",
+      "query_selector": "[data-bottom-sticky-ad=\"true\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Benji dashboard root",
+      "query_selector": "#benji-dashboard-root",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
+  "result": {
+    "success": true,
+    "log": "rules applied in real-time"
+  }
+}
