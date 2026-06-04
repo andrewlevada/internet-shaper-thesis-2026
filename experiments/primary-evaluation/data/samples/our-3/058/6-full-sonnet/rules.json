@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Enlarge & highlight viewer count",
+			"query_selector": ".tw-media-card-stat",
+			"logic": "\nelement.style.fontSize = '14px';\nelement.style.fontWeight = '800';\nelement.style.letterSpacing = '0.02em';\nelement.style.color = '#0d0d0d';\nelement.style.background = 'linear-gradient(135deg, #ff4fff 0%, #ff2a6d 50%, #ff8c00 100%)';\nelement.style.border = '2px solid rgba(255,255,255,0.5)';\nelement.style.borderRadius = '6px';\nelement.style.padding = '4px 10px';\nelement.style.boxShadow = '0 0 10px rgba(255, 42, 109, 0.8), 0 2px 6px rgba(0,0,0,0.6)';\nelement.style.textShadow = 'none';\nelement.style.backdropFilter = 'blur(4px)';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

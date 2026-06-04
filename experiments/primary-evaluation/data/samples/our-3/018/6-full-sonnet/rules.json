@@ -1,0 +1,63 @@
+{
+	"rules": [
+		{
+			"label": "Widen sidebar column layout",
+			"query_selector": "[data-layout=\"responsive-sidebar\"]",
+			"logic": "\nelement.style.setProperty('grid-template-columns', 'minmax(0,1fr) minmax(0,520px)', 'important');\nelement.style.setProperty('grid-template-areas', '\"contentTop contentTop\" \"main sidebar\" \"contentBottom contentBottom\"', 'important');\nelement.style.setProperty('max-width', '100%', 'important');\nelement.style.setProperty('gap', '24px', 'important');\n"
+		},
+		{
+			"label": "Style sidebar region panel",
+			"query_selector": "[data-region=\"sidebar\"]",
+			"logic": "\nelement.style.setProperty('background', '#f8f9fc', 'important');\nelement.style.setProperty('border-radius', '20px', 'important');\nelement.style.setProperty('padding', '0', 'important');\nelement.style.setProperty('min-width', '0', 'important');\nelement.style.setProperty('overflow', 'visible', 'important');\n"
+		},
+		{
+			"label": "Move sponsored widget to sidebar",
+			"query_selector": "[data-module-key=\"main-block-1\"]",
+			"logic": "\n// Move the sponsored content block into the sidebar region\nconst sidebar = document.querySelector('[data-region=\"sidebar\"] .flex.flex-col');\nif (!sidebar) return;\nif (element.dataset.movedToSidebar === 'true') return;\nsidebar.insertBefore(element, sidebar.firstChild);\nelement.dataset.movedToSidebar = 'true';\n"
+		},
+		{
+			"label": "Multi-column Taboola feed layout",
+			"query_selector": "#taboola-below-content-thumbnails-article",
+			"logic": "\nelement.style.setProperty('display', 'grid', 'important');\nelement.style.setProperty('grid-template-columns', 'repeat(2, 1fr)', 'important');\nelement.style.setProperty('gap', '14px', 'important');\nelement.style.setProperty('width', '100%', 'important');\n"
+		},
+		{
+			"label": "Style Taboola feed cards",
+			"query_selector": "[tbl-feed-card]",
+			"logic": "\nelement.style.setProperty('background', '#ffffff', 'important');\nelement.style.setProperty('border-radius', '14px', 'important');\nelement.style.setProperty('overflow', 'hidden', 'important');\nelement.style.setProperty('box-shadow', '0 2px 8px rgba(0,0,0,0.07)', 'important');\nelement.style.setProperty('padding', '0', 'important');\nelement.style.setProperty('margin', '0', 'important');\nelement.style.setProperty('width', '100%', 'important');\n"
+		},
+		{
+			"label": "Style sponsored content card header",
+			"query_selector": "[data-module-key=\"main-block-1\"] [data-slot=\"card\"]",
+			"logic": "\nelement.style.setProperty('background', 'transparent', 'important');\nelement.style.setProperty('border', 'none', 'important');\nelement.style.setProperty('padding', '0', 'important');\nelement.style.setProperty('gap', '8px', 'important');\n"
+		},
+		{
+			"label": "Style sponsored section card-header",
+			"query_selector": "[data-module-key=\"main-block-1\"] [data-slot=\"card-header\"]",
+			"logic": "\nelement.style.setProperty('background', '#1a2744', 'important');\nelement.style.setProperty('border-radius', '16px 16px 0 0', 'important');\nelement.style.setProperty('padding', '14px 20px', 'important');\nelement.style.setProperty('margin', '0', 'important');\n\nconst h2 = element.querySelector('h2');\nif (h2) {\n  h2.style.setProperty('color', '#ffffff', 'important');\n  h2.style.setProperty('font-size', '15px', 'important');\n  h2.style.setProperty('letter-spacing', '0.08em', 'important');\n  h2.style.setProperty('text-transform', 'uppercase', 'important');\n  h2.style.setProperty('font-weight', '700', 'important');\n}\n"
+		},
+		{
+			"label": "Style sponsored card-content wrapper",
+			"query_selector": "[data-module-key=\"main-block-1\"] [data-slot=\"card-content\"]",
+			"logic": "\nelement.style.setProperty('padding', '16px', 'important');\nelement.style.setProperty('background', '#f0f3fa', 'important');\nelement.style.setProperty('border-radius', '0 0 16px 16px', 'important');\n"
+		},
+		{
+			"label": "Expand sidebar ad block height",
+			"query_selector": "[data-module-key=\"sidebar-block-0\"] section",
+			"logic": "\nelement.style.setProperty('height', 'auto', 'important');\nelement.style.setProperty('min-height', '300px', 'important');\nelement.style.setProperty('border-radius', '16px', 'important');\nelement.style.setProperty('overflow', 'hidden', 'important');\n"
+		},
+		{
+			"label": "Make sidebar sticky scroll panel",
+			"query_selector": "[data-region=\"sidebar\"] > .flex.flex-col",
+			"logic": "\nelement.style.setProperty('position', 'sticky', 'important');\nelement.style.setProperty('top', '80px', 'important');\nelement.style.setProperty('max-height', 'calc(100vh - 100px)', 'important');\nelement.style.setProperty('overflow-y', 'auto', 'important');\nelement.style.setProperty('padding', '0 4px 16px 4px', 'important');\nelement.style.setProperty('gap', '16px', 'important');\nelement.style.setProperty('scroll-behavior', 'smooth', 'important');\n\n// Subtle scrollbar\nelement.style.setProperty('scrollbar-width', 'thin', 'important');\nelement.style.setProperty('scrollbar-color', '#c5cde8 transparent', 'important');\n"
+		},
+		{
+			"label": "Tighten Taboola rbox containers",
+			"query_selector": ".trc_rbox_container",
+			"logic": "\nelement.style.setProperty('width', '100%', 'important');\nelement.style.setProperty('overflow', 'hidden', 'important');\nelement.style.setProperty('border-radius', '12px', 'important');\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

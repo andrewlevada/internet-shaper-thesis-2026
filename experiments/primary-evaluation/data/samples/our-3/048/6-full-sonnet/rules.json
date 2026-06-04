@@ -1,0 +1,28 @@
+{
+	"rules": [
+		{
+			"label": "Hoist horoscope bar top",
+			"query_selector": "#convenience-bar",
+			"logic": "\n// Move the horoscope convenience bar to sit directly after the sticky header\nconst header = document.querySelector('header#module-uh');\nif (!header || !element.parentNode) return;\n// Check if already repositioned\nif (element.previousElementSibling === header || element.getAttribute('data-repositioned') === 'horoscope') return;\n// Wrap body-level placement: insert after header in its parent\nconst headerParent = header.parentNode;\nif (!headerParent) return;\nheaderParent.insertBefore(element, header.nextSibling);\nelement.setAttribute('data-repositioned', 'horoscope');\nelement.style.position = 'sticky';\nelement.style.top = '56px';\nelement.style.zIndex = '15';\nelement.style.backgroundColor = 'var(--color-bg-primary, #fff)';\nelement.style.paddingTop = '8px';\nelement.style.paddingBottom = '4px';\nelement.style.borderBottom = '1px solid var(--color-border-tertiary, #e0e0e0)';\n"
+		},
+		{
+			"label": "Hoist Shopping Experts top",
+			"query_selector": "li:has(a[data-ylk*=\"subsec:shopping\"])",
+			"logic": "\n// Move the \"From Our Shopping Experts\" li to be the first item in the feed list\nconst feed = document.querySelector('#strm > ul.flex');\nif (!feed || !element.parentNode) return;\n// Already first child of feed, skip\nif (feed.firstElementChild === element && element.getAttribute('data-repositioned') === 'shopping') return;\nfeed.insertBefore(element, feed.firstElementChild);\nelement.setAttribute('data-repositioned', 'shopping');\nelement.style.borderRadius = '10px';\nelement.style.background = 'var(--color-bg-brand-secondary, #f4f0ff)';\nelement.style.padding = '16px';\nelement.style.marginBottom = '8px';\n"
+		},
+		{
+			"label": "Filter political/military news",
+			"query_selector": "#strm li.list-none",
+			"logic": "\n// Hide feed items tagged as Politics or with military/political keywords\nconst anchor = element.querySelector('a[data-yga]');\nif (!anchor) return;\n\nconst yga = anchor.getAttribute('data-yga') || '';\nconst ylk = anchor.getAttribute('data-ylk') || '';\nconst headlineEl = element.querySelector('h3 a');\nconst headline = headlineEl ? headlineEl.textContent.toLowerCase() : '';\n\n// Category-based filter\nlet isPolitical = false;\ntry {\n  const data = JSON.parse(yga);\n  const category = (data.yContentCategory || '').toLowerCase();\n  const labels = (data.yLabels || '').toLowerCase();\n  if (category === 'politics' || category === 'u.s.' || labels.includes('politics')) {\n    isPolitical = true;\n  }\n} catch(e) {}\n\n// Keyword-based filter for political & military topics\nconst politicalKeywords = [\n  'trump', 'biden', 'congress', 'senate', 'democrat', 'republican',\n  'election', 'white house', 'politics', 'political', 'president',\n  'administration', 'military', 'pentagon', 'missile', 'war', 'troops',\n  'iran', 'ukraine', 'nato', 'defense', 'weapons', 'strike', 'bomb',\n  'army', 'navy', 'air force', 'soldier', 'general ', 'sanctions',\n  'diplomacy', 'diplomat', 'secretary of state', 'legislation', 'bill passed',\n  'gun control', 'border', 'immigration', 'tariff', 'sanctions', 'nuclear'\n];\n\nif (!isPolitical) {\n  for (const kw of politicalKeywords) {\n    if (headline.includes(kw)) {\n      isPolitical = true;\n      break;\n    }\n  }\n}\n\n// Also check ylk badge labels\nif (ylk.includes('badge-politics') || ylk.includes('ll4:badge-news') && ylk.includes('cnt_tpc:Politics')) {\n  isPolitical = true;\n}\n\nelement.style.display = isPolitical ? 'none' : '';\n"
+		},
+		{
+			"label": "Filter hero carousel political",
+			"query_selector": "article[aria-label^=\"Slide\"]",
+			"logic": "\nconst anchor = element.querySelector('a[data-yga]');\nif (!anchor) return;\n\nconst yga = anchor.getAttribute('data-yga') || '';\nconst headline = element.querySelector('h3 a') ? element.querySelector('h3 a').textContent.toLowerCase() : '';\n\nlet isPolitical = false;\ntry {\n  const data = JSON.parse(yga);\n  const category = (data.yContentCategory || '').toLowerCase();\n  if (category === 'politics' || category === 'world') isPolitical = true;\n} catch(e) {}\n\nconst politicalKeywords = [\n  'trump', 'biden', 'congress', 'senate', 'democrat', 'republican',\n  'election', 'white house', 'military', 'pentagon', 'missile', 'war',\n  'iran', 'ukraine', 'nato', 'defense', 'weapons', 'strike', 'bomb',\n  'army', 'navy', 'general ', 'sanctions', 'diplomacy', 'nuclear',\n  'lawyer', 'administration', 'kennedy center', 'tariff', 'border'\n];\n\nif (!isPolitical) {\n  for (const kw of politicalKeywords) {\n    if (headline.includes(kw)) { isPolitical = true; break; }\n  }\n}\n\nelement.style.display = isPolitical ? 'none' : '';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

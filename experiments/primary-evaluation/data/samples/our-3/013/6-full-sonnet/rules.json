@@ -1,0 +1,83 @@
+{
+	"rules": [
+		{
+			"label": "Dim marketing feature taglines",
+			"query_selector": ".hubble-product__options-features",
+			"logic": "\nelement.style.opacity = '0.35';\nelement.style.filter = 'grayscale(80%)';\nelement.style.pointerEvents = 'none';\n"
+		},
+		{
+			"label": "Dim Samsung brand perks banner",
+			"query_selector": ".s-option-promotion-new-coupon",
+			"logic": "\nelement.style.opacity = '0.3';\nelement.style.filter = 'grayscale(90%)';\nelement.style.transform = 'scale(0.97)';\nelement.style.transformOrigin = 'top left';\nelement.style.transition = 'none';\n"
+		},
+		{
+			"label": "Dim bundle promotion gift banner",
+			"query_selector": ".s-option-promotion-gift",
+			"logic": "\nelement.style.opacity = '0.35';\nelement.style.filter = 'grayscale(80%)';\n"
+		},
+		{
+			"label": "Dim financing brand banner",
+			"query_selector": ".s-option-financing .s-option-financing__banner",
+			"logic": "\nelement.style.opacity = '0.25';\nelement.style.filter = 'grayscale(100%)';\n"
+		},
+		{
+			"label": "Dim in-box brand feature section",
+			"query_selector": ".hubble-product__summary-feature",
+			"logic": "\nelement.style.opacity = '0.35';\nelement.style.filter = 'grayscale(70%)';\n"
+		},
+		{
+			"label": "Highlight hardware spec summary",
+			"query_selector": ".hubble-product__summary-content",
+			"logic": "\nelement.style.order = '-1';\nelement.style.background = '#f7f9fc';\nelement.style.borderLeft = '3px solid #1428A0';\nelement.style.borderRadius = '6px';\nelement.style.padding = '14px 16px';\nelement.style.marginBottom = '12px';\nelement.style.boxShadow = '0 1px 6px rgba(0,0,0,0.08)';\n"
+		},
+		{
+			"label": "Move spec summary above in-box section",
+			"query_selector": ".hubble-product__summary",
+			"logic": "\nelement.style.display = 'flex';\nelement.style.flexDirection = 'column';\n"
+		},
+		{
+			"label": "Reorder summary: specs before in-box",
+			"query_selector": ".hubble-product__summary-head",
+			"logic": "\nelement.style.order = '-3';\n"
+		},
+		{
+			"label": "Pull spec content to top order",
+			"query_selector": ".hubble-product__summary-content",
+			"logic": "\nelement.style.order = '-2';\nelement.style.background = '#f7f9fc';\nelement.style.borderLeft = '3px solid #1428A0';\nelement.style.borderRadius = '6px';\nelement.style.padding = '14px 16px';\nelement.style.marginBottom = '12px';\nelement.style.boxShadow = '0 1px 6px rgba(0,0,0,0.08)';\n"
+		},
+		{
+			"label": "Push in-box section below specs",
+			"query_selector": ".hubble-product__summary-feature",
+			"logic": "\nelement.style.order = '1';\nelement.style.opacity = '0.35';\nelement.style.filter = 'grayscale(70%)';\n"
+		},
+		{
+			"label": "Highlight price total block",
+			"query_selector": ".hubble-product__total",
+			"logic": "\nelement.style.background = '#ffffff';\nelement.style.border = '2px solid #1428A0';\nelement.style.borderRadius = '8px';\nelement.style.padding = '16px';\nelement.style.marginTop = '8px';\nelement.style.boxShadow = '0 2px 10px rgba(20,40,160,0.10)';\n"
+		},
+		{
+			"label": "Enlarge spec option text chips",
+			"query_selector": ".hubble-product__summary-product-option .s-product-opiton",
+			"logic": "\nelement.style.display = 'inline-block';\nelement.style.background = '#e8ecf8';\nelement.style.color = '#1428A0';\nelement.style.borderRadius = '4px';\nelement.style.padding = '2px 7px';\nelement.style.margin = '2px 3px';\nelement.style.fontSize = '0.85em';\nelement.style.fontWeight = '600';\nelement.style.letterSpacing = '0.01em';\n"
+		},
+		{
+			"label": "Highlight total price text",
+			"query_selector": ".hubble-product__total-text strong",
+			"logic": "\nelement.style.fontSize = '1.6em';\nelement.style.color = '#1428A0';\nelement.style.fontWeight = '700';\n"
+		},
+		{
+			"label": "Dim Samsung \"Direct van Samsung\" header",
+			"query_selector": ".s-option-promotion-coupon .hubble-product__options-head, .s-option-promotion-new-coupon .hubble-product__options-head",
+			"logic": "\nelement.style.opacity = '0.3';\nelement.style.fontSize = '0.8em';\n"
+		},
+		{
+			"label": "Dim product image carousel banners",
+			"query_selector": ".hubble-product__buying-gallery[data-option=\"device\"] .bc-gallery",
+			"logic": "\nelement.style.opacity = '0.5';\nelement.style.filter = 'saturate(0.3)';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"rules": [
+		{
+			"label": "Hide horoscope tile",
+			"query_selector": "#conbar-content [data-ylk*=\"subsec:horoscope\"]",
+			"logic": "\n// Walk up to the card container (the rounded tile div)\nlet card = element;\nwhile (card && card.id !== 'conbar-content') {\n  if (card.classList.contains('rounded-xl')) {\n    card.style.display = 'none';\n    return;\n  }\n  card = card.parentElement;\n}\n"
+		},
+		{
+			"label": "Hide What to Watch tile",
+			"query_selector": "#conbar-content [data-ylk*=\"subsec:what-to-watch\"]",
+			"logic": "\n// Walk up to the card container (the rounded tile div)\nlet card = element;\nwhile (card && card.id !== 'conbar-content') {\n  if (card.classList.contains('rounded-xl')) {\n    card.style.display = 'none';\n    return;\n  }\n  card = card.parentElement;\n}\n"
+		},
+		{
+			"label": "Boost Politics & World to top",
+			"query_selector": "#strm > ul:first-of-type",
+			"logic": "\nconst hardNewsCategories = ['politics', 'world', 'u.s.', 'news'];\n\n// Collect all direct li children\nconst items = Array.from(element.children).filter(el => el.tagName === 'LI');\nif (items.length === 0) return;\n\n// Classify each item\nfunction isHardNews(li) {\n  // Check data-ylk attributes on any anchor inside\n  const links = li.querySelectorAll('[data-ylk]');\n  for (const link of links) {\n    const ylk = (link.getAttribute('data-ylk') || '').toLowerCase();\n    const yga = (link.getAttribute('data-yga') || '').toLowerCase();\n    // Check for content category in data-ylk (e.g. cnt_tpc:Politics)\n    for (const cat of hardNewsCategories) {\n      if (ylk.includes('cnt_tpc:' + cat) || yga.includes('\"ycontentcategory\":\"' + cat)) {\n        return true;\n      }\n    }\n    // Check the visible category badge text\n  }\n  // Also check badge text (e.g. <div class=\"text-link\">Politics</div>)\n  const badges = li.querySelectorAll('.text-link, .label-m-emphasized');\n  for (const badge of badges) {\n    const text = badge.textContent.trim().toLowerCase();\n    if (hardNewsCategories.includes(text)) return true;\n  }\n  return false;\n}\n\nconst hardItems = items.filter(isHardNews);\nconst otherItems = items.filter(li => !isHardNews(li));\n\nif (hardItems.length === 0) return; // nothing to reorder yet\n\n// Re-insert: hard news first, then others — idempotent via consistent order\nconst allOrdered = [...hardItems, ...otherItems];\nallOrdered.forEach(li => element.appendChild(li));\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

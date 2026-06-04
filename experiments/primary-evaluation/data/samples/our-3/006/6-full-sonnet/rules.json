@@ -1,0 +1,33 @@
+{
+	"rules": [
+		{
+			"label": "Flex order for columns",
+			"query_selector": "#column-list",
+			"logic": "element.style.display = 'flex';\nelement.style.flexDirection = 'column';"
+		},
+		{
+			"label": "Entretenimento column first",
+			"query_selector": "#coluna-entretenimento",
+			"logic": "element.style.order = '-3';"
+		},
+		{
+			"label": "BBB video to top of columns",
+			"query_selector": ".area-video-bbb",
+			"logic": "\nconst columnList = document.querySelector('#column-list');\nif (!columnList) return;\n\n// Only move if not already inside column-list\nif (element.parentElement === columnList) return;\n\n// Place a clone reference - move the real element before column-list\nconst parent = columnList.parentElement;\nif (!parent) return;\nparent.insertBefore(element, columnList);\nelement.style.order = '-4';\nelement.style.marginBottom = '16px';\n"
+		},
+		{
+			"label": "BBB video franja to top",
+			"query_selector": ".area-franja-de-videos",
+			"logic": "\nconst columnList = document.querySelector('#column-list');\nif (!columnList) return;\n\nconst parent = columnList.parentElement;\nif (!parent) return;\n\n// Only move if not already before column-list\nif (element.nextElementSibling === columnList) return;\n\nparent.insertBefore(element, columnList);\nelement.style.marginBottom = '24px';\n"
+		},
+		{
+			"label": "Hide empty video-bbb",
+			"query_selector": ".area-video-bbb",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

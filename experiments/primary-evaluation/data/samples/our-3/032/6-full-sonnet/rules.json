@@ -1,0 +1,18 @@
+{
+	"rules": [
+		{
+			"label": "Hide sign-in promo banner",
+			"query_selector": "ytd-background-promo-renderer",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Replace promo with trending link",
+			"query_selector": "ytd-background-promo-renderer",
+			"logic": "\n// Hide the promo\nelement.style.display = 'none';\n\n// If we haven't already injected the redirect banner, do it now\nif (document.getElementById('ext-trending-redirect')) return;\n\nconst banner = document.createElement('div');\nbanner.id = 'ext-trending-redirect';\nbanner.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;gap:16px;text-align:center;';\n\nconst heading = document.createElement('div');\nheading.textContent = '🔥 Discover What\\'s Trending';\nheading.style.cssText = 'font-size:22px;font-weight:700;color:var(--yt-spec-text-primary,#0f0f0f);';\n\nconst sub = document.createElement('div');\nsub.textContent = 'Sign in to see your saved videos, or explore popular content right now.';\nsub.style.cssText = 'font-size:14px;color:var(--yt-spec-text-secondary,#606060);max-width:420px;';\n\nconst btn = document.createElement('a');\nbtn.href = '/feed/trending';\nbtn.textContent = 'Go to Trending';\nbtn.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:10px 20px;border-radius:20px;background:#ff0000;color:#fff;font-size:14px;font-weight:600;text-decoration:none;';\n\nconst btn2 = document.createElement('a');\nbtn2.href = '/feed/explore';\nbtn2.textContent = 'Explore Popular Videos';\nbtn2.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:20px;border:1px solid var(--yt-spec-text-primary,#0f0f0f);color:var(--yt-spec-text-primary,#0f0f0f);font-size:14px;font-weight:600;text-decoration:none;';\n\nconst btnRow = document.createElement('div');\nbtnRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:8px;';\nbtnRow.appendChild(btn);\nbtnRow.appendChild(btn2);\n\nbanner.appendChild(heading);\nbanner.appendChild(sub);\nbanner.appendChild(btnRow);\n\nelement.parentNode.insertBefore(banner, element);\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

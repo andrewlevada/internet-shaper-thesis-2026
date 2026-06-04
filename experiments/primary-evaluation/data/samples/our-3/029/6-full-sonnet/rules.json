@@ -1,0 +1,33 @@
+{
+	"rules": [
+		{
+			"label": "Hide \"Create Free Account\" header button",
+			"query_selector": ".global-action__item.register",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide \"Sign In\" header buttons",
+			"query_selector": ".global-action__item.sign-in",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide side-rail \"Sign In to Save\" button",
+			"query_selector": ".page-side-save",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide page-header \"Sign In to Save\" button",
+			"query_selector": "#collections-save-button",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide comments \"Sign In\" CTA block",
+			"query_selector": ".ArticleAnonymousComments_anonymousCommentsContent__uSoxq",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Move comments below headline",
+			"query_selector": "article.prose",
+			"logic": "\nconst commentsSection = element.querySelector('#comments-section');\nconst articleHeader = element.querySelector('[data-testid=\"article-header\"]');\nconst articleBody = element.querySelector('.flatplan_body');\n\nif (!commentsSection || !articleHeader || !articleBody) return;\n\n// Check if already repositioned to avoid duplicate moves\nif (articleHeader.nextElementSibling === commentsSection) return;\n\n// Style the comments section for its new prominent position\ncommentsSection.style.marginTop = '0';\ncommentsSection.style.borderTop = 'none';\ncommentsSection.style.paddingTop = '0';\ncommentsSection.style.marginBottom = '24px';\ncommentsSection.style.background = '#f8fafc';\ncommentsSection.style.borderRadius = '12px';\ncommentsSection.style.padding = '20px';\ncommentsSection.style.border = '1px solid #e2e8f0';\n\n// Add a label above the section\nlet label = commentsSection.querySelector('#community-label');\nif (!label) {\n  label = document.createElement('p');\n  label.id = 'community-label';\n  label.textContent = '💬 Community Reactions & Comments';\n  label.style.fontSize = '14px';\n  label.style.fontWeight = '700';\n  label.style.color = '#374151';\n  label.style.marginBottom = '12px';\n  label.style.marginTop = '0';\n  label.style.textTransform = 'uppercase';\n  label.style.letterSpacing = '0.05em';\n  commentsSection.insertBefore(label, commentsSection.firstChild);\n}\n\n// Insert the comments section right after the article header\narticleHeader.insertAdjacentElement('afterend', commentsSection);\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

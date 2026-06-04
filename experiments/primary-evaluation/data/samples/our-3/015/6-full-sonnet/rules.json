@@ -1,0 +1,38 @@
+{
+	"rules": [
+		{
+			"label": "Hide inline Twitter/X embed",
+			"query_selector": ".twitter-tweet, .twitter-tweet-rendered",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide OpenWeb comments section",
+			"query_selector": "#comments-section",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide OpenWeb reactions widget",
+			"query_selector": "[data-spotim-app=\"reactions\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide OpenWeb floating bell",
+			"query_selector": "[data-spot-im-shadow-host]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Twitter tracking iframes",
+			"query_selector": "iframe[title=\"Twitter settings iframe\"], iframe#rufous-sandbox",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide view-comments button",
+			"query_selector": "[data-testid=\"view-comments-button\"]",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

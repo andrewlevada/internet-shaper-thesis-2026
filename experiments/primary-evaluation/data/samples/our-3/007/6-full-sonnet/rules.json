@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Move Shorts shelves to top",
+			"query_selector": "div#contents.ytd-section-list-renderer",
+			"logic": "\n// Collect all direct ytd-item-section-renderer children\nconst sections = Array.from(element.children).filter(\n  el => el.tagName.toLowerCase() === 'ytd-item-section-renderer'\n);\nif (sections.length === 0) return;\n\n// Separate into Shorts (contain grid-shelf-view-model) and others\nconst shortsSections = sections.filter(sec =>\n  sec.querySelector('grid-shelf-view-model.ytGridShelfViewModelHost')\n);\nif (shortsSections.length === 0) return;\n\n// Find the first non-Shorts section as the anchor insertion point\nconst firstNonShorts = sections.find(sec =>\n  !sec.querySelector('grid-shelf-view-model.ytGridShelfViewModelHost')\n);\nif (!firstNonShorts) return;\n\n// Determine if reordering is needed: check if any Shorts section comes after the first non-Shorts section\nconst allChildren = Array.from(element.children);\nconst firstNonShortsIdx = allChildren.indexOf(firstNonShorts);\nconst needsMove = shortsSections.some(sec => allChildren.indexOf(sec) > firstNonShortsIdx);\nif (!needsMove) return;\n\n// Insert all Shorts sections before the first non-Shorts section, preserving their relative order\nshortsSections.forEach(sec => {\n  element.insertBefore(sec, firstNonShorts);\n});\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

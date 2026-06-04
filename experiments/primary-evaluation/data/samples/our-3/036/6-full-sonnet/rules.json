@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Move 'More from YouTube' to top",
+			"query_selector": "#sections.ytd-guide-renderer",
+			"logic": "\n// Find the \"More from YouTube\" section by its title text\nconst allSections = element.querySelectorAll('ytd-guide-section-renderer');\nlet moreFromYT = null;\nfor (const section of allSections) {\n  const titleEl = section.querySelector('#guide-section-title');\n  if (titleEl && titleEl.textContent.trim() === 'More from YouTube') {\n    moreFromYT = section;\n    break;\n  }\n}\n// Only move it if found and it's not already the first child\nif (moreFromYT && element.firstElementChild !== moreFromYT) {\n  element.insertBefore(moreFromYT, element.firstElementChild);\n}\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

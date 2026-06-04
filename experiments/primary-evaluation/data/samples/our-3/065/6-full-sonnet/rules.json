@@ -1,0 +1,18 @@
+{
+	"rules": [
+		{
+			"label": "Inject \"Change to English\" button",
+			"query_selector": ".RNNXgb",
+			"logic": "\n// Find the \"Change to English\" link in the notification banner\nconst englishLink = document.querySelector('#slim_appbar a[href*=\"hl=en\"]');\nif (!englishLink) return;\n\n// Avoid duplicating the button\nif (document.getElementById('ext-change-to-english-btn')) return;\n\nconst btn = document.createElement('a');\nbtn.id = 'ext-change-to-english-btn';\nbtn.href = englishLink.href;\nbtn.textContent = '🌐 Change to English';\nbtn.title = 'Switch to globally available English search results';\n\nObject.assign(btn.style, {\n  display: 'inline-flex',\n  alignItems: 'center',\n  justifyContent: 'center',\n  marginLeft: '10px',\n  padding: '0 18px',\n  height: '44px',\n  background: '#1a73e8',\n  color: '#fff',\n  fontFamily: 'Google Sans, Roboto, Arial, sans-serif',\n  fontSize: '14px',\n  fontWeight: '600',\n  letterSpacing: '0.01em',\n  borderRadius: '24px',\n  border: 'none',\n  cursor: 'pointer',\n  textDecoration: 'none',\n  whiteSpace: 'nowrap',\n  boxShadow: '0 1px 3px rgba(26,115,232,0.4)',\n  flexShrink: '0',\n  transition: 'background 0.15s, box-shadow 0.15s',\n  verticalAlign: 'middle',\n});\n\nbtn.addEventListener('mouseover', () => {\n  btn.style.background = '#1557b0';\n  btn.style.boxShadow = '0 2px 6px rgba(26,115,232,0.5)';\n});\nbtn.addEventListener('mouseout', () => {\n  btn.style.background = '#1a73e8';\n  btn.style.boxShadow = '0 1px 3px rgba(26,115,232,0.4)';\n});\n\n// Insert right after the search bar container\nelement.insertAdjacentElement('afterend', btn);\n"
+		},
+		{
+			"label": "Hide English notification banner",
+			"query_selector": "#slim_appbar",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

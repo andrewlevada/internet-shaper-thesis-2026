@@ -1,0 +1,28 @@
+{
+	"rules": [
+		{
+			"label": "Hide Explore Featured Boards",
+			"query_selector": "[data-grid-item-idx=\"0\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide pin metadata bar",
+			"query_selector": ".To17G1.ekBBbl",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide search results group text",
+			"query_selector": ".iWgz2P.sA6yWk",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide pin overflow menu button",
+			"query_selector": "[data-test-id=\"overflow-menu-button\"]",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

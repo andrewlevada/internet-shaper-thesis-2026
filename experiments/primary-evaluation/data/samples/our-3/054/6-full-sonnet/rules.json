@@ -1,0 +1,28 @@
+{
+	"rules": [
+		{
+			"label": "Hide Talk tab",
+			"query_selector": "#ca-talk",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Edit tab",
+			"query_selector": "#ca-edit",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide View History tab",
+			"query_selector": "#ca-history",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Tools dropdown",
+			"query_selector": "#vector-page-tools-dropdown",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

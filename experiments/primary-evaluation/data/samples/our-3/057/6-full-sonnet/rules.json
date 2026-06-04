@@ -1,0 +1,18 @@
+{
+	"rules": [
+		{
+			"label": "Hide Featured content sidebar",
+			"query_selector": "table.sidebar.tfarticle-archive",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide calendar table",
+			"query_selector": "table.toccolours.floatnone",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

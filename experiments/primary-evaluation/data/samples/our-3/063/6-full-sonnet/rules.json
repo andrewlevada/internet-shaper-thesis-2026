@@ -1,0 +1,48 @@
+{
+	"rules": [
+		{
+			"label": "Hide RHS knowledge panel",
+			"query_selector": "#rhs",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide carousels & image/video rows",
+			"query_selector": ".ULSxyf",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide People also search for (bottom)",
+			"query_selector": "#bres",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide AI overview vcap blocks",
+			"query_selector": ".GUyUUb",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide People Also Ask PAA block",
+			"query_selector": ".LQCGqc",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide related products rich card",
+			"query_selector": "#HbKV2c",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide inline video result card",
+			"query_selector": ".MjjYud .PmEWq",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide AI overview tvcap wrapper",
+			"query_selector": "#tvcap",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

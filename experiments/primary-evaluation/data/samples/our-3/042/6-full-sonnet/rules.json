@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Move \"What's new\" to top",
+			"query_selector": "[data-test-id=\"tier1-pin-feed\"]",
+			"logic": "\nconst parent = element.parentElement;\nif (!parent) return;\n// Only move if it's not already the first child\nif (parent.firstElementChild === element) return;\nparent.insertBefore(element, parent.firstElementChild);\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

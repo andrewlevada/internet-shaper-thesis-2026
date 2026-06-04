@@ -1,0 +1,23 @@
+{
+	"rules": [
+		{
+			"label": "Remove Copilot search tab",
+			"query_selector": "#b-scopeListItem-copilotsearch",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Remove collapsed chat container",
+			"query_selector": "#b_copilot_search",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Remove follow-up prompt textarea",
+			"query_selector": ".b_copilot_composer",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

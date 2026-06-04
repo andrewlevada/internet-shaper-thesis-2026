@@ -1,0 +1,88 @@
+{
+	"rules": [
+		{
+			"label": "Move Reviews module to main",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45",
+			"logic": "\n// Move the module to the main content area, right before Taboola sponsored content\nconst mainContent = document.querySelector('.region-main.regionMain');\nconst taboolaAnchor = document.querySelector('#Taboola-main-f6ca0247-5836-4cb0-a1f4-a2d9e3cf15bf');\nif (!mainContent || !taboolaAnchor) return;\n\n// Avoid re-inserting if already moved\nif (element.dataset.movedToMain === 'true') return;\n\nelement.dataset.movedToMain = 'true';\nelement.style.display = 'block';\n\n// Insert into main column before the Taboola block\nmainContent.insertBefore(element, taboolaAnchor);\n"
+		},
+		{
+			"label": "Style Reviews card container",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 section",
+			"logic": "\nelement.style.cssText = `\n  background: linear-gradient(145deg, #0f2027 0%, #203a43 45%, #2c5364 100%) !important;\n  border-radius: 16px !important;\n  padding: 28px 32px 32px !important;\n  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2) !important;\n  width: 100% !important;\n  max-width: 100% !important;\n  box-sizing: border-box !important;\n  margin: 0 !important;\n  border: 1px solid rgba(255,255,255,0.08) !important;\n  position: relative !important;\n  overflow: hidden !important;\n`;\n\n// Add a subtle mountain/terrain decorative overlay using a pseudo-approach via a child div\nif (!element.querySelector('.gear-deco-bg')) {\n  const deco = document.createElement('div');\n  deco.className = 'gear-deco-bg';\n  deco.style.cssText = `\n    position: absolute;\n    top: 0; right: 0; bottom: 0; left: 0;\n    background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpolygon points='0,200 150,80 280,140 420,40 560,120 700,30 800,90 800,200' fill='rgba(255,255,255,0.03)'/%3E%3Cpolygon points='0,200 100,110 250,160 400,70 550,140 680,60 800,110 800,200' fill='rgba(255,255,255,0.025)'/%3E%3C/svg%3E\");\n    background-size: cover;\n    background-position: bottom;\n    pointer-events: none;\n    z-index: 0;\n  `;\n  element.insertBefore(deco, element.firstChild);\n}\n"
+		},
+		{
+			"label": "Style Reviews module header",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 header",
+			"logic": "\nelement.style.cssText = `\n  position: relative;\n  z-index: 1;\n  border-bottom: 2px solid rgba(255,255,255,0.15) !important;\n  padding-bottom: 16px !important;\n  margin-bottom: 24px !important;\n  display: flex !important;\n  align-items: center !important;\n  gap: 12px !important;\n`;\n\n// Add outdoor gear icon if not already there\nif (!element.querySelector('.gear-header-icon')) {\n  const icon = document.createElement('span');\n  icon.className = 'gear-header-icon';\n  icon.textContent = '🏕️';\n  icon.style.cssText = `font-size: 28px; flex-shrink: 0;`;\n  element.insertBefore(icon, element.firstChild);\n}\n"
+		},
+		{
+			"label": "Style Reviews heading text",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 h2.Card--cardHeading--M6yBx",
+			"logic": "\nelement.style.cssText = `\n  color: #ffffff !important;\n  font-size: 22px !important;\n  font-weight: 800 !important;\n  letter-spacing: 0.5px !important;\n  text-transform: uppercase !important;\n  margin: 0 !important;\n  text-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;\n`;\n\n// Inject a subtitle beneath the heading if not already present\nif (!element.querySelector('.gear-subtitle')) {\n  const sub = document.createElement('div');\n  sub.className = 'gear-subtitle';\n  sub.textContent = 'Gear tested for every forecast';\n  sub.style.cssText = `\n    font-size: 12px;\n    font-weight: 400;\n    color: rgba(120,210,255,0.85);\n    letter-spacing: 1.5px;\n    text-transform: uppercase;\n    margin-top: 4px;\n    display: block;\n  `;\n  element.appendChild(sub);\n}\n"
+		},
+		{
+			"label": "Redesign Reviews as grid",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .ListView--listViewContainer--Sqnsn",
+			"logic": "\nelement.style.cssText = `\n  display: grid !important;\n  grid-template-columns: repeat(3, 1fr) !important;\n  gap: 18px !important;\n  width: 100% !important;\n  position: relative;\n  z-index: 1;\n`;\n"
+		},
+		{
+			"label": "Style Reviews grid cards",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .ListView--listView---8Ujq",
+			"logic": "\nelement.style.cssText = `\n  display: flex !important;\n  flex-direction: column !important;\n  background: rgba(255, 255, 255, 0.06) !important;\n  border: 1px solid rgba(255, 255, 255, 0.12) !important;\n  border-radius: 12px !important;\n  overflow: hidden !important;\n  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;\n  text-decoration: none !important;\n  width: 100% !important;\n  min-width: 0 !important;\n  backdrop-filter: blur(4px) !important;\n  box-shadow: 0 2px 12px rgba(0,0,0,0.25) !important;\n  cursor: pointer !important;\n`;\n\n// Hover state simulation via onmouseenter/onmouseleave (idempotent guard)\nif (!element.dataset.hoverBound) {\n  element.dataset.hoverBound = 'true';\n  element.addEventListener('mouseenter', () => {\n    element.style.background = 'rgba(255,255,255,0.13)';\n    element.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';\n    element.style.transform = 'translateY(-3px)';\n    element.style.borderColor = 'rgba(120,210,255,0.5)';\n  });\n  element.addEventListener('mouseleave', () => {\n    element.style.background = 'rgba(255,255,255,0.06)';\n    element.style.boxShadow = '0 2px 12px rgba(0,0,0,0.25)';\n    element.style.transform = 'translateY(0)';\n    element.style.borderColor = 'rgba(255,255,255,0.12)';\n  });\n}\n"
+		},
+		{
+			"label": "Style Reviews image wrappers",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .ListView--listViewImg--SqQtI",
+			"logic": "\nelement.style.cssText = `\n  width: 100% !important;\n  aspect-ratio: 16/9 !important;\n  overflow: hidden !important;\n  flex-shrink: 0 !important;\n  position: relative !important;\n  background: rgba(0,0,0,0.3) !important;\n`;\n"
+		},
+		{
+			"label": "Fix Reviews image ratio",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .Image--intrinsicRatioRoot--L7BRj",
+			"logic": "\nelement.style.cssText = `\n  position: absolute !important;\n  inset: 0 !important;\n  padding-top: 0 !important;\n  width: 100% !important;\n  height: 100% !important;\n`;\n"
+		},
+		{
+			"label": "Fix Reviews images fill",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .Image--intrinsicRatioElement--bFd9O",
+			"logic": "\nelement.style.cssText = `\n  position: absolute !important;\n  inset: 0 !important;\n  width: 100% !important;\n  height: 100% !important;\n  object-fit: cover !important;\n  object-position: center !important;\n`;\n\n// Load lazy images immediately\nif (element.dataset.src && !element.src) {\n  element.src = element.dataset.src;\n}\n"
+		},
+		{
+			"label": "Style Reviews card body text",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .ListView--listViewBody--An10C",
+			"logic": "\nelement.style.cssText = `\n  padding: 12px 14px 14px !important;\n  margin: 0 !important;\n  flex: 1 !important;\n  display: flex !important;\n  flex-direction: column !important;\n  justify-content: flex-start !important;\n`;\n"
+		},
+		{
+			"label": "Style Reviews card titles",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .ListView--listViewTitle--fB8w3",
+			"logic": "\nelement.style.cssText = `\n  color: #ffffff !important;\n  font-size: 13px !important;\n  font-weight: 600 !important;\n  line-height: 1.45 !important;\n  display: -webkit-box !important;\n  -webkit-line-clamp: 3 !important;\n  -webkit-box-orient: vertical !important;\n  overflow: hidden !important;\n  text-shadow: 0 1px 4px rgba(0,0,0,0.5) !important;\n  letter-spacing: 0.1px !important;\n`;\n\n// Add a small outdoor-themed tag badge per card (idempotent)\nconst tags = ['☀️ Sun & Heat', '👕 Apparel', '🛏️ Home', '💇 Hair Care', '✈️ Travel', '🎁 Gifts'];\nconst parent = element.closest('.ListView--listView---8Ujq');\nif (parent && !parent.querySelector('.gear-tag')) {\n  const siblings = Array.from(parent.parentElement ? parent.parentElement.querySelectorAll('.ListView--listView---8Ujq') : []);\n  const idx = siblings.indexOf(parent);\n  const tag = document.createElement('span');\n  tag.className = 'gear-tag';\n  tag.textContent = tags[idx] || '🏕️ Gear';\n  tag.style.cssText = `\n    display: inline-block;\n    font-size: 10px;\n    font-weight: 700;\n    color: rgba(120,210,255,0.95);\n    text-transform: uppercase;\n    letter-spacing: 0.8px;\n    margin-bottom: 6px;\n    margin-top: 2px;\n  `;\n  element.parentElement.insertBefore(tag, element);\n}\n"
+		},
+		{
+			"label": "Fix Reviews content z-index",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .Card--content--IOayG",
+			"logic": "\nelement.style.cssText = `\n  position: relative !important;\n  z-index: 1 !important;\n  padding: 0 !important;\n`;\n"
+		},
+		{
+			"label": "Style Reviews CTA link",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .Card--cardHeader--AE3k1 a",
+			"logic": "\nelement.style.cssText = `\n  display: flex !important;\n  align-items: center !important;\n  gap: 8px !important;\n  text-decoration: none !important;\n  color: inherit !important;\n  width: 100% !important;\n`;\n"
+		},
+		{
+			"label": "Style Reviews header chevron",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .Card--titleCtaChevronH2--JwKz-",
+			"logic": "\nelement.style.cssText = `\n  color: rgba(120, 210, 255, 0.85) !important;\n  width: 18px !important;\n  height: 18px !important;\n  transform: rotate(-90deg) !important;\n  flex-shrink: 0 !important;\n`;\n"
+		},
+		{
+			"label": "Style Reviews footer",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 footer",
+			"logic": "\nelement.style.cssText = `\n  position: relative !important;\n  z-index: 1 !important;\n  border-top: 1px solid rgba(255,255,255,0.1) !important;\n  padding-top: 16px !important;\n  margin-top: 20px !important;\n`;\n\nif (!element.querySelector('.gear-footer-cta')) {\n  const cta = document.createElement('a');\n  cta.className = 'gear-footer-cta';\n  cta.href = 'https://weather.com/atmosphere';\n  cta.target = '_self';\n  cta.textContent = 'Browse All Gear Reviews & Deals →';\n  cta.style.cssText = `\n    display: inline-block;\n    color: rgba(120,210,255,0.95);\n    font-size: 13px;\n    font-weight: 700;\n    letter-spacing: 0.5px;\n    text-decoration: none;\n    text-transform: uppercase;\n    padding: 8px 0;\n    border-bottom: 2px solid rgba(120,210,255,0.3);\n    transition: border-color 0.2s;\n  `;\n  cta.addEventListener('mouseenter', () => { cta.style.borderBottomColor = 'rgba(120,210,255,0.9)'; });\n  cta.addEventListener('mouseleave', () => { cta.style.borderBottomColor = 'rgba(120,210,255,0.3)'; });\n  element.appendChild(cta);\n}\n"
+		},
+		{
+			"label": "Fix image component wrapper fill",
+			"query_selector": "#WxuContentMedia-sidebar-008213b9-4580-4deb-8a5e-ae9354c21a45 .imageComponentWrapper",
+			"logic": "\nelement.style.cssText = `\n  position: absolute !important;\n  inset: 0 !important;\n  width: 100% !important;\n  height: 100% !important;\n`;\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

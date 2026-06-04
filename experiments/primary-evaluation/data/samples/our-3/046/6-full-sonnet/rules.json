@@ -1,0 +1,33 @@
+{
+	"rules": [
+		{
+			"label": "Hide main homepage content",
+			"query_selector": "#nca-homepage",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide top ad banner",
+			"query_selector": ".border-y.border-y-tertiary.bg-always-black\\/5",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide page footer",
+			"query_selector": "footer",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide bottom sticky ad",
+			"query_selector": "[data-bottom-sticky-ad=\"true\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide top nav links",
+			"query_selector": "#ybar-l1-nav",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

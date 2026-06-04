@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Hide sponsored ad blocks",
+			"query_selector": "li.b_ad",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

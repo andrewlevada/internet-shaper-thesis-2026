@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Enlarge & green Save $X text",
+			"query_selector": ".productModule a[data-ylk*=\"discountcallout\"] span",
+			"logic": "\nif (!element.textContent.trim().startsWith('Save $')) return;\nelement.style.fontSize = '1.4rem';\nelement.style.lineHeight = '1.8rem';\nelement.style.fontWeight = '800';\nelement.style.color = '#16a34a';\nelement.style.backgroundColor = '#dcfce7';\nelement.style.padding = '2px 10px';\nelement.style.borderRadius = '6px';\nelement.style.display = 'inline-block';\nelement.style.letterSpacing = '0.01em';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

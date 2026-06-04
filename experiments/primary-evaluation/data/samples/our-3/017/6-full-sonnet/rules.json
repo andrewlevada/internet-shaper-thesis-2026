@@ -1,0 +1,43 @@
+{
+	"rules": [
+		{
+			"label": "Hide ad containers",
+			"query_selector": ".adContainer",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide top ad region",
+			"query_selector": ".regionTopAds",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Taboola feed",
+			"query_selector": "[id^=\"tbl-aug-\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide sticky sidebar ad",
+			"query_selector": "[data-region=\"sidebar\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Google ad iframes",
+			"query_selector": "iframe[id^=\"google_ads_iframe\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Google ad slot iframes",
+			"query_selector": "iframe[id^=\"gptm-\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Single-column layout",
+			"query_selector": "[data-layout=\"responsive-sidebar\"]",
+			"logic": "\nelement.style.gridTemplateColumns = '1fr';\nelement.style.gridTemplateAreas = '\"contentTop\" \"main\" \"contentBottom\"';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

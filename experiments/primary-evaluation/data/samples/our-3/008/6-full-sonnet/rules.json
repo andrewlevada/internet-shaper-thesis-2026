@@ -1,0 +1,23 @@
+{
+	"rules": [
+		{
+			"label": "Hide Shorts grid shelves",
+			"query_selector": "grid-shelf-view-model",
+			"logic": "\n// grid-shelf-view-model is exclusively used for Shorts grids in search results.\n// Confirm by checking for the Shorts lockup child before hiding.\nconst hasShorts = element.querySelector('ytm-shorts-lockup-view-model-v2');\nif (!hasShorts) return;\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Hide Shorts lockup items",
+			"query_selector": "ytm-shorts-lockup-view-model-v2",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Shorts section header",
+			"query_selector": "yt-section-header-view-model",
+			"logic": "\n// Hide section headers that belong to a Shorts grid shelf\nconst parent = element.closest('grid-shelf-view-model');\nif (!parent) return;\nelement.style.display = 'none';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

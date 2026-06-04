@@ -1,0 +1,138 @@
+{
+	"rules": [
+		{
+			"label": "Match Taboola section wrapper",
+			"query_selector": "[data-module-key=\"main-block-2\"] [data-slot=\"card\"]",
+			"logic": "\n// Match the native feed section card's outer style\nelement.style.background = 'var(--card, #fff)';\nelement.style.borderRadius = '';\nelement.style.gap = '';\nelement.style.padding = '0';\n"
+		},
+		{
+			"label": "Style Sponsored Content heading",
+			"query_selector": "[data-module-key=\"main-block-2\"] [data-slot=\"card-header\"]",
+			"logic": "\n// Match the native \"Trending\" / \"Home & Garden\" heading style exactly\nelement.style.padding = '0';\nelement.style.margin = '0';\nelement.style.paddingBottom = '1rem';   // pb-4\nelement.style.borderTop = 'none';\nelement.style.marginTop = '0';\nelement.style.display = 'flex';\n\nconst h2 = element.querySelector('h2');\nif (h2) {\n  h2.style.fontSize = '1.25rem';      // text-xl\n  h2.style.lineHeight = '1.75rem';    // leading-normal\n  h2.style.letterSpacing = '-0.025em'; // tracking-tight\n  h2.style.fontWeight = '700';        // font-bold\n  h2.style.color = 'rgb(17,24,39)';   // text-gray-900\n  h2.style.display = 'flex';\n  h2.style.margin = '0';\n  h2.style.padding = '0';\n}\n"
+		},
+		{
+			"label": "Reset card-content padding",
+			"query_selector": "[data-module-key=\"main-block-2\"] [data-slot=\"card-content\"]",
+			"logic": "\nelement.style.padding = '0';\nelement.style.zIndex = '';\n"
+		},
+		{
+			"label": "Style Taboola feed cards as grid",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_rbox_div",
+			"logic": "\n// Make each Taboola card row display as a matching CSS grid (like the native @md/grid layout)\nelement.style.display = 'grid';\nelement.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';\nelement.style.gap = '1.5rem 1.5rem'; // gap-x-6 gap-y-4\nelement.style.marginBottom = '1rem';\n"
+		},
+		{
+			"label": "Style individual Taboola items",
+			"query_selector": "#taboola-below-content-thumbnails-video .videoCube.trc_spotlight_item",
+			"logic": "\n// Match native card item layout: flex-col, gap-4, rounded corners\nelement.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.gap = '1rem';\nelement.style.textDecoration = 'none';\nelement.style.borderRadius = '0.5rem';\nelement.style.cursor = 'pointer';\nelement.style.overflow = 'hidden';\nelement.style.background = 'transparent';\nelement.style.width = '100%';\nelement.style.boxSizing = 'border-box';\n"
+		},
+		{
+			"label": "Style Taboola thumbnail block",
+			"query_selector": "#taboola-below-content-thumbnails-video .thumbBlock_holder",
+			"logic": "\n// Match native image wrapper: rounded-2xl, overflow-hidden, aspect-square\nelement.style.position = 'relative';\nelement.style.overflow = 'hidden';\nelement.style.borderRadius = '1rem'; // rounded-2xl\nelement.style.aspectRatio = '1 / 1';\nelement.style.width = '100%';\nelement.style.transition = 'box-shadow 150ms';\n"
+		},
+		{
+			"label": "Style Taboola thumbnail image",
+			"query_selector": "#taboola-below-content-thumbnails-video .thumbBlock",
+			"logic": "\n// Match native img style: object-cover, scale, transition\nelement.style.position = 'absolute';\nelement.style.inset = '0';\nelement.style.width = '100%';\nelement.style.height = '100%';\nelement.style.backgroundSize = 'cover';\nelement.style.backgroundPosition = 'center';\nelement.style.borderRadius = '0.5rem'; // rounded-lg\nelement.style.transform = 'scale(1.01)';\nelement.style.transition = 'transform 200ms ease';\n"
+		},
+		{
+			"label": "Remove Taboola thumbnail overlay",
+			"query_selector": "#taboola-below-content-thumbnails-video .thumbnail-overlay",
+			"logic": "\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Style Taboola label box",
+			"query_selector": "#taboola-below-content-thumbnails-video .video-label-box",
+			"logic": "\n// Match native text column layout\nelement.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.gap = '0.125rem';\nelement.style.width = '100%';\n"
+		},
+		{
+			"label": "Style Taboola item title text",
+			"query_selector": "#taboola-below-content-thumbnails-video .video-title",
+			"logic": "\n// Match native h2 card title: font-bold, text-base, line-clamp-4, pb-0.5\nelement.style.fontWeight = '700';\nelement.style.fontSize = '1rem';      // text-base\nelement.style.lineHeight = '1.625';\nelement.style.color = 'rgb(17,24,39)'; // text-gray-900\nelement.style.display = '-webkit-box';\nelement.style.webkitLineClamp = '3';\nelement.style.webkitBoxOrient = 'vertical';\nelement.style.overflow = 'hidden';\nelement.style.paddingBottom = '0.125rem'; // pb-0.5\nelement.style.marginBottom = '0';\nelement.style.textDecoration = 'none';\nelement.style.WebkitLineClamp = '3';\n"
+		},
+		{
+			"label": "Style Taboola branding label",
+			"query_selector": "#taboola-below-content-thumbnails-video .branding",
+			"logic": "\n// Match native \"source/duration\" sub-label style\nelement.style.fontSize = '0.75rem';   // text-xs\nelement.style.color = 'rgb(107,114,128)'; // text-gray-500\nelement.style.fontWeight = '400';\nelement.style.lineHeight = '1.5';\nelement.style.display = 'block';\nelement.style.textDecoration = 'none';\n"
+		},
+		{
+			"label": "Style Taboola thumbnail href",
+			"query_selector": "#taboola-below-content-thumbnails-video .item-thumbnail-href",
+			"logic": "\nelement.style.display = 'block';\nelement.style.textDecoration = 'none';\nelement.style.width = '100%';\n"
+		},
+		{
+			"label": "Style Taboola label href",
+			"query_selector": "#taboola-below-content-thumbnails-video .item-label-href",
+			"logic": "\nelement.style.display = 'block';\nelement.style.textDecoration = 'none';\nelement.style.color = 'inherit';\nelement.style.width = '100%';\n"
+		},
+		{
+			"label": "Hide Taboola section header",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_rbox_header",
+			"logic": "\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Hide Taboola feed header bar",
+			"query_selector": ".tbl-feed-header",
+			"logic": "\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Reset Taboola feed card padding",
+			"query_selector": "#taboola-below-content-thumbnails-video .tbl-feed-card",
+			"logic": "\nelement.style.padding = '0';\nelement.style.margin = '0 0 0 0';\nelement.style.border = 'none';\nelement.style.background = 'transparent';\n"
+		},
+		{
+			"label": "Reset Taboola rbox borders",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_rbox_border_elm",
+			"logic": "\nelement.style.border = 'none';\nelement.style.borderTop = 'none';\nelement.style.boxShadow = 'none';\nelement.style.padding = '0';\n"
+		},
+		{
+			"label": "Hide videoCube aspect placeholder",
+			"query_selector": "#taboola-below-content-thumbnails-video .videoCube_aspect",
+			"logic": "\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Hide Taboola exclude button",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_user_exclude_btn",
+			"logic": "\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Style Taboola rbox container",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_rbox_container",
+			"logic": "\nelement.style.background = 'transparent';\nelement.style.border = 'none';\nelement.style.padding = '0';\nelement.style.margin = '0';\n"
+		},
+		{
+			"label": "Hover scale Taboola thumbnails",
+			"query_selector": "#taboola-below-content-thumbnails-video .videoCube.trc_spotlight_item",
+			"logic": "\n// Add hover class styling to match native \"group-hover:shadow-lg\"\nif (!element.dataset.hoverBound) {\n  element.dataset.hoverBound = 'true';\n  element.addEventListener('mouseenter', () => {\n    const thumb = element.querySelector('.thumbBlock_holder');\n    if (thumb) thumb.style.boxShadow = '0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)';\n    const img = element.querySelector('.thumbBlock');\n    if (img) img.style.transform = 'scale(1.05)';\n  });\n  element.addEventListener('mouseleave', () => {\n    const thumb = element.querySelector('.thumbBlock_holder');\n    if (thumb) thumb.style.boxShadow = '';\n    const img = element.querySelector('.thumbBlock');\n    if (img) img.style.transform = 'scale(1.01)';\n  });\n}\n"
+		},
+		{
+			"label": "Style Sponsored Content section wrapper",
+			"query_selector": "[data-module-key=\"main-block-2\"]",
+			"logic": "\n// Match the native section wrapper: flex flex-col @container/card text-card-foreground bg-card border-gray-500\nelement.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.background = '#fff';\nelement.style.color = 'inherit';\n"
+		},
+		{
+			"label": "Style Taboola outer section element",
+			"query_selector": "[data-module-key=\"main-block-2\"] section",
+			"logic": "\nelement.style.background = '#fff';\nelement.style.padding = '0';\nelement.style.border = 'none';\nelement.style.boxShadow = 'none';\n"
+		},
+		{
+			"label": "Style Taboola trc_rbox_outer",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_rbox_outer",
+			"logic": "\nelement.style.padding = '0';\nelement.style.margin = '0';\nelement.style.border = 'none';\n"
+		},
+		{
+			"label": "Match Taboola section to native feed",
+			"query_selector": "[data-module-key=\"main-block-2\"] [data-slot=\"card\"]",
+			"logic": "\n// Mirror the exact classes on the native section: flex flex-col @container/card bg-card text-card-foreground border-gray-500\nelement.style.display = 'flex';\nelement.style.flexDirection = 'column';\nelement.style.background = '#fff';\nelement.style.border = 'none';\nelement.style.boxShadow = 'none';\nelement.style.borderRadius = '0';\nelement.style.padding = '0';\nelement.style.gap = '0';\n"
+		},
+		{
+			"label": "Align Taboola trc_rbox thumbs grid",
+			"query_selector": "#taboola-below-content-thumbnails-video .trc_rbox",
+			"logic": "\nelement.style.overflow = 'visible';\nelement.style.background = 'transparent';\nelement.style.border = 'none';\nelement.style.padding = '0';\nelement.style.margin = '0';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

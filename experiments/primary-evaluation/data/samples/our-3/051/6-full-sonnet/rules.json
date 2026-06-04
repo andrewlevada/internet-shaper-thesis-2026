@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Style Your Friends tab",
+			"query_selector": "#friends-tab",
+			"logic": "\n// High-contrast styling for the tab container\nelement.style.backgroundColor = '#0f4c81';\nelement.style.borderRadius = '6px 6px 0 0';\nelement.style.border = '2px solid #ff9900';\nelement.style.borderBottom = 'none';\nelement.style.boxShadow = '0 -2px 8px rgba(255, 153, 0, 0.45)';\nelement.style.padding = '0 10px';\nelement.style.transition = 'background-color 0.2s';\n\n// Style the inner anchor link\nconst anchor = element.querySelector('a');\nif (anchor) {\n  anchor.style.color = '#ffffff';\n  anchor.style.fontWeight = '700';\n  anchor.style.fontSize = '15px';\n  anchor.style.letterSpacing = '0.3px';\n  anchor.style.display = 'flex';\n  anchor.style.alignItems = 'center';\n  anchor.style.gap = '7px';\n  anchor.style.textDecoration = 'none';\n  anchor.style.padding = '8px 4px';\n\n  // Inject SVG icon only once (idempotent guard)\n  if (!anchor.querySelector('.friends-tab-icon')) {\n    const svgNS = 'http://www.w3.org/2000/svg';\n    const svg = document.createElementNS(svgNS, 'svg');\n    svg.setAttribute('class', 'friends-tab-icon');\n    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');\n    svg.setAttribute('viewBox', '0 0 24 24');\n    svg.setAttribute('width', '18');\n    svg.setAttribute('height', '18');\n    svg.setAttribute('fill', '#ff9900');\n    svg.setAttribute('aria-hidden', 'true');\n    svg.style.flexShrink = '0';\n\n    // Person 1 (back-left)\n    const circle1 = document.createElementNS(svgNS, 'circle');\n    circle1.setAttribute('cx', '8');\n    circle1.setAttribute('cy', '7');\n    circle1.setAttribute('r', '3');\n    circle1.setAttribute('opacity', '0.75');\n\n    const path1 = document.createElementNS(svgNS, 'path');\n    path1.setAttribute('d', 'M2 20c0-3.314 2.686-6 6-6s6 2.686 6 6');\n    path1.setAttribute('opacity', '0.75');\n\n    // Person 2 (front-right)\n    const circle2 = document.createElementNS(svgNS, 'circle');\n    circle2.setAttribute('cx', '16');\n    circle2.setAttribute('cy', '7');\n    circle2.setAttribute('r', '3');\n\n    const path2 = document.createElementNS(svgNS, 'path');\n    path2.setAttribute('d', 'M10 20c0-3.314 2.686-6 6-6s6 2.686 6 6');\n\n    svg.appendChild(circle1);\n    svg.appendChild(path1);\n    svg.appendChild(circle2);\n    svg.appendChild(path2);\n\n    anchor.insertBefore(svg, anchor.firstChild);\n  }\n}\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

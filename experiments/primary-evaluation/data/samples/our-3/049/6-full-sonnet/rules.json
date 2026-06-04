@@ -1,0 +1,28 @@
+{
+	"rules": [
+		{
+			"label": "Hide For You feed",
+			"query_selector": "main[aria-label=\"Top stories and Stories for you\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide For You header bar",
+			"query_selector": ".mb-2\\\\.5.justify-between",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Inject directory grid",
+			"query_selector": "#nca-homepage > div > div",
+			"logic": "\nif (document.getElementById('yahoo-directory-grid')) return;\n\nconst grid = document.createElement('div');\ngrid.id = 'yahoo-directory-grid';\ngrid.style.cssText = `\n  max-width: 760px;\n  margin: 24px auto;\n  padding: 0 16px;\n  font-family: inherit;\n`;\n\nconst categories = [\n  { label: '📰  News',        url: 'https://news.yahoo.com',          desc: 'Top headlines & breaking news',      color: '#6001d2' },\n  { label: '💰  Finance',     url: 'https://finance.yahoo.com',        desc: 'Markets, stocks & business news',    color: '#0078d4' },\n  { label: '🏆  Sports',      url: 'https://sports.yahoo.com',         desc: 'Scores, stats & highlights',         color: '#d63031' },\n  { label: '🌤  Weather',     url: 'https://weather.yahoo.com',        desc: 'Forecasts & radar maps',             color: '#00b894' },\n  { label: '🎬  Entertainment', url: 'https://www.yahoo.com/entertainment', desc: 'Movies, TV & celebrity news',  color: '#e17055' },\n  { label: '🏥  Health',      url: 'https://health.yahoo.com',         desc: 'Wellness tips & medical news',       color: '#00cec9' },\n  { label: '🔬  Science',     url: 'https://www.yahoo.com/science',    desc: 'Discoveries & tech research',        color: '#6c5ce7' },\n  { label: '✈️  Travel',      url: 'https://www.yahoo.com/travel',     desc: 'Destinations & travel deals',        color: '#fdcb6e' },\n  { label: '🛒  Shopping',    url: 'https://shopping.yahoo.com',       desc: 'Deals, reviews & product picks',     color: '#e84393' },\n  { label: '🎮  Games',       url: 'https://www.yahoo.com/games',      desc: 'Puzzles, trivia & games',            color: '#2d3436' },\n  { label: '⚖️  Politics',    url: 'https://www.yahoo.com/politics',   desc: 'Policy, elections & government',     color: '#b2395c' },\n  { label: '🌍  World',       url: 'https://www.yahoo.com/world-news', desc: 'International news & events',        color: '#0984e3' },\n];\n\nconst heading = document.createElement('h2');\nheading.textContent = 'Where would you like to go?';\nheading.style.cssText = `\n  font-size: 1.35rem;\n  font-weight: 700;\n  color: var(--color-primary, #1a1a1a);\n  margin-bottom: 18px;\n  margin-top: 4px;\n  letter-spacing: -0.01em;\n`;\ngrid.appendChild(heading);\n\nconst gridWrap = document.createElement('div');\ngridWrap.style.cssText = `\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));\n  gap: 14px;\n`;\n\ncategories.forEach(cat => {\n  const a = document.createElement('a');\n  a.href = cat.url;\n  a.style.cssText = `\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    padding: 18px 16px 14px;\n    background: var(--color-primary-bg, #ffffff);\n    border: 2px solid transparent;\n    border-radius: 14px;\n    text-decoration: none;\n    box-shadow: 0 1px 6px rgba(0,0,0,0.08);\n    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;\n    cursor: pointer;\n    position: relative;\n    overflow: hidden;\n  `;\n\n  const accent = document.createElement('div');\n  accent.style.cssText = `\n    width: 28px;\n    height: 4px;\n    border-radius: 2px;\n    background: ${cat.color};\n    margin-bottom: 10px;\n  `;\n\n  const label = document.createElement('span');\n  label.textContent = cat.label;\n  label.style.cssText = `\n    font-size: 1rem;\n    font-weight: 700;\n    color: var(--color-primary, #1a1a1a);\n    display: block;\n    margin-bottom: 5px;\n    line-height: 1.3;\n  `;\n\n  const desc = document.createElement('span');\n  desc.textContent = cat.desc;\n  desc.style.cssText = `\n    font-size: 0.75rem;\n    color: var(--color-secondary, #666);\n    font-weight: 400;\n    line-height: 1.4;\n  `;\n\n  a.appendChild(accent);\n  a.appendChild(label);\n  a.appendChild(desc);\n\n  a.addEventListener('mouseover', () => {\n    a.style.borderColor = cat.color;\n    a.style.boxShadow = `0 4px 16px rgba(0,0,0,0.12)`;\n    a.style.transform = 'translateY(-2px)';\n  });\n  a.addEventListener('mouseout', () => {\n    a.style.borderColor = 'transparent';\n    a.style.boxShadow = '0 1px 6px rgba(0,0,0,0.08)';\n    a.style.transform = 'translateY(0)';\n  });\n\n  gridWrap.appendChild(a);\n});\n\ngrid.appendChild(gridWrap);\n\n// Insert after the convenience bar wrapper\nelement.appendChild(grid);\n"
+		},
+		{
+			"label": "Hide Top Stories carousel",
+			"query_selector": "#ntk",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

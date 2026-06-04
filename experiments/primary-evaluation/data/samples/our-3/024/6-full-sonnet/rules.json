@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Add Save button on pins",
+			"query_selector": "[data-test-id=\"pin\"] .PinCard__imageWrapper",
+			"logic": "\n// Idempotent: skip if already injected\nif (element.querySelector('.ext-save-btn')) return;\n\n// Get the pin URL from the closest anchor tag\nconst pinEl = element.closest('[data-test-id=\"pin\"]');\nconst pinId = pinEl ? pinEl.getAttribute('data-test-pin-id') : null;\nconst anchor = pinEl ? pinEl.querySelector('a[href*=\"/pin/\"]') : null;\nconst href = anchor ? anchor.getAttribute('href') : '#';\n\n// Create the button\nconst btn = document.createElement('a');\nbtn.className = 'ext-save-btn';\nbtn.href = href;\nbtn.target = '_blank';\nbtn.rel = 'noopener noreferrer';\nbtn.textContent = '⬆ Save';\nbtn.title = 'Save this Pin to a board';\n\n// Prevent click from bubbling to the pin card link\nbtn.addEventListener('click', function(e) {\n  e.stopPropagation();\n});\n\n// Style the button\nbtn.style.cssText = `\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  z-index: 999;\n  background: #e60023;\n  color: #ffffff;\n  font-size: 13px;\n  font-weight: 700;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n  padding: 7px 13px;\n  border-radius: 24px;\n  text-decoration: none;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.35);\n  cursor: pointer;\n  letter-spacing: 0.3px;\n  line-height: 1;\n  white-space: nowrap;\n  border: none;\n  outline: none;\n  pointer-events: auto;\n  transition: background 0.15s, transform 0.1s;\n`;\n\nbtn.addEventListener('mouseenter', function() {\n  btn.style.background = '#ad081b';\n  btn.style.transform = 'scale(1.06)';\n});\nbtn.addEventListener('mouseleave', function() {\n  btn.style.background = '#e60023';\n  btn.style.transform = 'scale(1)';\n});\n\nelement.appendChild(btn);\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

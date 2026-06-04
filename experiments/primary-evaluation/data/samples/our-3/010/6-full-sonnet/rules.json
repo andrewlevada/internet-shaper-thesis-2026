@@ -1,0 +1,23 @@
+{
+	"rules": [
+		{
+			"label": "Hide chip-bar",
+			"query_selector": "#chip-bar.ytd-search-header-renderer",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Filters button",
+			"query_selector": "#filter-button.ytd-search-header-renderer",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Collapse search header row",
+			"query_selector": "ytd-search-header-renderer",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

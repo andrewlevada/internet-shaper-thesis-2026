@@ -1,0 +1,18 @@
+{
+	"rules": [
+		{
+			"label": "Move vídeos to top",
+			"query_selector": "section.area-franja-de-videos",
+			"logic": "\n  const header = document.querySelector('#header-section');\n  if (!header) return;\n  // Only move if not already right after the header\n  if (header.nextElementSibling === element) return;\n  header.parentNode.insertBefore(element, header.nextSibling);\n"
+		},
+		{
+			"label": "Enlarge video player",
+			"query_selector": ".video-grid-franja-player-escuro__container",
+			"logic": "\n  element.style.display = 'flex';\n  element.style.flexDirection = 'row';\n  element.style.gap = '16px';\n  element.style.alignItems = 'flex-start';\n\n  // Make the post-player (left column) much bigger\n  const player = element.querySelector('.post-player');\n  if (player) {\n    player.style.flex = '0 0 72%';\n    player.style.maxWidth = '72%';\n  }\n\n  // Make bs-player fill its container\n  const bsPlayer = element.querySelector('bs-player');\n  if (bsPlayer) {\n    bsPlayer.style.display = 'block';\n    bsPlayer.style.width = '100%';\n    bsPlayer.style.minHeight = '420px';\n  }\n\n  // Shrink the list column\n  const list = element.querySelector('.video-grid-franja-player-escuro__list');\n  if (list) {\n    list.style.flex = '1 1 28%';\n    list.style.maxWidth = '28%';\n    list.style.overflowY = 'auto';\n    list.style.maxHeight = '420px';\n  }\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

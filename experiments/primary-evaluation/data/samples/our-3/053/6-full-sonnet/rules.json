@@ -1,0 +1,23 @@
+{
+	"rules": [
+		{
+			"label": "Hide archive nav grid",
+			"query_selector": ".mw-content-ltr.mw-parser-output > .hlist",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide archive calendar table",
+			"query_selector": ".mw-content-ltr.mw-parser-output > table.toccolours",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Expand search bar full width",
+			"query_selector": "#p-search",
+			"logic": "\nelement.style.flex = '1 1 auto';\nelement.style.maxWidth = '100%';\nelement.style.width = '100%';\n\nconst container = element.querySelector('.vector-typeahead-search-container');\nif (container) {\n  container.style.width = '100%';\n  container.style.maxWidth = '100%';\n}\n\nconst form = element.querySelector('.cdx-search-input');\nif (form) {\n  form.style.width = '100%';\n  form.style.maxWidth = '100%';\n}\n\nconst inputWrapper = element.querySelector('.cdx-search-input__input-wrapper');\nif (inputWrapper) {\n  inputWrapper.style.width = '100%';\n}\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

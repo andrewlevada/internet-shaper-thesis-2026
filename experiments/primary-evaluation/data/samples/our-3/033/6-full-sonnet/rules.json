@@ -1,0 +1,23 @@
+{
+	"rules": [
+		{
+			"label": "Enlarge search bar",
+			"query_selector": "#center.ytd-masthead",
+			"logic": "\nelement.style.flex = '1 1 auto';\nelement.style.maxWidth = '100%';\nelement.style.width = '100%';\nelement.style.justifyContent = 'center';\nelement.style.padding = '0 16px';\n"
+		},
+		{
+			"label": "Hide left sidebar guide",
+			"query_selector": "tp-yt-app-drawer#guide",
+			"logic": "\nelement.style.display = 'none';\n"
+		},
+		{
+			"label": "Expand searchbox width",
+			"query_selector": "yt-searchbox.ytd-masthead",
+			"logic": "\nelement.style.flex = '1 1 auto';\nelement.style.maxWidth = '100%';\nelement.style.width = '100%';\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

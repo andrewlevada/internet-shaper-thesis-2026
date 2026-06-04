@@ -1,0 +1,488 @@
+Timestamp: 2026-06-03T15:05:55.248520+00:00
+Sample: our-3/031
+Pipeline: full-sonnet (6-full-sonnet)
+Backend: anthropic
+Model: claude-sonnet-4-6
+Work page: /Users/andrewlevada/Projects/my/internet-shaper/experiments/primary-evaluation/data/samples/our-3/031/6-full-sonnet/work/page.html
+Tools: get_map_of_dom, show_in_dom, set_update_rule
+
+=== Model Request ===
+
+--- System prompt ---
+You are a browser extension agent that modifies web pages based on user requests.
+
+All tools read from and write to the same live page. set_update_rule changes are applied immediately — subsequent read tool calls reflect the updated state.
+
+Workflow:
+1. Call get_map_of_dom() to get an overview of the page structure
+2. Identify candidate elements for the user's request
+3. Use show_in_dom() to examine specific elements if you need more detail
+4. Create update rules with specific selectors (prefer class names, data attributes, or tag names over structural paths)
+
+Rules must be idempotent and deterministic:
+- Running the same logic on the same element multiple times must produce the same result as running it once.
+- If the rule reads child content (e.g. text, badge values) to decide whether to hide the element, it will be re-run after child content loads. This is expected — write logic that handles an empty/missing value gracefully by doing nothing (early return), so once the content is present the rule applies correctly.
+- Avoid accumulating side effects: do not append to textContent, do not toggle classes — always set to an absolute value.
+- Never use element.remove() when a condition check is involved; prefer element.style.display = 'none' so the rule can still run again if needed.
+
+--- Tool definitions ---
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_map_of_dom",
+      "description": "Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout: 1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count. 2. Repeating sibling elements show only the first with a comment indicating count. 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes. Can only be called once per session; later calls return the previous result message.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "show_in_dom",
+      "description": "Returns full HTML for the first element matching the query selector.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_selector": {
+            "type": "string",
+            "description": "CSS selector for the element to show (e.g., '#main', '.post-container', '[data-testid=\"feed\"]')"
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Non-negative number of element descendant levels to include below the matched elemen. Nested elements replaced by <!-- -N children -->. Depth counts element levels below the matched node: 0 returns only that element, 1 only direct children, etc. ",
+            "minimum": 0,
+            "default": 3
+          }
+        },
+        "required": [
+          "query_selector"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_update_rule",
+      "description": "Sets a persistent update rule. It is applied to all elements matching the CSS selector immediatly and then every time the page loads. \n\nThe 'logic' parameter is JavaScript code that executes with 'element' bound to each matching DOM element. \nThe page's 'document' is also available for DOM construction (e.g. document.createElement). \nGlobal APIs like window are not avaliable. \n\nCommon patterns: \n- element.style.display = 'none' - hide the element \n- element.style.opacity = '0.3' - dim the element \n- element.classList.add('hidden') - add a class \n- element.textContent = '' - clear text content \n\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "A short label (~3 words) describing what this rule does, for display in the rule management UI (e.g., 'Hide video ads', 'Remove sidebar', 'Dim suggestions')"
+          },
+          "query_selector": {
+            "type": "string",
+            "description": "A CSS selector matching elements to modify (e.g., '.ad-container', '[data-ad]', 'ytd-ad-slot-renderer')"
+          },
+          "logic": {
+            "type": "string",
+            "description": "Valid JavaScript code with access to 'element' variable only."
+          }
+        },
+        "required": [
+          "label",
+          "query_selector",
+          "logic"
+        ]
+      }
+    }
+  }
+]
+
+=== Agent Chat ===
+
+--- USER ---
+Add an easily accessible quick-settings toolbar directly on the page header (with sliders for font size, layout width, and instant dark mode toggle) so I don't have to navigate into a separate preferences menu.
+
+--- API REQUEST round 0 ---
+model=claude-sonnet-4-6 messages=1 payload_chars=4,170
+
+--- API RESPONSE round 0 ---
+elapsed_s=2.0 prompt_tokens=366 completion_tokens=41 cached_tokens=1186 cache_creation_tokens=0 finish_reason=tool_use tool_calls=[get_map_of_dom]
+
+--- TOOL CALL: get_map_of_dom ---
+(no input)
+
+--- TOOL RESULT: get_map_of_dom ---
+<body class="is-blog-post nowikiabar mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-500 ns-subject page-User_blog_Marphimon_Getting_Started_With_Fandom_Signing_Up_Personalization rootpage-User_blog_Marphimon skin-fandomdesktop action-view ooui-theme-fandomooui wiki-wikia theme-fandomdesktop-light" data-theme="light"><div class="notifications-placeholder"><!-- -1 wrappers  class="banner-notifications-placeholder"--><div class="wds-banner-notification__container"></div></div><nav class="global-top-navigation" id="global-top-navigation" aria-label="Fandom top navigation"><a class="global-top-navigation__fandom-logo" data-tracking-label="fandom-logo" data-testid="fandom-logo" aria-label="Fandom homepage"><svg class="wds-icon" /></a><div class="search-container"><!-- -1 wrappers  class="search-app search-app__wrapper"--><input type="text" class="search-app__input" placeholder="Search"><svg class="search-app__icon search-app__icon-input search-app__icon-search" /><div class="search-app__actions-wrapper"></div></div><div class="global-top-navigation__action-wrapper"><div class="global-action__item sign-in"><a class="wds-button wds-is-secondary global-action__link" data-tracking-label="account.sign-in" aria-label="Sign In"> Sign In </a></div><div class="global-action__item register"><a class="wds-button global-action__link" data-tracking-label="account.register" aria-label="Create a Free Account"> Create a Free Account </a></div></div></nav><div id="community-navigation" class="community-navigation fandom-sticky-header" aria-label="Community navigation"><div class="community-navigation__fandom-heart"><!-- -1 wrappers  class="community-navigation__fandom-heart__link" data-tracking-label="fandom-heart" data-testid="fandom-heart-logo" aria-label="Fandom homepage"--><svg class="wds-icon" /></div><a class="fandom-sticky-header__logo" data-tracking-label="community-logo"><img alt="Community Central"></a><a class="fandom-sticky-header__sitename" data-tracking-label="community-name"> Community Central</a><nav class="fandom-community-header__local-navigation"><!-- -1 wrappers  class="wds-tabs"--><li class="wds-dropdown explore-menu"><div class="wds-tabs__tab-label wds-dropdown__toggle first-level-item"><div class="wds-dropdown__placeholder"><svg class="wds-icon-tiny wds-icon" /><span>Explore</span></div><svg class="wds-icon wds-icon-tiny wds-dropdown__toggle-chevron" aria-label="Expand" /></div><div class="wds-is-not-scrollable wds-dropdown__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li><!-- -1 wrappers  data-tracking="explore-main-page"--><svg class="wds-icon-tiny wds-icon navigation-item-icon" /><span>Main Page</span></li><li><!-- -1 wrappers  data-tracking="explore-discuss"--><svg class="wds-icon-tiny wds-icon navigation-item-icon" /><span>Discuss</span></li><li><!-- -1 wrappers  data-tracking="explore-all-pages"--><span>All Pages</span></li><!-- -2 siblings --></div></li><li class="wds-dropdown"><div class="wds-tabs__tab-label wds-dropdown__toggle first-level-item"><a data-tracking="custom-level-1"><span>Get Started With Fandom</span></a><svg class="wds-icon wds-icon-tiny wds-dropdown__toggle-chevron" aria-label="Expand" /></div><div class="wds-is-not-scrollable wds-dropdown__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li class="wds-dropdown-level-nested"><a class="wds-dropdown-level-nested__toggle" data-tracking="custom-level-2"><span>Your First Steps on Fandom</span><svg class="wds-icon wds-icon-tiny wds-dropdown-chevron" aria-label="Expand" /></a><div class="wds-is-not-scrollable wds-dropdown-level-nested__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li><!-- -1 wrappers  data-tracking="custom-level-3"--><span>Signing Up &amp; Personalizing</span></li><!-- -3 siblings --></div></li><!-- -3 siblings --><li><!-- -1 wrappers  data-tracking="custom-level-2"--><span>Community Programs</span></li><li><!-- -1 wrappers  data-tracking="custom-level-2"--><span>Fandom Discord Events</span></li></div></li><!-- -3 siblings --></nav><div class="search-container"><div class="search-app search-app__wrapper community-search__wrapper search--with-community-colors"><input type="text" class="search-app__input" placeholder="Search"><svg class="search-app__icon search-app__icon-input search-app__icon-search" /><div class="search-app__actions-wrapper"></div></div><button class="search-app wds-button wds-is-text search-app__button" aria-label="Open searchbar"><svg class="search-app__icon" /></button></div><div class="wiki-tools"><a class="wds-button wds-is-text" title="Discuss" aria-label="Discuss" data-tracking-label="discussions"><svg class="wds-icon wds-icon-small" /></a><a class="wds-button wds-is-text wiki-tools__theme-switch" title="Switch to Dark Theme" aria-label="Switch to Dark Theme" data-tracking-label="theme-switch-dark"><svg class="wds-icon wds-icon-small" /></a></div><div class="global-action__item sign-in"><!-- -1 wrappers  class="wds-dropdown sign-in__dropdown"--><a class="global-action__link wds-button sign-in__anchor" data-tracking-label="account.sign-in"><!-- -1 wrappers  class="global-action__button-label sign-in__label"--><svg class="wds-icon wds-icon-small sign-in__icon" /> Sign In </a><div class="wds-dropdown__content wds-is-not-scrollable wds-is-right-aligned sign-in__dropdown-content"><div class="sign-in__register-text"> Don't have an account? </div><a class="wds-button wds-is-full-width global-action__register-link" data-tracking-label="account.register" aria-label="Create a Free Account"> Create a Free Account </a><hr><a class="wds-button wds-is-full-width wds-is-secondary global-action__sign-in-link" data-tracking-label="account.sign-in" aria-label="Sign In"> Sign In </a></div></div></div><div class="global-explore-navigation" id="global-explore-navigation" data-testid="global-explore-navigation"><div class="global-explore-navigation__top"><!-- -1 wrappers  class="global-explore-navigation__nav" aria-label="Fandom navigation"--><div><div class="global-explore-navigation__item global-explore-navigation__item--with-icon global-explore-navigation__home global-explore-navigation__panel-item"><!-- -3 wrappers  class="global-explore-navigation__button global-explore-navigation__home-link wds-avatar wds-avatar--square" data-testid="home__link" data-tracking-label="home"--><span class="global-explore-navigation__icon"><svg class="wds-icon wds-icon-small" /></span><span class="global-explore-navigation__label">Home</span></div><div class="global-explore-navigation__item global-explore-navigation__item--with-icon global-explore-navigation__explore global-explore-navigation__panel-item wds-is-active"><button class="global-explore-navigation__button" data-testid="explore__button"><!-- -1 wrappers  class="wds-avatar wds-avatar--square"--><span class="global-explore-navigation__icon"><svg class="wds-icon-small" id="wds-compass-small__Layer_1" /></span><span class="global-explore-navigation__label">Explore</span></button><div id="explore__content" class="global-explore-navigation__panel-container"><!-- -3 wrappers  class="navigation-panel navigation-panel--left PanelSpinner-module_wrapper__Ly5sW fandom-spinner is-block"--><svg /></div></div><div class="global-explore-navigation__item global-explore-navigation__item--with-icon global-explore-navigation__saved global-explore-navigation__panel-item"><!-- -3 wrappers  class="global-explore-navigation__button global-explore-navigation__saved-link wds-avatar wds-avatar--square" data-testid="saved__link" data-tracking-label="saved"--><span class="global-explore-navigation__icon global-explore-navigation__icon--saved"><svg class="wds-icon wds-icon-small" /></span><span class="global-explore-navigation__label">Saved</span></div><div class="global-explore-navigation__item global-explore-navigation__item--with-icon global-explore-navigation__progress global-explore-navigation__panel-item"><!-- -3 wrappers  class="global-explore-navigation__button global-explore-navigation__progress-link wds-avatar wds-avatar--square" data-testid="progress__link" data-tracking-label="progress"--><span class="global-explore-navigation__icon global-explore-navigation__icon--progress"><svg class="wds-icon wds-icon-small" /></span><span class="global-explore-navigation__label">Progress</span></div><div class="global-explore-navigation__item global-explore-navigation__item--with-icon global-explore-navigation__history global-explore-navigation__panel-item"><button class="global-explore-navigation__button" data-testid="history__button"><!-- -1 wrappers  class="wds-avatar wds-avatar--square"--><span class="global-explore-navigation__icon global-explore-navigation__icon--history"><svg class="wds-icon wds-icon-small" /></span><span class="global-explore-navigation__label">History</span></button><div id="history__content" class="global-explore-navigation__panel-container"></div></div></div><div class="global-explore-navigation__divider"></div></div><div class="global-explore-navigation__bottom"><!-- -2 wrappers  class="global-explore-navigation__nav global-explore-navigation__item global-explore-navigation__item--with-icon global-explore-navigation__menu global-explore-navigation__more global-explore-navigation__panel-item" aria-label="Fandom navigation"--><button class="global-explore-navigation__button" data-testid="menu__button"><!-- -1 wrappers  class="wds-avatar wds-avatar--square"--><span class="global-explore-navigation__icon"><svg class="wds-icon wds-icon-small" /></span><span class="global-explore-navigation__label">More</span></button><div id="menu__content" class="global-explore-navigation__panel-container"></div></div></div><div class="main-container"><div id="age-gate"></div><div class="top_leaderboard-odyssey-wrapper fandom-ad-sticky-container sticky-placement-top fandom-ad-placeholder fandom-ad-slot-top_leaderboard"><!-- -1 wrappers  class="fandom-ad-wrapper top-ads-container"--><fandom-ad id="top_leaderboard"></fandom-ad><div id="label-top_leaderboard" class="fandom-ad-label" data-key="advertisement"> Advertisement </div></div><div class="fandom-community-header__background cover header"></div><div class="resizable-container"><a class="skip-link wds-button wds-is-text">Skip to content</a><div class="community-header-wrapper"><!-- -1 wrappers  class="fandom-community-header"--><a class="fandom-community-header__image"><img alt="Community Central" data-test="fandom-community-header-community-logo"></a><div class="fandom-community-header__top-container"><div class="fandom-community-header__community-name-wrapper"><a class="fandom-community-header__community-name" data-test="fandom-community-header-community-name"> Community Central </a></div><div class="page-counter"><div class="page-counter__value">43,251</div><div class="page-counter__label">pages</div></div><div class="wiki-tools wds-button-group"><a class="wds-button wds-is-secondary" title="Discuss" aria-label="Discuss" data-tracking="discussions"><svg class="wds-icon wds-icon-small" /></a><a class="wds-button wds-is-secondary wiki-tools__theme-switch" title="Switch to Dark Theme" aria-label="Switch to Dark Theme" data-tracking="theme-switch-dark"><svg class="wds-icon wds-icon-small" /></a></div></div><nav class="fandom-community-header__local-navigation"><!-- -1 wrappers  class="wds-tabs"--><li class="wds-dropdown explore-menu"><div class="wds-tabs__tab-label wds-dropdown__toggle first-level-item"><div class="wds-dropdown__placeholder"><svg class="wds-icon-tiny wds-icon" /><span>Explore</span></div><svg class="wds-icon wds-icon-tiny wds-dropdown__toggle-chevron" aria-label="Expand" /></div><div class="wds-is-not-scrollable wds-dropdown__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li><!-- -1 wrappers  data-tracking="explore-main-page"--><svg class="wds-icon-tiny wds-icon navigation-item-icon" /><span>Main Page</span></li><li><!-- -1 wrappers  data-tracking="explore-discuss"--><svg class="wds-icon-tiny wds-icon navigation-item-icon" /><span>Discuss</span></li><li><!-- -1 wrappers  data-tracking="explore-all-pages"--><span>All Pages</span></li><!-- -2 siblings --></div></li><li class="wds-dropdown"><div class="wds-tabs__tab-label wds-dropdown__toggle first-level-item"><a data-tracking="custom-level-1"><span>Get Started With Fandom</span></a><svg class="wds-icon wds-icon-tiny wds-dropdown__toggle-chevron" aria-label="Expand" /></div><div class="wds-is-not-scrollable wds-dropdown__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li class="wds-dropdown-level-nested"><a class="wds-dropdown-level-nested__toggle" data-tracking="custom-level-2"><span>Your First Steps on Fandom</span><svg class="wds-icon wds-icon-tiny wds-dropdown-chevron" aria-label="Expand" /></a><div class="wds-is-not-scrollable wds-dropdown-level-nested__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li><!-- -1 wrappers  data-tracking="custom-level-3"--><span>Signing Up &amp; Personalizing</span></li><!-- -3 siblings --></div></li><!-- -3 siblings --><li><!-- -1 wrappers  data-tracking="custom-level-2"--><span>Community Programs</span></li><li><!-- -1 wrappers  data-tracking="custom-level-2"--><span>Fandom Discord Events</span></li></div></li><!-- -3 siblings --></nav></div><div class="page has-right-rail"><main class="page__main"><div class="page-side-tools__wrapper"><!-- -1 wrappers  class="page-side-tools"--><button class="page-side-tool content-size-toggle" name="content-size-toggle" aria-label="Expand" data-wds-tooltip="Expand" data-wds-tooltip-position="right" data-tooltip-attached="1"><svg class="wds-icon wds-icon-small" /></button><a class="page-side-tool page-side-save" id="collections-save-button-side-tool" aria-label="Sign In to Save" data-tracking-label="save-to-collection-side-tool" data-wds-tooltip="Sign In to Save" data-wds-tooltip-position="right" data-tooltip-attached="1"><svg class="wds-icon wds-icon-small" /></a></div><div class="page-header" id="page-header"><div class="page-header__top"><div class="page-header__meta"><!-- -1 wrappers  class="page-header__categories"--><span class="page-header__categories-in">in:</span><a title="Category:Advice Beginner" data-tracking-label="categories-top-more-0">Advice Beginner</a><!-- -2 siblings -->, , </div><div class="page-header__languages"><!-- -1 wrappers  class="wds-dropdown"--><div class="wds-dropdown__toggle"> English<svg class="wds-icon wds-icon-tiny wds-dropdown__toggle-chevron" aria-label="Toggle" /></div><div class="wds-dropdown__content"><!-- -1 wrappers  class="wds-list wds-is-linked"--><li><a data-tracking-label="lang-de">Deutsch</a></li><!-- -3 siblings --></div></div></div><div class="page-header__bottom"><div class="page-header__title-wrapper"><h1 class="page-header__title" id="firstHeading"> Getting Started With Fandom: Signing Up &amp; Personalization </h1><div class="page-header__subtitle"><!-- -1 wrappers  class="page-header__subtitle-blog-post"--><a><!-- -1 wrappers  class="wds-avatar" title="Marphimon"--><img alt="Marphimon" title="Marphimon" class="wds-avatar__image"></a><div class="page-header__blog-post-details"><a>Marphimon</a><span class="page-header__blog-post-details__bullet">•</span> 7 July 2023 <span class="page-header__blog-post-details__bullet">•</span><a>User blog:Marphimon</a></div></div></div><div class="page-header__actions" id="p-views"><a class="wds-button wds-is-text page-header__action-button" data-tracking-label="comments-button" aria-label="Comments"><div id="article-comments-button" class="button-counter">5</div><svg class="wds-icon wds-icon-small" /></a><a class="wds-button wds-is-text page-header__action-button page-header__collections has-label" id="collections-save-button" data-tracking-label="save-to-collection" aria-label="Sign In to Save" title="Sign In to Save"><svg class="wds-icon wds-icon-small" /><span class="page-header__collections-text-full">Sign In to Save</span><span class="page-header__collections-text-short">Save</span></a></div></div></div><div id="content" class="page-content ve-init-mw-desktopArticleTarget-targetContainer"><!-- -2 wrappers  class="mw-body-content mw-content-ltr mw-parser-output"--><p>We are happy to have you join our Fandom community and are looking into getting started! </p><figure class="thumb mw-halign-right show-info-icon"><a class="mw-file-description image"><img alt="Let's get started with your fan journey!" class="thumbimage lazyloaded" data-image-name="Advice-beginner-your first steps.png" data-image-key="Advice-beginner-your_first_steps.png" data-relevant="0" data-src="https://static.wikia.nocookie.net/central/images/5/5c/Advice-beginner-your_first_steps.png/revision/latest/scale-to-width-down/200?cb=20231002201214"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></a><figcaption class="thumbcaption"><p class="caption">Let's get started with your fan journey!</p></figcaption></figure><p>In this very simple tutorial, you will learn the essentials of how to<b> sign up and set up your account on Fandom</b><!-- -2 siblings -->, how to get started with - both the web pages containing fan documentation, and how to get started with . After reading up on these simple basics, you will be able to explore and join your favorite fandom wikis to connect with other people sharing the same passion! </p><h2><span id="How_do_I_sign_up_for_a_Fandom_user_account.3F"></span><span class="mw-headline" id="How_do_I_sign_up_for_a_Fandom_user_account?">How do I sign up for a Fandom user account?</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a title="Sign in to edit" class="mw-editsection-visualeditor" data-tracking-label="log-in-edit-section" data-action="edit-section" data-testid="log-in-edit-section" aria-label="Sign in to edit"><svg class="wds-icon wds-icon-tiny" /></a><span class="mw-editsection-bracket">]</span></span></h2><p>If you have not already signed up, this is how you do it: </p><div id="gallery-0" data-seq-no="0" class="wikia-gallery wikia-gallery-caption-below wikia-gallery-position-center wikia-gallery-spacing-medium wikia-gallery-border-small wikia-gallery-captions-left wikia-gallery-caption-size-medium"><div class="wikia-gallery-caption"></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-sign-up-mobile-png" title="Simple-sign-up-mobile.png (11 KB)"--><img title="Simple-sign-up-mobile.png (11 KB)" class="thumbimage lazyloaded" alt="Mobile: Tap on the avatar icon in the top right of your screen and tap &quot;Register&quot;. This takes you to the registration flow." data-image-name="Simple-sign-up-mobile.png" data-image-key="Simple-sign-up-mobile.png" data-relevant="1" data-caption="Mobile: Tap on the avatar icon in the top right of your screen and tap &quot;Register&quot;. This takes you to the registration flow." data-src="https://static.wikia.nocookie.net/central/images/2/2c/Simple-sign-up-mobile.png/revision/latest/scale-to-width-down/300?cb=20230718082118"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">Mobile: Tap on the avatar icon in the top right of your screen and tap "Register". This takes you to the registration flow.</div></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-sign-up-desktop-png" title="Simple-sign-up-desktop.png (103 KB)"--><img title="Simple-sign-up-desktop.png (103 KB)" class="thumbimage lazyloaded" alt="Desktop: On the top right of each Fandom page, you can see an option that says &quot;Register&quot;. This takes you to the registration flow." data-image-name="Simple-sign-up-desktop.png" data-image-key="Simple-sign-up-desktop.png" data-relevant="1" data-caption="Desktop: On the top right of each Fandom page, you can see an option that says &quot;Register&quot;. This takes you to the registration flow." data-src="https://static.wikia.nocookie.net/central/images/2/21/Simple-sign-up-desktop.png/revision/latest/scale-to-width-down/300?cb=20230718082111"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">Desktop: On the top right of each Fandom page, you can see an option that says "Register". This takes you to the registration flow.</div></div></div><p>Direct link: <a class="external free">https://auth.fandom.com/register</a></p><p>Next, choose an option to register - you can connect using social media (Facebook, Google, Twitch, Apple) or register with an email and password. After signing up with an email, you will be asked to verify your email, so make sure to check your inbox! </p><h2><span id="How_do_I_set_up_my_viewing_experience.3F"></span><span class="mw-headline" id="How_do_I_set_up_my_viewing_experience?">How do I set up my viewing experience?</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a title="Sign in to edit" class="mw-editsection-visualeditor" data-tracking-label="log-in-edit-section" data-action="edit-section" data-testid="log-in-edit-section" aria-label="Sign in to edit"><svg class="wds-icon wds-icon-tiny" /></a><span class="mw-editsection-bracket">]</span></span></h2><p>Congratulations on signing up and joining the Fandom community! To make sure you have the best possible viewing experience tailored to your needs, let's visit your user account settings. On Fandom, these are called "Preferences", which is what you will see in the screenshots. Keep in mind for later - settings = preferences, because it's about your <i>preferred</i> settings! </p><p>If you are looking to adjust your text size on mobile, you will need to tap "mobile options". This will bring you to the following screen. </p><p><b>Special Mobile Specific Settings</b></p><figure class="thumb mw-halign-center show-info-icon"><a class="mw-file-description image"><img alt="Customizing your mobile specific settings" class="thumbimage lazyload" data-image-name="Simple-preferences-mobilesettings-mobile.png" data-image-key="Simple-preferences-mobilesettings-mobile.png" data-relevant="1" data-src="https://static.wikia.nocookie.net/central/images/4/46/Simple-preferences-mobilesettings-mobile.png/revision/latest/scale-to-width-down/400?cb=20230718082048"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></a><figcaption class="thumbcaption"><p class="caption">Customizing your mobile specific settings</p></figcaption></figure><div></div><h3><span id="Accessing_your_account_settings_.2F_user_preferences"></span><span class="mw-headline" id="Accessing_your_account_settings_/_user_preferences">Accessing your account settings / user preferences</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a title="Sign in to edit" class="mw-editsection-visualeditor" data-tracking-label="log-in-edit-section" data-action="edit-section" data-testid="log-in-edit-section" aria-label="Sign in to edit"><svg class="wds-icon wds-icon-tiny" /></a><span class="mw-editsection-bracket">]</span></span></h3><div id="gallery-1" data-seq-no="1" class="wikia-gallery wikia-gallery-caption-below wikia-gallery-position-center wikia-gallery-spacing-medium wikia-gallery-border-small wikia-gallery-captions-left wikia-gallery-caption-size-medium"><div class="wikia-gallery-caption"></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-preferences-mobile-png" title="Simple-preferences-mobile.png (15 KB)"--><img title="Simple-preferences-mobile.png (15 KB)" class="thumbimage lazyload" alt="How to locate your user settings on mobile" data-image-name="Simple-preferences-mobile.png" data-image-key="Simple-preferences-mobile.png" data-relevant="1" data-caption="How to locate your user settings on mobile" data-src="https://static.wikia.nocookie.net/central/images/2/21/Simple-preferences-mobile.png/revision/latest/scale-to-width-down/300?cb=20230718082041"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">How to locate your user settings on mobile</div></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-preferences-desktop-png" title="Simple-preferences-desktop.png (15 KB)"--><img title="Simple-preferences-desktop.png (15 KB)" class="thumbimage lazyload" alt="How to locate your user settings on desktop" data-image-name="Simple-preferences-desktop.png" data-image-key="Simple-preferences-desktop.png" data-relevant="1" data-caption="How to locate your user settings on desktop" data-src="https://static.wikia.nocookie.net/central/images/5/53/Simple-preferences-desktop.png/revision/latest?cb=20230718082033"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">How to locate your user settings on desktop</div></div></div><p>Now that we have accessed the settings - your "user preferences" - we'll dive into the most frequently asked questions. </p><p><b>I prefer a light/dark theme, how can I update my settings/preferences?</b></p><dl><dd>When accessing your settings, you see 6 options near the top of your screen/the white page. By default, you see "User profile" highlighted. Next to it, there is a tab called "Appearance". Click that one.</dd></dl><div id="gallery-2" data-seq-no="2" class="wikia-gallery wikia-gallery-caption-below wikia-gallery-position-center wikia-gallery-spacing-medium wikia-gallery-border-small wikia-gallery-captions-left wikia-gallery-caption-size-medium"><div class="wikia-gallery-caption"></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-preferences-appearance-location-png" title="Simple-preferences-appearance-location.png (20 KB)"--><img title="Simple-preferences-appearance-location.png (20 KB)" class="thumbimage lazyload" alt="Location of &quot;Appearance&quot; tab. On smaller displays, you might have to scroll to the right to find it." data-image-name="Simple-preferences-appearance-location.png" data-image-key="Simple-preferences-appearance-location.png" data-relevant="1" data-caption="Location of &quot;Appearance&quot; tab. On smaller displays, you might have to scroll to the right to find it." data-src="https://static.wikia.nocookie.net/central/images/4/42/Simple-preferences-appearance-location.png/revision/latest/scale-to-width-down/300?cb=20230718082018"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">Location of "Appearance" tab. On smaller displays, you might have to scroll to the right to find it.</div></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-preferences-appearance-theme-png" title="Simple-preferences-appearance-theme.png (13 KB)"--><img title="Simple-preferences-appearance-theme.png (13 KB)" class="thumbimage lazyload" alt="Choose the one you prefer - light or dark theme, or whichever the wiki you are visiting chose as a default!" data-image-name="Simple-preferences-appearance-theme.png" data-image-key="Simple-preferences-appearance-theme.png" data-relevant="1" data-caption="Choose the one you prefer - light or dark theme, or whichever the wiki you are visiting chose as a default!" data-src="https://static.wikia.nocookie.net/central/images/5/5c/Simple-preferences-appearance-theme.png/revision/latest?cb=20230718082026"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">Choose the one you prefer - light or dark theme, or whichever the wiki you are visiting chose as a default!</div></div></div><dl><dd>You can also change this setting on the fly on each page if you want to check out how a wiki looks in the other theme!</dd></dl><div id="gallery-3" data-seq-no="3" class="wikia-gallery wikia-gallery-caption-below wikia-gallery-position-center wikia-gallery-spacing-medium wikia-gallery-border-small wikia-gallery-captions-left wikia-gallery-caption-size-medium"><div class="wikia-gallery-caption"></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-preferences-onwiki-themechange-desktop-png" title="Simple-preferences-onwiki-themechange-desktop.png (32 KB)"--><img title="Simple-preferences-onwiki-themechange-desktop.png (32 KB)" class="thumbimage lazyload" alt="Switch between dark and light theme on desktop." data-image-name="Simple-preferences-onwiki-themechange-desktop.png" data-image-key="Simple-preferences-onwiki-themechange-desktop.png" data-relevant="1" data-caption="Switch between dark and light theme on desktop." data-src="https://static.wikia.nocookie.net/central/images/5/50/Simple-preferences-onwiki-themechange-desktop.png/revision/latest/scale-to-width-down/300?cb=20230718082056"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">Switch between dark and light theme on desktop.</div></div><div class="wikia-gallery-item"><div class="thumb"><!-- -2 wrappers  class="gallery-image-wrapper accent image lightbox" id="Simple-preferences-onwiki-themechange-mobile-png" title="Simple-preferences-onwiki-themechange-mobile.png (19 KB)"--><img title="Simple-preferences-onwiki-themechange-mobile.png (19 KB)" class="thumbimage lazyload" alt="Switch between dark and light theme on mobile." data-image-name="Simple-preferences-onwiki-themechange-mobile.png" data-image-key="Simple-preferences-onwiki-themechange-mobile.png" data-relevant="1" data-caption="Switch between dark and light theme on mobile." data-src="https://static.wikia.nocookie.net/central/images/b/b8/Simple-preferences-onwiki-themechange-mobile.png/revision/latest/scale-to-width-down/300?cb=20230718082103"><div><!-- -2 wrappers  class="gallery-icon-container view-image icon-container" aria-label="view image"--><svg /></div></div><div class="lightbox-caption">Switch between dark and light theme on mobile.</div></div></div><p><br></p><p> Congratulations on updating your preferences! Remember, that's the word Fandom uses for account settings. If you want to learn more advanced ways to customize your <a title="Help:Preferences">user preferences</a>, or <a title="Help:Profiles">how to set up your profile on Fandom</a>, click any of the links, or if you want to take the next step on your journey to become the very best, head over to learning how to get started with contributing to Fandom!</p><div class="mainpage-box text-align-center listevents-table"><span><!-- -1 wrappers --><img alt="Advice-beginner-your first steps" class="mw-file-element lazyload" data-image-name="Advice-beginner-your first steps.png" data-image-key="Advice-beginner-your_first_steps.png" data-relevant="0" data-src="https://static.wikia.nocookie.net/central/images/5/5c/Advice-beginner-your_first_steps.png/revision/latest/scale-to-width-down/50?cb=20231002201214"></span><br><span class="listevents-header"><a title="Help:Your First Steps on Fandom">Getting Started</a> With:</span><div><br><p><span class="mainpage-box__links"><!-- -2 wrappers  class="mw-default-size"--><img alt="Advice-beginner-signing up personalizing" class="mw-file-element lazyload" data-image-name="Advice-beginner-signing up personalizing.png" data-image-key="Advice-beginner-signing_up_personalizing.png" data-relevant="1" data-src="https://static.wikia.nocookie.net/central/images/8/82/Advice-beginner-signing_up_personalizing.png/revision/latest?cb=20230718075052"></span><strong class="mw-selflink selflink">Signing Up &amp; Personalizing</strong></p><p><span class="mainpage-box__links"><!-- -2 wrappers  class="mw-default-size"--><img alt="Advice-beginner-contributing to wikis" class="mw-file-element lazyload" data-image-name="Advice-beginner-contributing to wikis.png" data-image-key="Advice-beginner-contributing_to_wikis.png" data-relevant="0" data-src="https://static.wikia.nocookie.net/central/images/b/bf/Advice-beginner-contributing_to_wikis.png/revision/latest?cb=20230718075037"></span><a title="User blog:Marphimon/Getting Started With Contributing to Wikis">Contributing to Wikis</a></p><p><span class="mainpage-box__links"><!-- -2 wrappers  class="mw-default-size"--><img alt="Advice-beginner-discussing fandoms" class="mw-file-element lazyload" data-image-name="Advice-beginner-discussing fandoms.png" data-image-key="Advice-beginner-discussing_fandoms.png" data-relevant="1" data-src="https://static.wikia.nocookie.net/central/images/2/2d/Advice-beginner-discussing_fandoms.png/revision/latest?cb=20230718075045"></span><a title="User blog:LucyKuranSKYDOME/Getting Started With Joining Wiki Discussion">Discussing Fandoms</a></p></div><div class="mainpage-box__links"><span class="mw-default-size"><!-- -1 wrappers  title="Help:Your Next Steps on Fandom"--><img alt="Advice-intermediate-your next steps" class="mw-file-element lazyload" data-image-name="Advice-intermediate-your next steps.png" data-image-key="Advice-intermediate-your_next_steps.png" data-relevant="0" data-src="https://static.wikia.nocookie.net/central/images/b/bd/Advice-intermediate-your_next_steps.png/revision/latest?cb=20240612221503"></span><a title="Help:Your Next Steps on Fandom">Take the Next Steps</a></div></div></div><div class="page-footer"><div class="wds-collapsible-panel wds-is-collapsed page-footer__categories" aria-label="Toggle Categories"><header class="wds-collapsible-panel__header"> Categories <svg class="wds-icon wds-icon-small" /></header><div class="wds-collapsible-panel__content" id="collapsible-content-categories"><!-- -3 wrappers  class="article-categories CategorySelect articlePage container categories"--><li class="special-categories-label"><a class="categoriesLink" title="Special:Categories">Categories</a><span>: </span></li><li class="category normal" data-name="Advice Beginner" data-type="normal"><span class="name"><a title="Category:Advice Beginner">Advice Beginner</a></span><span class="tool removeCategory"></span></li><!-- -2 siblings --></div></div><div class="wds-collapsible-panel wds-is-collapsed page-footer__languages" aria-label="Toggle Languages"><header class="wds-collapsible-panel__header"> Languages <svg class="wds-icon wds-icon-small" /></header><div class="wds-collapsible-panel__content" id="collapsible-content-languages"><a data-tracking-label="lang-de">Deutsch</a><!-- -3 siblings --></div></div><div class="license-description"> Community content is available under <a>CC-BY-SA</a> unless otherwise noted. </div><div id="mw-data-after-content"><!-- -2 wrappers  class="ArticleAnonymousComments_anonymousCommentsSection__tQcO0" data-testid="article-comments-anonymous-section"--><div class="ArticleAnonymousComments_anonymousCommentsCounter__hgqSZ" data-testid="article-comments-anonymous-counter"><!-- -1 wrappers  class="CommentCounter_comment-counter__Kr4tO"--><p>5 Comments</p></div><div class="ArticleAnonymousComments_anonymousCommentsContent__uSoxq"><span class="ArticleAnonymousComments_anonymousCommentsHeaderIcon__Xm7fB"><svg class="wds-icon" /></span><h3 class="ArticleAnonymousComments_anonymousCommentsTitle__tRoCi">Join the conversation</h3><h4 class="ArticleAnonymousComments_anonymousCommentsSubtitle__84DBv">Sign in to read what others are saying and share your thoughts.</h4><a class="ArticleAnonymousComments_anonymousCommentsLogin__NBOXS wds-button">SIGN IN</a><p class="ArticleAnonymousComments_anonymousCommentsFooter__QDtze">Don't have account? <a class="ArticleAnonymousComments_anonymousCommentsRegister__cE8HZ">Register now</a></p></div></div></div></main><aside class="page__right-rail"><!-- -1 wrappers  class="right-rail-wrapper WikiaRail"--><div id="rail-boxad-wrapper"><!-- -1 wrappers  class="fandom-ad-placeholder fandom-ad-wrapper"--><fandom-ad id="top_boxad"></fandom-ad><div id="label-top_boxad" class="fandom-ad-label" data-key="advertisement"> Advertisement </div></div><div id="WikiaRail" class="is-ready"><div class="rail-recentImages-module"></div></div><section class="railModule rail-module" data-add-rail-module-page="Template:RailModule"><!-- -1 wrappers  class="mainpage-button"--><a title="Community Programs Hub">View all Community Events &amp; Programming</a></section><div class="sticky-modules-wrapper"><!-- -1 wrappers  class="rail-module" id="WikiaAdInContentPlaceHolder"--><section id="recirculation-rail"></section></div></aside></div><div class="fandom-ad-placeholder fandom-ad-wrapper bottom-ads-container"><fandom-ad id="bottom_leaderboard"></fandom-ad><div id="label-bottom_leaderboard" class="fandom-ad-label" data-key="advertisement"> Advertisement </div></div></div><footer class="global-footer"><div class="global-footer__content"><div><h2 class="global-footer__header"><!-- -1 wrappers  data-tracking-label="logo" title="Fandom logo" aria-label="Fandom homepage"--><img class="global-footer__header-logo" alt="Fandom logo"></h2><section class="global-footer__section global-footer__section-fandom-overview"><h3 class="global-footer__section-header">Explore properties</h3><ul class="global-footer__links"><li><a class="global-footer__link" data-tracking-label="explore.fandom"> Fandom </a></li><!-- -5 siblings --></ul></section><section class="global-footer__section global-footer__section-social-links"><h3 class="global-footer__section-header">Follow Us</h3><ul class="global-footer__links"><li><!-- -1 wrappers  class="global-footer__link" data-tracking-label="follow-us.facebook" aria-label="Follow Fandom on Facebook"--><svg class="global-footer__link-icon wds-icon wds-icon-small" /></li><!-- -4 siblings --></ul></section></div><div><!-- -1 wrappers  class="global-footer__section global-footer__section-site-overview"--><h3 class="global-footer__section-header">Overview</h3><ul class="global-footer__links"><li><a class="global-footer__link" data-tracking-label="company-overview.what-is-fandom"> What is Fandom? </a></li><!-- -10 siblings --><li><button type="button" class="global-footer__link ot-sdk-show-settings toi-preferences-control" data-tracking-label="site-overview.privacy-preferences">Manage Preferences</button></li></ul></div><div><section class="global-footer__section global-footer__section-community"><h3 class="global-footer__section-header">Community</h3><ul class="global-footer__links"><li><a class="global-footer__link" data-tracking-label="community.community-central"> Community Central </a></li><!-- -2 siblings --></ul></section><section class="global-footer__section global-footer__section-advertise"><h3 class="global-footer__section-header">Advertise</h3><ul class="global-footer__links"><li><a class="global-footer__link" data-tracking-label="advertise.media-kit"> Media Kit </a></li><li><a class="global-footer__link" data-tracking-label="advertise.contact"> Contact </a></li></ul></section></div><div><section class="global-footer__section global-footer__section-fandom-apps"><h3 class="global-footer__section-header">Fandom Apps</h3> Take your favorite fandoms with you and never miss a beat. </section><section class="global-footer__section global-footer__section-fandom-stores"><img class="global-footer__icon" alt="Fandom App logo"><ul class="global-footer__links"><li><!-- -1 wrappers  class="global-footer__link" data-tracking-label="community-apps.app-store" aria-label="Fandom's Apple Store"--><img class="global-footer__link-icon" alt="Store icon"></li><li><!-- -1 wrappers  class="global-footer__link" data-tracking-label="community-apps.google-play" aria-label="Fandom's Google Play"--><img class="global-footer__link-icon" alt="Store icon"></li></ul></section></div></div><div class="global-footer__bottom"><div>Community Central is a Fandom Lifestyle Community.</div><div><button type="button" data-switch-url="aHR0cHM6Ly9jb21tdW5pdHkuZmFuZG9tLmNvbS93aWtpL1VzZXJfYmxvZzpNYXJwaGltb24vR2V0dGluZ19TdGFydGVkX1dpdGhfRmFuZG9tOl9TaWduaW5nX1VwXyUyNl9QZXJzb25hbGl6YXRpb24/dGl0bGU9VXNlcl9ibG9nJTNBTWFycGhpbW9uJTJGR2V0dGluZ19TdGFydGVkX1dpdGhfRmFuZG9tJTNBX1NpZ25pbmdfVXBfJTI2X1BlcnNvbmFsaXphdGlvbiZtb2JpbGVhY3Rpb249dG9nZ2xlX3ZpZXdfbW9iaWxl" class="global-footer__switch-view global-footer__switch-to-mobile"> View Mobile Site </button></div></div></footer></div><svg /><iframe></iframe><!-- -2 siblings --><div id="onetrust-consent-sdk" data-nosnippet="true"><div class="onetrust-pc-dark-filter ot-hide ot-fade-in"></div><div id="onetrust-pc-sdk" class="otPcCenter ot-hide ot-fade-in ot-leg-opt-out ot-leg-btn ot-addtl-vendors" aria-label="Preference center" role="region"><div role="dialog" aria-label="About Your Privacy"><div class="ot-pc-header"><!-- -1 wrappers  class="ot-pc-logo" role="img" aria-label="Fandom Logo"--><img alt="Fandom Logo"></div><div id="ot-pc-content" class="ot-pc-scrollbar ot-enbl-chr"><div class="ot-optout-signal ot-hide"><div class="ot-optout-icon"><svg /></div><span></span></div><h2 id="ot-pc-title">About Your Privacy</h2><div id="ot-pc-desc">We process your data to deliver content or advertisements and measure the delivery of such content or advertisements to extract insights about our website. We share this information with our partners on the basis of consent and legitimate interest. You may exercise your right to consent or object to a legitimate interest, based on a specific purpose below or at a partner level in the link under each purpose. These choices will be signaled to our vendors participating in the Transparency and Consent Framework. The choices you make regarding the purposes and vendors listed in this notice are saved and stored locally on your device for a maximum duration of 1 year. <br><a class="privacy-notice-link" aria-label="More information about your privacy, opens in a new tab">Privacy Policy</a></div><button id="accept-recommended-btn-handler">Allow All</button><section class="ot-sdk-row ot-cat-grp"><h3 id="ot-category-title"> Manage Consent Preferences</h3><div class="ot-accordion-layout ot-cat-item ot-vs-config" data-optanongroupid="C0004"><button></button><div class="ot-acc-hdr"><h4 class="ot-cat-header" id="ot-header-id-C0004">Targeting Cookies</h4><div class="ot-tgl"><input type="checkbox" name="ot-group-id-C0004" id="ot-group-id-C0004" class="category-switch-handler" data-optanongroupid="C0004"><label class="ot-switch"><span class="ot-switch-nob"></span><span class="ot-label-txt">Targeting Cookies</span></label></div><div class="ot-arw-cntr"><svg class="ot-arw" data-prefix="fas" data-icon="caret-right" role="img" /></div></div><div class="ot-acc-grpcntr ot-acc-txt"><p class="ot-acc-grpdesc ot-category-desc" id="ot-desc-id-C0004">These cookies may be set through our site by our advertising partners. They may be used by those companies to build a profile of your interests and show you relevant adverts on other sites. They do not store directly personal information, but are based on uniquely identifying your browser and internet device. If you do not allow these cookies, you will experience less targeted advertising.</p></div></div><!-- -14 siblings --></section></div><section id="ot-pc-lst" class="ot-hide ot-hosts-ui ot-pc-scrollbar ot-enbl-chr"><div id="ot-pc-hdr"><div id="ot-lst-title"><button class="ot-link-btn back-btn-handler" aria-label="Back"><!-- -1 wrappers  id="ot-back-arw"--><title>Back Button</title></button><h3>Cookie List</h3></div><div class="ot-lst-subhdr"><div class="ot-search-cntr"><p role="status" class="ot-scrn-rdr"></p><input id="vendor-search-handler" type="text" name="vendor-search-handler" placeholder="Search…" aria-label="Cookie list search"><svg><title>Search Icon</title></svg></div><div class="ot-fltr-cntr"><!-- -2 wrappers  id="filter-btn-handler" aria-label="Filter Cookie List" role="presentation"--><title>Filter Icon</title></div><div id="ot-anchor"></div><section id="ot-fltr-modal"><!-- -1 wrappers --><div id="ot-filter-list-header"></div><button id="clear-filters-handler">Clear</button><div class="ot-fltr-scrlcnt ot-pc-scrollbar" role="group"><ul class="ot-fltr-opts"><!-- -2 wrappers  class="ot-fltr-opt ot-chkbox"--><input id="chkbox-id" type="checkbox" class="category-filter-handler"><label><span class="ot-label-txt">checkbox label</span></label><span class="ot-label-status">label</span></ul><div class="ot-fltr-btns"><button id="filter-apply-handler">Apply</button><button id="filter-cancel-handler">Cancel</button></div></div></section></div></div><section id="ot-lst-cnt" class="ot-host-cnt ot-pc-scrollbar"><div id="ot-sel-blk"><!-- -1 wrappers  class="ot-sel-all"--><div class="ot-sel-all-hdr"><span class="ot-consent-hdr">Consent</span><span class="ot-li-hdr">Leg.Interest</span></div><div class="ot-sel-all-chkbox"><div class="ot-chkbox" id="ot-selall-hostcntr"><input id="select-all-hosts-groups-handler" type="checkbox"><label><span class="ot-label-txt">checkbox label</span></label><span class="ot-label-status">label</span></div><div class="ot-chkbox" id="ot-selall-vencntr"><input id="select-all-vendor-groups-handler" type="checkbox"><label><span class="ot-label-txt">checkbox label</span></label><span class="ot-label-status">label</span></div><div class="ot-chkbox" id="ot-selall-licntr"><input id="select-all-vendor-leg-handler" type="checkbox"><label><span class="ot-label-txt">checkbox label</span></label><span class="ot-label-status">label</span></div></div></div><div class="ot-sdk-row"><!-- -1 wrappers  class="ot-sdk-column"--><ul id="ot-ven-lst"></ul></div></section></section><div class="ot-pc-footer ot-pc-scrollbar"><div class="ot-btn-container"><button class="ot-pc-refuse-all-handler">Reject All</button><button class="save-preference-btn-handler onetrust-close-btn-handler">Confirm My Choices</button></div><div class="ot-pc-footer-logo"><!-- -1 wrappers  aria-label="Powered by OneTrust Opens in a new Tab"--><img alt="Powered by Onetrust" title="Powered by OneTrust Opens in a new Tab"></div></div><span class="ot-scrn-rdr">Your Privacy [`dialog closed`]</span></div><iframe class="ot-text-resize" title="onetrust-text-resize"></iframe></div><div id="ot-sdk-btn-floating" class="ot-floating-button" data-title="Manage Preferences"><div class="ot-floating-button__front custom-persistent-icon"><button type="button" class="ot-floating-button__open" aria-label="Manage Preferences"></button></div><div class="ot-floating-button__back custom-persistent-icon"><!-- -1 wrappers  class="ot-floating-button__close" type="button" aria-label="Close Preferences"--><svg role="presentation" /></div></div></div><div id="discord-interceptor-root"></div><div id="highlight__main-container"></div><div id="mw-teleport-target"></div><iframe id="__bm_locator" name="__bm_locator"></iframe></body>
+
+<!-- Stats: 347 wrappers collapsed, 71 list items truncated -->
+
+
+--- API REQUEST round 1 ---
+model=claude-sonnet-4-6 messages=3 payload_chars=53,433
+
+--- API RESPONSE round 1 ---
+elapsed_s=47.5 prompt_tokens=1 completion_tokens=3841 cached_tokens=1186 cache_creation_tokens=15357 finish_reason=tool_use tool_calls=[set_update_rule]
+
+--- TOOL CALL: set_update_rule ---
+{
+  "query_selector": "body",
+  "label": "Quick-settings toolbar",
+  "logic": "\n// Idempotency guard\nif (document.getElementById('qs-toolbar')) return;\n\n/* ── Inject styles ── */\nconst style = document.createElement('style');\nstyle.id = 'qs-toolbar-styles';\nstyle.textContent = `\n  #qs-toolbar {\n    position: sticky;\n    top: 0;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    gap: 0;\n    padding: 0 18px;\n    height: 44px;\n    background: linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);\n    box-shadow: 0 2px 12px rgba(0,0,0,0.45);\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;\n    font-size: 12px;\n    color: #e0e0e0;\n    user-select: none;\n    flex-wrap: nowrap;\n    overflow: hidden;\n  }\n  #qs-toolbar .qs-brand {\n    display: flex;\n    align-items: center;\n    gap: 6px;\n    font-weight: 700;\n    font-size: 11px;\n    letter-spacing: 0.08em;\n    text-transform: uppercase;\n    color: #a8d8ff;\n    margin-right: 18px;\n    white-space: nowrap;\n    flex-shrink: 0;\n  }\n  #qs-toolbar .qs-brand svg {\n    width: 16px; height: 16px; flex-shrink: 0;\n  }\n  #qs-toolbar .qs-divider {\n    width: 1px;\n    height: 26px;\n    background: rgba(255,255,255,0.15);\n    margin: 0 16px;\n    flex-shrink: 0;\n  }\n  #qs-toolbar .qs-control {\n    display: flex;\n    align-items: center;\n    gap: 8px;\n    flex-shrink: 0;\n  }\n  #qs-toolbar .qs-label {\n    white-space: nowrap;\n    color: #b0c4de;\n    font-size: 11px;\n    font-weight: 600;\n    letter-spacing: 0.04em;\n    display: flex;\n    align-items: center;\n    gap: 5px;\n  }\n  #qs-toolbar .qs-label svg {\n    width: 13px; height: 13px; opacity: 0.8;\n  }\n  #qs-toolbar .qs-value {\n    color: #a8d8ff;\n    font-weight: 700;\n    font-size: 11px;\n    min-width: 30px;\n    text-align: right;\n  }\n  /* Slider */\n  #qs-toolbar input[type=range] {\n    -webkit-appearance: none;\n    appearance: none;\n    width: 90px;\n    height: 4px;\n    border-radius: 2px;\n    background: rgba(255,255,255,0.18);\n    outline: none;\n    cursor: pointer;\n    transition: background 0.2s;\n  }\n  #qs-toolbar input[type=range]::-webkit-slider-thumb {\n    -webkit-appearance: none;\n    width: 14px; height: 14px;\n    border-radius: 50%;\n    background: #a8d8ff;\n    box-shadow: 0 0 0 3px rgba(168,216,255,0.25);\n    cursor: pointer;\n    transition: box-shadow 0.15s, background 0.15s;\n  }\n  #qs-toolbar input[type=range]:hover::-webkit-slider-thumb {\n    background: #ffffff;\n    box-shadow: 0 0 0 4px rgba(168,216,255,0.4);\n  }\n  #qs-toolbar input[type=range]::-moz-range-thumb {\n    width: 14px; height: 14px;\n    border-radius: 50%;\n    background: #a8d8ff;\n    border: none;\n    cursor: pointer;\n  }\n  /* Dark mode toggle */\n  #qs-toolbar .qs-toggle-wrap {\n    display: flex;\n    align-items: center;\n    gap: 8px;\n    flex-shrink: 0;\n  }\n  #qs-toolbar .qs-toggle {\n    position: relative;\n    width: 40px;\n    height: 22px;\n    flex-shrink: 0;\n  }\n  #qs-toolbar .qs-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }\n  #qs-toolbar .qs-toggle-track {\n    position: absolute;\n    inset: 0;\n    border-radius: 11px;\n    background: rgba(255,255,255,0.15);\n    cursor: pointer;\n    transition: background 0.25s;\n    border: 1px solid rgba(255,255,255,0.2);\n  }\n  #qs-toolbar .qs-toggle input:checked + .qs-toggle-track {\n    background: #3a7bd5;\n    border-color: #3a7bd5;\n  }\n  #qs-toolbar .qs-toggle-thumb {\n    position: absolute;\n    top: 3px; left: 3px;\n    width: 16px; height: 16px;\n    border-radius: 50%;\n    background: #ffffff;\n    box-shadow: 0 1px 4px rgba(0,0,0,0.4);\n    transition: left 0.25s cubic-bezier(.4,0,.2,1);\n    pointer-events: none;\n  }\n  #qs-toolbar .qs-toggle input:checked ~ .qs-toggle-thumb {\n    left: 21px;\n  }\n  /* Dark mode body class effect */\n  body.qs-dark-mode {\n    filter: invert(1) hue-rotate(180deg);\n  }\n  body.qs-dark-mode img,\n  body.qs-dark-mode video,\n  body.qs-dark-mode [class*=\"fandom-ad\"],\n  body.qs-dark-mode iframe,\n  body.qs-dark-mode svg {\n    filter: invert(1) hue-rotate(180deg);\n  }\n  body.qs-dark-mode #qs-toolbar {\n    filter: none;\n  }\n  /* Spacer pushes dark mode to far right */\n  #qs-toolbar .qs-spacer { flex: 1 1 auto; min-width: 8px; }\n  /* Reset button */\n  #qs-toolbar .qs-reset {\n    display: flex; align-items: center; gap: 4px;\n    background: rgba(255,255,255,0.08);\n    border: 1px solid rgba(255,255,255,0.18);\n    border-radius: 5px;\n    color: #b0c4de;\n    font-size: 10px;\n    font-weight: 600;\n    letter-spacing: 0.04em;\n    padding: 3px 9px;\n    cursor: pointer;\n    transition: background 0.15s, color 0.15s;\n    white-space: nowrap;\n    flex-shrink: 0;\n  }\n  #qs-toolbar .qs-reset:hover {\n    background: rgba(255,255,255,0.18);\n    color: #fff;\n  }\n`;\ndocument.head.appendChild(style);\n\n/* ── Build toolbar HTML ── */\nconst bar = document.createElement('div');\nbar.id = 'qs-toolbar';\nbar.setAttribute('role', 'toolbar');\nbar.setAttribute('aria-label', 'Quick Settings');\nbar.innerHTML = `\n  <div class=\"qs-brand\">\n    <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14\"/>\n    </svg>\n    Quick Settings\n  </div>\n\n  <div class=\"qs-divider\"></div>\n\n  <!-- Font Size -->\n  <div class=\"qs-control\" id=\"qs-fontsize-ctrl\">\n    <span class=\"qs-label\">\n      <svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n        <text x=\"2\" y=\"18\" font-size=\"12\" font-family=\"sans-serif\" font-weight=\"bold\">A</text>\n        <text x=\"13\" y=\"20\" font-size=\"16\" font-family=\"sans-serif\" font-weight=\"bold\">A</text>\n      </svg>\n      Font Size\n    </span>\n    <input type=\"range\" id=\"qs-font-slider\" min=\"80\" max=\"140\" step=\"5\" value=\"100\" aria-label=\"Font size\">\n    <span class=\"qs-value\" id=\"qs-font-val\">100%</span>\n  </div>\n\n  <div class=\"qs-divider\"></div>\n\n  <!-- Layout Width -->\n  <div class=\"qs-control\" id=\"qs-width-ctrl\">\n    <span class=\"qs-label\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n        <path d=\"M21 3H3M21 21H3M17 12H7M21 8H3M21 16H3\"/>\n      </svg>\n      Layout Width\n    </span>\n    <input type=\"range\" id=\"qs-width-slider\" min=\"60\" max=\"100\" step=\"5\" value=\"100\" aria-label=\"Layout width\">\n    <span class=\"qs-value\" id=\"qs-width-val\">100%</span>\n  </div>\n\n  <div class=\"qs-spacer\"></div>\n\n  <!-- Dark Mode Toggle -->\n  <div class=\"qs-toggle-wrap\">\n    <span class=\"qs-label\">\n      <svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n        <path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"/>\n      </svg>\n      Dark Mode\n    </span>\n    <label class=\"qs-toggle\" aria-label=\"Toggle dark mode\">\n      <input type=\"checkbox\" id=\"qs-dark-toggle\">\n      <span class=\"qs-toggle-track\"></span>\n      <span class=\"qs-toggle-thumb\"></span>\n    </label>\n  </div>\n\n  <div class=\"qs-divider\"></div>\n\n  <button class=\"qs-reset\" id=\"qs-reset-btn\" title=\"Reset all settings to default\">\n    <svg width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <polyline points=\"1 4 1 10 7 10\"/><path d=\"M3.51 15a9 9 0 1 0 .49-4.36\"/>\n    </svg>\n    Reset\n  </button>\n`;\n\n/* ── Insert at very top of body ── */\ndocument.body.insertBefore(bar, document.body.firstChild);\n\n/* ── Restore saved state ── */\nconst saved = {\n  font:  parseInt(localStorage.getItem('qs_font')  || '100', 10),\n  width: parseInt(localStorage.getItem('qs_width') || '100', 10),\n  dark:  localStorage.getItem('qs_dark') === '1'\n};\n\n/* ── Targets for font / width ── */\nconst CONTENT_SELECTORS = '.page__main, .page-content, .mw-parser-output, .page-header';\nconst LAYOUT_SELECTOR   = '.resizable-container, .page.has-right-rail, .main-container';\n\nfunction applyFont(val) {\n  document.querySelectorAll(CONTENT_SELECTORS).forEach(el => {\n    el.style.fontSize = val + '%';\n  });\n  document.getElementById('qs-font-val').textContent = val + '%';\n  document.getElementById('qs-font-slider').value = val;\n  localStorage.setItem('qs_font', val);\n}\n\nfunction applyWidth(val) {\n  document.querySelectorAll(LAYOUT_SELECTOR).forEach(el => {\n    el.style.maxWidth = val + '%';\n    el.style.marginLeft = 'auto';\n    el.style.marginRight = 'auto';\n  });\n  document.getElementById('qs-width-val').textContent = val + '%';\n  document.getElementById('qs-width-slider').value = val;\n  localStorage.setItem('qs_width', val);\n}\n\nfunction applyDark(on) {\n  if (on) {\n    document.body.classList.add('qs-dark-mode');\n  } else {\n    document.body.classList.remove('qs-dark-mode');\n  }\n  document.getElementById('qs-dark-toggle').checked = on;\n  localStorage.setItem('qs_dark', on ? '1' : '0');\n}\n\n/* Apply saved state */\napplyFont(saved.font);\napplyWidth(saved.width);\napplyDark(saved.dark);\n\n/* ── Wire events ── */\ndocument.getElementById('qs-font-slider').addEventListener('input', function() {\n  applyFont(parseInt(this.value, 10));\n});\ndocument.getElementById('qs-width-slider').addEventListener('input', function() {\n  applyWidth(parseInt(this.value, 10));\n});\ndocument.getElementById('qs-dark-toggle').addEventListener('change', function() {\n  applyDark(this.checked);\n});\ndocument.getElementById('qs-reset-btn').addEventListener('click', function() {\n  applyFont(100);\n  applyWidth(100);\n  applyDark(false);\n});\n"
+}
+
+--- TOOL RESULT: set_update_rule ---
+Rule applied (#1): "Quick-settings toolbar" - selector="body"
+
+--- API REQUEST round 2 ---
+model=claude-sonnet-4-6 messages=5 payload_chars=63,959
+
+--- API RESPONSE round 2 ---
+elapsed_s=7.8 prompt_tokens=3870 completion_tokens=288 cached_tokens=16543 cache_creation_tokens=0 finish_reason=end_turn tool_calls=[(none)]
+
+--- ASSISTANT ---
+Your **Quick-Settings Toolbar** is now live at the very top of the page! Here's what was added and how everything works:
+
+---
+
+### 🎛️ Quick-Settings Toolbar — Feature Overview
+
+| Control | What it does |
+|---|---|
+| **Font Size slider** (80 – 140%) | Scales the article text up or down in real-time |
+| **Layout Width slider** (60 – 100%) | Narrows or expands the main content container, centred on the page |
+| **Dark Mode toggle** | Instantly inverts the colour scheme site-wide, with smart corrections for images, videos, and ads so they look natural |
+| **Reset button** | One click restores all three settings to their defaults (100%, 100%, light) |
+
+---
+
+### ✨ Design Highlights
+- **Sticky positioning** — the bar stays pinned at the top as you scroll, always within reach
+- **Sleek dark gradient** header with smooth slider thumbs and an animated toggle pill
+- **Persistent settings** — all three preferences are saved to `localStorage` and automatically restored when you reload the page
+- **Non-destructive** — the toolbar is fully idempotent and won't duplicate itself on page re-renders
+
+Tokens: 20413 prompt / 288 completion
+
+=== Result ===
+
+1 rule(s) applied:
+[1] Quick-settings toolbar — body
+    
+// Idempotency guard
+if (document.getElementById('qs-toolbar')) return;
+
+/* ── Inject styles ── */
+const style = document.createElement('style');
+style.id = 'qs-toolbar-styles';
+style.textContent = `
+  #qs-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 18px;
+    height: 44px;
+    background: linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 12px;
+    color: #e0e0e0;
+    user-select: none;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  #qs-toolbar .qs-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a8d8ff;
+    margin-right: 18px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #qs-toolbar .qs-brand svg {
+    width: 16px; height: 16px; flex-shrink: 0;
+  }
+  #qs-toolbar .qs-divider {
+    width: 1px;
+    height: 26px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 16px;
+    flex-shrink: 0;
+  }
+  #qs-toolbar .qs-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  #qs-toolbar .qs-label {
+    white-space: nowrap;
+    color: #b0c4de;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  #qs-toolbar .qs-label svg {
+    width: 13px; height: 13px; opacity: 0.8;
+  }
+  #qs-toolbar .qs-value {
+    color: #a8d8ff;
+    font-weight: 700;
+    font-size: 11px;
+    min-width: 30px;
+    text-align: right;
+  }
+  /* Slider */
+  #qs-toolbar input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 90px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.18);
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #qs-toolbar input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #a8d8ff;
+    box-shadow: 0 0 0 3px rgba(168,216,255,0.25);
+    cursor: pointer;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  #qs-toolbar input[type=range]:hover::-webkit-slider-thumb {
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(168,216,255,0.4);
+  }
+  #qs-toolbar input[type=range]::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #a8d8ff;
+    border: none;
+    cursor: pointer;
+  }
+  /* Dark mode toggle */
+  #qs-toolbar .qs-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  #qs-toolbar .qs-toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  #qs-toolbar .qs-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  #qs-toolbar .qs-toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.25s;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  #qs-toolbar .qs-toggle input:checked + .qs-toggle-track {
+    background: #3a7bd5;
+    border-color: #3a7bd5;
+  }
+  #qs-toolbar .qs-toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    transition: left 0.25s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+  }
+  #qs-toolbar .qs-toggle input:checked ~ .qs-toggle-thumb {
+    left: 21px;
+  }
+  /* Dark mode body class effect */
+  body.qs-dark-mode {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  body.qs-dark-mode img,
+  body.qs-dark-mode video,
+  body.qs-dark-mode [class*="fandom-ad"],
+  body.qs-dark-mode iframe,
+  body.qs-dark-mode svg {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  body.qs-dark-mode #qs-toolbar {
+    filter: none;
+  }
+  /* Spacer pushes dark mode to far right */
+  #qs-toolbar .qs-spacer { flex: 1 1 auto; min-width: 8px; }
+  /* Reset button */
+  #qs-toolbar .qs-reset {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 5px;
+    color: #b0c4de;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #qs-toolbar .qs-reset:hover {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+  }
+`;
+document.head.appendChild(style);
+
+/* ── Build toolbar HTML ── */
+const bar = document.createElement('div');
+bar.id = 'qs-toolbar';
+bar.setAttribute('role', 'toolbar');
+bar.setAttribute('aria-label', 'Quick Settings');
+bar.innerHTML = `
+  <div class="qs-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+    </svg>
+    Quick Settings
+  </div>
+
+  <div class="qs-divider"></div>
+
+  <!-- Font Size -->
+  <div class="qs-control" id="qs-fontsize-ctrl">
+    <span class="qs-label">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <text x="2" y="18" font-size="12" font-family="sans-serif" font-weight="bold">A</text>
+        <text x="13" y="20" font-size="16" font-family="sans-serif" font-weight="bold">A</text>
+      </svg>
+      Font Size
+    </span>
+    <input type="range" id="qs-font-slider" min="80" max="140" step="5" value="100" aria-label="Font size">
+    <span class="qs-value" id="qs-font-val">100%</span>
+  </div>
+
+  <div class="qs-divider"></div>
+
+  <!-- Layout Width -->
+  <div class="qs-control" id="qs-width-ctrl">
+    <span class="qs-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 3H3M21 21H3M17 12H7M21 8H3M21 16H3"/>
+      </svg>
+      Layout Width
+    </span>
+    <input type="range" id="qs-width-slider" min="60" max="100" step="5" value="100" aria-label="Layout width">
+    <span class="qs-value" id="qs-width-val">100%</span>
+  </div>
+
+  <div class="qs-spacer"></div>
+
+  <!-- Dark Mode Toggle -->
+  <div class="qs-toggle-wrap">
+    <span class="qs-label">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      Dark Mode
+    </span>
+    <label class="qs-toggle" aria-label="Toggle dark mode">
+      <input type="checkbox" id="qs-dark-toggle">
+      <span class="qs-toggle-track"></span>
+      <span class="qs-toggle-thumb"></span>
+    </label>
+  </div>
+
+  <div class="qs-divider"></div>
+
+  <button class="qs-reset" id="qs-reset-btn" title="Reset all settings to default">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.36"/>
+    </svg>
+    Reset
+  </button>
+`;
+
+/* ── Insert at very top of body ── */
+document.body.insertBefore(bar, document.body.firstChild);
+
+/* ── Restore saved state ── */
+const saved = {
+  font:  parseInt(localStorage.getItem('qs_font')  || '100', 10),
+  width: parseInt(localStorage.getItem('qs_width') || '100', 10),
+  dark:  localStorage.getItem('qs_dark') === '1'
+};
+
+/* ── Targets for font / width ── */
+const CONTENT_SELECTORS = '.page__main, .page-content, .mw-parser-output, .page-header';
+const LAYOUT_SELECTOR   = '.resizable-container, .page.has-right-rail, .main-container';
+
+function applyFont(val) {
+  document.querySelectorAll(CONTENT_SELECTORS).forEach(el => {
+    el.style.fontSize = val + '%';
+  });
+  document.getElementById('qs-font-val').textContent = val + '%';
+  document.getElementById('qs-font-slider').value = val;
+  localStorage.setItem('qs_font', val);
+}
+
+function applyWidth(val) {
+  document.querySelectorAll(LAYOUT_SELECTOR).forEach(el => {
+    el.style.maxWidth = val + '%';
+    el.style.marginLeft = 'auto';
+    el.style.marginRight = 'auto';
+  });
+  document.getElementById('qs-width-val').textContent = val + '%';
+  document.getElementById('qs-width-slider').value = val;
+  localStorage.setItem('qs_width', val);
+}
+
+function applyDark(on) {
+  if (on) {
+    document.body.classList.add('qs-dark-mode');
+  } else {
+    document.body.classList.remove('qs-dark-mode');
+  }
+  document.getElementById('qs-dark-toggle').checked = on;
+  localStorage.setItem('qs_dark', on ? '1' : '0');
+}
+
+/* Apply saved state */
+applyFont(saved.font);
+applyWidth(saved.width);
+applyDark(saved.dark);
+
+/* ── Wire events ── */
+document.getElementById('qs-font-slider').addEventListener('input', function() {
+  applyFont(parseInt(this.value, 10));
+});
+document.getElementById('qs-width-slider').addEventListener('input', function() {
+  applyWidth(parseInt(this.value, 10));
+});
+document.getElementById('qs-dark-toggle').addEventListener('change', function() {
+  applyDark(this.checked);
+});
+document.getElementById('qs-reset-btn').addEventListener('click', function() {
+  applyFont(100);
+  applyWidth(100);
+  applyDark(false);
+});
+
+

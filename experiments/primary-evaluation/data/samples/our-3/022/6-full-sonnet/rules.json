@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Hide keyword pill scroll bar",
+			"query_selector": "[data-test-id=\"scrollable-one-bar-root\"]",
+			"logic": "element.style.display = 'none';"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

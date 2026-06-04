@@ -1,0 +1,18 @@
+{
+	"rules": [
+		{
+			"label": "Sticky Featured Content sidebar",
+			"query_selector": "table.sidebar.tfarticle-archive",
+			"logic": "\nelement.style.position = 'sticky';\nelement.style.top = '8px';\nelement.style.maxHeight = 'calc(100vh - 16px)';\nelement.style.overflowY = 'auto';\nelement.style.overflowX = 'hidden';\nelement.style.zIndex = '100';\nelement.style.boxShadow = '0 2px 12px rgba(0,0,0,0.18)';\nelement.style.borderRadius = '6px';\nelement.style.background = 'var(--background-color-base, #fff)';\nelement.style.scrollbarWidth = 'thin';\n"
+		},
+		{
+			"label": "Condense archive link lists",
+			"query_selector": ".mw-content-ltr .hlist",
+			"logic": "\nelement.style.fontSize = '0.78em';\nelement.style.lineHeight = '1.25';\nelement.style.letterSpacing = '-0.01em';\nelement.style.margin = '0.1em 0';\nelement.style.padding = '2px 6px';\nelement.style.background = 'var(--background-color-neutral-subtle, #f8f9fa)';\nelement.style.borderRadius = '4px';\nelement.style.borderLeft = '3px solid var(--border-color-progressive, #3366cc)';\n\nconst uls = element.querySelectorAll('ul');\nuls.forEach(ul => {\n  ul.style.margin = '0';\n  ul.style.padding = '0';\n  ul.style.listStyle = 'none';\n  ul.style.display = 'flex';\n  ul.style.flexWrap = 'wrap';\n  ul.style.gap = '0';\n});\n\nconst lis = element.querySelectorAll('li');\nlis.forEach(li => {\n  li.style.margin = '0';\n  li.style.padding = '0 2px';\n  li.style.display = 'inline';\n  li.style.lineHeight = '1.3';\n});\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}

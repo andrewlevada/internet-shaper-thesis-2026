@@ -1,0 +1,13 @@
+{
+	"rules": [
+		{
+			"label": "Hoist Afbeeldingen & Video's to top",
+			"query_selector": "#rso",
+			"logic": "\n// Find the Afbeeldingen block (ULSxyf containing heading \"Afbeeldingen\")\nlet afbeeldingenBlock = null;\nlet videosBlock = null;\n\nconst candidates = element.querySelectorAll('.ULSxyf');\nfor (const block of candidates) {\n  const heading = block.querySelector('.mgAbYb, [role=\"heading\"]');\n  if (heading) {\n    const text = heading.textContent.trim();\n    if (text === 'Afbeeldingen') afbeeldingenBlock = block;\n    if (text === \"Video's\") videosBlock = block;\n  }\n}\n\nif (!afbeeldingenBlock && !videosBlock) return;\n\n// Insert both at the very top of #rso, Videos first then Afbeeldingen\n// so reading order is: Afbeeldingen, then Video's at the top\nconst firstChild = element.firstChild;\n\nif (videosBlock && videosBlock !== firstChild) {\n  element.insertBefore(videosBlock, firstChild);\n}\nif (afbeeldingenBlock) {\n  element.insertBefore(afbeeldingenBlock, element.firstChild);\n}\n"
+		}
+	],
+	"result": {
+		"success": true,
+		"log": "rules applied in real-time"
+	}
+}
