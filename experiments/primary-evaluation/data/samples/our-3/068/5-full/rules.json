@@ -1,14 +1,9 @@
 {
   "rules": [
     {
-      "label": "Move Video carousel to top",
-      "query_selector": "ul#search-result li[data-fast-name=\"video-unisearch\"]",
-      "logic": "var list = document.getElementById('search-result');\nif (list && element.parentNode === list) {\n  if (list.firstChild !== element) {\n    list.insertBefore(element, list.firstChild);\n  }\n}"
-    },
-    {
-      "label": "Move Images widget to top",
-      "query_selector": ".content__right .serp-item[data-fast-name=\"images\"]",
-      "logic": "var list = document.getElementById('search-result');\nif (!list || element.parentNode === list) return;\n\nvar li = document.createElement('li');\nli.className = 'serp-item serp-item_card';\nli.setAttribute('data-cid', element.getAttribute('data-cid') || '');\nli.setAttribute('data-log-node', element.getAttribute('data-log-node') || '');\nli.setAttribute('data-fast', element.getAttribute('data-fast') || '');\nli.setAttribute('data-fast-name', 'images');\nli.setAttribute('data-fast-subtype', element.getAttribute('data-fast-subtype') || '');\n\nvar root = element.querySelector('.Root');\nif (root) {\n  li.appendChild(root);\n} else {\n  while (element.firstChild) {\n    li.appendChild(element.firstChild);\n  }\n}\n\nelement.parentNode.replaceChild(li, element);\n\nvar firstLi = list.querySelector('li[data-fast-name=\"video-unisearch\"]');\nif (firstLi && list.contains(firstLi)) {\n  list.insertBefore(li, firstLi);\n} else {\n  if (list.firstChild) {\n    list.insertBefore(li, list.firstChild);\n  } else {\n    list.appendChild(li);\n  }\n}"
+      "label": "Hide article sidebar",
+      "query_selector": "aside.article-sidebar",
+      "logic": "element.style.display = 'none'"
     }
   ],
   "result": {

@@ -1,35 +1,34 @@
 {
-	"request-prompt": "Hide the right-hand 'Images' (Картинки) widget and the inline 'Video' (Видео) carousel to keep the results page strictly text-focused.",
-	"goal": "I prefer highly structured, text-heavy search results and prioritize direct links to authoritative, factual sources like Wikipedia.",
+	"request-prompt": "Convert the 'Contact us' link in the top menu and the help desk submission link in the text into a prominent, styled call-to-action button placed right below the article title.",
+	"goal": "I prefer reaching out to customer support or system administrators directly to handle configuration changes and setup tasks for me.",
 	"jobs": [
-		"I want to watch entertaining or funny cat videos to amuse myself.",
-		"I want to find high-quality, royalty-free images of cats to download or use for a project.",
-		"I want to find the official website, download links, or online communities for the mobile game 'C.A.T.S.: Crash Arena Turbo Stars'.",
-		"I want to learn interesting or educational facts about domestic cats' behavior and characteristics.",
-		"I want to refine my current search query with suggested related keywords to discover more specific cat-related topics.",
-		"I want to switch directly to specialized search vertical tabs like Yandex Images or Yandex Video to explore more visual content."
+		"I want to learn how to enable or disable standard Fandom features (such as Message Wall, Article Comments, or Blogs) using the Admin Dashboard.",
+		"I want to submit a request to Fandom staff to turn on a restricted extension (such as custom JavaScript, achievements, DPL, or Variables) for my wiki.",
+		"I want to find where to request or set up an interlanguage link for my wiki.",
+		"I want to navigate to instructions for other wiki administration tasks, such as changing a wiki's name/URL or closing/reopening a wiki.",
+		"I want to contact Fandom support with custom questions about my wiki's features or configuration."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer highly structured, text-heavy search results and prioritize direct links to authoritative, factual sources like Wikipedia.",
-			"b": "I prefer highly visual search interfaces and rely on inline video carousels, image grids, and interactive media preview blocks."
+			"a": "I prefer using simple, built-in administrative dashboards and visual settings menus to manage my site rather than dealing with code.",
+			"b": "I prefer using advanced customization options like custom JavaScript, custom CSS, and complex extensions to fine-tune my site."
 		},
 		{
-			"a": "I prefer consuming content exclusively in my native language (Russian) and tend to skip or ignore English-language web search results.",
-			"b": "I am fully comfortable navigating and reading global English-language platforms and often prefer them for broader or more original content."
+			"a": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
+			"b": "I prefer reaching out to customer support or system administrators directly to handle configuration changes and setup tasks for me."
 		},
 		{
-			"a": "I use search engines strictly for serious, objective research and informational purposes, avoiding entertainment widgets and gaming links.",
-			"b": "I often use search engines for casual entertainment, seeking out fun videos, cool images, and mobile games to pass the time."
+			"a": "I prefer concise, minimal help pages that provide a direct link or a single clear instruction to solve my immediate problem.",
+			"b": "I prefer highly detailed documentation with extensive context, definitions, and external references so I can fully understand the underlying system."
 		}
 	],
-	"preference-pair-index": 1,
-	"preference-side": "a",
-	"preference": "I prefer highly structured, text-heavy search results and prioritize direct links to authoritative, factual sources like Wikipedia.",
-	"source-snapshot": "019",
+	"preference-pair-index": 2,
+	"preference-side": "b",
+	"preference": "I prefer reaching out to customer support or system administrators directly to handle configuration changes and setup tasks for me.",
+	"source-snapshot": "069",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://yandex.ru/search/?text=cats",
-	"final-url": "https://yandex.ru/search?text=cats&lr=10466",
-	"protected_at": 1780344967745,
-	"finalized_at": 1780352308449
+	"url": "https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"protected_at": 1780344967752,
+	"finalized_at": 1780352309273
 }

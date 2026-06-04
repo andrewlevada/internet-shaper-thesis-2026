@@ -1,14 +1,9 @@
 {
 	"rules": [
 		{
-			"label": "Hide English prompt banner",
-			"query_selector": "#slim_appbar",
-			"logic": "element.style.display = 'none';"
-		},
-		{
-			"label": "Hide English web results",
-			"query_selector": ".A6K0A h2.bNg8Rb",
-			"logic": "\nconst h2Text = element.textContent.trim();\nif (h2Text === 'Web results') {\n  const resultBlock = element.closest('.A6K0A');\n  if (resultBlock) {\n    resultBlock.style.display = 'none';\n  }\n}\n"
+			"label": "English snippets to bottom",
+			"query_selector": "#search-result",
+			"logic": "\n// Collect all serp-item li elements that are organic results\nconst items = Array.from(element.querySelectorAll('li.serp-item'));\nif (items.length === 0) return;\n\n// A helper: returns true if the title is primarily English (Latin-script, no Cyrillic)\nfunction isEnglishTitle(li) {\n  const titleEl = li.querySelector('.OrganicTitleContentSpan, .OrganicTitle-LinkText');\n  if (!titleEl) return false;\n  const text = titleEl.textContent.trim();\n  if (!text) return false;\n  // Count Cyrillic characters\n  const cyrillicCount = (text.match(/[\\u0400-\\u04FF]/g) || []).length;\n  // Count Latin letters\n  const latinCount = (text.match(/[A-Za-z]/g) || []).length;\n  // Treat as English if there are Latin chars and virtually no Cyrillic\n  // (allow a few Cyrillic chars for mixed titles like \"CATS — ВКонтакте\" → has Cyrillic → Russian)\n  return latinCount > 0 && cyrillicCount === 0;\n}\n\nconst russianItems = [];\nconst englishItems = [];\n\nfor (const li of items) {\n  if (isEnglishTitle(li)) {\n    englishItems.push(li);\n  } else {\n    russianItems.push(li);\n  }\n}\n\n// Move all English items to the end (after all Russian items)\n// appendChild is idempotent: re-running produces same result\nfor (const li of englishItems) {\n  element.appendChild(li);\n}\n"
 		}
 	],
 	"result": {

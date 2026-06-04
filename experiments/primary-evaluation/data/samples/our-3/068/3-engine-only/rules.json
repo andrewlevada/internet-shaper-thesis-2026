@@ -1,19 +1,9 @@
 {
   "rules": [
     {
-      "label": "Move images to top",
-      "query_selector": "li[data-fast-name=\"images\"]",
+      "label": "Hide left article sidebar",
+      "query_selector": "aside.article-sidebar",
       "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Move video to top",
-      "query_selector": "li[data-fast-name=\"video-unisearch\"]",
-      "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Clone images widget top",
-      "query_selector": ".content__left",
-      "logic": "if (element._widgetsMoved) return;\nelement._widgetsMoved = true;\nvar searchList = element.querySelector('#search-result');\nif (!searchList) return;\n\nvar imagesItem = document.querySelector('li[data-fast-name=\"images\"]');\nvar videoItem = document.querySelector('li[data-fast-name=\"video-unisearch\"]');\n\nif (imagesItem && imagesItem.parentElement) {\n    var clonedImages = imagesItem.cloneNode(true);\n    searchList.insertBefore(clonedImages, searchList.firstChild);\n}\n\nif (videoItem && videoItem.parentElement) {\n    var clonedVideo = videoItem.cloneNode(true);\n    if (searchList.firstChild) {\n        searchList.insertBefore(clonedVideo, searchList.firstChild.nextSibling);\n    } else {\n        searchList.insertBefore(clonedVideo, searchList.firstChild);\n    }\n}"
     }
   ],
   "result": {

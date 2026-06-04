@@ -1,35 +1,34 @@
 {
-	"request-prompt": "Place the 'Afbeeldingen' (Images) gallery card and the 'Video's' video carousel at the absolute top of the search results column so I can immediately browse trailers and photos.",
-	"goal": "I am a highly visual searcher who prefers watching videos, trailers, and looking at image galleries rather than reading articles.",
+	"request-prompt": "Move the 'Related articles' links and other self-help links from the bottom and sidebar of the page into a highly visible 'Recommended Self-Help' block right below the main article header.",
+	"goal": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
 	"jobs": [
-		"I want to book tickets to see the \"Cats\" musical in Dutch theaters.",
-		"I want to watch promotional videos, trailers, and gala performances of the \"Cats\" musical.",
-		"I want to listen to or find information about the Dutch pop group \"The Cats\" from Volendam.",
-		"I want to find guides and general information on how to care for a domestic cat as a pet.",
-		"I want to look up reviews, cast details, and ratings for the 2019 \"Cats\" movie.",
-		"I want to learn about the list of songs and characters from Andrew Lloyd Webber's musical \"Cats\"."
+		"I want to learn how to enable or disable standard Fandom features (such as Message Wall, Article Comments, or Blogs) using the Admin Dashboard.",
+		"I want to submit a request to Fandom staff to turn on a restricted extension (such as custom JavaScript, achievements, DPL, or Variables) for my wiki.",
+		"I want to find where to request or set up an interlanguage link for my wiki.",
+		"I want to navigate to instructions for other wiki administration tasks, such as changing a wiki's name/URL or closing/reopening a wiki.",
+		"I want to contact Fandom support with custom questions about my wiki's features or configuration."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer when search engines show rich previews, knowledge panels, and quick answers directly in the search results so I don't have to click through to external websites.",
-			"b": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites."
+			"a": "I prefer using simple, built-in administrative dashboards and visual settings menus to manage my site rather than dealing with code.",
+			"b": "I prefer using advanced customization options like custom JavaScript, custom CSS, and complex extensions to fine-tune my site."
 		},
 		{
-			"a": "I always prefer looking for search results in my native language and find translated or local localized pages most helpful.",
-			"b": "I prefer to search for and consume web content in English to get more comprehensive and globally accurate information."
+			"a": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
+			"b": "I prefer reaching out to customer support or system administrators directly to handle configuration changes and setup tasks for me."
 		},
 		{
-			"a": "I prefer reading textual information, articles, and structured encyclopedia entries when learning about a topic online.",
-			"b": "I am a highly visual searcher who prefers watching videos, trailers, and looking at image galleries rather than reading articles."
+			"a": "I prefer concise, minimal help pages that provide a direct link or a single clear instruction to solve my immediate problem.",
+			"b": "I prefer highly detailed documentation with extensive context, definitions, and external references so I can fully understand the underlying system."
 		}
 	],
-	"preference-pair-index": 3,
-	"preference-side": "b",
-	"preference": "I am a highly visual searcher who prefers watching videos, trailers, and looking at image galleries rather than reading articles.",
-	"source-snapshot": "001",
+	"preference-pair-index": 2,
+	"preference-side": "a",
+	"preference": "I prefer to troubleshoot issues and configure settings entirely on my own using self-service help articles and documentation.",
+	"source-snapshot": "069",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://google.com/search?q=cats",
-	"final-url": "https://www.google.com/search?q=cats&sei=H3IdaurZGZH87_UPqsPhuAk",
-	"protected_at": 1780344967745,
-	"finalized_at": 1780352308233
+	"url": "https://support.fandom.com/hc/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"final-url": "https://support.fandom.com/hc/en-us/articles/360021589413-I-want-a-feature-or-extension-turned-on",
+	"protected_at": 1780344967752,
+	"finalized_at": 1780352309128
 }

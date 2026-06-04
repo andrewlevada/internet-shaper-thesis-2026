@@ -1,44 +1,14 @@
 {
   "rules": [
     {
-      "label": "Hide right sidebar knowledge panel",
-      "query_selector": "#rhs",
-      "logic": "element.style.display = 'none';"
+      "label": "Move Video carousel to top",
+      "query_selector": "ul#search-result li[data-fast-name=\"video-unisearch\"]",
+      "logic": "var list = document.getElementById('search-result');\nif (list && element.parentNode === list) {\n  if (list.firstChild !== element) {\n    list.insertBefore(element, list.firstChild);\n  }\n}"
     },
     {
-      "label": "Hide rich cards and special sections",
-      "query_selector": ".ULSxyf",
-      "logic": "element.style.display = 'none';"
-    },
-    {
-      "label": "Hide bottom people also search",
-      "query_selector": "#bres",
-      "logic": "element.style.display = 'none';"
-    },
-    {
-      "label": "Hide shopping suggestions",
-      "query_selector": "#HbKV2c, .S6Ggif",
-      "logic": "element.style.display = 'none';"
-    },
-    {
-      "label": "Hide slim appbar notification",
-      "query_selector": "#slim_appbar",
-      "logic": "element.style.display = 'none';"
-    },
-    {
-      "label": "Hide top ads container",
-      "query_selector": "#tads, #tvcap",
-      "logic": "element.style.display = 'none';"
-    },
-    {
-      "label": "Hide bottom ads container",
-      "query_selector": "#tadsb",
-      "logic": "element.style.display = 'none';"
-    },
-    {
-      "label": "Hide inline video results",
-      "query_selector": ".A6K0A.PmEWq",
-      "logic": "element.style.display = 'none';"
+      "label": "Move Images widget to top",
+      "query_selector": ".content__right .serp-item[data-fast-name=\"images\"]",
+      "logic": "var list = document.getElementById('search-result');\nif (!list || element.parentNode === list) return;\n\nvar li = document.createElement('li');\nli.className = 'serp-item serp-item_card';\nli.setAttribute('data-cid', element.getAttribute('data-cid') || '');\nli.setAttribute('data-log-node', element.getAttribute('data-log-node') || '');\nli.setAttribute('data-fast', element.getAttribute('data-fast') || '');\nli.setAttribute('data-fast-name', 'images');\nli.setAttribute('data-fast-subtype', element.getAttribute('data-fast-subtype') || '');\n\nvar root = element.querySelector('.Root');\nif (root) {\n  li.appendChild(root);\n} else {\n  while (element.firstChild) {\n    li.appendChild(element.firstChild);\n  }\n}\n\nelement.parentNode.replaceChild(li, element);\n\nvar firstLi = list.querySelector('li[data-fast-name=\"video-unisearch\"]');\nif (firstLi && list.contains(firstLi)) {\n  list.insertBefore(li, firstLi);\n} else {\n  if (list.firstChild) {\n    list.insertBefore(li, list.firstChild);\n  } else {\n    list.appendChild(li);\n  }\n}"
     }
   ],
   "result": {

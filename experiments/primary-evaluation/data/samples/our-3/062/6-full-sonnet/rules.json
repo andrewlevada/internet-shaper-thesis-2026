@@ -1,9 +1,14 @@
 {
 	"rules": [
 		{
-			"label": "Move Cats KP to top",
-			"query_selector": "#topstuff",
-			"logic": "\n// Find the knowledge panel in the right sidebar\nconst kpSource = document.querySelector('#uLEOKb .pxiwBd');\nif (!kpSource) return;\n\n// Check if we already inserted the clone to avoid duplicates\nif (element.querySelector('.cats-kp-injected')) return;\n\n// Clone the entire knowledge panel\nconst clone = kpSource.cloneNode(true);\nclone.classList.add('cats-kp-injected');\n\n// Style the clone so it looks natural in the left column\nclone.style.cssText = `\n  display: block;\n  width: 100%;\n  max-width: 652px;\n  margin: 0 0 24px 0;\n  padding: 16px;\n  background: #fff;\n  border: 1px solid #dadce0;\n  border-radius: 12px;\n  box-shadow: 0 1px 6px rgba(32,33,36,.18);\n  box-sizing: border-box;\n`;\n\n// Remove any width constraints inside the clone that assume sidebar width\nconst innerLayout = clone.querySelector('.e8Ck0d');\nif (innerLayout) {\n  innerLayout.style.cssText = 'width: 100% !important; max-width: 100% !important;';\n}\n\n// Hide the original in the sidebar so it doesn't duplicate\nkpSource.style.display = 'none';\n\n// Insert at the top of #topstuff\nelement.appendChild(clone);\n"
+			"label": "Hide Images widget",
+			"query_selector": ".serp-item[data-fast-name=\"images\"]",
+			"logic": "element.style.display = 'none';"
+		},
+		{
+			"label": "Hide Video carousel",
+			"query_selector": ".serp-item[data-fast-name=\"video-unisearch\"][data-fast-subtype=\"carousel\"]",
+			"logic": "element.style.display = 'none';"
 		}
 	],
 	"result": {

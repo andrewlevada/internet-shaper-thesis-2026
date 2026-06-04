@@ -1,14 +1,24 @@
 {
   "rules": [
     {
-      "label": "Hide English prompt banner",
-      "query_selector": "#slim_appbar .WE0UJf div[style*=\"#feefc3\"]",
-      "logic": "element.style.display = 'none';"
+      "label": "Move English results to bottom",
+      "query_selector": "#search-result",
+      "logic": "element.style.display = 'none'"
     },
     {
-      "label": "Hide English web results",
-      "query_selector": "div.A6K0A > div[lang=\"en\"]",
-      "logic": "element.style.display = 'none';"
+      "label": "Move English results to bottom",
+      "query_selector": "#search-result",
+      "logic": "(function() {\n  // Only run once per element (use a flag)\n  if (element.__reordered) return;\n  element.__reordered = true;\n\n  var children = Array.from(element.children);\n  var russianItems = [];\n  var englishItems = [];\n  var otherItems = [];\n\n  for (var i = 0; i < children.length; i++) {\n    var child = children[i];\n    // Only process organic serp-item results\n    if (!child.classList.contains('serp-item')) {\n      otherItems.push({ el: child, index: i });\n      continue;\n    }\n\n    // Check if it has a translate link (indicates English content)\n    var extralinksBtn = child.querySelector('.Organic-Extralinks');\n    var isEnglish = false;\n    if (extralinksBtn && extralinksBtn.getAttribute('data-vnl')) {\n      try {\n        var data = JSON.parse(extralinksBtn.getAttribute('data-vnl'));\n        if (data.items) {\n          for (var j = 0; j < data.items.length; j++) {\n            if (data.items[j].variant === 'translate') {\n              isEnglish = true;\n              break;\n            }\n          }\n        }\n      } catch(e) {}\n    }\n\n    // Also check title text for Cyrillic\n    if (!isEnglish) {\n      var titleSpan = child.querySelector('.OrganicTitleContentSpan');\n      if (titleSpan) {\n        var titleText = titleSpan.textContent || '';\n        // If title has no Cyrillic characters, it's likely English\n        if (!/[\\u0400-\\u04FF]/.test(titleText)) {\n          isEnglish = true;\n        }\n      }\n    }\n\n    if (isEnglish) {\n      englishItems.push({ el: child, index: i });\n    } else {\n      russianItems.push({ el: child, index: i });\n    }\n  }\n\n  // Rebuild order: russian first, then other (non-organic), then english at bottom\n  var newOrder = [];\n  // Collect items by original index to determine placement\n  var allItems = [];\n  for (var i = 0; i < children.length; i++) {\n    allItems.push({ el: children[i], index: i });\n  }\n\n  // Sort: russian organic first, then non-organic in original order, then english organic at end\n  var sortedItems = [];\n\n  // First add russian items in their original relative order\n  russianItems.forEach(function(item) {\n    sortedItems.push(item);\n  });\n\n  // Then add non-organic items (like video carousel) in their original order\n  otherItems.forEach(function(item) {\n    sortedItems.push(item);\n  });\n\n  // Finally add english items at the bottom\n  englishItems.forEach(function(item) {\n    sortedItems.push(item);\n  });\n\n  // Now append in new order (appendChild moves existing nodes)\n  for (var k = 0; k < sortedItems.length; k++) {\n    element.appendChild(sortedItems[k].el);\n  }\n})();"
+    },
+    {
+      "label": "Show search results",
+      "query_selector": "#search-result",
+      "logic": "element.style.display = '';"
+    },
+    {
+      "label": "Ensure search visible",
+      "query_selector": "#search-result",
+      "logic": "element.style.display = '';"
     }
   ],
   "result": {

@@ -1,35 +1,35 @@
 {
-	"request-prompt": "Hide all rich cards, 'People also search for' elements, related search carousels, and image rows, leaving only the standard textual organic web links (like Wikipedia and musical site links) directly below the search filters.",
-	"goal": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites.",
+	"request-prompt": "Move the right-hand 'Images' (Картинки) widget and the inline 'Video' (Видео) carousel to the absolute top of the main search results column.",
+	"goal": "I prefer highly visual search interfaces and rely on inline video carousels, image grids, and interactive media preview blocks.",
 	"jobs": [
-		"I want to book tickets to see the \"Cats\" musical in Dutch theaters.",
-		"I want to watch promotional videos, trailers, and gala performances of the \"Cats\" musical.",
-		"I want to listen to or find information about the Dutch pop group \"The Cats\" from Volendam.",
-		"I want to find guides and general information on how to care for a domestic cat as a pet.",
-		"I want to look up reviews, cast details, and ratings for the 2019 \"Cats\" movie.",
-		"I want to learn about the list of songs and characters from Andrew Lloyd Webber's musical \"Cats\"."
+		"I want to watch entertaining or funny cat videos to amuse myself.",
+		"I want to find high-quality, royalty-free images of cats to download or use for a project.",
+		"I want to find the official website, download links, or online communities for the mobile game 'C.A.T.S.: Crash Arena Turbo Stars'.",
+		"I want to learn interesting or educational facts about domestic cats' behavior and characteristics.",
+		"I want to refine my current search query with suggested related keywords to discover more specific cat-related topics.",
+		"I want to switch directly to specialized search vertical tabs like Yandex Images or Yandex Video to explore more visual content."
 	],
 	"preference-pairs": [
 		{
-			"a": "I prefer when search engines show rich previews, knowledge panels, and quick answers directly in the search results so I don't have to click through to external websites.",
-			"b": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites."
+			"a": "I prefer highly structured, text-heavy search results and prioritize direct links to authoritative, factual sources like Wikipedia.",
+			"b": "I prefer highly visual search interfaces and rely on inline video carousels, image grids, and interactive media preview blocks."
 		},
 		{
-			"a": "I always prefer looking for search results in my native language and find translated or local localized pages most helpful.",
-			"b": "I prefer to search for and consume web content in English to get more comprehensive and globally accurate information."
+			"a": "I prefer consuming content exclusively in my native language (Russian) and tend to skip or ignore English-language web search results.",
+			"b": "I am fully comfortable navigating and reading global English-language platforms and often prefer them for broader or more original content."
 		},
 		{
-			"a": "I prefer reading textual information, articles, and structured encyclopedia entries when learning about a topic online.",
-			"b": "I am a highly visual searcher who prefers watching videos, trailers, and looking at image galleries rather than reading articles."
+			"a": "I use search engines strictly for serious, objective research and informational purposes, avoiding entertainment widgets and gaming links.",
+			"b": "I often use search engines for casual entertainment, seeking out fun videos, cool images, and mobile games to pass the time."
 		}
 	],
 	"preference-pair-index": 1,
 	"preference-side": "b",
-	"preference": "I prefer to skip the search engine's rich summaries and immediately click on classic web links to read directly from the original source websites.",
-	"source-snapshot": "001",
+	"preference": "I prefer highly visual search interfaces and rely on inline video carousels, image grids, and interactive media preview blocks.",
+	"source-snapshot": "019",
 	"model": "google/gemini-3.5-flash",
-	"url": "https://google.com/search?q=cats",
-	"final-url": "https://www.google.com/search?q=cats&sei=H3IdaurZGZH87_UPqsPhuAk",
-	"protected_at": 1780344967741,
-	"finalized_at": 1780352307587
+	"url": "https://yandex.ru/search/?text=cats",
+	"final-url": "https://yandex.ru/search?text=cats&lr=10466",
+	"protected_at": 1780344967745,
+	"finalized_at": 1780352308619
 }

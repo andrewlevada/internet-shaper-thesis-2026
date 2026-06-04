@@ -1,7 +1,18 @@
 {
-  "rules": [],
+  "rules": [
+    {
+      "label": "Hide Images widget",
+      "query_selector": ".serp-item[data-fast-name=\"images\"]",
+      "logic": "element.style.display = 'none'"
+    },
+    {
+      "label": "Hide Video carousel",
+      "query_selector": ".serp-item[data-fast-name=\"video-unisearch\"]",
+      "logic": "element.style.display = 'none'"
+    }
+  ],
   "result": {
     "success": true,
-    "log": "no rules generated"
+    "log": "rules applied in real-time"
   }
 }

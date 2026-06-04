@@ -1,9 +1,9 @@
 {
 	"rules": [
 		{
-			"label": "Move Images & Video to top",
-			"query_selector": "#search-result",
-			"logic": "\n// Find the Images widget (right-column) and Video carousel (left-column)\nvar images = document.querySelector('[data-fast-name=\"images\"]');\nvar video = document.querySelector('[data-fast-name=\"video-unisearch\"]');\n\n// Find the first real organic result (first serp-item that is not video/images)\nvar firstItem = element.querySelector('.serp-item[data-cid=\"0\"]');\n\nif (!images || !video || !firstItem) return;\n\n// Mark elements so we don't re-insert repeatedly (idempotency guard)\nif (images.dataset.movedToTop === '1' && video.dataset.movedToTop === '1') return;\n\n// Style the images widget to fit in the left column flow\nimages.style.width = '100%';\nimages.style.marginBottom = '16px';\nimages.dataset.movedToTop = '1';\nvideo.dataset.movedToTop = '1';\n\n// Insert Images first (will appear at top), then Video below it\nelement.insertBefore(images, firstItem);\nelement.insertBefore(video, firstItem);\n"
+			"label": "Hide article sidebar",
+			"query_selector": "aside.article-sidebar",
+			"logic": "element.style.display = 'none';"
 		}
 	],
 	"result": {

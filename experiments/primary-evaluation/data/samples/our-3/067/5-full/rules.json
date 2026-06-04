@@ -1,14 +1,24 @@
 {
   "rules": [
     {
-      "label": "Hide Images widget",
-      "query_selector": ".serp-item[data-fast-name=\"images\"]",
+      "label": "Hide top menu Contact us link",
+      "query_selector": "li.item a.contactus",
       "logic": "element.style.display = 'none';"
     },
     {
-      "label": "Hide Video carousel",
-      "query_selector": ".serp-item[data-fast-name=\"video-unisearch\"]",
+      "label": "Hide in-text help desk link",
+      "query_selector": ".article-body a[href*=\"requests/new\"]",
       "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Hide footer Contact us section",
+      "query_selector": ".article-more-questions",
+      "logic": "element.style.display = 'none';"
+    },
+    {
+      "label": "Add CTA button below title",
+      "query_selector": "h1.article-title",
+      "logic": "if (element.nextElementSibling && element.nextElementSibling.classList.contains('cta-button-wrapper')) return;\n\nconst wrapper = document.createElement('div');\nwrapper.className = 'cta-button-wrapper';\nwrapper.style.cssText = 'margin-top: 16px; margin-bottom: 8px; text-align: center;';\n\nconst btn = document.createElement('a');\nbtn.href = 'https://support.fandom.com/hc/en-us/requests/new';\nbtn.textContent = 'Contact Us for Assistance';\nbtn.style.cssText = 'display: inline-block; padding: 12px 32px; background-color: #1dbf73; color: #fff; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.15);';\n\nbtn.addEventListener('mouseover', function() { btn.style.backgroundColor = '#19a463'; });\nbtn.addEventListener('mouseout', function() { btn.style.backgroundColor = '#1dbf73'; });\n\nwrapper.appendChild(btn);\nelement.parentNode.insertBefore(wrapper, element.nextSibling);"
     }
   ],
   "result": {

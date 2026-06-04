@@ -1,44 +1,19 @@
 {
   "rules": [
     {
-      "label": "Hide rich cards & expandables",
-      "query_selector": "div.cUnQKe, div.Lv2Cle, div.vtSz8d, div.oIk2Cb, div.GUyUUb[data-hb=\"b\"]",
+      "label": "Move images to top",
+      "query_selector": "li[data-fast-name=\"images\"]",
       "logic": "element.style.display = 'none'"
     },
     {
-      "label": "Hide related search suggestions",
-      "query_selector": "div.S6Ggif.Ww4FFb.vt6azd, div.HBvJzb, ul.UJttZc.KMCtw",
+      "label": "Move video to top",
+      "query_selector": "li[data-fast-name=\"video-unisearch\"]",
       "logic": "element.style.display = 'none'"
     },
     {
-      "label": "Hide image rows inline",
-      "query_selector": "div.x7cRLb, div.aQ9ZH.yIw0Od.p8FEIf.U48fD, div.DeKlx.jEgXc.yIw0Od",
-      "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Hide video carousel rows",
-      "query_selector": "div.Ea5p3b, div.bQwQK.p8FEIf.U48fD",
-      "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Hide AI overview cards",
-      "query_selector": "div.hICk5e, div.qRuFed, div.u16Ss.RECdmd.qVSwkc",
-      "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Hide related question pairs",
-      "query_selector": "div.wQiwMc.related-question-pair, div.related-question-pair",
-      "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Hide ads containers",
-      "query_selector": "div#tads, div#bottomads, div#tvcap, div.GUyUUb[data-hb=\"t\"]",
-      "logic": "element.style.display = 'none'"
-    },
-    {
-      "label": "Hide slim appbar notification",
-      "query_selector": "div#slim_appbar",
-      "logic": "element.style.display = 'none'"
+      "label": "Clone images widget top",
+      "query_selector": ".content__left",
+      "logic": "if (element._widgetsMoved) return;\nelement._widgetsMoved = true;\nvar searchList = element.querySelector('#search-result');\nif (!searchList) return;\n\nvar imagesItem = document.querySelector('li[data-fast-name=\"images\"]');\nvar videoItem = document.querySelector('li[data-fast-name=\"video-unisearch\"]');\n\nif (imagesItem && imagesItem.parentElement) {\n    var clonedImages = imagesItem.cloneNode(true);\n    searchList.insertBefore(clonedImages, searchList.firstChild);\n}\n\nif (videoItem && videoItem.parentElement) {\n    var clonedVideo = videoItem.cloneNode(true);\n    if (searchList.firstChild) {\n        searchList.insertBefore(clonedVideo, searchList.firstChild.nextSibling);\n    } else {\n        searchList.insertBefore(clonedVideo, searchList.firstChild);\n    }\n}"
     }
   ],
   "result": {

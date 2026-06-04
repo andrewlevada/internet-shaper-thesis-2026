@@ -1,19 +1,14 @@
 {
   "rules": [
     {
-      "label": "Move Cats knowledge panel to top",
-      "query_selector": "#rhs #jOAHU",
-      "logic": "element.style.display = 'none'"
+      "label": "Hide Images widget",
+      "query_selector": ".serp-item[data-fast-name=\"images\"]",
+      "logic": "element.style.display = 'none';"
     },
     {
-      "label": "Move Cats knowledge panel to top",
-      "query_selector": "#rhs #jOAHU",
-      "logic": ""
-    },
-    {
-      "label": "Move knowledge panel to main column",
-      "query_selector": "#jOAHU",
-      "logic": "element.style.display = 'none'\nvar rso = document.getElementById('rso');\nif (!rso) return;\nvar clone = element.cloneNode(true);\nclone.style.display = '';\nrso.insertBefore(clone, rso.firstChild);"
+      "label": "Hide Video carousel",
+      "query_selector": ".serp-item[data-fast-name=\"video-unisearch\"]",
+      "logic": "element.style.display = 'none';"
     }
   ],
   "result": {
