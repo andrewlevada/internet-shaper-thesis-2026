@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useLayoutEffect, useEffect, useRef, useState } from "react"
 import {
 	COMPARISON_ZOOM,
 	type MediaKind,
@@ -11,9 +11,14 @@ import type { ZipArchive } from "@/lib/zip-archive"
 
 function PreviewViewport({
 	children,
-}: Readonly<{ children: React.ReactNode }>) {
+	scrollRef,
+}: Readonly<{
+	children: React.ReactNode
+	scrollRef?: React.RefObject<HTMLDivElement | null>
+}>) {
 	return (
 		<div
+			ref={scrollRef}
 			className="overflow-auto rounded-[1px]"
 			style={{
 				width: PREVIEW_VIEWPORT_WIDTH_PX,
@@ -25,21 +30,31 @@ function PreviewViewport({
 	)
 }
 
+function HiddenViewportSurface() {
+	return <div className="h-full w-full bg-white" aria-hidden />
+}
+
 function MhtmlFrame({
 	src,
 	title,
 	fixedViewport,
+	contentKey,
+	scrollRef,
 }: Readonly<{
 	src: string
 	title: string
 	fixedViewport: boolean
+	contentKey?: string
+	scrollRef?: React.RefObject<HTMLDivElement | null>
 }>) {
 	if (fixedViewport) {
 		return (
-			<PreviewViewport>
+			<PreviewViewport scrollRef={scrollRef}>
 				<iframe
+					key={contentKey}
 					src={src}
 					title={title}
+					loading="eager"
 					className="block h-full w-full border-0"
 				/>
 			</PreviewViewport>
@@ -48,7 +63,12 @@ function MhtmlFrame({
 
 	return (
 		<div className="h-[80vh] max-h-[900px] w-[1440px] overflow-auto rounded-[1px]">
-			<iframe src={src} title={title} className="min-h-full w-full border-0" />
+			<iframe
+				src={src}
+				title={title}
+				loading="eager"
+				className="min-h-full w-full border-0"
+			/>
 		</div>
 	)
 }
@@ -60,6 +80,8 @@ export default function MediaCard({
 	label,
 	className = "",
 	variant = "default",
+	hideContent = false,
+	contentKey,
 }: Readonly<{
 	src: string | null
 	kind: MediaKind
@@ -67,41 +89,73 @@ export default function MediaCard({
 	label?: string
 	className?: string
 	variant?: "default" | "comparison" | "intro"
+	/** Keeps card chrome; hides iframe/image during blind transitions. */
+	hideContent?: boolean
+	contentKey?: string
 }>) {
 	const fixedViewport = variant === "comparison" || variant === "intro"
 	const zoom = variant === "comparison" ? COMPARISON_ZOOM : 1
+	const viewportRef = useRef<HTMLDivElement>(null)
+
+	useLayoutEffect(() => {
+		if (!hideContent && src) {
+			viewportRef.current?.scrollTo(0, 0)
+		}
+	}, [hideContent, src, contentKey])
+
+	const viewportBody = hideContent ? (
+		fixedViewport ? (
+			<PreviewViewport scrollRef={viewportRef}>
+				<HiddenViewportSurface />
+			</PreviewViewport>
+		) : (
+			<div className="h-[80vh] max-h-[900px] w-[1440px] bg-white rounded-[1px]" />
+		)
+	) : !src ? (
+		fixedViewport ? (
+			<PreviewViewport scrollRef={viewportRef}>
+				<div className="flex h-full items-center justify-center text-sm text-accent/50">
+					Loading…
+				</div>
+			</PreviewViewport>
+		) : (
+			<div className="flex h-[80vh] max-h-[900px] items-center justify-center text-sm text-accent/50">
+				Loading…
+			</div>
+		)
+	) : kind === "screenshot" ? (
+		fixedViewport ? (
+			<PreviewViewport scrollRef={viewportRef}>
+				{/* biome-ignore lint/performance/noImgElement: dynamically loaded content */}
+				<img
+					key={contentKey}
+					src={src}
+					alt={alt}
+					className="block max-h-full max-w-full h-auto w-auto rounded-[1px]"
+				/>
+			</PreviewViewport>
+		) : (
+			// biome-ignore lint/performance/noImgElement: dynamically loaded content
+			<img
+				key={contentKey}
+				src={src}
+				alt={alt}
+				className="w-full h-auto rounded-[1px]"
+			/>
+		)
+	) : (
+		<MhtmlFrame
+			src={src}
+			title={alt}
+			fixedViewport={fixedViewport}
+			contentKey={contentKey}
+			scrollRef={viewportRef}
+		/>
+	)
 
 	const paper = (
 		<div className="w-fit rounded-[1px] bg-white p-2 shadow-[0_10px_28px_rgba(0,0,0,0.2)] border border-black/10">
-			{!src ? (
-				fixedViewport ? (
-					<PreviewViewport>
-						<div className="flex h-full items-center justify-center text-sm text-accent/50">
-							Loading…
-						</div>
-					</PreviewViewport>
-				) : (
-					<div className="flex h-[80vh] max-h-[900px] items-center justify-center text-sm text-accent/50">
-						Loading…
-					</div>
-				)
-			) : kind === "screenshot" ? (
-				fixedViewport ? (
-					<PreviewViewport>
-						{/* biome-ignore lint/performance/noImgElement: dynamically loaded content */}
-						<img
-							src={src}
-							alt={alt}
-							className="block max-h-full max-w-full h-auto w-auto rounded-[1px]"
-						/>
-					</PreviewViewport>
-				) : (
-					// biome-ignore lint/performance/noImgElement: dynamically loaded content
-					<img src={src} alt={alt} className="w-full h-auto rounded-[1px]" />
-				)
-			) : (
-				<MhtmlFrame src={src} title={alt} fixedViewport={fixedViewport} />
-			)}
+			{viewportBody}
 		</div>
 	)
 

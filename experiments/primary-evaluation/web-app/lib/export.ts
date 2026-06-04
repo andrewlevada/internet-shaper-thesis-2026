@@ -2,7 +2,7 @@ import { zipSync } from "fflate"
 import { buildPairsCsv, buildWinMatrixCsv } from "./scoring"
 import type { ComparisonVote } from "./types"
 
-export function formatResultFilename(date = new Date()): string {
+function formatTimestamp(date: Date): string {
 	const pad = (value: number) => String(value).padStart(2, "0")
 	const year = date.getFullYear()
 	const month = pad(date.getMonth() + 1)
@@ -10,7 +10,18 @@ export function formatResultFilename(date = new Date()): string {
 	const hours = pad(date.getHours())
 	const minutes = pad(date.getMinutes())
 	const seconds = pad(date.getSeconds())
-	return `eval-result-${year}-${month}-${day}T${hours}-${minutes}-${seconds}.zip`
+	return `${year}-${month}-${day}T${hours}-${minutes}-${seconds}`
+}
+
+export function formatResultFilename(date = new Date()): string {
+	return `eval-result-${formatTimestamp(date)}.zip`
+}
+
+export function formatCheckpointFilename(
+	voteCount: number,
+	date = new Date(),
+): string {
+	return `eval-checkpoint-${voteCount}-votes-${formatTimestamp(date)}.zip`
 }
 
 export function buildResultZip(

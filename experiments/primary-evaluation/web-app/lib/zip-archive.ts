@@ -22,6 +22,7 @@ function normalizePath(filename: string): string {
 export class ZipArchive {
 	private reader: ZipReader<BlobReader>
 	private entries = new Map<string, FileEntry>()
+	private mediaUrlCache = new Map<string, string>()
 
 	private constructor(reader: ZipReader<BlobReader>) {
 		this.reader = reader
@@ -74,14 +75,26 @@ export class ZipArchive {
 	}
 
 	async createMediaUrl(path: string, kind: MediaKind): Promise<string> {
-		const bytes = await this.readBytes(path)
-		if (kind === "mhtml") {
-			return mhtmlBytesToPreviewUrl(bytes)
+		const cacheKey = `${kind}:${path}`
+		const cached = this.mediaUrlCache.get(cacheKey)
+		if (cached) {
+			return cached
 		}
-		return createBlobUrl(bytes, mimeTypeForKind(kind))
+
+		const bytes = await this.readBytes(path)
+		const url =
+			kind === "mhtml"
+				? await mhtmlBytesToPreviewUrl(bytes)
+				: createBlobUrl(bytes, mimeTypeForKind(kind))
+		this.mediaUrlCache.set(cacheKey, url)
+		return url
 	}
 
 	async close(): Promise<void> {
+		for (const url of this.mediaUrlCache.values()) {
+			URL.revokeObjectURL(url)
+		}
+		this.mediaUrlCache.clear()
 		await this.reader.close()
 		this.entries.clear()
 	}

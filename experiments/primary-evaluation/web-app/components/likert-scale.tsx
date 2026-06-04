@@ -11,8 +11,10 @@ const OPTIONS: { value: Rating; label: string }[] = [
 
 export default function LikertScale({
 	onSelect,
+	disabled = false,
 }: Readonly<{
 	onSelect: (rating: Rating) => void
+	disabled?: boolean
 }>) {
 	return (
 		<div className="flex flex-row flex-wrap justify-center gap-2 w-full">
@@ -21,6 +23,7 @@ export default function LikertScale({
 					key={option.value}
 					variant="secondary"
 					className="text-sm"
+					disabled={disabled}
 					onClick={() => onSelect(option.value)}
 				>
 					{option.label}

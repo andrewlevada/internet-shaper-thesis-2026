@@ -1,8 +1,14 @@
 import { create } from "zustand"
-import { buildResultZip } from "../lib/export"
+import { saveVoteCheckpointIfNeeded } from "../lib/checkpoint"
+import {
+	type DisplayMedia,
+	type DisplayMediaView,
+	displayMediaCacheKey,
+	loadDisplayMedia as loadDisplayMediaForItem,
+} from "../lib/display-media"
+import { buildResultZip, downloadBlob } from "../lib/export"
 import { entriesIdentical, type MediaKind } from "../lib/media"
 import { assignSampleHexIds, buildComparisonQueue } from "../lib/randomize"
-import { findOriginalPipeline } from "../lib/screenshot"
 import type {
 	ComparisonItem,
 	ComparisonVote,
@@ -10,14 +16,11 @@ import type {
 	ParsedSample,
 	Rating,
 } from "../lib/types"
-import { parseSamplesFromArchive, revokeBlobUrls } from "../lib/validate"
+import { MEDIA_REVEAL_DELAY_MS, waitAtLeast } from "../lib/media-transition"
+import { parseSamplesFromArchive } from "../lib/validate"
 import { ZipArchive } from "../lib/zip-archive"
 
-export interface DisplayMedia {
-	left: string
-	right: string
-	original: string
-}
+export type { DisplayMedia }
 
 interface EvalState {
 	seed: number
@@ -31,8 +34,11 @@ interface EvalState {
 	acknowledgedSamples: string[]
 	status: EvalStatus
 	displayMedia: DisplayMedia | null
+	mediaPrefetch: Map<string, DisplayMedia>
 	mediaLoading: boolean
+	mediaContentVisible: boolean
 	mediaError: string | null
+	lastCheckpointVoteCount: number
 	initFromZip: (file: File) => Promise<void>
 	loadDisplayMedia: () => Promise<void>
 	acknowledgeSample: (sampleHex: string) => void
@@ -53,8 +59,11 @@ const initialState = {
 	acknowledgedSamples: [] as string[],
 	status: "idle" as EvalStatus,
 	displayMedia: null as DisplayMedia | null,
+	mediaPrefetch: new Map<string, DisplayMedia>(),
 	mediaLoading: false,
+	mediaContentVisible: true,
 	mediaError: null as string | null,
+	lastCheckpointVoteCount: 0,
 }
 
 function isIdenticalPair(item: ComparisonItem): boolean {
@@ -103,11 +112,36 @@ function skipIdenticalPairs(
 	return { votes: nextVotes, currentIndex: index, status: "running" }
 }
 
-function revokeDisplayMedia(displayMedia: DisplayMedia | null): void {
-	if (!displayMedia) {
-		return
+function prefetchTargets(
+	queue: ComparisonItem[],
+	currentIndex: number,
+	acknowledgedSamples: string[],
+): { index: number; view: DisplayMediaView }[] {
+	const current = queue[currentIndex]
+	if (!current) {
+		return []
 	}
-	revokeBlobUrls([displayMedia.left, displayMedia.right, displayMedia.original])
+
+	const targets: { index: number; view: DisplayMediaView }[] = []
+	const onIntro = !acknowledgedSamples.includes(current.sampleHex)
+
+	if (onIntro) {
+		targets.push({ index: currentIndex, view: "comparison" })
+	}
+
+	const nextIndex = onIntro ? currentIndex : currentIndex + 1
+	const nextItem = queue[nextIndex]
+	if (!nextItem) {
+		return targets
+	}
+
+	const nextOnIntro = !acknowledgedSamples.includes(nextItem.sampleHex)
+	targets.push({
+		index: nextIndex,
+		view: nextOnIntro ? "intro" : "comparison",
+	})
+
+	return targets
 }
 
 export const useEvalStore = create<EvalState>((set, get) => ({
@@ -115,7 +149,6 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 
 	async initFromZip(file: File) {
 		const previous = get()
-		revokeDisplayMedia(previous.displayMedia)
 		if (previous.archive) {
 			await previous.archive.close()
 		}
@@ -142,8 +175,11 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 			acknowledgedSamples: [],
 			status: "running",
 			displayMedia: null,
+			mediaPrefetch: new Map(),
 			mediaLoading: false,
+			mediaContentVisible: true,
 			mediaError: null,
+			lastCheckpointVoteCount: 0,
 		})
 	},
 
@@ -156,6 +192,7 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 			acknowledgedSamples,
 			samples,
 			status,
+			mediaPrefetch,
 		} = get()
 
 		if (status !== "running" || !archive) {
@@ -167,52 +204,76 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 			return
 		}
 
-		const sample = samples.find((entry) => entry.id === current.sampleId)
-		if (!sample) {
-			return
-		}
+		const view: DisplayMediaView = acknowledgedSamples.includes(
+			current.sampleHex,
+		)
+			? "comparison"
+			: "intro"
+		const isComparison = view === "comparison"
+		const cacheKey = displayMediaCacheKey(currentIndex, view)
+		const cached = mediaPrefetch.get(cacheKey)
+		const startedAt = Date.now()
 
-		const originalPipeline = findOriginalPipeline(sample.pipelines)
-		const originalVariant = sample.pipelines[originalPipeline]
-		if (!originalVariant) {
-			return
+		if (isComparison) {
+			set({
+				displayMedia: null,
+				mediaLoading: true,
+				mediaContentVisible: false,
+				mediaError: null,
+			})
+		} else {
+			set({ displayMedia: null, mediaLoading: true, mediaError: null })
 		}
-
-		const needsIntro = !acknowledgedSamples.includes(current.sampleHex)
-		revokeDisplayMedia(get().displayMedia)
-		set({ displayMedia: null, mediaLoading: true, mediaError: null })
 
 		try {
-			if (needsIntro) {
-				const original = await archive.createMediaUrl(
-					originalVariant.path,
+			const displayMedia =
+				cached ??
+				(await loadDisplayMediaForItem(
+					archive,
 					mediaKind,
-				)
-				set({
-					displayMedia: { left: "", right: "", original },
-					mediaLoading: false,
-				})
-				return
+					samples,
+					current,
+					view,
+				))
+
+			if (cached) {
+				const nextPrefetch = new Map(mediaPrefetch)
+				nextPrefetch.delete(cacheKey)
+				set({ mediaPrefetch: nextPrefetch })
 			}
 
-			const [left, right] = await Promise.all([
-				archive.createMediaUrl(current.leftPath, mediaKind),
-				archive.createMediaUrl(current.rightPath, mediaKind),
-			])
+			if (isComparison) {
+				await waitAtLeast(MEDIA_REVEAL_DELAY_MS, startedAt)
+				set({
+					displayMedia,
+					mediaLoading: false,
+					mediaContentVisible: true,
+					mediaError: null,
+				})
+			} else {
+				set({
+					displayMedia,
+					mediaLoading: false,
+					mediaContentVisible: true,
+					mediaError: null,
+				})
+			}
 
-			set({
-				displayMedia: { left, right, original: "" },
-				mediaLoading: false,
-			})
+			void prefetchUpcomingMedia(get, set)
 		} catch (cause) {
 			const message =
 				cause instanceof Error ? cause.message : "Failed to load media"
-			set({ mediaLoading: false, mediaError: message })
+			set({
+				mediaLoading: false,
+				mediaContentVisible: !isComparison,
+				mediaError: message,
+			})
 		}
 	},
 
 	acknowledgeSample(sampleHex: string) {
-		const { queue, currentIndex, votes, acknowledgedSamples, status } = get()
+		const { queue, currentIndex, votes, acknowledgedSamples, status, seed } =
+			get()
 		if (status !== "running" || acknowledgedSamples.includes(sampleHex)) {
 			return
 		}
@@ -225,14 +286,22 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 			nextAcknowledged,
 		)
 
+		const lastCheckpointVoteCount = saveVoteCheckpointIfNeeded(
+			advanced.votes,
+			seed,
+			get().lastCheckpointVoteCount,
+		)
+
 		set({
 			acknowledgedSamples: nextAcknowledged,
 			...advanced,
+			lastCheckpointVoteCount,
 		})
 	},
 
 	recordVote(rating: Rating) {
-		const { queue, currentIndex, votes, acknowledgedSamples, status } = get()
+		const { queue, currentIndex, votes, acknowledgedSamples, status, seed } =
+			get()
 		if (status !== "running") {
 			return
 		}
@@ -259,7 +328,19 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 			acknowledgedSamples,
 		)
 
-		set(advanced)
+		const lastCheckpointVoteCount = saveVoteCheckpointIfNeeded(
+			advanced.votes,
+			seed,
+			get().lastCheckpointVoteCount,
+		)
+
+		set({
+			displayMedia: null,
+			mediaLoading: true,
+			mediaContentVisible: false,
+			...advanced,
+			lastCheckpointVoteCount,
+		})
 	},
 
 	downloadResults() {
@@ -269,20 +350,74 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 		}
 
 		const { filename, blob } = buildResultZip(votes, seed)
-		const url = URL.createObjectURL(blob)
-		const anchor = document.createElement("a")
-		anchor.href = url
-		anchor.download = filename
-		anchor.click()
-		URL.revokeObjectURL(url)
+		downloadBlob(blob, filename)
 	},
 
 	async reset() {
-		const { archive, displayMedia } = get()
-		revokeDisplayMedia(displayMedia)
+		const { archive } = get()
 		if (archive) {
 			await archive.close()
 		}
-		set({ ...initialState })
+		set({ ...initialState, mediaPrefetch: new Map() })
 	},
 }))
+
+async function prefetchUpcomingMedia(
+	get: () => EvalState,
+	set: (partial: Partial<EvalState>) => void,
+): Promise<void> {
+	const {
+		archive,
+		mediaKind,
+		queue,
+		currentIndex,
+		acknowledgedSamples,
+		samples,
+		status,
+		mediaPrefetch,
+	} = get()
+
+	if (status !== "running" || !archive) {
+		return
+	}
+
+	const targets = prefetchTargets(queue, currentIndex, acknowledgedSamples)
+	if (targets.length === 0) {
+		return
+	}
+
+	const nextPrefetch = new Map(mediaPrefetch)
+	let changed = false
+
+	await Promise.all(
+		targets.map(async ({ index, view }) => {
+			const key = displayMediaCacheKey(index, view)
+			if (nextPrefetch.has(key)) {
+				return
+			}
+
+			const item = queue[index]
+			if (!item) {
+				return
+			}
+
+			try {
+				const media = await loadDisplayMediaForItem(
+					archive,
+					mediaKind,
+					samples,
+					item,
+					view,
+				)
+				nextPrefetch.set(key, media)
+				changed = true
+			} catch {
+				// Prefetch is best-effort.
+			}
+		}),
+	)
+
+	if (changed) {
+		set({ mediaPrefetch: nextPrefetch })
+	}
+}

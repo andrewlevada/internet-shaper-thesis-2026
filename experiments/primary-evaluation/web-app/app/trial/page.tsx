@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import ComparisonView from "@/components/comparison-view"
 import LikertScale from "@/components/likert-scale"
+import MediaPreloader from "@/components/media-preloader"
 import ProgressBar from "@/components/progress-bar"
 import SamplePresenter from "@/components/sample-presenter"
 import TaskDescription from "@/components/task-description"
@@ -19,7 +20,9 @@ export default function Trial() {
 	const votes = useEvalStore((state) => state.votes)
 	const acknowledgedSamples = useEvalStore((state) => state.acknowledgedSamples)
 	const displayMedia = useEvalStore((state) => state.displayMedia)
+	const mediaPrefetch = useEvalStore((state) => state.mediaPrefetch)
 	const mediaLoading = useEvalStore((state) => state.mediaLoading)
+	const mediaContentVisible = useEvalStore((state) => state.mediaContentVisible)
 	const mediaError = useEvalStore((state) => state.mediaError)
 	const recordVote = useEvalStore((state) => state.recordVote)
 	const acknowledgeSample = useEvalStore((state) => state.acknowledgeSample)
@@ -66,6 +69,11 @@ export default function Trial() {
 
 	return (
 		<div className="w-full h-full pt-4">
+			<MediaPreloader
+				kind={mediaKind}
+				displayMedia={displayMedia}
+				prefetched={mediaPrefetch.values()}
+			/>
 			<div className="flex flex-col gap-6">
 				<ProgressBar fraction={progressFraction} />
 
@@ -88,9 +96,13 @@ export default function Trial() {
 							leftSrc={displayMedia?.left ?? null}
 							rightSrc={displayMedia?.right ?? null}
 							kind={mediaKind}
-							loading={mediaLoading}
+							contentVisible={mediaContentVisible}
+							contentKey={`${currentIndex}-${current.leftPath}-${current.rightPath}`}
 						/>
-						<LikertScale onSelect={handleSelect} />
+						<LikertScale
+							onSelect={handleSelect}
+							disabled={!mediaContentVisible || mediaLoading}
+						/>
 					</>
 				)}
 			</div>

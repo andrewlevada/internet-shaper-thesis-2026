@@ -16,7 +16,7 @@ export async function mhtmlBytesToPreviewUrl(
 	bytes: Uint8Array,
 ): Promise<string> {
 	const { data: html } = await convert(bytes, {
-		fetchMissingResources: true,
+		fetchMissingResources: false,
 	})
 	const sanitized = stripContentSecurityPolicy(html)
 	return createBlobUrl(new TextEncoder().encode(sanitized), "text/html")
