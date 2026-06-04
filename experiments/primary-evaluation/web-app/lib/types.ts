@@ -8,12 +8,22 @@ export type PipelineId =
 	| "full"
 	| "full-sonnet"
 
-export type Rating =
+export type LikertRating =
 	| "left_better"
 	| "left_slightly"
 	| "similar"
 	| "right_slightly"
 	| "right_better"
+
+export type ScaleRating = LikertRating | "na"
+
+export type RatingDimension = "goal" | "structural" | "design"
+
+export interface HierarchicalScores {
+	goalAlignment: LikertRating
+	structuralCohesion: ScaleRating
+	designAlignment: ScaleRating
+}
 
 export type EvalStatus = "idle" | "running" | "complete"
 
@@ -53,5 +63,6 @@ export interface ComparisonVote {
 	sampleHex: string
 	leftPipeline: string
 	rightPipeline: string
-	rating: Rating
+	primaryDimension: RatingDimension
+	scores: HierarchicalScores
 }

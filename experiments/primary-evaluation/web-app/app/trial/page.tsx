@@ -3,12 +3,12 @@
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import ComparisonView from "@/components/comparison-view"
-import LikertScale from "@/components/likert-scale"
+import HierarchicalRating from "@/components/hierarchical-rating"
 import MediaPreloader from "@/components/media-preloader"
 import ProgressBar from "@/components/progress-bar"
 import SamplePresenter from "@/components/sample-presenter"
 import TaskDescription from "@/components/task-description"
-import type { Rating } from "@/lib/types"
+import type { LikertRating, RatingDimension } from "@/lib/types"
 import { useEvalStore } from "@/store/eval-store"
 
 export default function Trial() {
@@ -59,8 +59,8 @@ export default function Trial() {
 		loadDisplayMedia,
 	])
 
-	const handleSelect = (rating: Rating) => {
-		recordVote(rating)
+	const handleSelect = (dimension: RatingDimension, value: LikertRating) => {
+		recordVote(dimension, value)
 	}
 
 	if (status !== "running" || !current) {
@@ -99,7 +99,7 @@ export default function Trial() {
 							contentVisible={mediaContentVisible}
 							contentKey={`${currentIndex}-${current.leftPath}-${current.rightPath}`}
 						/>
-						<LikertScale
+						<HierarchicalRating
 							onSelect={handleSelect}
 							disabled={!mediaContentVisible || mediaLoading}
 						/>

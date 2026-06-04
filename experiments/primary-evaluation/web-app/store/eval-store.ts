@@ -9,12 +9,14 @@ import {
 import { buildResultZip, downloadBlob } from "../lib/export"
 import { entriesIdentical, type MediaKind } from "../lib/media"
 import { assignSampleHexIds, buildComparisonQueue } from "../lib/randomize"
+import { recordVoteFromSelection } from "../lib/scoring"
 import type {
 	ComparisonItem,
 	ComparisonVote,
 	EvalStatus,
 	ParsedSample,
-	Rating,
+	RatingDimension,
+	LikertRating,
 } from "../lib/types"
 import { MEDIA_REVEAL_DELAY_MS, waitAtLeast } from "../lib/media-transition"
 import { parseSamplesFromArchive } from "../lib/validate"
@@ -42,7 +44,7 @@ interface EvalState {
 	initFromZip: (file: File) => Promise<void>
 	loadDisplayMedia: () => Promise<void>
 	acknowledgeSample: (sampleHex: string) => void
-	recordVote: (rating: Rating) => void
+	recordVote: (dimension: RatingDimension, value: LikertRating) => void
 	downloadResults: () => void
 	reset: () => void
 }
@@ -99,7 +101,7 @@ function skipIdenticalPairs(
 				sampleHex: item.sampleHex,
 				leftPipeline: item.leftPipeline,
 				rightPipeline: item.rightPipeline,
-				rating: "similar" as Rating,
+				...recordVoteFromSelection("design", "similar"),
 			},
 		]
 		index++
@@ -299,7 +301,7 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 		})
 	},
 
-	recordVote(rating: Rating) {
+	recordVote(dimension: RatingDimension, value: LikertRating) {
 		const { queue, currentIndex, votes, acknowledgedSamples, status, seed } =
 			get()
 		if (status !== "running") {
@@ -317,7 +319,7 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 				sampleHex: current.sampleHex,
 				leftPipeline: current.leftPipeline,
 				rightPipeline: current.rightPipeline,
-				rating,
+				...recordVoteFromSelection(dimension, value),
 			},
 		]
 

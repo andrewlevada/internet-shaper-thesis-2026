@@ -29,11 +29,17 @@ export function buildResultZip(
 	seed: number,
 ): { filename: string; blob: Blob } {
 	const pairsCsv = buildPairsCsv(votes, seed)
-	const winMatrixCsv = buildWinMatrixCsv(votes)
+	const goalWinMatrixCsv = buildWinMatrixCsv(votes, "goal")
+	const structuralWinMatrixCsv = buildWinMatrixCsv(votes, "structural")
+	const designWinMatrixCsv = buildWinMatrixCsv(votes, "design")
 
 	const zipped = zipSync({
 		"pairs.csv": new TextEncoder().encode(pairsCsv),
-		"win-matrix.csv": new TextEncoder().encode(winMatrixCsv),
+		"win-matrix-goal.csv": new TextEncoder().encode(goalWinMatrixCsv),
+		"win-matrix-structural.csv": new TextEncoder().encode(
+			structuralWinMatrixCsv,
+		),
+		"win-matrix-design.csv": new TextEncoder().encode(designWinMatrixCsv),
 	})
 
 	const blob = new Blob([new Uint8Array(zipped)], { type: "application/zip" })

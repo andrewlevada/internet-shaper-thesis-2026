@@ -1,21 +1,20 @@
+import {
+	inferHierarchicalScores,
+	likertToPairScores,
+	scaleRatingToPairScores,
+} from "./hierarchical-rating"
 import { createPrng, shuffle } from "./randomize"
-import type { ComparisonVote, Rating } from "./types"
+import type { ComparisonVote, LikertRating, RatingDimension } from "./types"
 
-export function ratingToScores(rating: Rating): {
-	left: number
-	right: number
-} {
-	switch (rating) {
-		case "left_better":
-			return { left: 1, right: 0 }
-		case "left_slightly":
-			return { left: 1, right: 0 }
-		case "similar":
-			return { left: 0, right: 0 }
-		case "right_slightly":
-			return { left: 0, right: 1 }
-		case "right_better":
-			return { left: 0, right: 1 }
+export { inferHierarchicalScores, likertToPairScores }
+
+export function recordVoteFromSelection(
+	dimension: RatingDimension,
+	value: LikertRating,
+): Pick<ComparisonVote, "primaryDimension" | "scores"> {
+	return {
+		primaryDimension: dimension,
+		scores: inferHierarchicalScores(dimension, value),
 	}
 }
 
@@ -26,9 +25,31 @@ function escapeCsv(value: string): string {
 	return value
 }
 
+function scoreColumns(rating: LikertRating | "na"): [string, string] {
+	if (rating === "na") {
+		return ["", ""]
+	}
+	const { left, right } = likertToPairScores(rating)
+	return [String(left), String(right)]
+}
+
 export function buildPairsCsv(votes: ComparisonVote[], seed: number): string {
-	const header =
-		"sample_hex,left_pipeline,right_pipeline,rating,left_score,right_score"
+	const header = [
+		"sample_hex",
+		"left_pipeline",
+		"right_pipeline",
+		"primary_dimension",
+		"goal_alignment",
+		"structural_cohesion",
+		"design_alignment",
+		"goal_left_score",
+		"goal_right_score",
+		"structural_left_score",
+		"structural_right_score",
+		"design_left_score",
+		"design_right_score",
+	].join(",")
+
 	const random = createPrng(seed)
 
 	const bySample = new Map<string, ComparisonVote[]>()
@@ -44,15 +65,28 @@ export function buildPairsCsv(votes: ComparisonVote[], seed: number): string {
 	for (const sampleHex of sampleHexes) {
 		const group = bySample.get(sampleHex) ?? []
 		for (const vote of group) {
-			const { left, right } = ratingToScores(vote.rating)
+			const { scores } = vote
+			const [goalLeft, goalRight] = scoreColumns(scores.goalAlignment)
+			const [structuralLeft, structuralRight] = scoreColumns(
+				scores.structuralCohesion,
+			)
+			const [designLeft, designRight] = scoreColumns(scores.designAlignment)
+
 			rows.push(
 				[
 					escapeCsv(vote.sampleHex),
 					escapeCsv(vote.leftPipeline),
 					escapeCsv(vote.rightPipeline),
-					escapeCsv(vote.rating),
-					String(left),
-					String(right),
+					escapeCsv(vote.primaryDimension),
+					escapeCsv(scores.goalAlignment),
+					escapeCsv(scores.structuralCohesion),
+					escapeCsv(scores.designAlignment),
+					goalLeft,
+					goalRight,
+					structuralLeft,
+					structuralRight,
+					designLeft,
+					designRight,
 				].join(","),
 			)
 		}
@@ -61,7 +95,10 @@ export function buildPairsCsv(votes: ComparisonVote[], seed: number): string {
 	return rows.join("\n")
 }
 
-export function buildWinMatrixCsv(votes: ComparisonVote[]): string {
+export function buildWinMatrixCsv(
+	votes: ComparisonVote[],
+	dimension: RatingDimension = "goal",
+): string {
 	const pipelines = [
 		...new Set(
 			votes.flatMap((vote) => [vote.leftPipeline, vote.rightPipeline]),
@@ -74,7 +111,19 @@ export function buildWinMatrixCsv(votes: ComparisonVote[]): string {
 	}
 
 	for (const vote of votes) {
-		const { left, right } = ratingToScores(vote.rating)
+		const rating =
+			dimension === "goal"
+				? vote.scores.goalAlignment
+				: dimension === "structural"
+					? vote.scores.structuralCohesion
+					: vote.scores.designAlignment
+
+		const pairScores = scaleRatingToPairScores(rating)
+		if (!pairScores) {
+			continue
+		}
+
+		const { left, right } = pairScores
 		const leftRow = matrix.get(vote.leftPipeline)
 		const rightRow = matrix.get(vote.rightPipeline)
 		if (!leftRow || !rightRow) {
