@@ -96,6 +96,8 @@ export function buildComparisonQueue(
 			const swap = random() < 0.5
 			const leftPipeline = swap ? b : a
 			const rightPipeline = swap ? a : b
+			const left = sample.pipelines[leftPipeline]
+			const right = sample.pipelines[rightPipeline]
 
 			items.push({
 				sampleHex: sampleHexById[sample.id],
@@ -103,10 +105,12 @@ export function buildComparisonQueue(
 				task: sample.task,
 				leftPipeline,
 				rightPipeline,
-				leftScreenshotUrl: sample.pipelines[leftPipeline].screenshotUrl,
-				rightScreenshotUrl: sample.pipelines[rightPipeline].screenshotUrl,
-				leftScreenshotBytes: sample.pipelines[leftPipeline].screenshotBytes,
-				rightScreenshotBytes: sample.pipelines[rightPipeline].screenshotBytes,
+				leftPath: left.path,
+				rightPath: right.path,
+				leftSignature: left.signature,
+				rightSignature: right.signature,
+				leftUncompressedSize: left.uncompressedSize,
+				rightUncompressedSize: right.uncompressedSize,
 			})
 		}
 	}

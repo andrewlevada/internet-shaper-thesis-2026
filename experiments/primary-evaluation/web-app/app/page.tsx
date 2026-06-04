@@ -86,7 +86,7 @@ export default function Home() {
 							onClick={handlePreview}
 							disabled={loading || !selectedFile}
 						>
-							Preview screenshots
+							Preview archive
 						</Button>
 					</div>
 				</div>

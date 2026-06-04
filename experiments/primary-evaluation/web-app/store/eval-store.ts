@@ -1,7 +1,8 @@
 import { create } from "zustand"
 import { buildResultZip } from "../lib/export"
+import { entriesIdentical, type MediaKind } from "../lib/media"
 import { assignSampleHexIds, buildComparisonQueue } from "../lib/randomize"
-import { bytesEqual } from "../lib/screenshot"
+import { findOriginalPipeline } from "../lib/screenshot"
 import type {
 	ComparisonItem,
 	ComparisonVote,
@@ -9,11 +10,19 @@ import type {
 	ParsedSample,
 	Rating,
 } from "../lib/types"
-import { parseSamplesFromZip, revokeSampleUrls } from "../lib/validate"
-import { parseZipFile } from "../lib/zip"
+import { parseSamplesFromArchive, revokeBlobUrls } from "../lib/validate"
+import { ZipArchive } from "../lib/zip-archive"
+
+export interface DisplayMedia {
+	left: string
+	right: string
+	original: string
+}
 
 interface EvalState {
 	seed: number
+	mediaKind: MediaKind
+	archive: ZipArchive | null
 	samples: ParsedSample[]
 	sampleHexById: Record<string, string>
 	queue: ComparisonItem[]
@@ -21,7 +30,11 @@ interface EvalState {
 	votes: ComparisonVote[]
 	acknowledgedSamples: string[]
 	status: EvalStatus
+	displayMedia: DisplayMedia | null
+	mediaLoading: boolean
+	mediaError: string | null
 	initFromZip: (file: File) => Promise<void>
+	loadDisplayMedia: () => Promise<void>
 	acknowledgeSample: (sampleHex: string) => void
 	recordVote: (rating: Rating) => void
 	downloadResults: () => void
@@ -30,6 +43,8 @@ interface EvalState {
 
 const initialState = {
 	seed: 0,
+	mediaKind: "screenshot" as MediaKind,
+	archive: null as ZipArchive | null,
 	samples: [] as ParsedSample[],
 	sampleHexById: {} as Record<string, string>,
 	queue: [] as ComparisonItem[],
@@ -37,10 +52,18 @@ const initialState = {
 	votes: [] as ComparisonVote[],
 	acknowledgedSamples: [] as string[],
 	status: "idle" as EvalStatus,
+	displayMedia: null as DisplayMedia | null,
+	mediaLoading: false,
+	mediaError: null as string | null,
 }
 
 function isIdenticalPair(item: ComparisonItem): boolean {
-	return bytesEqual(item.leftScreenshotBytes, item.rightScreenshotBytes)
+	return entriesIdentical(
+		item.leftUncompressedSize,
+		item.leftSignature,
+		item.rightUncompressedSize,
+		item.rightSignature,
+	)
 }
 
 function skipIdenticalPairs(
@@ -80,18 +103,37 @@ function skipIdenticalPairs(
 	return { votes: nextVotes, currentIndex: index, status: "running" }
 }
 
+function revokeDisplayMedia(displayMedia: DisplayMedia | null): void {
+	if (!displayMedia) {
+		return
+	}
+	revokeBlobUrls([displayMedia.left, displayMedia.right, displayMedia.original])
+}
+
 export const useEvalStore = create<EvalState>((set, get) => ({
 	...initialState,
 
 	async initFromZip(file: File) {
-		const files = await parseZipFile(file)
-		const samples = parseSamplesFromZip(files)
+		const previous = get()
+		revokeDisplayMedia(previous.displayMedia)
+		if (previous.archive) {
+			await previous.archive.close()
+		}
+
+		const archive = await ZipArchive.open(file)
+		const entryMeta = await archive.index()
+		const { samples, mediaKind } = await parseSamplesFromArchive(
+			archive,
+			entryMeta,
+		)
 		const seed = Date.now()
 		const sampleHexById = assignSampleHexIds(samples, seed)
 		const queue = buildComparisonQueue(samples, sampleHexById, seed)
 
 		set({
 			seed,
+			mediaKind,
+			archive,
 			samples,
 			sampleHexById,
 			queue,
@@ -99,7 +141,74 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 			votes: [],
 			acknowledgedSamples: [],
 			status: "running",
+			displayMedia: null,
+			mediaLoading: false,
+			mediaError: null,
 		})
+	},
+
+	async loadDisplayMedia() {
+		const {
+			archive,
+			mediaKind,
+			queue,
+			currentIndex,
+			acknowledgedSamples,
+			samples,
+			status,
+		} = get()
+
+		if (status !== "running" || !archive) {
+			return
+		}
+
+		const current = queue[currentIndex]
+		if (!current) {
+			return
+		}
+
+		const sample = samples.find((entry) => entry.id === current.sampleId)
+		if (!sample) {
+			return
+		}
+
+		const originalPipeline = findOriginalPipeline(sample.pipelines)
+		const originalVariant = sample.pipelines[originalPipeline]
+		if (!originalVariant) {
+			return
+		}
+
+		const needsIntro = !acknowledgedSamples.includes(current.sampleHex)
+		revokeDisplayMedia(get().displayMedia)
+		set({ displayMedia: null, mediaLoading: true, mediaError: null })
+
+		try {
+			if (needsIntro) {
+				const original = await archive.createMediaUrl(
+					originalVariant.path,
+					mediaKind,
+				)
+				set({
+					displayMedia: { left: "", right: "", original },
+					mediaLoading: false,
+				})
+				return
+			}
+
+			const [left, right] = await Promise.all([
+				archive.createMediaUrl(current.leftPath, mediaKind),
+				archive.createMediaUrl(current.rightPath, mediaKind),
+			])
+
+			set({
+				displayMedia: { left, right, original: "" },
+				mediaLoading: false,
+			})
+		} catch (cause) {
+			const message =
+				cause instanceof Error ? cause.message : "Failed to load media"
+			set({ mediaLoading: false, mediaError: message })
+		}
 	},
 
 	acknowledgeSample(sampleHex: string) {
@@ -168,9 +277,12 @@ export const useEvalStore = create<EvalState>((set, get) => ({
 		URL.revokeObjectURL(url)
 	},
 
-	reset() {
-		const { samples } = get()
-		revokeSampleUrls(samples)
+	async reset() {
+		const { archive, displayMedia } = get()
+		revokeDisplayMedia(displayMedia)
+		if (archive) {
+			await archive.close()
+		}
 		set({ ...initialState })
 	},
 }))

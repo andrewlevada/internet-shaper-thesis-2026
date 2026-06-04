@@ -1,5 +1,6 @@
+import { assetNameForKind, detectMediaKind, type MediaKind } from "./media"
 import type { ParsedSample, Task } from "./types"
-import { createBlobUrl, decodeText } from "./zip"
+import type { ZipArchive, ZipEntryMeta } from "./zip-archive"
 
 const PIPELINE_FOLDER_PATTERN = /^\d+-[\w-]+$/
 
@@ -66,10 +67,25 @@ function getPipelineFolders(paths: string[], sampleRoot: string): string[] {
 	return [...folders].sort()
 }
 
-export function parseSamplesFromZip(
-	files: Map<string, Uint8Array>,
-): ParsedSample[] {
-	const paths = [...files.keys()]
+function requireEntryMeta(
+	meta: Map<string, ZipEntryMeta>,
+	path: string,
+	sampleId: string,
+): ZipEntryMeta {
+	const entry = meta.get(path)
+	if (!entry) {
+		throw new Error(`Sample ${sampleId}: missing ${path}`)
+	}
+	return entry
+}
+
+export async function parseSamplesFromArchive(
+	archive: ZipArchive,
+	entryMeta: Map<string, ZipEntryMeta>,
+): Promise<{ samples: ParsedSample[]; mediaKind: MediaKind }> {
+	const paths = [...entryMeta.keys()]
+	const mediaKind = detectMediaKind(paths)
+	const assetName = assetNameForKind(mediaKind)
 	const sampleRoots = findSampleRoots(paths)
 
 	if (sampleRoots.length === 0) {
@@ -103,41 +119,32 @@ export function parseSamplesFromZip(
 	for (const sampleRoot of sampleRoots) {
 		const sampleId = sampleRoot
 		const taskPath = `${sampleRoot}/task.json`
-		const taskData = files.get(taskPath)
-
-		if (!taskData) {
-			throw new Error(`Sample ${sampleId}: missing task.json`)
-		}
-
-		const task = parseTaskJson(decodeText(taskData), sampleId)
+		const taskRaw = await archive.readText(taskPath)
+		const task = parseTaskJson(taskRaw, sampleId)
 		const pipelines: ParsedSample["pipelines"] = {}
 
 		for (const pipeline of referencePipelines) {
-			const screenshotPath = `${sampleRoot}/${pipeline}/screenshot.png`
-			const screenshotData = files.get(screenshotPath)
-
-			if (!screenshotData) {
-				throw new Error(
-					`Sample ${sampleId}: missing ${pipeline}/screenshot.png`,
-				)
-			}
+			const assetPath = `${sampleRoot}/${pipeline}/${assetName}`
+			const assetMeta = requireEntryMeta(entryMeta, assetPath, sampleId)
 
 			pipelines[pipeline] = {
-				screenshotUrl: createBlobUrl(screenshotData, "image/png"),
-				screenshotBytes: screenshotData,
+				path: assetPath,
+				kind: mediaKind,
+				signature: assetMeta.signature,
+				uncompressedSize: assetMeta.uncompressedSize,
 			}
 		}
 
 		samples.push({ id: sampleId, task, pipelines })
 	}
 
-	return samples
+	return { samples, mediaKind }
 }
 
-export function revokeSampleUrls(samples: ParsedSample[]): void {
-	for (const sample of samples) {
-		for (const pipeline of Object.values(sample.pipelines)) {
-			URL.revokeObjectURL(pipeline.screenshotUrl)
+export function revokeBlobUrls(urls: Iterable<string>): void {
+	for (const url of urls) {
+		if (url) {
+			URL.revokeObjectURL(url)
 		}
 	}
 }

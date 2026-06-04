@@ -1,25 +1,34 @@
-import ScreenshotCard from "@/components/screenshot-card"
+import MediaCard from "@/components/media-card"
+import type { MediaKind } from "@/lib/media"
 
 export default function ComparisonView({
-	leftScreenshotUrl,
-	rightScreenshotUrl,
+	leftSrc,
+	rightSrc,
+	kind,
+	loading,
 }: Readonly<{
-	leftScreenshotUrl: string
-	rightScreenshotUrl: string
+	leftSrc: string | null
+	rightSrc: string | null
+	kind: MediaKind
+	loading?: boolean
 }>) {
 	return (
-		<div className="relative -mx-[140px] w-[calc(100%+280px)] flex flex-row justify-center items-start gap-6 overflow-visible py-4">
-			<ScreenshotCard
-				src={leftScreenshotUrl}
-				alt="Left variant screenshot"
+		<div className="relative mx-[-140px] w-[calc(100%+280px)] flex flex-row justify-center items-start gap-6 overflow-visible py-4">
+			<MediaCard
+				src={loading ? null : leftSrc}
+				kind={kind}
+				alt="Left variant"
 				label="Left"
-				className="w-[45vw] flex-shrink-0 -rotate-2 translate-y-1"
+				variant="comparison"
+				className="shrink-0 -rotate-2 translate-y-1"
 			/>
-			<ScreenshotCard
-				src={rightScreenshotUrl}
-				alt="Right variant screenshot"
+			<MediaCard
+				src={loading ? null : rightSrc}
+				kind={kind}
+				alt="Right variant"
 				label="Right"
-				className="w-[45vw] flex-shrink-0 rotate-2 translate-y-3"
+				variant="comparison"
+				className="shrink-0 rotate-2 translate-y-3"
 			/>
 		</div>
 	)

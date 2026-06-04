@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #a09f96;
-  --text: #1a1a1a;
-  --accent: #2b521d;
-  --white: #ffffff;
+	--background: #a09f96;
+	--text: #1a1a1a;
+	--accent: #2b521d;
+	--white: #ffffff;
 }
 
 @theme {
@@ -18,15 +18,16 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--text);
+	font-family: Arial, Helvetica, sans-serif;
 }
 
 h1 {
-  font-size: 24px;
+	font-size: 24px;
 }
 
-input, button {
-  cursor: pointer !important;
+input,
+button {
+	cursor: pointer !important;
 }

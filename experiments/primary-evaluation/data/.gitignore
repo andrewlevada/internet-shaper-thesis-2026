@@ -1,3 +1,2 @@
 samples/**/work/**
-samples.zip
-**/our-2-raw/
+samples/**/*.zip

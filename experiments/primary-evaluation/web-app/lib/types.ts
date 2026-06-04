@@ -1,3 +1,5 @@
+import type { MediaKind } from "./media"
+
 export type PipelineId =
 	| "original"
 	| "baseline"
@@ -21,8 +23,10 @@ export interface Task {
 }
 
 export interface PipelineVariant {
-	screenshotUrl: string
-	screenshotBytes: Uint8Array
+	path: string
+	kind: MediaKind
+	signature: number
+	uncompressedSize: number
 }
 
 export interface ParsedSample {
@@ -37,10 +41,12 @@ export interface ComparisonItem {
 	task: Task
 	leftPipeline: string
 	rightPipeline: string
-	leftScreenshotUrl: string
-	rightScreenshotUrl: string
-	leftScreenshotBytes: Uint8Array
-	rightScreenshotBytes: Uint8Array
+	leftPath: string
+	rightPath: string
+	leftSignature: number
+	rightSignature: number
+	leftUncompressedSize: number
+	rightUncompressedSize: number
 }
 
 export interface ComparisonVote {
