@@ -1,0 +1,7 @@
+;1-original;2-baseline;3-engine-only;4-map-only;5-full;6-full-sonnet
+1-original;;1;;;0;0
+2-baseline;54;;14;17;11;
+3-engine-only;;17;;;8;
+4-map-only;;11;;;8;
+5-full;58;17;13;17;;4
+6-full-sonnet;63;;;;13;

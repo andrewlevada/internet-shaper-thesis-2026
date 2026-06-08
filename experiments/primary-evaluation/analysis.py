@@ -13,14 +13,43 @@ from typing import Literal
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import tiktoken
 from scipy.stats import binomtest, friedmanchisquare, wilcoxon
 
 ROOT = Path(__file__).resolve().parent
 PAIRS_CSV = ROOT / "pairs.csv"
-WIN_MATRIX_CSV = ROOT / "win-matrix.csv"
 SAMPLES_DIR = ROOT / "data" / "samples" / "our-3"
 OUTPUT_DIR = ROOT / "analysis-output"
+
+RatingDimension = Literal["goal", "structural", "design"]
+
+DIMENSIONS: tuple[RatingDimension, ...] = ("goal", "structural", "design")
+
+DIMENSION_LABELS: dict[RatingDimension, str] = {
+    "goal": "Goal alignment",
+    "structural": "Structural cohesion",
+    "design": "Design alignment",
+}
+
+DIMENSION_CONFIG: dict[RatingDimension, tuple[str, str, str]] = {
+    "goal": ("goal_alignment", "goal_left_score", "goal_right_score"),
+    "structural": (
+        "structural_cohesion",
+        "structural_left_score",
+        "structural_right_score",
+    ),
+    "design": ("design_alignment", "design_left_score", "design_right_score"),
+}
+
+SCORE_COLUMNS = [
+    "goal_left_score",
+    "goal_right_score",
+    "structural_left_score",
+    "structural_right_score",
+    "design_left_score",
+    "design_right_score",
+]
+
+EXPECTED_FULLY_ZERO_SAMPLES = 3
 
 PipelineId = Literal[
     "original",
@@ -40,39 +69,29 @@ FOLDER_TO_ID: dict[str, PipelineId] = {
     "6-full-sonnet": "full-sonnet",
 }
 
-COMPARISON_PAIRS: list[tuple[PipelineId, PipelineId]] = [
-    ("original", "baseline"),
-    ("original", "full"),
-    ("original", "full-sonnet"),
-    ("baseline", "full"),
-    ("full", "full-sonnet"),
-    ("baseline", "engine-only"),
-    ("baseline", "map-only"),
-    ("engine-only", "full"),
-    ("map-only", "full"),
+LIKERT_ORDER = [
+    "left_better",
+    "left_slightly",
+    "similar",
+    "right_slightly",
+    "right_better",
 ]
-
-QWEN_MODEL_CONTEXT = 262_144
-VISIBLE_TOKEN_BUDGET = QWEN_MODEL_CONTEXT - 60_000
-
-LIKERT_TO_SCORE = {
-    "left_better": 2,
-    "left_slightly": 1,
-    "similar": 0,
-    "right_slightly": -1,
-    "right_better": -2,
-}
 
 ALPHA = 0.05
 
 ELAPSED_RE = re.compile(r"elapsed_s=([\d.]+)")
 
-AGENT_PIPELINE_IDS: tuple[PipelineId, ...] = (
+VS_ORIGINAL_PIPELINES: tuple[PipelineId, ...] = (
+    "baseline",
+    "full",
+    "full-sonnet",
+)
+
+TIMING_PIPELINE_IDS: tuple[PipelineId, ...] = (
     "baseline",
     "engine-only",
     "map-only",
     "full",
-    "full-sonnet",
 )
 
 TIMING_COMPARISON_PAIRS: list[tuple[PipelineId, PipelineId]] = [
@@ -81,8 +100,6 @@ TIMING_COMPARISON_PAIRS: list[tuple[PipelineId, PipelineId]] = [
     ("baseline", "engine-only"),
     ("map-only", "full"),
     ("engine-only", "full"),
-    ("full", "full-sonnet"),
-    ("baseline", "full-sonnet"),
 ]
 
 PIPELINE_COLORS: dict[PipelineId, str] = {
@@ -111,15 +128,33 @@ def folder_to_id(folder: str) -> PipelineId:
     raise KeyError(f"Unknown pipeline folder: {folder}")
 
 
-def load_pairs() -> pd.DataFrame:
+def find_fully_zero_samples(df: pd.DataFrame) -> list[str]:
+    numeric = df[SCORE_COLUMNS].fillna(0)
+    totals = numeric.groupby(df["sample_hex"]).sum().sum(axis=1)
+    zero_samples = totals[totals == 0].index.tolist()
+    if len(zero_samples) != EXPECTED_FULLY_ZERO_SAMPLES:
+        raise ValueError(
+            f"Expected exactly {EXPECTED_FULLY_ZERO_SAMPLES} fully-zero samples, "
+            f"found {len(zero_samples)}: {zero_samples}"
+        )
+    return zero_samples
+
+
+def load_pairs() -> tuple[pd.DataFrame, list[str]]:
     df = pd.read_csv(PAIRS_CSV)
     df["left_id"] = df["left_pipeline"].map(folder_to_id)
     df["right_id"] = df["right_pipeline"].map(folder_to_id)
-    return df
+    excluded = find_fully_zero_samples(df)
+    filtered = df[~df["sample_hex"].isin(excluded)].copy()
+    return filtered, excluded
 
 
-def load_win_matrix() -> pd.DataFrame:
-    raw = WIN_MATRIX_CSV.read_text(encoding="utf-8")
+def win_matrix_path(dimension: RatingDimension) -> Path:
+    return ROOT / f"win-matrix-{dimension}.csv"
+
+
+def load_win_matrix(dimension: RatingDimension) -> pd.DataFrame:
+    raw = win_matrix_path(dimension).read_text(encoding="utf-8")
     lines = [line for line in raw.strip().splitlines() if line.strip()]
     header = lines[0].split(";")
     rows = []
@@ -154,40 +189,89 @@ def filter_pair(df: pd.DataFrame, a: PipelineId, b: PipelineId) -> pd.DataFrame:
     return df.loc[mask].copy()
 
 
+def filter_dimension_rows(
+    df: pd.DataFrame, dimension: RatingDimension
+) -> pd.DataFrame:
+    _, left_col, right_col = DIMENSION_CONFIG[dimension]
+    return df[df[left_col].notna() & df[right_col].notna()].copy()
+
+
+def pair_scores(row: pd.Series, dimension: RatingDimension) -> tuple[int, int]:
+    _, left_col, right_col = DIMENSION_CONFIG[dimension]
+    return int(row[left_col]), int(row[right_col])
+
+
 def favored_pipeline(
-    rating: str, left_id: PipelineId, right_id: PipelineId
+    left_score: int,
+    right_score: int,
+    left_id: PipelineId,
+    right_id: PipelineId,
 ) -> PipelineId | None:
-    if rating in ("left_better", "left_slightly"):
+    if left_score > right_score:
         return left_id
-    if rating in ("right_better", "right_slightly"):
+    if right_score > left_score:
         return right_id
     return None
 
 
 def binary_win_for(
-    rating: str,
+    row: pd.Series,
     target: PipelineId,
-    left_id: PipelineId,
-    right_id: PipelineId,
+    dimension: RatingDimension,
 ) -> int | None:
-    winner = favored_pipeline(rating, left_id, right_id)
+    left_score, right_score = pair_scores(row, dimension)
+    winner = favored_pipeline(
+        left_score, right_score, row["left_id"], row["right_id"]
+    )
     if winner is None:
         return None
     return 1 if winner == target else 0
 
 
-def likert_for_target(
-    rating: str,
+def signed_score_for_target(
+    row: pd.Series,
     target: PipelineId,
-    left_id: PipelineId,
-    right_id: PipelineId,
+    dimension: RatingDimension,
 ) -> int:
-    raw = LIKERT_TO_SCORE[rating]
-    if target == left_id:
-        return raw
-    if target == right_id:
-        return -raw
-    raise ValueError(f"{target} not in pair ({left_id}, {right_id})")
+    left_score, right_score = pair_scores(row, dimension)
+    if target == row["left_id"]:
+        return left_score - right_score
+    if target == row["right_id"]:
+        return right_score - left_score
+    raise ValueError(f"{target} not in pair ({row['left_id']}, {row['right_id']})")
+
+
+def exact_binomial_win_rate(wins: int, total: int) -> TestResult:
+    if total == 0:
+        return TestResult(
+            "Exact binomial (win rate vs 50%)",
+            0,
+            None,
+            1.0,
+            False,
+            "No comparisons",
+        )
+    result = binomtest(wins, n=total, p=0.5, alternative="two-sided")
+    p = float(result.pvalue)
+    rate = wins / total
+    return TestResult(
+        "Exact binomial (win rate vs 50%)",
+        total,
+        float(result.statistic) if result.statistic is not None else None,
+        p,
+        p < ALPHA,
+        f"win rate = {rate:.1%} ({wins}/{total})",
+    )
+
+
+def adaptation_success_vs_original(
+    row: pd.Series,
+    treatment: PipelineId,
+    dimension: RatingDimension,
+) -> int:
+    """1 if treatment beats original; 0 for tie (failed adaptation) or loss."""
+    outcome = binary_win_for(row, treatment, dimension)
+    return 1 if outcome == 1 else 0
 
 
 def exact_sign_test_binary(wins: int, losses: int) -> TestResult:
@@ -272,43 +356,49 @@ def mcnemar_exact(b: int, c: int) -> TestResult:
 
 
 def analyze_vs_original(
-    df: pd.DataFrame, treatment: PipelineId, label: str
+    df: pd.DataFrame,
+    treatment: PipelineId,
+    dimension: RatingDimension,
+    label: str,
 ) -> dict[str, object]:
-    subset = filter_pair(df, "original", treatment)
+    subset = filter_dimension_rows(filter_pair(df, "original", treatment), dimension)
     wins = 0
-    losses = 0
-    ties = 0
+    catastrophic_losses = 0
+    standard_fails = 0
     for _, row in subset.iterrows():
-        outcome = binary_win_for(
-            row["rating"], treatment, row["left_id"], row["right_id"]
-        )
-        if outcome is None:
-            ties += 1
-        elif outcome == 1:
+        outcome = binary_win_for(row, treatment, dimension)
+        if outcome == 1:
             wins += 1
+        elif outcome == 0:
+            catastrophic_losses += 1
         else:
-            losses += 1
-    sign = exact_sign_test_binary(wins, losses)
+            standard_fails += 1
+    n = len(subset)
+    sign = exact_binomial_win_rate(wins, n)
     return {
         "label": label,
         "treatment": treatment,
-        "n_samples": len(subset),
+        "dimension": dimension,
+        "n_samples": n,
         "wins": wins,
-        "losses": losses,
-        "ties": ties,
-        "success_rate_decisive": wins / (wins + losses) if wins + losses else math.nan,
-        "success_rate_all": wins / len(subset) if len(subset) else math.nan,
+        "catastrophic_losses": catastrophic_losses,
+        "standard_fails": standard_fails,
+        "win_rate": wins / n if n else math.nan,
         "sign_test": sign,
     }
 
 
 def analyze_quality_pair(
-    df: pd.DataFrame, a: PipelineId, b: PipelineId, favor: PipelineId, label: str
+    df: pd.DataFrame,
+    a: PipelineId,
+    b: PipelineId,
+    favor: PipelineId,
+    dimension: RatingDimension,
+    label: str,
 ) -> dict[str, object]:
-    subset = filter_pair(df, a, b)
+    subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
     scores = [
-        likert_for_target(row["rating"], favor, row["left_id"], row["right_id"])
-        for _, row in subset.iterrows()
+        signed_score_for_target(row, favor, dimension) for _, row in subset.iterrows()
     ]
     wilcox = wilcoxon_signed_rank([float(s) for s in scores])
     wins = sum(1 for s in scores if s > 0)
@@ -319,6 +409,7 @@ def analyze_quality_pair(
         "label": label,
         "pair": (a, b),
         "favor": favor,
+        "dimension": dimension,
         "n_samples": len(subset),
         "scores": scores,
         "wilcoxon": wilcox,
@@ -328,118 +419,96 @@ def analyze_quality_pair(
 
 
 def compare_two_treatments_vs_original(
-    df: pd.DataFrame, t_a: PipelineId, t_b: PipelineId, label: str
+    df: pd.DataFrame,
+    t_a: PipelineId,
+    t_b: PipelineId,
+    dimension: RatingDimension,
+    label: str,
 ) -> dict[str, object]:
     samples = sorted(df["sample_hex"].unique())
     b_win = 0
     c_win = 0
     ties = 0
     for sample in samples:
-        row_a = filter_pair(
-            df[df["sample_hex"] == sample], "original", t_a
+        row_a = filter_dimension_rows(
+            filter_pair(df[df["sample_hex"] == sample], "original", t_a),
+            dimension,
         )
-        row_b = filter_pair(
-            df[df["sample_hex"] == sample], "original", t_b
+        row_b = filter_dimension_rows(
+            filter_pair(df[df["sample_hex"] == sample], "original", t_b),
+            dimension,
         )
         if row_a.empty or row_b.empty:
             continue
-        oa = binary_win_for(
-            row_a.iloc[0]["rating"], t_a, row_a.iloc[0]["left_id"], row_a.iloc[0]["right_id"]
-        )
-        ob = binary_win_for(
-            row_b.iloc[0]["rating"], t_b, row_b.iloc[0]["left_id"], row_b.iloc[0]["right_id"]
-        )
-        if oa is None or ob is None:
-            ties += 1
-            continue
+        oa = adaptation_success_vs_original(row_a.iloc[0], t_a, dimension)
+        ob = adaptation_success_vs_original(row_b.iloc[0], t_b, dimension)
         if oa == 1 and ob == 0:
             b_win += 1
         elif oa == 0 and ob == 1:
             c_win += 1
+        else:
+            ties += 1
     mcnemar = mcnemar_exact(b_win, c_win)
     return {
         "label": label,
         "t_a": t_a,
         "t_b": t_b,
+        "dimension": dimension,
         "a_wins_b_loses": b_win,
         "b_wins_a_loses": c_win,
-        "ties": ties,
+        "concordant": ties,
         "mcnemar": mcnemar,
     }
 
 
-def baseline_processability() -> pd.DataFrame:
-    encoding = tiktoken.get_encoding("o200k_base")
-    token_pat = re.compile(r"prompt_tokens=(\d+)")
-    rows = []
-    for sample_dir in sorted(SAMPLES_DIR.iterdir()):
-        if not sample_dir.is_dir():
-            continue
-        log_path = sample_dir / "2-baseline" / "agent.log"
-        visible = sample_dir / "2-baseline" / "work" / "visible.html"
-        if not visible.exists():
-            visible = sample_dir / "1-original" / "work" / "visible.html"
-        visible_tokens = None
-        if visible.exists():
-            visible_tokens = len(
-                encoding.encode(visible.read_text(encoding="utf-8", errors="replace"))
-            )
-        ran = log_path.exists()
-        max_prompt = None
-        overflow = False
-        edited = False
-        if ran:
-            text = log_path.read_text(encoding="utf-8", errors="replace")
-            tokens = [int(m.group(1)) for m in token_pat.finditer(text)]
-            max_prompt = max(tokens) if tokens else None
-            overflow = "=== Context overflow ===" in text or "Context overflow:" in text
-            edited = "(edited raw.html" in text
-        fits_visible = (
-            visible_tokens is not None and visible_tokens <= VISIBLE_TOKEN_BUDGET
-        )
-        rows.append(
-            {
-                "sample": sample_dir.name,
-                "baseline_ran": ran,
-                "visible_tokens": visible_tokens,
-                "fits_visible_budget": fits_visible,
-                "max_prompt_tokens": max_prompt,
-                "context_overflow": overflow,
-                "produced_edits": edited,
-                "processable_ran_ok": ran and not overflow,
-                "processable_fits_context": fits_visible if visible_tokens else None,
-            }
-        )
-    return pd.DataFrame(rows)
+def plot_win_rate_vs_original(
+    df: pd.DataFrame, dimension: RatingDimension, path: Path
+) -> tuple[list[dict[str, object]], TestResult, TestResult]:
+    """Bar chart of win rate vs original for baseline, full, and full-sonnet."""
+    results = [
+        analyze_vs_original(df, pipeline, dimension, pipeline)
+        for pipeline in VS_ORIGINAL_PIPELINES
+    ]
+    mcnemar_bf = compare_two_treatments_vs_original(
+        df, "baseline", "full", dimension, "baseline vs full"
+    )["mcnemar"]
+    mcnemar_fs = compare_two_treatments_vs_original(
+        df, "full", "full-sonnet", dimension, "full vs full-sonnet"
+    )["mcnemar"]
 
+    labels = list(VS_ORIGINAL_PIPELINES)
+    rates = [r["win_rate"] * 100 for r in results]
+    colors = [PIPELINE_COLORS[p] for p in labels]
 
-def plot_success_rates(results: list[dict[str, object]], path: Path) -> None:
-    labels = [r["label"] for r in results]
-    rates = [r["success_rate_decisive"] * 100 for r in results]
-    ns = [r["n_samples"] for r in results]
-    fig, ax = plt.subplots(figsize=(8, 4.5))
-    colors = ["#6b7280", "#2563eb", "#7c3aed", "#059669"]
-    bars = ax.bar(labels, rates, color=colors[: len(labels)], edgecolor="white")
+    fig, ax = plt.subplots(figsize=(7, 5))
+    x = np.arange(len(labels))
+    bars = ax.bar(x, rates, color=colors, edgecolor="white", width=0.6)
+    ax.set_xticks(x, labels)
+    ax.set_ylabel("Win rate vs original (%)")
+    ax.set_ylim(0, 105)
+    ax.set_title(f"{DIMENSION_LABELS[dimension]} — adaptation success vs original")
     ax.axhline(50, color="#9ca3af", linestyle="--", linewidth=1, label="Chance (50%)")
-    ax.set_ylabel("Success rate vs original (%)")
-    ax.set_ylim(0, 100)
-    ax.set_title("Task completion: share of decisive human judgments favoring treatment")
-    for bar, n in zip(bars, ns):
+
+    for bar, result in zip(bars, results):
         ax.text(
             bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 2,
-            f"n={n}",
+            bar.get_height() + 1.5,
+            f"{result['win_rate']:.0%}",
             ha="center",
             va="bottom",
             fontsize=9,
         )
-    ax.legend(loc="upper right")
+
+    ymax = max(rates) if rates else 100
+
+    ax.legend(loc="upper left")
     fig.tight_layout()
     fig.savefig(path, dpi=160)
     plt.close(fig)
+    return results, mcnemar_bf, mcnemar_fs
 
 
-def plot_win_matrix(matrix: pd.DataFrame, path: Path) -> None:
+def plot_win_matrix(matrix: pd.DataFrame, path: Path, dimension: RatingDimension) -> None:
     pipelines = [
         "original",
         "baseline",
@@ -470,38 +539,47 @@ def plot_win_matrix(matrix: pd.DataFrame, path: Path) -> None:
             if i == j:
                 continue
             ax.text(j, i, int(data[i, j]), ha="center", va="center", color="#111")
-    ax.set_title("Win matrix (binary judgments aggregated)")
+    ax.set_title(f"Win matrix — {DIMENSION_LABELS[dimension]}")
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     fig.tight_layout()
     fig.savefig(path, dpi=160)
     plt.close(fig)
 
 
-def plot_likert_distributions(df: pd.DataFrame, path: Path) -> None:
+def plot_likert_distributions(
+    df: pd.DataFrame, path: Path, dimension: RatingDimension
+) -> None:
+    rating_col, _, _ = DIMENSION_CONFIG[dimension]
     pairs_to_plot = [
-        ("baseline", "full", "full", "1b: baseline vs full (quality)"),
-        ("full", "full-sonnet", "full-sonnet", "2b: full vs full-sonnet (quality)"),
+        ("baseline", "full", "full", "1b: baseline vs full"),
+        ("full", "full-sonnet", "full-sonnet", "2b: full vs full-sonnet"),
         ("baseline", "engine-only", "engine-only", "3: baseline vs engine-only"),
         ("baseline", "map-only", "map-only", "3: baseline vs map-only"),
     ]
     fig, axes = plt.subplots(2, 2, figsize=(10, 8))
-    order = ["left_better", "left_slightly", "similar", "right_slightly", "right_better"]
-    for ax, (a, b, favor, title) in zip(axes.flatten(), pairs_to_plot):
-        subset = filter_pair(df, a, b)
-        counts = {k: 0 for k in order}
-        for rating in subset["rating"]:
-            counts[rating] = counts.get(rating, 0) + 1
-        ax.bar(order, [counts[k] for k in order], color="#4f46e5", alpha=0.85)
+    for ax, (a, b, _favor, title) in zip(axes.flatten(), pairs_to_plot):
+        subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
+        counts = {k: 0 for k in LIKERT_ORDER}
+        for rating in subset[rating_col]:
+            if pd.isna(rating) or rating == "na":
+                continue
+            counts[str(rating)] = counts.get(str(rating), 0) + 1
+        ax.bar(LIKERT_ORDER, [counts[k] for k in LIKERT_ORDER], color="#4f46e5", alpha=0.85)
         ax.set_title(title)
         ax.tick_params(axis="x", rotation=35)
         ax.set_ylabel("Count")
-    fig.suptitle("Likert preference distributions (raw ratings)", y=1.02)
+    fig.suptitle(
+        f"{DIMENSION_LABELS[dimension]} — preference distributions",
+        y=1.02,
+    )
     fig.tight_layout()
     fig.savefig(path, dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 
-def plot_component_wins(df: pd.DataFrame, path: Path) -> None:
+def plot_component_wins(
+    df: pd.DataFrame, path: Path, dimension: RatingDimension
+) -> None:
     pairs = [
         ("baseline", "engine-only", "engine-only"),
         ("baseline", "map-only", "map-only"),
@@ -512,12 +590,10 @@ def plot_component_wins(df: pd.DataFrame, path: Path) -> None:
     labels = []
     rates = []
     for a, b, favor in pairs:
-        subset = filter_pair(df, a, b)
+        subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
         wins = losses = 0
         for _, row in subset.iterrows():
-            outcome = binary_win_for(
-                row["rating"], favor, row["left_id"], row["right_id"]
-            )
+            outcome = binary_win_for(row, favor, dimension)
             if outcome is None:
                 continue
             if outcome == 1:
@@ -530,32 +606,10 @@ def plot_component_wins(df: pd.DataFrame, path: Path) -> None:
     ax.barh(labels, rates, color="#0d9488")
     ax.axvline(50, color="#9ca3af", linestyle="--", linewidth=1)
     ax.set_xlabel("Decisive win rate (%)")
-    ax.set_title("Component contribution: decisive preference for favored pipeline")
-    ax.set_xlim(0, 100)
-    fig.tight_layout()
-    fig.savefig(path, dpi=160)
-    plt.close(fig)
-
-
-def plot_processability(proc: pd.DataFrame, path: Path) -> None:
-    total = len(proc)
-    ran = proc["baseline_ran"].sum()
-    fits = proc["processable_fits_context"].sum()
-    fig, ax = plt.subplots(figsize=(6, 4))
-    labels = ["Baseline ran", "Visible DOM fits budget", "Produced edits"]
-    values = [
-        100 * ran / total,
-        100 * fits / total,
-        100 * proc["produced_edits"].sum() / total,
-    ]
-    ax.bar(labels, values, color=["#2563eb", "#7c3aed", "#059669"])
-    ax.set_ylim(0, 100)
-    ax.set_ylabel("Share of corpus samples (%)")
     ax.set_title(
-        f"Baseline processability (n={total}, visible budget ≤ {VISIBLE_TOKEN_BUDGET:,} tokens)"
+        f"{DIMENSION_LABELS[dimension]} — component contribution (decisive preference)"
     )
-    for i, v in enumerate(values):
-        ax.text(i, v + 2, f"{v:.0f}%", ha="center")
+    ax.set_xlim(0, 100)
     fig.tight_layout()
     fig.savefig(path, dpi=160)
     plt.close(fig)
@@ -575,7 +629,7 @@ def collect_pipeline_times() -> pd.DataFrame:
             continue
         sample = sample_dir.name
         for folder, pipeline_id in FOLDER_TO_ID.items():
-            if pipeline_id not in AGENT_PIPELINE_IDS:
+            if pipeline_id not in TIMING_PIPELINE_IDS:
                 continue
             log_path = sample_dir / folder / "agent.log"
             if not log_path.exists():
@@ -600,7 +654,7 @@ def collect_pipeline_times() -> pd.DataFrame:
 
 def summarize_pipeline_times(times: pd.DataFrame) -> pd.DataFrame:
     rows = []
-    for pipeline_id in AGENT_PIPELINE_IDS:
+    for pipeline_id in TIMING_PIPELINE_IDS:
         values = times.loc[times["pipeline_id"] == pipeline_id, "elapsed_s"]
         if values.empty:
             continue
@@ -685,7 +739,7 @@ def analyze_pipeline_timing(times: pd.DataFrame) -> dict[str, object]:
     pivot = times.pivot_table(
         index="sample", columns="pipeline_id", values="elapsed_s", aggfunc="first"
     )
-    friedman_cols = [p for p in AGENT_PIPELINE_IDS if p in pivot.columns]
+    friedman_cols = [p for p in TIMING_PIPELINE_IDS if p in pivot.columns]
     friedman_data = pivot[friedman_cols].dropna()
     if len(friedman_data) >= 2:
         stat, p = friedmanchisquare(
@@ -716,7 +770,7 @@ def analyze_pipeline_timing(times: pd.DataFrame) -> dict[str, object]:
 
 
 def plot_pipeline_time_distribution(times: pd.DataFrame, path: Path) -> None:
-    order = list(AGENT_PIPELINE_IDS)
+    order = list(TIMING_PIPELINE_IDS)
     data = [times.loc[times["pipeline_id"] == p, "elapsed_s"].to_numpy() for p in order]
     labels = order
     fig, ax = plt.subplots(figsize=(9, 5))
@@ -763,7 +817,7 @@ def plot_speedup_vs_baseline(times: pd.DataFrame, path: Path) -> None:
         index="sample", columns="pipeline_id", values="elapsed_s", aggfunc="first"
     )
     baseline = pivot["baseline"]
-    others = [p for p in AGENT_PIPELINE_IDS if p != "baseline"]
+    others = [p for p in TIMING_PIPELINE_IDS if p != "baseline"]
     speedups = []
     labels = []
     for pipeline_id in others:
@@ -792,13 +846,17 @@ def plot_speedup_vs_baseline(times: pd.DataFrame, path: Path) -> None:
 
 def timing_report_sections(timing: dict[str, object]) -> list[str]:
     summary: pd.DataFrame = timing["summary"]
+    n_samples = int(summary["n"].max()) if not summary.empty else 0
     sections = [
-        "## 4. Pipeline processing time",
+        "## Pipeline processing time",
         "",
         "Metric: sum of `elapsed_s` across API request rounds in each `agent.log` "
         "(model inference time only; excludes screenshot capture and rule apply).",
         "",
-        "### Summary (n=42 samples per pipeline)",
+        "Compared pipelines ran on the same hardware (`baseline`, `engine-only`, "
+        "`map-only`, `full`). `full-sonnet` is excluded — it ran on different hardware.",
+        "",
+        f"### Summary (n={n_samples} samples per pipeline)",
         "",
         "| Pipeline | Median | Mean | Min | Max |",
         "|----------|--------|------|-----|-----|",
@@ -845,120 +903,99 @@ def write_report(sections: list[str]) -> None:
     print(report)
 
 
-def main() -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    df = load_pairs()
-    matrix = load_win_matrix()
-    proc = baseline_processability()
-    proc.to_csv(OUTPUT_DIR / "baseline-processability.csv", index=False)
+def dimension_report_sections(
+    df: pd.DataFrame, dimension: RatingDimension
+) -> tuple[list[str], list[str]]:
+    """Return markdown sections and generated figure filenames for one dimension."""
+    sections: list[str] = [
+        f"## {DIMENSION_LABELS[dimension]}",
+        "",
+    ]
+    figure_names: list[str] = []
+    dim_slug = dimension
 
-    sections: list[str] = ["# Primary evaluation — statistical analysis", ""]
+    win_rate_plot = f"win-rate-vs-original-{dim_slug}.png"
+    vs_original_results, mcnemar_bf, mcnemar_fs = plot_win_rate_vs_original(
+        df, dimension, OUTPUT_DIR / win_rate_plot
+    )
+    figure_names.append(win_rate_plot)
 
-    # --- Q0 ---
-    total = len(proc)
-    ran_pct = 100 * proc["baseline_ran"].mean()
-    fits_pct = 100 * proc["processable_fits_context"].mean()
-    edit_pct = 100 * proc["produced_edits"].mean()
-    overflow_n = int(proc["context_overflow"].sum())
-    sections.append("## 0. Baseline processability (corpus, n={})".format(total))
+    sections.append("### 1a. vs original")
     sections.append(
-        f"- Baseline agent ran on **{ran_pct:.1f}%** ({int(proc['baseline_ran'].sum())}/{total}) samples."
+        "Win = reviewer prefers treatment over original. "
+        "Standard fail = tied (`similar`). Catastrophic fail = treatment rated worse than original."
     )
-    sections.append(
-        f"- Visible DOM alone fits a conservative context budget ({VISIBLE_TOKEN_BUDGET:,} tokens) on **{fits_pct:.1f}%** of samples; the rest are too large for a single `get_dom` call without compression."
-    )
-    sections.append(
-        f"- Context overflow during baseline run: **{overflow_n}** samples."
-    )
-    sections.append(
-        f"- Baseline produced edits (index.html) on **{edit_pct:.1f}%** of samples."
-    )
-    full_ran = sum(
-        1
-        for d in SAMPLES_DIR.iterdir()
-        if d.is_dir() and (d / "5-full" / "agent.log").exists()
-    )
-    sections.append(
-        f"- Full pipeline (`5-full`) ran on **{100 * full_ran / total:.1f}%** ({full_ran}/{total}) samples."
-    )
-    sections.append(
-        f"Human pairwise evaluation covers **{df['sample_hex'].nunique()}** samples ({len(df)} judgments)."
-    )
-
-    plot_processability(proc, OUTPUT_DIR / "processability.png")
-
-    # --- Q1a ---
-    q1a_baseline = analyze_vs_original(df, "baseline", "original vs baseline")
-    q1a_full = analyze_vs_original(df, "full", "original vs full")
-    sections.append("## 1a. Task completion vs original")
-    for r in (q1a_baseline, q1a_full):
-        sections.append(f"### {r['label']}")
+    for r in vs_original_results:
+        sections.append(f"#### {r['treatment']}")
         sections.append(
-            f"- Success rate (decisive only): **{r['success_rate_decisive']:.1%}** "
-            f"({r['wins']} wins, {r['losses']} losses, {r['ties']} ties, n={r['n_samples']})"
+            f"- Win rate: **{r['win_rate']:.1%}** "
+            f"({r['wins']} wins, {r['catastrophic_losses']} catastrophic fails, "
+            f"{r['standard_fails']} standard fails, n={r['n_samples']})"
         )
         sections.append(f"- {fmt_test(r['sign_test'])}")
+    sections.append("#### Paired McNemar (same samples, success vs original)")
+    sections.append(f"- baseline vs full: {fmt_test(mcnemar_bf)}")
+    sections.append(f"- full vs full-sonnet: {fmt_test(mcnemar_fs)}")
+
     compare_bf = compare_two_treatments_vs_original(
-        df, "baseline", "full", "baseline vs full (paired on same samples)"
+        df,
+        "baseline",
+        "full",
+        dimension,
+        "baseline vs full (paired on same samples)",
     )
-    sections.append("### Paired comparison: baseline vs full (both vs original)")
+    sections.append("#### Discordant pairs: baseline vs full")
     sections.append(
-        f"- Discordant: baseline wins & full loses **{compare_bf['a_wins_b_loses']}**, "
-        f"full wins & baseline loses **{compare_bf['b_wins_a_loses']}**, ties **{compare_bf['ties']}**"
-    )
-    sections.append(f"- {fmt_test(compare_bf['mcnemar'])}")
-
-    plot_success_rates(
-        [q1a_baseline, q1a_full],
-        OUTPUT_DIR / "success-vs-original.png",
+        f"- Baseline succeeds & full fails **{compare_bf['a_wins_b_loses']}**, "
+        f"full succeeds & baseline fails **{compare_bf['b_wins_a_loses']}**, "
+        f"concordant **{compare_bf['concordant']}**"
     )
 
-    # --- Q1b ---
+    compare_models = compare_two_treatments_vs_original(
+        df,
+        "full",
+        "full-sonnet",
+        dimension,
+        "full vs full-sonnet (both vs original)",
+    )
+    sections.append("#### Discordant pairs: full vs full-sonnet")
+    sections.append(
+        f"- Full succeeds & sonnet fails **{compare_models['a_wins_b_loses']}**, "
+        f"sonnet succeeds & full fails **{compare_models['b_wins_a_loses']}**, "
+        f"concordant **{compare_models['concordant']}**"
+    )
+
     q1b = analyze_quality_pair(
-        df, "baseline", "full", "full", "1b: baseline vs full (quality → full)"
+        df,
+        "baseline",
+        "full",
+        "full",
+        dimension,
+        "1b: baseline vs full",
     )
-    sections.append("## 1b. Quality (baseline vs full)")
+    sections.append("### 1b. baseline vs full")
     sections.append(
-        f"- Mean signed Likert score favoring full: **{q1b['mean_score']:+.2f}** (n={q1b['n_samples']})"
+        f"- Mean signed score favoring full: **{q1b['mean_score']:+.2f}** (n={q1b['n_samples']})"
     )
     sections.append(f"- {fmt_test(q1b['wilcoxon'])}")
     sections.append(f"- Binary (decisive) sign test: {fmt_test(q1b['sign_test'])}")
 
-    # --- Q2a / 2b ---
-    q2a = analyze_vs_original(df, "full-sonnet", "original vs full-sonnet")
     q2b = analyze_quality_pair(
         df,
         "full",
         "full-sonnet",
         "full-sonnet",
-        "2b: full vs full-sonnet (quality → sonnet)",
+        dimension,
+        "2b: full vs full-sonnet",
     )
-    compare_models = compare_two_treatments_vs_original(
-        df, "full", "full-sonnet", "full vs full-sonnet (both vs original)"
-    )
-    sections.append("## 2a. full-sonnet vs original")
+    sections.append("### 2b. full vs full-sonnet")
     sections.append(
-        f"- Success rate (decisive): **{q2a['success_rate_decisive']:.1%}** "
-        f"({q2a['wins']}/{q2a['wins'] + q2a['losses']} decisive)"
+        f"- Mean signed score favoring sonnet: **{q2b['mean_score']:+.2f}**"
     )
-    sections.append(f"- {fmt_test(q2a['sign_test'])}")
-    sections.append("## 2b. full vs full-sonnet (quality)")
-    sections.append(f"- Mean signed score favoring sonnet: **{q2b['mean_score']:+.2f}**")
     sections.append(f"- {fmt_test(q2b['wilcoxon'])}")
     sections.append(f"- Binary sign test: {fmt_test(q2b['sign_test'])}")
-    sections.append("### Paired: full vs sonnet (both vs original)")
-    sections.append(
-        f"- Discordant: full **{compare_models['a_wins_b_loses']}**, sonnet **{compare_models['b_wins_a_loses']}**"
-    )
-    sections.append(f"- {fmt_test(compare_models['mcnemar'])}")
 
-    plot_success_rates(
-        [q1a_full, q2a],
-        OUTPUT_DIR / "success-full-vs-sonnet.png",
-    )
-
-    # --- Q3 component contribution ---
-    sections.append("## 3. Component contribution")
+    sections.append("### 3. Component contribution")
     component_pairs = [
         ("baseline", "engine-only", "engine-only", "baseline vs engine-only"),
         ("baseline", "map-only", "map-only", "baseline vs map-only"),
@@ -967,12 +1004,10 @@ def main() -> None:
         ("baseline", "full", "full", "baseline vs full"),
     ]
     for a, b, favor, label in component_pairs:
-        subset = filter_pair(df, a, b)
+        subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
         wins = losses = ties = 0
         for _, row in subset.iterrows():
-            outcome = binary_win_for(
-                row["rating"], favor, row["left_id"], row["right_id"]
-            )
+            outcome = binary_win_for(row, favor, dimension)
             if outcome is None:
                 ties += 1
             elif outcome == 1:
@@ -980,18 +1015,54 @@ def main() -> None:
             else:
                 losses += 1
         sign = exact_sign_test_binary(wins, losses)
-        qual = analyze_quality_pair(df, a, b, favor, label)
-        sections.append(f"### {label}")
+        qual = analyze_quality_pair(df, a, b, favor, dimension, label)
+        sections.append(f"#### {label}")
+        decisive_rate = wins / (wins + losses) if wins + losses else math.nan
         sections.append(
-            f"- Decisive win rate for **{favor}**: **{wins / (wins + losses):.1%}** "
+            f"- Decisive win rate for **{favor}**: **{decisive_rate:.1%}** "
             f"({wins}W/{losses}L/{ties}T, n={len(subset)})"
         )
         sections.append(f"- Sign test: {fmt_test(sign)}")
-        sections.append(f"- Wilcoxon (Likert favoring {favor}): {fmt_test(qual['wilcoxon'])}")
+        sections.append(
+            f"- Wilcoxon (signed score favoring {favor}): {fmt_test(qual['wilcoxon'])}"
+        )
 
-    plot_component_wins(df, OUTPUT_DIR / "component-contribution.png")
-    plot_likert_distributions(df, OUTPUT_DIR / "likert-distributions.png")
-    plot_win_matrix(matrix, OUTPUT_DIR / "win-matrix.png")
+    component_plot = f"component-contribution-{dim_slug}.png"
+    likert_plot = f"likert-distributions-{dim_slug}.png"
+    win_matrix_plot = f"win-matrix-{dim_slug}.png"
+    plot_component_wins(df, OUTPUT_DIR / component_plot, dimension)
+    plot_likert_distributions(df, OUTPUT_DIR / likert_plot, dimension)
+    matrix = load_win_matrix(dimension)
+    plot_win_matrix(matrix, OUTPUT_DIR / win_matrix_plot, dimension)
+    figure_names.extend([component_plot, likert_plot, win_matrix_plot])
+
+    return sections, figure_names
+
+
+def main() -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    df, excluded_samples = load_pairs()
+
+    sections: list[str] = ["# Primary evaluation — statistical analysis", ""]
+    figure_names: list[str] = []
+
+    sections.append("## Corpus and exclusions")
+    sections.append(
+        f"Human pairwise evaluation covers **{df['sample_hex'].nunique()}** samples "
+        f"({len(df)} judgments) after excluding **{len(excluded_samples)}** samples "
+        f"with all-zero scores: `{', '.join(excluded_samples)}`."
+    )
+
+    sections.append("## Pairwise human judgments (three rating scales)")
+    sections.append(
+        "Each comparison uses hierarchical ratings on goal alignment, structural cohesion, "
+        "and design alignment. Binary win scores (0/1) are derived per scale from the exported CSV."
+    )
+
+    for dimension in DIMENSIONS:
+        dim_sections, dim_figures = dimension_report_sections(df, dimension)
+        sections.extend(dim_sections)
+        figure_names.extend(dim_figures)
 
     times = collect_pipeline_times()
     times.to_csv(OUTPUT_DIR / "pipeline-times.csv", index=False)
@@ -1003,19 +1074,16 @@ def main() -> None:
         timing["summary"], OUTPUT_DIR / "pipeline-times-medians.png"
     )
     plot_speedup_vs_baseline(times, OUTPUT_DIR / "pipeline-speedup-vs-baseline.png")
+    figure_names.extend(
+        [
+            "pipeline-times-boxplot.png",
+            "pipeline-times-medians.png",
+            "pipeline-speedup-vs-baseline.png",
+        ]
+    )
 
     sections.append("## Figures")
-    for name in (
-        "processability.png",
-        "success-vs-original.png",
-        "success-full-vs-sonnet.png",
-        "likert-distributions.png",
-        "component-contribution.png",
-        "win-matrix.png",
-        "pipeline-times-boxplot.png",
-        "pipeline-times-medians.png",
-        "pipeline-speedup-vs-baseline.png",
-    ):
+    for name in figure_names:
         sections.append(f"- `{OUTPUT_DIR.name}/{name}`")
 
     write_report(sections)
