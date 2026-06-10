@@ -2,13 +2,17 @@
 
 
 
+Eval run: **run-02** (`eval-results/run-02/`).
+
+
+
 ## Corpus and exclusions
 
 Human pairwise evaluation covers **65** samples (585 judgments) after excluding **3** samples with all-zero scores: `0e4fe2f8, e1d82f59, eda9143e`.
 
-## Pairwise human judgments (three rating scales)
+## Pairwise human judgments (3 rating scales)
 
-Each comparison uses hierarchical ratings on goal alignment, structural cohesion, and design alignment. Binary win scores (0/1) are derived per scale from the exported CSV.
+Each comparison uses hierarchical ratings on Goal alignment, Structural cohesion, Design alignment. Binary win scores (0/1) are derived per scale from the exported CSV.
 
 ## Goal alignment
 
@@ -558,38 +562,38 @@ Compared pipelines ran on the same hardware (`baseline`, `engine-only`, `map-onl
 
 ## Figures
 
-- `analysis-output/win-rate-vs-original-goal.png`
+- `analysis-output/run-02/win-rate-vs-original-goal.png`
 
-- `analysis-output/ablation-matrix-goal.png`
+- `analysis-output/run-02/ablation-matrix-goal.png`
 
-- `analysis-output/component-contribution-goal.png`
+- `analysis-output/run-02/component-contribution-goal.png`
 
-- `analysis-output/likert-distributions-goal.png`
+- `analysis-output/run-02/likert-distributions-goal.png`
 
-- `analysis-output/win-matrix-goal.png`
+- `analysis-output/run-02/win-matrix-goal.png`
 
-- `analysis-output/win-rate-vs-original-structural.png`
+- `analysis-output/run-02/win-rate-vs-original-structural.png`
 
-- `analysis-output/ablation-matrix-structural.png`
+- `analysis-output/run-02/ablation-matrix-structural.png`
 
-- `analysis-output/component-contribution-structural.png`
+- `analysis-output/run-02/component-contribution-structural.png`
 
-- `analysis-output/likert-distributions-structural.png`
+- `analysis-output/run-02/likert-distributions-structural.png`
 
-- `analysis-output/win-matrix-structural.png`
+- `analysis-output/run-02/win-matrix-structural.png`
 
-- `analysis-output/win-rate-vs-original-design.png`
+- `analysis-output/run-02/win-rate-vs-original-design.png`
 
-- `analysis-output/ablation-matrix-design.png`
+- `analysis-output/run-02/ablation-matrix-design.png`
 
-- `analysis-output/component-contribution-design.png`
+- `analysis-output/run-02/component-contribution-design.png`
 
-- `analysis-output/likert-distributions-design.png`
+- `analysis-output/run-02/likert-distributions-design.png`
 
-- `analysis-output/win-matrix-design.png`
+- `analysis-output/run-02/win-matrix-design.png`
 
-- `analysis-output/pipeline-times-boxplot.png`
+- `analysis-output/run-02/pipeline-times-boxplot.png`
 
-- `analysis-output/pipeline-times-medians.png`
+- `analysis-output/run-02/pipeline-times-medians.png`
 
-- `analysis-output/pipeline-speedup-vs-baseline.png`
+- `analysis-output/run-02/pipeline-speedup-vs-baseline.png`

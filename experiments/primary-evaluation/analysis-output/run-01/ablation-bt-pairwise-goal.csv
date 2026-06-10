@@ -1,0 +1,7 @@
+pipeline_a,pipeline_b,wins_a,wins_b,observed_rate_a,bt_rate_a
+baseline,engine-only,7,2,0.7777777777777778,0.7948593465438097
+baseline,map-only,1,5,0.16666666666666666,0.24517448657310728
+baseline,full,6,4,0.6,0.5375218961749114
+engine-only,map-only,0,0,,0.07734454786989316
+engine-only,full,1,4,0.2,0.23074682378368028
+map-only,full,5,2,0.7142857142857143,0.7815781313284521

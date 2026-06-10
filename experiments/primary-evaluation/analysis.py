@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import math
 import re
 import statistics
@@ -16,13 +17,10 @@ import pandas as pd
 from scipy.stats import binomtest, friedmanchisquare, wilcoxon
 
 ROOT = Path(__file__).resolve().parent
-PAIRS_CSV = ROOT / "pairs.csv"
+EVAL_RESULTS_DIR = ROOT / "eval-results"
 SAMPLES_DIR = ROOT / "data" / "samples" / "our-3"
-OUTPUT_DIR = ROOT / "analysis-output"
 
 RatingDimension = Literal["goal", "structural", "design"]
-
-DIMENSIONS: tuple[RatingDimension, ...] = ("goal", "structural", "design")
 
 DIMENSION_LABELS: dict[RatingDimension, str] = {
     "goal": "Goal alignment",
@@ -30,7 +28,7 @@ DIMENSION_LABELS: dict[RatingDimension, str] = {
     "design": "Design alignment",
 }
 
-DIMENSION_CONFIG: dict[RatingDimension, tuple[str, str, str]] = {
+MULTI_SCALE_DIMENSION_CONFIG: dict[RatingDimension, tuple[str, str, str]] = {
     "goal": ("goal_alignment", "goal_left_score", "goal_right_score"),
     "structural": (
         "structural_cohesion",
@@ -40,16 +38,9 @@ DIMENSION_CONFIG: dict[RatingDimension, tuple[str, str, str]] = {
     "design": ("design_alignment", "design_left_score", "design_right_score"),
 }
 
-SCORE_COLUMNS = [
-    "goal_left_score",
-    "goal_right_score",
-    "structural_left_score",
-    "structural_right_score",
-    "design_left_score",
-    "design_right_score",
-]
-
-EXPECTED_FULLY_ZERO_SAMPLES = 3
+SINGLE_SCALE_DIMENSION_CONFIG: dict[RatingDimension, tuple[str, str, str]] = {
+    "goal": ("rating", "left_score", "right_score"),
+}
 
 PipelineId = Literal[
     "original",
@@ -146,39 +137,122 @@ class TestResult:
     notes: str = ""
 
 
+@dataclass(frozen=True)
+class EvalSchema:
+    """Column layout for one eval-results run (single- or multi-scale)."""
+
+    dimensions: tuple[RatingDimension, ...]
+    dimension_config: dict[RatingDimension, tuple[str, str, str]]
+    score_columns: tuple[str, ...]
+    expected_fully_zero_samples: int | None
+
+    @property
+    def scale_count(self) -> int:
+        return len(self.dimensions)
+
+    @classmethod
+    def detect(cls, pairs_csv: Path) -> EvalSchema:
+        columns = pairs_csv.read_text(encoding="utf-8").splitlines()[0].split(",")
+        if "goal_left_score" in columns:
+            score_columns = tuple(
+                col
+                for _, left_col, right_col in MULTI_SCALE_DIMENSION_CONFIG.values()
+                for col in (left_col, right_col)
+            )
+            return cls(
+                dimensions=("goal", "structural", "design"),
+                dimension_config=MULTI_SCALE_DIMENSION_CONFIG,
+                score_columns=score_columns,
+                expected_fully_zero_samples=3,
+            )
+        if "left_score" in columns:
+            return cls(
+                dimensions=("goal",),
+                dimension_config=SINGLE_SCALE_DIMENSION_CONFIG,
+                score_columns=("left_score", "right_score"),
+                expected_fully_zero_samples=0,
+            )
+        raise ValueError(
+            f"Unrecognized pairs.csv schema in {pairs_csv}: {columns}"
+        )
+
+
+@dataclass(frozen=True)
+class EvalRun:
+    run_id: str
+    schema: EvalSchema
+
+    @property
+    def result_dir(self) -> Path:
+        return EVAL_RESULTS_DIR / self.run_id
+
+    @property
+    def pairs_csv(self) -> Path:
+        return self.result_dir / "pairs.csv"
+
+    @property
+    def output_dir(self) -> Path:
+        return ROOT / "analysis-output" / self.run_id
+
+    def win_matrix_path(self, dimension: RatingDimension) -> Path:
+        if self.schema.scale_count == 1:
+            return self.result_dir / "win-matrix.csv"
+        return self.result_dir / f"win-matrix-{dimension}.csv"
+
+    @classmethod
+    def list_run_ids(cls) -> list[str]:
+        if not EVAL_RESULTS_DIR.is_dir():
+            return []
+        return sorted(
+            path.name
+            for path in EVAL_RESULTS_DIR.iterdir()
+            if path.is_dir() and (path / "pairs.csv").is_file()
+        )
+
+    @classmethod
+    def load(cls, run_id: str) -> EvalRun:
+        pairs_csv = EVAL_RESULTS_DIR / run_id / "pairs.csv"
+        if not pairs_csv.is_file():
+            available = ", ".join(cls.list_run_ids()) or "(none)"
+            raise FileNotFoundError(
+                f"Eval run {run_id!r} not found at {pairs_csv}. "
+                f"Available runs: {available}"
+            )
+        return cls(run_id=run_id, schema=EvalSchema.detect(pairs_csv))
+
+
 def folder_to_id(folder: str) -> PipelineId:
     if folder in FOLDER_TO_ID:
         return FOLDER_TO_ID[folder]
     raise KeyError(f"Unknown pipeline folder: {folder}")
 
 
-def find_fully_zero_samples(df: pd.DataFrame) -> list[str]:
-    numeric = df[SCORE_COLUMNS].fillna(0)
+def find_fully_zero_samples(
+    df: pd.DataFrame, schema: EvalSchema
+) -> list[str]:
+    numeric = df[list(schema.score_columns)].fillna(0)
     totals = numeric.groupby(df["sample_hex"]).sum().sum(axis=1)
     zero_samples = totals[totals == 0].index.tolist()
-    if len(zero_samples) != EXPECTED_FULLY_ZERO_SAMPLES:
+    expected = schema.expected_fully_zero_samples
+    if expected is not None and len(zero_samples) != expected:
         raise ValueError(
-            f"Expected exactly {EXPECTED_FULLY_ZERO_SAMPLES} fully-zero samples, "
+            f"Expected exactly {expected} fully-zero samples, "
             f"found {len(zero_samples)}: {zero_samples}"
         )
     return zero_samples
 
 
-def load_pairs() -> tuple[pd.DataFrame, list[str]]:
-    df = pd.read_csv(PAIRS_CSV)
+def load_pairs(eval_run: EvalRun) -> tuple[pd.DataFrame, list[str]]:
+    df = pd.read_csv(eval_run.pairs_csv)
     df["left_id"] = df["left_pipeline"].map(folder_to_id)
     df["right_id"] = df["right_pipeline"].map(folder_to_id)
-    excluded = find_fully_zero_samples(df)
+    excluded = find_fully_zero_samples(df, eval_run.schema)
     filtered = df[~df["sample_hex"].isin(excluded)].copy()
     return filtered, excluded
 
 
-def win_matrix_path(dimension: RatingDimension) -> Path:
-    return ROOT / f"win-matrix-{dimension}.csv"
-
-
-def load_win_matrix(dimension: RatingDimension) -> pd.DataFrame:
-    raw = win_matrix_path(dimension).read_text(encoding="utf-8")
+def load_win_matrix(eval_run: EvalRun, dimension: RatingDimension) -> pd.DataFrame:
+    raw = eval_run.win_matrix_path(dimension).read_text(encoding="utf-8")
     lines = [line for line in raw.strip().splitlines() if line.strip()]
     header = lines[0].split(";")
     rows = []
@@ -214,14 +288,20 @@ def filter_pair(df: pd.DataFrame, a: PipelineId, b: PipelineId) -> pd.DataFrame:
 
 
 def filter_dimension_rows(
-    df: pd.DataFrame, dimension: RatingDimension
+    df: pd.DataFrame,
+    dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> pd.DataFrame:
-    _, left_col, right_col = DIMENSION_CONFIG[dimension]
+    _, left_col, right_col = schema.dimension_config[dimension]
     return df[df[left_col].notna() & df[right_col].notna()].copy()
 
 
-def pair_scores(row: pd.Series, dimension: RatingDimension) -> tuple[int, int]:
-    _, left_col, right_col = DIMENSION_CONFIG[dimension]
+def pair_scores(
+    row: pd.Series,
+    dimension: RatingDimension,
+    schema: EvalSchema,
+) -> tuple[int, int]:
+    _, left_col, right_col = schema.dimension_config[dimension]
     return int(row[left_col]), int(row[right_col])
 
 
@@ -242,8 +322,9 @@ def binary_win_for(
     row: pd.Series,
     target: PipelineId,
     dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> int | None:
-    left_score, right_score = pair_scores(row, dimension)
+    left_score, right_score = pair_scores(row, dimension, schema)
     winner = favored_pipeline(
         left_score, right_score, row["left_id"], row["right_id"]
     )
@@ -256,8 +337,9 @@ def signed_score_for_target(
     row: pd.Series,
     target: PipelineId,
     dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> int:
-    left_score, right_score = pair_scores(row, dimension)
+    left_score, right_score = pair_scores(row, dimension, schema)
     if target == row["left_id"]:
         return left_score - right_score
     if target == row["right_id"]:
@@ -292,9 +374,10 @@ def adaptation_success_vs_original(
     row: pd.Series,
     treatment: PipelineId,
     dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> int:
     """1 if treatment beats original; 0 for tie (failed adaptation) or loss."""
-    outcome = binary_win_for(row, treatment, dimension)
+    outcome = binary_win_for(row, treatment, dimension, schema)
     return 1 if outcome == 1 else 0
 
 
@@ -384,13 +467,16 @@ def analyze_vs_original(
     treatment: PipelineId,
     dimension: RatingDimension,
     label: str,
+    schema: EvalSchema,
 ) -> dict[str, object]:
-    subset = filter_dimension_rows(filter_pair(df, "original", treatment), dimension)
+    subset = filter_dimension_rows(
+        filter_pair(df, "original", treatment), dimension, schema
+    )
     wins = 0
     catastrophic_losses = 0
     standard_fails = 0
     for _, row in subset.iterrows():
-        outcome = binary_win_for(row, treatment, dimension)
+        outcome = binary_win_for(row, treatment, dimension, schema)
         if outcome == 1:
             wins += 1
         elif outcome == 0:
@@ -419,10 +505,12 @@ def analyze_quality_pair(
     favor: PipelineId,
     dimension: RatingDimension,
     label: str,
+    schema: EvalSchema,
 ) -> dict[str, object]:
-    subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
+    subset = filter_dimension_rows(filter_pair(df, a, b), dimension, schema)
     scores = [
-        signed_score_for_target(row, favor, dimension) for _, row in subset.iterrows()
+        signed_score_for_target(row, favor, dimension, schema)
+        for _, row in subset.iterrows()
     ]
     wilcox = wilcoxon_signed_rank([float(s) for s in scores])
     wins = sum(1 for s in scores if s > 0)
@@ -448,6 +536,7 @@ def compare_two_treatments_vs_original(
     t_b: PipelineId,
     dimension: RatingDimension,
     label: str,
+    schema: EvalSchema,
 ) -> dict[str, object]:
     samples = sorted(df["sample_hex"].unique())
     b_win = 0
@@ -457,15 +546,17 @@ def compare_two_treatments_vs_original(
         row_a = filter_dimension_rows(
             filter_pair(df[df["sample_hex"] == sample], "original", t_a),
             dimension,
+            schema,
         )
         row_b = filter_dimension_rows(
             filter_pair(df[df["sample_hex"] == sample], "original", t_b),
             dimension,
+            schema,
         )
         if row_a.empty or row_b.empty:
             continue
-        oa = adaptation_success_vs_original(row_a.iloc[0], t_a, dimension)
-        ob = adaptation_success_vs_original(row_b.iloc[0], t_b, dimension)
+        oa = adaptation_success_vs_original(row_a.iloc[0], t_a, dimension, schema)
+        ob = adaptation_success_vs_original(row_b.iloc[0], t_b, dimension, schema)
         if oa == 1 and ob == 0:
             b_win += 1
         elif oa == 0 and ob == 1:
@@ -486,18 +577,21 @@ def compare_two_treatments_vs_original(
 
 
 def plot_win_rate_vs_original(
-    df: pd.DataFrame, dimension: RatingDimension, path: Path
+    df: pd.DataFrame,
+    dimension: RatingDimension,
+    path: Path,
+    schema: EvalSchema,
 ) -> tuple[list[dict[str, object]], TestResult, TestResult]:
     """Bar chart of win rate vs original for baseline, full, and full-sonnet."""
     results = [
-        analyze_vs_original(df, pipeline, dimension, pipeline)
+        analyze_vs_original(df, pipeline, dimension, pipeline, schema)
         for pipeline in VS_ORIGINAL_PIPELINES
     ]
     mcnemar_bf = compare_two_treatments_vs_original(
-        df, "baseline", "full", dimension, "baseline vs full"
+        df, "baseline", "full", dimension, "baseline vs full", schema
     )["mcnemar"]
     mcnemar_fs = compare_two_treatments_vs_original(
-        df, "full", "full-sonnet", dimension, "full vs full-sonnet"
+        df, "full", "full-sonnet", dimension, "full vs full-sonnet", schema
     )["mcnemar"]
 
     labels = list(VS_ORIGINAL_PIPELINES)
@@ -571,9 +665,12 @@ def plot_win_matrix(matrix: pd.DataFrame, path: Path, dimension: RatingDimension
 
 
 def plot_likert_distributions(
-    df: pd.DataFrame, path: Path, dimension: RatingDimension
+    df: pd.DataFrame,
+    path: Path,
+    dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> None:
-    rating_col, _, _ = DIMENSION_CONFIG[dimension]
+    rating_col, _, _ = schema.dimension_config[dimension]
     pairs_to_plot = [
         ("baseline", "full", "full", "1b: baseline vs full"),
         ("full", "full-sonnet", "full-sonnet", "2b: full vs full-sonnet"),
@@ -582,7 +679,7 @@ def plot_likert_distributions(
     ]
     fig, axes = plt.subplots(2, 2, figsize=(10, 8))
     for ax, (a, b, _favor, title) in zip(axes.flatten(), pairs_to_plot):
-        subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
+        subset = filter_dimension_rows(filter_pair(df, a, b), dimension, schema)
         counts = {k: 0 for k in LIKERT_ORDER}
         for rating in subset[rating_col]:
             if pd.isna(rating) or rating == "na":
@@ -629,10 +726,13 @@ class AblationBradleyTerry:
 
 
 def ablation_decisive_record(
-    df: pd.DataFrame, pipeline: PipelineId, dimension: RatingDimension
+    df: pd.DataFrame,
+    pipeline: PipelineId,
+    dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> tuple[int, int, int]:
     wins = losses = ties = 0
-    subset = filter_dimension_rows(df, dimension)
+    subset = filter_dimension_rows(df, dimension, schema)
     ablation = set(ABLATION_PIPELINE_IDS)
     for _, row in subset.iterrows():
         left, right = row["left_id"], row["right_id"]
@@ -641,7 +741,7 @@ def ablation_decisive_record(
         opponent = right if left == pipeline else left
         if opponent not in ablation:
             continue
-        outcome = binary_win_for(row, pipeline, dimension)
+        outcome = binary_win_for(row, pipeline, dimension, schema)
         if outcome is None:
             ties += 1
         elif outcome == 1:
@@ -652,17 +752,17 @@ def ablation_decisive_record(
 
 
 def fit_ablation_bradley_terry(
-    df: pd.DataFrame, dimension: RatingDimension
+    df: pd.DataFrame, dimension: RatingDimension, schema: EvalSchema
 ) -> AblationBradleyTerry:
     pipelines = list(ABLATION_PIPELINE_IDS)
     index = {pipeline: i for i, pipeline in enumerate(pipelines)}
     wins = np.zeros((len(pipelines), len(pipelines)))
-    subset = filter_dimension_rows(df, dimension)
+    subset = filter_dimension_rows(df, dimension, schema)
     for _, row in subset.iterrows():
         left, right = row["left_id"], row["right_id"]
         if left not in index or right not in index:
             continue
-        outcome = binary_win_for(row, left, dimension)
+        outcome = binary_win_for(row, left, dimension, schema)
         if outcome == 1:
             wins[index[left], index[right]] += 1
         elif outcome == 0:
@@ -692,7 +792,7 @@ def fit_ablation_bradley_terry(
         pipeline: float(strength[index[pipeline]]) for pipeline in pipelines
     }
     records = {
-        pipeline: ablation_decisive_record(df, pipeline, dimension)
+        pipeline: ablation_decisive_record(df, pipeline, dimension, schema)
         for pipeline in pipelines
     }
 
@@ -911,7 +1011,10 @@ def ablation_matrix_report_sections(
 
 
 def plot_component_wins(
-    df: pd.DataFrame, path: Path, dimension: RatingDimension
+    df: pd.DataFrame,
+    path: Path,
+    dimension: RatingDimension,
+    schema: EvalSchema,
 ) -> None:
     pairs = [
         ("baseline", "engine-only", "engine-only"),
@@ -923,10 +1026,10 @@ def plot_component_wins(
     labels = []
     rates = []
     for a, b, favor in pairs:
-        subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
+        subset = filter_dimension_rows(filter_pair(df, a, b), dimension, schema)
         wins = losses = 0
         for _, row in subset.iterrows():
-            outcome = binary_win_for(row, favor, dimension)
+            outcome = binary_win_for(row, favor, dimension, schema)
             if outcome is None:
                 continue
             if outcome == 1:
@@ -1229,17 +1332,21 @@ def fmt_test(t: TestResult) -> str:
     )
 
 
-def write_report(sections: list[str]) -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+def write_report(sections: list[str], output_dir: Path) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
     report = "\n\n".join(sections)
-    (OUTPUT_DIR / "report.md").write_text(report + "\n", encoding="utf-8")
+    (output_dir / "report.md").write_text(report + "\n", encoding="utf-8")
     print(report)
 
 
 def dimension_report_sections(
-    df: pd.DataFrame, dimension: RatingDimension
+    df: pd.DataFrame,
+    dimension: RatingDimension,
+    eval_run: EvalRun,
 ) -> tuple[list[str], list[str]]:
     """Return markdown sections and generated figure filenames for one dimension."""
+    schema = eval_run.schema
+    output_dir = eval_run.output_dir
     sections: list[str] = [
         f"## {DIMENSION_LABELS[dimension]}",
         "",
@@ -1249,7 +1356,7 @@ def dimension_report_sections(
 
     win_rate_plot = f"win-rate-vs-original-{dim_slug}.png"
     vs_original_results, mcnemar_bf, mcnemar_fs = plot_win_rate_vs_original(
-        df, dimension, OUTPUT_DIR / win_rate_plot
+        df, dimension, output_dir / win_rate_plot, schema
     )
     figure_names.append(win_rate_plot)
 
@@ -1276,6 +1383,7 @@ def dimension_report_sections(
         "full",
         dimension,
         "baseline vs full (paired on same samples)",
+        schema,
     )
     sections.append("#### Discordant pairs: baseline vs full")
     sections.append(
@@ -1290,6 +1398,7 @@ def dimension_report_sections(
         "full-sonnet",
         dimension,
         "full vs full-sonnet (both vs original)",
+        schema,
     )
     sections.append("#### Discordant pairs: full vs full-sonnet")
     sections.append(
@@ -1305,6 +1414,7 @@ def dimension_report_sections(
         "full",
         dimension,
         "1b: baseline vs full",
+        schema,
     )
     sections.append("### 1b. baseline vs full")
     sections.append(
@@ -1320,6 +1430,7 @@ def dimension_report_sections(
         "full-sonnet",
         dimension,
         "2b: full vs full-sonnet",
+        schema,
     )
     sections.append("### 2b. full vs full-sonnet")
     sections.append(
@@ -1328,15 +1439,15 @@ def dimension_report_sections(
     sections.append(f"- {fmt_test(q2b['wilcoxon'])}")
     sections.append(f"- Binary sign test: {fmt_test(q2b['sign_test'])}")
 
-    ablation_bt = fit_ablation_bradley_terry(df, dimension)
+    ablation_bt = fit_ablation_bradley_terry(df, dimension, schema)
     ablation_cells = ablation_matrix_cells(ablation_bt)
     ablation_plot = f"ablation-matrix-{dim_slug}.png"
-    plot_ablation_matrix(ablation_cells, OUTPUT_DIR / ablation_plot, dimension)
+    plot_ablation_matrix(ablation_cells, output_dir / ablation_plot, dimension)
     ablation_matrix_csv(ablation_cells).to_csv(
-        OUTPUT_DIR / f"ablation-matrix-{dim_slug}.csv", index=False
+        output_dir / f"ablation-matrix-{dim_slug}.csv", index=False
     )
     ablation_pairwise_csv(ablation_bt).to_csv(
-        OUTPUT_DIR / f"ablation-bt-pairwise-{dim_slug}.csv", index=False
+        output_dir / f"ablation-bt-pairwise-{dim_slug}.csv", index=False
     )
     sections.extend(ablation_matrix_report_sections(ablation_bt, ablation_cells))
     figure_names.append(ablation_plot)
@@ -1350,10 +1461,10 @@ def dimension_report_sections(
         ("baseline", "full", "full", "baseline vs full"),
     ]
     for a, b, favor, label in component_pairs:
-        subset = filter_dimension_rows(filter_pair(df, a, b), dimension)
+        subset = filter_dimension_rows(filter_pair(df, a, b), dimension, schema)
         wins = losses = ties = 0
         for _, row in subset.iterrows():
-            outcome = binary_win_for(row, favor, dimension)
+            outcome = binary_win_for(row, favor, dimension, schema)
             if outcome is None:
                 ties += 1
             elif outcome == 1:
@@ -1361,7 +1472,7 @@ def dimension_report_sections(
             else:
                 losses += 1
         sign = exact_sign_test_binary(wins, losses)
-        qual = analyze_quality_pair(df, a, b, favor, dimension, label)
+        qual = analyze_quality_pair(df, a, b, favor, dimension, label, schema)
         sections.append(f"#### {label}")
         decisive_rate = wins / (wins + losses) if wins + losses else math.nan
         sections.append(
@@ -1376,50 +1487,92 @@ def dimension_report_sections(
     component_plot = f"component-contribution-{dim_slug}.png"
     likert_plot = f"likert-distributions-{dim_slug}.png"
     win_matrix_plot = f"win-matrix-{dim_slug}.png"
-    plot_component_wins(df, OUTPUT_DIR / component_plot, dimension)
-    plot_likert_distributions(df, OUTPUT_DIR / likert_plot, dimension)
-    matrix = load_win_matrix(dimension)
-    plot_win_matrix(matrix, OUTPUT_DIR / win_matrix_plot, dimension)
+    plot_component_wins(df, output_dir / component_plot, dimension, schema)
+    plot_likert_distributions(df, output_dir / likert_plot, dimension, schema)
+    matrix = load_win_matrix(eval_run, dimension)
+    plot_win_matrix(matrix, output_dir / win_matrix_plot, dimension)
     figure_names.extend([component_plot, likert_plot, win_matrix_plot])
 
     return sections, figure_names
 
 
-def main() -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    df, excluded_samples = load_pairs()
+def parse_args() -> argparse.Namespace:
+    available = EvalRun.list_run_ids()
+    parser = argparse.ArgumentParser(
+        description="Statistical analysis of primary evaluation pairwise results."
+    )
+    parser.add_argument(
+        "--run",
+        default=available[-1] if available else None,
+        choices=available or None,
+        help=(
+            "Eval-results run folder to analyze "
+            f"(available: {', '.join(available) or 'none'})"
+        ),
+    )
+    return parser.parse_args()
 
-    sections: list[str] = ["# Primary evaluation — statistical analysis", ""]
+
+def scale_summary(schema: EvalSchema) -> str:
+    if schema.scale_count == 1:
+        return (
+            "## Pairwise human judgments (single rating scale)\n\n"
+            "Each comparison uses a goal-alignment rating. "
+            "Binary win scores (0/1) are derived from the exported CSV."
+        )
+    labels = ", ".join(DIMENSION_LABELS[d] for d in schema.dimensions)
+    return (
+        f"## Pairwise human judgments ({schema.scale_count} rating scales)\n\n"
+        f"Each comparison uses hierarchical ratings on {labels}. "
+        "Binary win scores (0/1) are derived per scale from the exported CSV."
+    )
+
+
+def run_analysis(eval_run: EvalRun) -> None:
+    output_dir = eval_run.output_dir
+    schema = eval_run.schema
+    output_dir.mkdir(parents=True, exist_ok=True)
+    df, excluded_samples = load_pairs(eval_run)
+
+    sections: list[str] = [
+        "# Primary evaluation — statistical analysis",
+        "",
+        f"Eval run: **{eval_run.run_id}** (`eval-results/{eval_run.run_id}/`).",
+        "",
+    ]
     figure_names: list[str] = []
 
+    excluded_note = (
+        f"`{', '.join(excluded_samples)}`"
+        if excluded_samples
+        else "_(none)_"
+    )
     sections.append("## Corpus and exclusions")
     sections.append(
         f"Human pairwise evaluation covers **{df['sample_hex'].nunique()}** samples "
         f"({len(df)} judgments) after excluding **{len(excluded_samples)}** samples "
-        f"with all-zero scores: `{', '.join(excluded_samples)}`."
+        f"with all-zero scores: {excluded_note}."
     )
 
-    sections.append("## Pairwise human judgments (three rating scales)")
-    sections.append(
-        "Each comparison uses hierarchical ratings on goal alignment, structural cohesion, "
-        "and design alignment. Binary win scores (0/1) are derived per scale from the exported CSV."
-    )
+    sections.append(scale_summary(schema))
 
-    for dimension in DIMENSIONS:
-        dim_sections, dim_figures = dimension_report_sections(df, dimension)
+    for dimension in schema.dimensions:
+        dim_sections, dim_figures = dimension_report_sections(
+            df, dimension, eval_run
+        )
         sections.extend(dim_sections)
         figure_names.extend(dim_figures)
 
     times = collect_pipeline_times()
-    times.to_csv(OUTPUT_DIR / "pipeline-times.csv", index=False)
+    times.to_csv(output_dir / "pipeline-times.csv", index=False)
     timing = analyze_pipeline_timing(times)
-    timing["summary"].to_csv(OUTPUT_DIR / "pipeline-time-summary.csv", index=False)
+    timing["summary"].to_csv(output_dir / "pipeline-time-summary.csv", index=False)
     sections.extend(timing_report_sections(timing))
-    plot_pipeline_time_distribution(times, OUTPUT_DIR / "pipeline-times-boxplot.png")
+    plot_pipeline_time_distribution(times, output_dir / "pipeline-times-boxplot.png")
     plot_pipeline_time_medians(
-        timing["summary"], OUTPUT_DIR / "pipeline-times-medians.png"
+        timing["summary"], output_dir / "pipeline-times-medians.png"
     )
-    plot_speedup_vs_baseline(times, OUTPUT_DIR / "pipeline-speedup-vs-baseline.png")
+    plot_speedup_vs_baseline(times, output_dir / "pipeline-speedup-vs-baseline.png")
     figure_names.extend(
         [
             "pipeline-times-boxplot.png",
@@ -1428,11 +1581,22 @@ def main() -> None:
         ]
     )
 
+    output_rel = f"analysis-output/{eval_run.run_id}"
     sections.append("## Figures")
     for name in figure_names:
-        sections.append(f"- `{OUTPUT_DIR.name}/{name}`")
+        sections.append(f"- `{output_rel}/{name}`")
 
-    write_report(sections)
+    write_report(sections, output_dir)
+
+
+def main() -> None:
+    args = parse_args()
+    if args.run is None:
+        raise SystemExit(
+            "No eval runs found under eval-results/. "
+            "Export pairs.csv into eval-results/run-XX/ first."
+        )
+    run_analysis(EvalRun.load(args.run))
 
 
 if __name__ == "__main__":
