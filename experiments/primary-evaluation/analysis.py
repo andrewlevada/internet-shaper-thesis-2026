@@ -110,6 +110,30 @@ PIPELINE_COLORS: dict[PipelineId, str] = {
     "full-sonnet": "#2563eb",
 }
 
+# 2×2 ablation: rows = action (immediate patch → rules engine),
+# columns = perception (full DOM → DOM compression).
+ABLATION_MATRIX: tuple[tuple[PipelineId, PipelineId], tuple[PipelineId, PipelineId]] = (
+    ("baseline", "map-only"),
+    ("engine-only", "full"),
+)
+
+ABLATION_ROW_LABELS = ("Immediate patch", "Rules engine")
+ABLATION_COL_LABELS = ("Full DOM", "DOM compression")
+
+ABLATION_PIPELINE_IDS: tuple[PipelineId, PipelineId, PipelineId, PipelineId] = (
+    "baseline",
+    "engine-only",
+    "map-only",
+    "full",
+)
+
+ABLATION_MARGINAL_PAIRS: list[tuple[PipelineId, PipelineId, PipelineId, str]] = [
+    ("baseline", "map-only", "map-only", "Map effect (immediate patch)"),
+    ("engine-only", "full", "full", "Map effect (rules engine)"),
+    ("baseline", "engine-only", "engine-only", "Engine effect (full DOM)"),
+    ("map-only", "full", "full", "Engine effect (DOM compression)"),
+]
+
 
 @dataclass(frozen=True)
 class TestResult:
@@ -577,6 +601,315 @@ def plot_likert_distributions(
     plt.close(fig)
 
 
+@dataclass(frozen=True)
+class AblationCell:
+    pipeline: PipelineId
+    bt_strength: float
+    bt_share: float
+    wins: int
+    losses: int
+    ties: int
+
+
+@dataclass(frozen=True)
+class AblationPairwise:
+    a: PipelineId
+    b: PipelineId
+    wins_a: int
+    wins_b: int
+    observed_rate_a: float
+    bt_rate_a: float
+
+
+@dataclass(frozen=True)
+class AblationBradleyTerry:
+    strengths: dict[PipelineId, float]
+    records: dict[PipelineId, tuple[int, int, int]]
+    pairwise: list[AblationPairwise]
+
+
+def ablation_decisive_record(
+    df: pd.DataFrame, pipeline: PipelineId, dimension: RatingDimension
+) -> tuple[int, int, int]:
+    wins = losses = ties = 0
+    subset = filter_dimension_rows(df, dimension)
+    ablation = set(ABLATION_PIPELINE_IDS)
+    for _, row in subset.iterrows():
+        left, right = row["left_id"], row["right_id"]
+        if pipeline not in (left, right):
+            continue
+        opponent = right if left == pipeline else left
+        if opponent not in ablation:
+            continue
+        outcome = binary_win_for(row, pipeline, dimension)
+        if outcome is None:
+            ties += 1
+        elif outcome == 1:
+            wins += 1
+        else:
+            losses += 1
+    return wins, losses, ties
+
+
+def fit_ablation_bradley_terry(
+    df: pd.DataFrame, dimension: RatingDimension
+) -> AblationBradleyTerry:
+    pipelines = list(ABLATION_PIPELINE_IDS)
+    index = {pipeline: i for i, pipeline in enumerate(pipelines)}
+    wins = np.zeros((len(pipelines), len(pipelines)))
+    subset = filter_dimension_rows(df, dimension)
+    for _, row in subset.iterrows():
+        left, right = row["left_id"], row["right_id"]
+        if left not in index or right not in index:
+            continue
+        outcome = binary_win_for(row, left, dimension)
+        if outcome == 1:
+            wins[index[left], index[right]] += 1
+        elif outcome == 0:
+            wins[index[right], index[left]] += 1
+
+    strength = np.ones(len(pipelines))
+    for _ in range(200):
+        updated = np.zeros(len(pipelines))
+        for i in range(len(pipelines)):
+            total_wins = float(wins[i].sum())
+            denominator = 0.0
+            for j in range(len(pipelines)):
+                if i == j:
+                    continue
+                comparisons = wins[i, j] + wins[j, i]
+                if comparisons:
+                    denominator += comparisons / (strength[i] + strength[j])
+            updated[i] = total_wins / denominator if denominator else strength[i]
+        anchor = updated[0] if updated[0] else 1.0
+        updated /= anchor
+        if np.max(np.abs(updated - strength)) < 1e-10:
+            strength = updated
+            break
+        strength = updated
+
+    strengths = {
+        pipeline: float(strength[index[pipeline]]) for pipeline in pipelines
+    }
+    records = {
+        pipeline: ablation_decisive_record(df, pipeline, dimension)
+        for pipeline in pipelines
+    }
+
+    pairwise: list[AblationPairwise] = []
+    for i, a in enumerate(pipelines):
+        for j, b in enumerate(pipelines):
+            if i >= j:
+                continue
+            wins_a = int(wins[i, j])
+            wins_b = int(wins[j, i])
+            total = wins_a + wins_b
+            observed = wins_a / total if total else math.nan
+            bt_rate = strengths[a] / (strengths[a] + strengths[b])
+            pairwise.append(
+                AblationPairwise(
+                    a=a,
+                    b=b,
+                    wins_a=wins_a,
+                    wins_b=wins_b,
+                    observed_rate_a=observed,
+                    bt_rate_a=bt_rate,
+                )
+            )
+    return AblationBradleyTerry(
+        strengths=strengths, records=records, pairwise=pairwise
+    )
+
+
+def ablation_matrix_cells(bt: AblationBradleyTerry) -> list[list[AblationCell]]:
+    total_strength = sum(bt.strengths.values())
+    return [
+        [
+            AblationCell(
+                pipeline=pipeline,
+                bt_strength=bt.strengths[pipeline],
+                bt_share=bt.strengths[pipeline] / total_strength,
+                wins=bt.records[pipeline][0],
+                losses=bt.records[pipeline][1],
+                ties=bt.records[pipeline][2],
+            )
+            for pipeline in row
+        ]
+        for row in ABLATION_MATRIX
+    ]
+
+
+def bt_win_probability(
+    strengths: dict[PipelineId, float], favor: PipelineId, other: PipelineId
+) -> float:
+    return strengths[favor] / (strengths[favor] + strengths[other])
+
+
+def plot_ablation_matrix(
+    cells: list[list[AblationCell]], path: Path, dimension: RatingDimension
+) -> None:
+    shares = [cell.bt_share * 100 for row in cells for cell in row]
+    vmin = min(shares) - 2
+    vmax = max(shares) + 2
+    data = np.array([[cell.bt_share * 100 for cell in row] for row in cells])
+    fig, ax = plt.subplots(figsize=(6.5, 5))
+    im = ax.imshow(data, cmap="YlGn", vmin=vmin, vmax=vmax)
+    ax.set_xticks(range(len(ABLATION_COL_LABELS)), ABLATION_COL_LABELS)
+    ax.set_yticks(range(len(ABLATION_ROW_LABELS)), ABLATION_ROW_LABELS)
+    ax.set_xlabel("Perception")
+    ax.set_ylabel("Action")
+    for i, row in enumerate(cells):
+        for j, cell in enumerate(row):
+            ax.text(
+                j,
+                i - 0.22,
+                cell.pipeline,
+                ha="center",
+                va="center",
+                fontsize=9,
+                color="#374151",
+            )
+            ax.text(
+                j,
+                i + 0.02,
+                f"{cell.bt_share:.0%}",
+                ha="center",
+                va="center",
+                fontsize=14,
+                fontweight="bold",
+                color="#111",
+            )
+            ax.text(
+                j,
+                i + 0.28,
+                f"λ={cell.bt_strength:.2f}",
+                ha="center",
+                va="center",
+                fontsize=8,
+                color="#4b5563",
+            )
+            ax.text(
+                j,
+                i + 0.42,
+                f"{cell.wins}W/{cell.losses}L",
+                ha="center",
+                va="center",
+                fontsize=7,
+                color="#6b7280",
+            )
+    ax.set_title(
+        f"{DIMENSION_LABELS[dimension]} — ablation matrix\n"
+        "Bradley–Terry strength share (4-pipeline subset)"
+    )
+    fig.colorbar(
+        im, ax=ax, fraction=0.046, pad=0.04, label="BT strength share (%)"
+    )
+    fig.tight_layout()
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+
+
+def ablation_matrix_csv(cells: list[list[AblationCell]]) -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    for row_label, row in zip(ABLATION_ROW_LABELS, cells):
+        for col_label, cell in zip(ABLATION_COL_LABELS, row):
+            rows.append(
+                {
+                    "action": row_label,
+                    "perception": col_label,
+                    "pipeline": cell.pipeline,
+                    "bt_strength": cell.bt_strength,
+                    "bt_share": cell.bt_share,
+                    "wins": cell.wins,
+                    "losses": cell.losses,
+                    "ties": cell.ties,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def ablation_pairwise_csv(bt: AblationBradleyTerry) -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {
+                "pipeline_a": pair.a,
+                "pipeline_b": pair.b,
+                "wins_a": pair.wins_a,
+                "wins_b": pair.wins_b,
+                "observed_rate_a": pair.observed_rate_a,
+                "bt_rate_a": pair.bt_rate_a,
+            }
+            for pair in bt.pairwise
+        ]
+    )
+
+
+def ablation_matrix_report_sections(
+    bt: AblationBradleyTerry, cells: list[list[AblationCell]]
+) -> list[str]:
+    sections = [
+        "### Ablation matrix (perception × action)",
+        "",
+        "Bradley–Terry model fit on decisive pairwise preferences among "
+        "`baseline`, `engine-only`, `map-only`, and `full` only "
+        "(ties excluded). Strengths are normalized with `baseline` = 1.",
+        "",
+        f"| | {ABLATION_COL_LABELS[0]} | {ABLATION_COL_LABELS[1]} |",
+        "|---|---|---|",
+    ]
+    for row_label, row in zip(ABLATION_ROW_LABELS, cells):
+        formatted = [
+            (
+                f"**{cell.pipeline}** — λ={cell.bt_strength:.2f}, "
+                f"share **{cell.bt_share:.1%}** "
+                f"({cell.wins}W/{cell.losses}L/{cell.ties}T)"
+            )
+            for cell in row
+        ]
+        sections.append(f"| {row_label} | {formatted[0]} | {formatted[1]} |")
+    sections.append("")
+    sections.append("#### Pairwise comparisons (observed vs Bradley–Terry)")
+    sections.append("")
+    sections.append("| Pair | Observed | BT predicted | Record |")
+    sections.append("|------|----------|--------------|--------|")
+    for pair in bt.pairwise:
+        observed = (
+            f"{pair.observed_rate_a:.1%}"
+            if math.isfinite(pair.observed_rate_a)
+            else "—"
+        )
+        sections.append(
+            f"| {pair.a} vs {pair.b} | {observed} | "
+            f"{pair.bt_rate_a:.1%} | {pair.wins_a}–{pair.wins_b} |"
+        )
+    sections.append("")
+    sections.append("#### Marginal component effects (Bradley–Terry)")
+    map_rates: list[float] = []
+    engine_rates: list[float] = []
+    for a, b, favor, label in ABLATION_MARGINAL_PAIRS:
+        rate = bt_win_probability(bt.strengths, favor, a)
+        if label.startswith("Map"):
+            map_rates.append(rate)
+        else:
+            engine_rates.append(rate)
+        sections.append(
+            f"- **{label}**: P(`{favor}` ≻ `{a}`) = **{rate:.1%}**"
+        )
+    sections.append("")
+    sections.append(
+        "#### Main effects (average BT win probability when adding component)"
+    )
+    sections.append(
+        f"- Map: **{statistics.mean(map_rates):.1%}** "
+        f"({', '.join(f'{rate:.1%}' for rate in map_rates)})"
+    )
+    sections.append(
+        f"- Rules engine: **{statistics.mean(engine_rates):.1%}** "
+        f"({', '.join(f'{rate:.1%}' for rate in engine_rates)})"
+    )
+    return sections
+
+
 def plot_component_wins(
     df: pd.DataFrame, path: Path, dimension: RatingDimension
 ) -> None:
@@ -994,6 +1327,19 @@ def dimension_report_sections(
     )
     sections.append(f"- {fmt_test(q2b['wilcoxon'])}")
     sections.append(f"- Binary sign test: {fmt_test(q2b['sign_test'])}")
+
+    ablation_bt = fit_ablation_bradley_terry(df, dimension)
+    ablation_cells = ablation_matrix_cells(ablation_bt)
+    ablation_plot = f"ablation-matrix-{dim_slug}.png"
+    plot_ablation_matrix(ablation_cells, OUTPUT_DIR / ablation_plot, dimension)
+    ablation_matrix_csv(ablation_cells).to_csv(
+        OUTPUT_DIR / f"ablation-matrix-{dim_slug}.csv", index=False
+    )
+    ablation_pairwise_csv(ablation_bt).to_csv(
+        OUTPUT_DIR / f"ablation-bt-pairwise-{dim_slug}.csv", index=False
+    )
+    sections.extend(ablation_matrix_report_sections(ablation_bt, ablation_cells))
+    figure_names.append(ablation_plot)
 
     sections.append("### 3. Component contribution")
     component_pairs = [

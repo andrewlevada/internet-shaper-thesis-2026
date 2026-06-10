@@ -1,0 +1,5 @@
+action,perception,pipeline,bt_strength,bt_share,wins,losses,ties
+Immediate patch,Full DOM,baseline,1.0,0.17834298951422375,7,10,84
+Immediate patch,DOM compression,map-only,0.4587510081023215,0.0818150262276319,3,10,55
+Rules engine,Full DOM,engine-only,2.237144948669558,0.3989791181223736,9,6,61
+Rules engine,DOM compression,full,1.9112770682168323,0.3408628661357708,16,9,88

@@ -66,6 +66,64 @@ Win = reviewer prefers treatment over original. Standard fail = tied (`similar`)
 
 - Binary sign test: Exact binomial (sign test): n=17, stat=0.7647, p=0.04904 (significant at α=0.05); win rate = 76.5% (13/17 decisive)
 
+### Ablation matrix (perception × action)
+
+
+
+Bradley–Terry model fit on decisive pairwise preferences among `baseline`, `engine-only`, `map-only`, and `full` only (ties excluded). Strengths are normalized with `baseline` = 1.
+
+
+
+| | Full DOM | DOM compression |
+
+|---|---|---|
+
+| Immediate patch | **baseline** — λ=1.00, share **22.7%** (42W/45L/108T) | **map-only** — λ=0.69, share **15.7%** (19W/34L/77T) |
+
+| Rules engine | **engine-only** — λ=1.12, share **25.4%** (25W/27L/78T) | **full** — λ=1.59, share **36.2%** (47W/27L/121T) |
+
+
+
+#### Pairwise comparisons (observed vs Bradley–Terry)
+
+
+
+| Pair | Observed | BT predicted | Record |
+
+|------|----------|--------------|--------|
+
+| baseline vs engine-only | 45.2% | 47.3% | 14–17 |
+
+| baseline vs map-only | 60.7% | 59.1% | 17–11 |
+
+| baseline vs full | 39.3% | 38.5% | 11–17 |
+
+| engine-only vs map-only | — | 61.8% | 0–0 |
+
+| engine-only vs full | 38.1% | 41.2% | 8–13 |
+
+| map-only vs full | 32.0% | 30.2% | 8–17 |
+
+
+
+#### Marginal component effects (Bradley–Terry)
+
+- **Map effect (immediate patch)**: P(`map-only` ≻ `baseline`) = **40.9%**
+
+- **Map effect (rules engine)**: P(`full` ≻ `engine-only`) = **58.8%**
+
+- **Engine effect (full DOM)**: P(`engine-only` ≻ `baseline`) = **52.7%**
+
+- **Engine effect (DOM compression)**: P(`full` ≻ `map-only`) = **69.8%**
+
+
+
+#### Main effects (average BT win probability when adding component)
+
+- Map: **49.8%** (40.9%, 58.8%)
+
+- Rules engine: **61.3%** (52.7%, 69.8%)
+
 ### 3. Component contribution
 
 #### baseline vs engine-only
@@ -164,6 +222,64 @@ Win = reviewer prefers treatment over original. Standard fail = tied (`similar`)
 
 - Binary sign test: Exact binomial (sign test): n=1, stat=1, p=1 (not significant at α=0.05); win rate = 100.0% (1/1 decisive)
 
+### Ablation matrix (perception × action)
+
+
+
+Bradley–Terry model fit on decisive pairwise preferences among `baseline`, `engine-only`, `map-only`, and `full` only (ties excluded). Strengths are normalized with `baseline` = 1.
+
+
+
+| | Full DOM | DOM compression |
+
+|---|---|---|
+
+| Immediate patch | **baseline** — λ=1.00, share **6.0%** (2W/5L/101T) | **map-only** — λ=1.50, share **8.9%** (3W/6L/68T) |
+
+| Rules engine | **engine-only** — λ=3.31, share **19.7%** (1W/1L/76T) | **full** — λ=10.97, share **65.4%** (7W/1L/113T) |
+
+
+
+#### Pairwise comparisons (observed vs Bradley–Terry)
+
+
+
+| Pair | Observed | BT predicted | Record |
+
+|------|----------|--------------|--------|
+
+| baseline vs engine-only | 0.0% | 23.2% | 0–1 |
+
+| baseline vs map-only | 50.0% | 40.0% | 2–2 |
+
+| baseline vs full | 0.0% | 8.4% | 0–2 |
+
+| engine-only vs map-only | — | 68.8% | 0–0 |
+
+| engine-only vs full | 0.0% | 23.2% | 0–1 |
+
+| map-only vs full | 20.0% | 12.0% | 1–4 |
+
+
+
+#### Marginal component effects (Bradley–Terry)
+
+- **Map effect (immediate patch)**: P(`map-only` ≻ `baseline`) = **60.0%**
+
+- **Map effect (rules engine)**: P(`full` ≻ `engine-only`) = **76.8%**
+
+- **Engine effect (full DOM)**: P(`engine-only` ≻ `baseline`) = **76.8%**
+
+- **Engine effect (DOM compression)**: P(`full` ≻ `map-only`) = **88.0%**
+
+
+
+#### Main effects (average BT win probability when adding component)
+
+- Map: **68.4%** (60.0%, 76.8%)
+
+- Rules engine: **82.4%** (76.8%, 88.0%)
+
 ### 3. Component contribution
 
 #### baseline vs engine-only
@@ -261,6 +377,64 @@ Win = reviewer prefers treatment over original. Standard fail = tied (`similar`)
 - Wilcoxon signed-rank: n=17, stat=54, p=0.306 (not significant at α=0.05); median signed score = -1.00
 
 - Binary sign test: Exact binomial (sign test): n=17, stat=0.3529, p=0.3323 (not significant at α=0.05); win rate = 35.3% (6/17 decisive)
+
+### Ablation matrix (perception × action)
+
+
+
+Bradley–Terry model fit on decisive pairwise preferences among `baseline`, `engine-only`, `map-only`, and `full` only (ties excluded). Strengths are normalized with `baseline` = 1.
+
+
+
+| | Full DOM | DOM compression |
+
+|---|---|---|
+
+| Immediate patch | **baseline** — λ=1.00, share **17.8%** (7W/10L/84T) | **map-only** — λ=0.46, share **8.2%** (3W/10L/55T) |
+
+| Rules engine | **engine-only** — λ=2.24, share **39.9%** (9W/6L/61T) | **full** — λ=1.91, share **34.1%** (16W/9L/88T) |
+
+
+
+#### Pairwise comparisons (observed vs Bradley–Terry)
+
+
+
+| Pair | Observed | BT predicted | Record |
+
+|------|----------|--------------|--------|
+
+| baseline vs engine-only | 33.3% | 30.9% | 2–4 |
+
+| baseline vs map-only | 100.0% | 68.6% | 4–0 |
+
+| baseline vs full | 14.3% | 34.3% | 1–6 |
+
+| engine-only vs map-only | — | 83.0% | 0–0 |
+
+| engine-only vs full | 55.6% | 53.9% | 5–4 |
+
+| map-only vs full | 33.3% | 19.4% | 3–6 |
+
+
+
+#### Marginal component effects (Bradley–Terry)
+
+- **Map effect (immediate patch)**: P(`map-only` ≻ `baseline`) = **31.4%**
+
+- **Map effect (rules engine)**: P(`full` ≻ `engine-only`) = **46.1%**
+
+- **Engine effect (full DOM)**: P(`engine-only` ≻ `baseline`) = **69.1%**
+
+- **Engine effect (DOM compression)**: P(`full` ≻ `map-only`) = **80.6%**
+
+
+
+#### Main effects (average BT win probability when adding component)
+
+- Map: **38.8%** (31.4%, 46.1%)
+
+- Rules engine: **74.9%** (69.1%, 80.6%)
 
 ### 3. Component contribution
 
@@ -386,6 +560,8 @@ Compared pipelines ran on the same hardware (`baseline`, `engine-only`, `map-onl
 
 - `analysis-output/win-rate-vs-original-goal.png`
 
+- `analysis-output/ablation-matrix-goal.png`
+
 - `analysis-output/component-contribution-goal.png`
 
 - `analysis-output/likert-distributions-goal.png`
@@ -394,6 +570,8 @@ Compared pipelines ran on the same hardware (`baseline`, `engine-only`, `map-onl
 
 - `analysis-output/win-rate-vs-original-structural.png`
 
+- `analysis-output/ablation-matrix-structural.png`
+
 - `analysis-output/component-contribution-structural.png`
 
 - `analysis-output/likert-distributions-structural.png`
@@ -401,6 +579,8 @@ Compared pipelines ran on the same hardware (`baseline`, `engine-only`, `map-onl
 - `analysis-output/win-matrix-structural.png`
 
 - `analysis-output/win-rate-vs-original-design.png`
+
+- `analysis-output/ablation-matrix-design.png`
 
 - `analysis-output/component-contribution-design.png`
 
