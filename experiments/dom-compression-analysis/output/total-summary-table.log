@@ -1,0 +1,25 @@
+generated_at=2026-06-10T11:46:34.100617+00:00
+input_csv=/Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/total.csv
+sample_count=74
+
+output_files:
+  - /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/output/chars-raw-visible.png
+  - /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/output/chars-compressed.png
+  - /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/output/tokens-raw-visible.png
+  - /Users/andrewlevada/Projects/my/internet-shaper/experiments/dom-compression-analysis/output/tokens-compressed.png
+
+tables:
+  - chars-raw-visible.png: DOM sizes analysis — characters / Raw & visible DOM (n=74 snapshots)
+      representation=Raw DOM, mean=948.6k, median=708.5k, min=50.1k, max=4.41M
+      representation=Visible DOM, mean=422.0k, median=295.2k, min=21.2k, max=2.35M
+  - chars-compressed.png: DOM sizes analysis — characters / With compressed DOM · compression = visible median ÷ compressed median (n=74 snapshots)
+      representation=Raw DOM, mean=948.6k, median=708.5k, min=50.1k, max=4.41M, compression=—
+      representation=Visible DOM, mean=422.0k, median=295.2k, min=21.2k, max=2.35M, compression=—
+      representation=Compressed DOM, mean=35.7k, median=21.4k, min=1,854, max=332.5k, compression=÷13.8×
+  - tokens-raw-visible.png: DOM compression — tokens / Raw & visible DOM (n=74 snapshots)
+      representation=Raw DOM, mean=339.3k, median=240.9k, min=18.5k, max=1.34M
+      representation=Visible DOM, mean=162.8k, median=107.9k, min=7,188, max=1.03M
+  - tokens-compressed.png: DOM compression — tokens / With compressed DOM · compression = visible median ÷ compressed median (n=74 snapshots)
+      representation=Raw DOM, mean=339.3k, median=240.9k, min=18.5k, max=1.34M, compression=—
+      representation=Visible DOM, mean=162.8k, median=107.9k, min=7,188, max=1.03M, compression=—
+      representation=Compressed DOM, mean=11.1k, median=6,612.5, min=522, max=107.9k, compression=÷16.3×
