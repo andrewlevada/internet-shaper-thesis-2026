@@ -57,11 +57,12 @@ export async function runAgentVercel(
 		get_map_of_dom: tool({
 			description: `Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout:
 
-1. Single-child wrapper chains are collapsed (nested divs with one child become flat)
+1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count.
 2. Repeating sibling elements (3+ with same tag/classes) show only the first with a comment indicating count
 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes
 
-Use this first to understand the page structure. Then use show_in_dom to examine specific elements in full detail.`,
+Use this first to understand the page structure. Then use show_in_dom to examine specific elements in full detail.
+Can only be called once per session; later calls return the previous result message.`,
 			inputSchema: z.object({}),
 			execute: async () => {
 				console.log("[VercelAgent] Executing get_map_of_dom")

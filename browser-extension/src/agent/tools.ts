@@ -15,6 +15,16 @@ export interface ToolContext {
 	rules: UpdateRule[]
 	toolCalls: ToolCall[]
 	maxToolOutputChars?: number
+	singleCallExploreUsed: Set<string>
+}
+
+const SINGLE_CALL_EXPLORE_TOOLS = new Set(["get_map_of_dom"])
+
+function singleCallExploreMessage(toolName: string): string {
+	return (
+		`The ${toolName} tool is extremely context-hungry, so it cannot be called again. ` +
+		"Refer to the result of the previous call."
+	)
 }
 
 export function createToolContext(
@@ -25,6 +35,7 @@ export function createToolContext(
 		rawHtml,
 		rules: [],
 		toolCalls: [],
+		singleCallExploreUsed: new Set(),
 		...(options?.maxToolOutputChars != null
 			? { maxToolOutputChars: options.maxToolOutputChars }
 			: {}),
@@ -62,11 +73,12 @@ export const toolDefinitions: Tool[] = [
 		name: "get_map_of_dom",
 		description: `Returns a compact, truncated map of the page DOM structure. The map is optimized for understanding the overall page layout:
 
-1. Single-child wrapper chains are collapsed (nested divs with one child become flat)
+1. Single-child wrapper chains are collapsed. Their attributes are merged into a comment indicating count.
 2. Repeating sibling elements (3+ with same tag/classes) show only the first with a comment indicating count
 3. Only semantic attributes are kept: class, id, role, aria-label, label, alt, type, and data-* attributes
 
-Use this first to understand the page structure. Then use show_in_dom() to examine specific elements in full detail.`,
+Use this first to understand the page structure. Then use show_in_dom() to examine specific elements in full detail.
+Can only be called once per session; later calls return the previous result message.`,
 		input_schema: {
 			type: "object" as const,
 			properties: {},
@@ -155,6 +167,18 @@ export function executeTool(
 	try {
 		switch (toolName) {
 			case "get_map_of_dom": {
+				if (
+					SINGLE_CALL_EXPLORE_TOOLS.has(toolName) &&
+					context.singleCallExploreUsed.has(toolName)
+				) {
+					const result = singleCallExploreMessage(toolName)
+					context.toolCalls.push({ name: toolName, input: {}, result })
+					return result
+				}
+				if (SINGLE_CALL_EXPLORE_TOOLS.has(toolName)) {
+					context.singleCallExploreUsed.add(toolName)
+				}
+
 				console.log(
 					"[Tools] Creating DOM map from HTML of length:",
 					context.rawHtml.length,
