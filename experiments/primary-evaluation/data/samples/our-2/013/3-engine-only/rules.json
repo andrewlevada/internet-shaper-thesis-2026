@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Add Preferences link in nav",
-    "query_selector": ".global-top-navigation__action-wrapper",
-    "logic": "element.style.display = 'flex';\nelement.style.flexWrap = 'wrap';\nelement.style.gap = '8px';\nif (!element.querySelector('.global-action__item.preferences-link')) {\n  var prefItem = document.createElement('div');\n  prefItem.className = 'global-action__item preferences-link';\n  var prefLink = document.createElement('a');\n  prefLink.href = 'https://www.fandom.com/preferences';\n  prefLink.className = 'wds-button wds-is-secondary global-action__link';\n  prefLink.setAttribute('rel', 'nofollow');\n  prefLink.setAttribute('data-tracking-label', 'account.preferences');\n  prefLink.setAttribute('aria-label', 'Preferences');\n  prefLink.textContent = 'Preferences';\n  prefItem.appendChild(prefLink);\n  element.appendChild(prefItem);\n}"
-  }
-]

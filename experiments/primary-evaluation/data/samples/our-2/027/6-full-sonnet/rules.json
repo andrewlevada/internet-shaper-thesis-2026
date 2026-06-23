@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Tags above stream title",
-		"query_selector": ".ScTextWrapper-sc-10mto54-1",
-		"logic": "\nelement.style.display = 'flex';\nelement.style.flexDirection = 'column';\n\n// Find the tags container inside this card's text wrapper\nconst tagsContainer = element.querySelector('.fsLBGq');\nif (tagsContainer) {\n  tagsContainer.style.order = '-1';\n  tagsContainer.style.marginBottom = '4px';\n  tagsContainer.style.marginTop = '0';\n}\n\n// Keep title link and game link in their natural order (0 and 1)\nconst titleLink = element.querySelector('[data-test-selector=\"TitleAndChannel\"]');\nif (titleLink) {\n  titleLink.style.order = '0';\n}\n\nconst gameLink = element.querySelector('.bfhuDn');\nif (gameLink) {\n  gameLink.style.order = '1';\n}\n"
-	}
-]

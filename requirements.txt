@@ -11,14 +11,17 @@
 
 accelerate>=1.0.0
 anthropic
+bitsandbytes
+compressed-tensors>=0.15.0
+kernels>=0.14.0
+matplotlib>=3.8
 openai
+pandas>=2.0
 playwright
 safetensors>=0.4.5
+scipy>=1.11
 tiktoken
 tldextract
 torch>=2.7.1
 tqdm>=4.66.0
-bitsandbytes
-compressed-tensors>=0.15.0
-kernels>=0.14.0
 transformers>=5.0.0

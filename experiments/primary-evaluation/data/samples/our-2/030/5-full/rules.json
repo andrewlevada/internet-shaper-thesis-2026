@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Auto-switch to English",
-    "query_selector": "#slim_appbar [jscontroller=\"IlbVv\"]",
-    "logic": "var link = element.querySelector('a[href*=\"hl=en\"]');\nif (link && link.href) {\n  document.location.href = link.href;\n}"
-  }
-]

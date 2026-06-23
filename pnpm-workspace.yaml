@@ -1,8 +1,8 @@
 packages:
   - "browser-extension"
-  - "playground"
-  - "experiments/primary-evaluation/data/pipeline"
-  - "experiments/primary-evaluation/web-app"
+  - "thesis-research-2026/playground"
+  - "thesis-research-2026/experiments/primary-evaluation/data/pipeline"
+  - "thesis-research-2026/experiments/primary-evaluation/web-app"
 allowBuilds:
   esbuild: true
   lefthook: true

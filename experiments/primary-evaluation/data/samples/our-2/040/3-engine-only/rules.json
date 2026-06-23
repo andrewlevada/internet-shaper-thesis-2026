@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Insert Admin Dashboard banner",
-    "query_selector": ".article-body",
-    "logic": "if (element.dataset.bannerInjected) return;\nelement.dataset.bannerInjected = 'true';\n\nvar banner = document.createElement('div');\nbanner.style.border = '2px solid #d4a017';\nbanner.style.background = '#fff9e6';\nbanner.style.padding = '12px 16px';\nbanner.style.marginBottom = '16px';\nbanner.style.borderRadius = '6px';\nbanner.style.fontWeight = 'bold';\n\nvar link = document.createElement('a');\nlink.href = 'https://community.fandom.com/wiki/Help:Admin_Dashboard';\nlink.target = '_blank';\nlink.style.color = '#520044';\nlink.style.textDecoration = 'underline';\nlink.style.fontWeight = 'bold';\nlink.textContent = 'Admin Dashboard';\n\nvar text = document.createElement('span');\ntext.innerHTML = ' Need to configure wiki settings? Go directly to the ';\n\nvar instructions = document.createTextNode(' — click \"Admin\" on your bottom toolbar to find it.');\n\nbanner.appendChild(text);\nbanner.appendChild(link);\nbanner.appendChild(instructions);\n\nelement.insertBefore(banner, element.firstChild);"
-  }
-]

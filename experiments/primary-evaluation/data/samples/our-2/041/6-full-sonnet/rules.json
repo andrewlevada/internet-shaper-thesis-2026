@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Add Contact Support button",
-		"query_selector": ".article-header",
-		"logic": "\nif (element.querySelector('#contact-support-btn-injected')) return;\n\nconst contactUrl = '/hc/en-us/requests/new?ticket_form_id=360000931354&tf_360017817454=i_want_a_feature_or_extension_turned_on';\n\nconst wrapper = document.createElement('div');\nwrapper.id = 'contact-support-btn-injected';\nwrapper.style.cssText = `\n  margin-top: 18px;\n  padding: 14px 18px;\n  background: #f0f6ff;\n  border: 1.5px solid #3b6fd4;\n  border-radius: 8px;\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  flex-wrap: wrap;\n`;\n\nconst label = document.createElement('span');\nlabel.textContent = '🔧 Need a feature or extension enabled on your wiki?';\nlabel.style.cssText = `\n  font-size: 14px;\n  color: #333;\n  flex: 1;\n  min-width: 200px;\n`;\n\nconst btn = document.createElement('a');\nbtn.href = contactUrl;\nbtn.textContent = 'Contact Support to Turn On a Feature';\nbtn.style.cssText = `\n  display: inline-block;\n  background: #3b6fd4;\n  color: #fff !important;\n  font-weight: bold;\n  font-size: 14px;\n  padding: 10px 20px;\n  border-radius: 6px;\n  text-decoration: none;\n  white-space: nowrap;\n  box-shadow: 0 2px 6px rgba(59,111,212,0.35);\n  transition: background 0.2s;\n`;\nbtn.onmouseenter = () => { btn.style.background = '#2a55b0'; };\nbtn.onmouseleave = () => { btn.style.background = '#3b6fd4'; };\n\nwrapper.appendChild(label);\nwrapper.appendChild(btn);\nelement.appendChild(wrapper);\n"
-	}
-]

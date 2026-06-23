@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Hide Alice AI quick answer",
-    "query_selector": "li.serp-item[data-fast-name=\"neuro_answer\"]",
-    "logic": "element.style.display = 'none';"
-  }
-]

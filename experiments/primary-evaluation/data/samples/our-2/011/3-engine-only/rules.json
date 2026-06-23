@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Hide search suggestion pills",
-    "query_selector": "[data-root-margin=\"search-one-bar\"]",
-    "logic": "element.style.display = 'none';"
-  }
-]

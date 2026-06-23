@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Admin Dashboard highlight box",
-		"query_selector": ".article-body",
-		"logic": "\n// Avoid duplicate insertion\nif (document.getElementById('admin-dashboard-highlight-box')) return;\n\nconst box = document.createElement('div');\nbox.id = 'admin-dashboard-highlight-box';\nbox.style.cssText = `\n  background-color: #fff9c4;\n  border: 3px solid #f0c000;\n  border-radius: 8px;\n  padding: 16px 20px;\n  margin-bottom: 24px;\n  font-weight: bold;\n  font-size: 1em;\n  line-height: 1.6;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.12);\n`;\n\nbox.innerHTML = `\n  <div style=\"font-size:1.1em; margin-bottom:8px; color:#7a5700;\">\n    ⚙️ Admin Dashboard — Quick Access\n  </div>\n  <div style=\"font-weight:bold; margin-bottom:8px;\">\n    👉 <a href=\"https://community.fandom.com/wiki/Help:Admin_Dashboard\" target=\"_self\"\n         style=\"color:#1a5276; text-decoration:underline; font-weight:bold;\">\n      Open the Admin Dashboard\n    </a>\n  </div>\n  <div style=\"font-weight:bold; color:#333;\">\n    Instructions: If you are an admin, click on <span style=\"background:#ffe066; padding:1px 5px; border-radius:3px;\">\"Admin\"</span> on your <strong>bottom toolbar</strong> to find this page and configure your wiki's settings.\n  </div>\n`;\n\nelement.insertBefore(box, element.firstChild);\n"
-	}
-]

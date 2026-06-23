@@ -1,0 +1,4 @@
+samples/**/work/**
+samples/**/*.zip
+samples/our-2/
+seed-samples/our-2/

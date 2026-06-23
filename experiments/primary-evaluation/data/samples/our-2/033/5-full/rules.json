@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Move PAA below first result",
-    "query_selector": "div.Wt5Tfe",
-    "logic": "var paaSection = element;\nif (!paaSection) return;\n\nvar firstResult = document.querySelector('div.A6K0A[data-rpos=\"2\"]');\nif (!firstResult) return;\n\nvar firstResultParent = firstResult.parentNode;\nif (!firstResultParent) return;\n\nvar nextSibling = firstResult.nextSibling;\n\nif (paaSection.parentNode !== firstResultParent || paaSection.previousElementSibling !== firstResult) {\n  firstResultParent.insertBefore(paaSection, nextSibling);\n}"
-  }
-]

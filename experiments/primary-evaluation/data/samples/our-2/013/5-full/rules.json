@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Add Preferences link in nav",
-    "query_selector": ".global-top-navigation__action-wrapper",
-    "logic": "(function() {\n  // Avoid duplicate insertion\n  if (element.querySelector('.global-action__item.preferences-link')) {\n    return;\n  }\n\n  var prefsItem = document.createElement('div');\n  prefsItem.className = 'global-action__item preferences-link';\n\n  var prefsLink = document.createElement('a');\n  prefsLink.className = 'wds-button wds-is-secondary global-action__link';\n  prefsLink.href = '/wiki/Special:Preferences';\n  prefsLink.setAttribute('data-tracking-label', 'account.preferences');\n  prefsLink.setAttribute('aria-label', 'Preferences');\n  prefsLink.textContent = ' Preferences ';\n\n  prefsItem.appendChild(prefsLink);\n  element.appendChild(prefsItem);\n})();"
-  }
-]

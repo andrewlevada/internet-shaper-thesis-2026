@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Enlarge & highlight header actions",
-    "query_selector": ".HeaderDesktopActions-Item",
-    "logic": "element.style.transform = 'scale(1.35)';\nelement.style.transformOrigin = 'center center';\nelement.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';\nelement.style.borderRadius = '12px';\nelement.style.padding = '6px';\nelement.style.margin = '0 4px';\nelement.style.boxShadow = '0 0 8px rgba(255, 100, 50, 0.5)';\nelement.style.outline = '2px solid #F8604A';"
-  }
-]

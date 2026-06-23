@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Hide stream card tags",
-    "query_selector": ".fsLBGq",
-    "logic": "element.style.display = 'none'"
-  }
-]

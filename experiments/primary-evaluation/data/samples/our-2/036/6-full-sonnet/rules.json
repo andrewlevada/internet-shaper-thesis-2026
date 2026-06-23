@@ -1,7 +1,0 @@
-[
-	{
-		"label": "Move Видео carousel to top",
-		"query_selector": "#search-result",
-		"logic": "\nconst videoItem = element.querySelector('li[data-fast-name=\"video-unisearch\"][data-fast-subtype=\"carousel\"]');\nif (!videoItem) return;\nconst firstItem = element.firstElementChild;\nif (!firstItem || firstItem === videoItem) return;\nelement.insertBefore(videoItem, firstItem);\n"
-	}
-]

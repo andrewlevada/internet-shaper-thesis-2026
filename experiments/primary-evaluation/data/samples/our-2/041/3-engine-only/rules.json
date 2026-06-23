@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Add Contact Support button below title",
-    "query_selector": "h1.article-title",
-    "logic": "element.style.position = 'relative';\n\nif (element.parentElement.querySelector('.contact-support-button')) {\n  return;\n}\n\nvar btn = document.createElement('a');\nbtn.href = '/hc/en-us/requests/new?ticket_form_id=360000931354&tf_360017817454=i_want_a_feature_or_extension_turned_on';\nbtn.className = 'contact-support-button';\nbtn.textContent = 'Contact Support to turn on a feature';\nbtn.style.display = 'block';\nbtn.style.marginTop = '12px';\nbtn.style.padding = '10px 20px';\nbtn.style.backgroundColor = '#520044';\nbtn.style.color = '#ffffff';\nbtn.style.textDecoration = 'none';\nbtn.style.borderRadius = '4px';\nbtn.style.fontWeight = 'bold';\nbtn.style.fontSize = '16px';\nbtn.style.textAlign = 'center';\nbtn.style.maxWidth = '360px';\n\nelement.parentElement.insertBefore(btn, element.nextSibling);"
-  }
-]

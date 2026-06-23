@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Add contact button under title",
-    "query_selector": "h1.article-title",
-    "logic": "element.style.position = 'relative';\n\nvar existing = element.parentElement.querySelector('.contact-support-button-inline');\nif (existing) {\n  return;\n}\n\nvar btn = document.createElement('a');\nbtn.href = '/hc/en-us/requests/new';\nbtn.className = 'contact-support-button-inline';\nbtn.textContent = 'Contact Support to turn on a feature';\nbtn.style.display = 'block';\nbtn.style.marginTop = '12px';\nbtn.style.padding = '10px 20px';\nbtn.style.backgroundColor = '#0072e3';\nbtn.style.color = '#ffffff';\nbtn.style.textDecoration = 'none';\nbtn.style.borderRadius = '6px';\nbtn.style.fontWeight = '600';\nbtn.style.fontSize = '15px';\nbtn.style.textAlign = 'center';\nbtn.style.maxWidth = '400px';\nbtn.style.transition = 'background-color 0.2s';\n\nbtn.addEventListener('mouseenter', function() {\n  btn.style.backgroundColor = '#005bb5';\n});\nbtn.addEventListener('mouseleave', function() {\n  btn.style.backgroundColor = '#0072e3';\n});\n\nelement.parentElement.insertBefore(btn, element.nextSibling);"
-  }
-]

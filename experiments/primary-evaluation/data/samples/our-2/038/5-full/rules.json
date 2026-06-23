@@ -1,7 +1,0 @@
-[
-  {
-    "label": "Enlarge header actions",
-    "query_selector": ".HeaderDesktopActions-Item.WeatherInformer, .HeaderDesktopActions-MarketCart, .HeaderDesktopActions-Favorites",
-    "logic": "element.style.transform = 'scale(1.35)';\nelement.style.transformOrigin = 'center center';\nelement.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';\nelement.style.borderRadius = '12px';\nelement.style.padding = '6px 8px';\nelement.style.background = 'rgba(255, 204, 0, 0.15)';\nelement.style.boxShadow = '0 0 0 2px rgba(255, 165, 0, 0.5), 0 2px 8px rgba(255, 165, 0, 0.3)';\nelement.style.outline = '2px solid rgba(255, 140, 0, 0.6)';"
-  }
-]
