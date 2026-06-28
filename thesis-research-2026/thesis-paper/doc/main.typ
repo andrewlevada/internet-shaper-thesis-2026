@@ -1,30 +1,3 @@
-#import "@preview/modern-innopolis-thesis:0.1.1": thesis, flex-title, example
-#import "title-page-2026.typ": title-page
-
-#title-page(
-  program-code: "09.03.01",
-  program-ru: "Информатика и вычислительная техника",
-  program-en: "Computer Science",
-  work-ru: "БАКАЛАВРСКАЯ РАБОТА",
-  work-en: "BACHELOR’S THESIS",
-  specialty-ru: "Анализ данных и искусственный интеллект",
-  specialty-en: "Data Analysis and Artificial Intelligence",
-  topic-ru: "Генеративная адаптация веб-интерфейсов под цели пользователя в режиме реального времени",
-  topic-en: "User‑Aligned Web Interfaces: Just‑in‑Time Generative Adaptation of Existing UIs",
-  author-ru: "Левада Андрей Романович",
-  author-en: "Andrey Levada",
-  supervisor-ru: "Лукманов Рустам Абубакирович",
-  supervisor-en: "Rustam Lukmanov",
-  year: "2026",
-)
-
-#show: thesis.with(
-  abstract: [
-    Commercial web interfaces often misalign with individual users' goals: designers cannot anticipate every task, and gray or dark patterns can prioritize business metrics over usability. Adaptive interfaces that developers build at design time don't help users reshape third-party sites they already use. We present Internet Shaper, a browser-extension-hosted agentic system that adapts live web pages from natural-language requests without access to site source code. The system separates _perception_ from _action_: a DOM compression algorithm gives a large language model a compact structural view of the page, and a rules engine persists selector-bound JavaScript that re-applies on reload and on DOM mutation. We evaluate compression on 73 snapshots from high-traffic domains, and collect preliminary human preferences on 15 samples. Compression reduces median visible DOM size by roughly 16×; the Internet Shaper system processes user requests about five times faster than a baseline on the same tasks. Screenshot-based judgments favor adapted pages over originals, but quality parity between the full system and the baseline remains inconclusive at this sample size.
-  ],
-  font-family: "Times New Roman"
-)
-
 = Introduction <sec:introduction>
 
 == Background <sec:background>

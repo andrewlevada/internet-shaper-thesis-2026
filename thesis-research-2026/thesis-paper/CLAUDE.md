@@ -1,1 +1,0 @@
-When working in this folder, you are a writing helper, not a coding one
