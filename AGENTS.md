@@ -3,8 +3,8 @@
 ## Cursor Cloud specific instructions
 
 Internet Shaper is a pnpm + Deno monorepo (see `CLAUDE.md` and each package's
-`CLAUDE.md` for stack details and canonical commands). The runnable products are
-the **browser-extension** and the **web-app**; the Python `data/pipeline` is
+`CLAUDE.md` for stack details and canonical commands). The runnable product is
+the **browser-extension**; the Python `data/pipeline` is
 research tooling (heavy torch/GPU + LLM, not provisioned here).
 
 ### Installing dependencies (non-obvious)
@@ -23,7 +23,7 @@ The global pnpm setting `verify-deps-before-run=false` is configured so that
 `pnpm dev` / `pnpm build` do not auto-trigger that failing install. Lefthook git
 hooks are intentionally not installed (Cursor owns the hooks path).
 
-### browser-extension (main product)
+### browser-extension
 
 - Built on the sibling `fiber` repo via `fiber-extension: link:../../fiber`;
   `fiber` must be built (`dist/`) first — see `../fiber/AGENTS.md`.
@@ -39,8 +39,3 @@ hooks are intentionally not installed (Cursor owns the hooks path).
 - Lint/format per `CLAUDE.md`: run `deno check` and `deno lint --fix` in
   `browser-extension`; repo-wide formatting/linting is Biome via `pnpm check`.
 
-### web-app (evaluation tool, separate product)
-
-- `pnpm dev` (Next.js, Turbopack) serves on `http://localhost:3000`. It is a
-  client-only tool with no backend/DB; the home page expects a `.zip` archive of
-  evaluation samples to proceed past the upload screen.
