@@ -1,19 +1,19 @@
 {
 	"folders": [
 		{
-			"path": "thesis-research-2026/playground/qwen-test",
-			"name": "qwen-test"
-		},
-		{
 			"path": ".",
 			"name": "internet-shaper"
 		},
 		{
-			"path": "thesis-research-2026/experiments/primary-evaluation/data/pipeline",
+			"path": "src/playground/qwen-test",
+			"name": "qwen-test"
+		},
+		{
+			"path": "src/experiments/primary-evaluation/data/pipeline",
 			"name": "primary-evaluation-pipeline"
 		},
 		{
-			"path": "thesis-research-2026/experiments/primary-evaluation/web-app",
+			"path": "src/experiments/primary-evaluation/web-app",
 			"name": "primary-evaluation-web"
 		}
 	],

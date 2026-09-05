@@ -10,9 +10,9 @@
 			"**",
 			"!!**/dist",
 			"!!**/playground/**/*.html",
-			"!!thesis-research-2026/experiments/**/seed-samples/**/*",
-			"!!thesis-research-2026/experiments/**/samples/**/*",
-			"!!thesis-research-2026/experiments/**/snapshots/**/*"
+			"!!src/experiments/**/seed-samples/**/*",
+			"!!src/experiments/**/samples/**/*",
+			"!!src/experiments/**/snapshots/**/*"
 		]
 	},
 	"formatter": {
