@@ -12,7 +12,7 @@ importers:
         specifier: 2.4.14
         version: 2.4.14
 
-  browser-extension:
+  src/browser-extension:
     dependencies:
       '@ai-sdk/openai':
         specifier: ^3.0.58
@@ -49,7 +49,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.2(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0)
 
-  thesis-research-2026/experiments/primary-evaluation/web-app:
+  src/experiments/primary-evaluation/web-app:
     dependencies:
       '@zip.js/zip.js':
         specifier: ^2.8.26
@@ -92,7 +92,7 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  thesis-research-2026/playground:
+  src/playground:
     dependencies:
       '@anthropic-ai/sdk':
         specifier: ^0.95.1
