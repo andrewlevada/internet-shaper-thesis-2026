@@ -16,5 +16,12 @@
 	},
 	"[glob:**/*.typ]": {
 		"editor.wordWrap": "on"
+	},
+	"editor.tokenColorCustomizations": {
+		"keywords": "#111111",
+		"functions": "#111111",
+		"variables": "#002cbd",
+		"comments": "#002cbd",
+		"types": "#b400c1"
 	}
 }

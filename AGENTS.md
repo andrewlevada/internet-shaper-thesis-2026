@@ -1,41 +1,19 @@
-# AGENTS.md
+# Project
 
-## Cursor Cloud specific instructions
+This is a monorepo of an Internet Shaper. An app for just-in-time generative adaptation of web interfaces. Also, this is a part of my batchelor's degree thesis
 
-Internet Shaper is a pnpm + Deno monorepo (see `CLAUDE.md` and each package's
-`CLAUDE.md` for stack details and canonical commands). The runnable product is
-the **browser-extension**; the Python `data/pipeline` is
-research tooling (heavy torch/GPU + LLM, not provisioned here).
+## Context
 
-### Installing dependencies (non-obvious)
+Popular, commertial user interfaces have systematically misaligned business and user goals. This ofter results in dopamine loops, that increase retention, while ignoring prefered usage patterns; or excessive ads of the features that provide little extra value.
 
-`pnpm install` runs a root `prepare` script (`lefthook install`) that **fails**
-in Cursor because the environment manages git `core.hooksPath`. The dependency
-postinstalls themselves (esbuild, sharp) succeed, so install with scripts off
-and rebuild only the native packages:
+This browser extension aims to counteract this problem by re-aligning the interface with a user's articulated goal
 
-```bash
-pnpm install --ignore-scripts
-pnpm rebuild esbuild sharp
-```
+## Research Question
 
-The global pnpm setting `verify-deps-before-run=false` is configured so that
-`pnpm dev` / `pnpm build` do not auto-trigger that failing install. Lefthook git
-hooks are intentionally not installed (Cursor owns the hooks path).
 
-### browser-extension
 
-- Built on the sibling `fiber` repo via `fiber-extension: link:../../fiber`;
-  `fiber` must be built (`dist/`) first — see `../fiber/AGENTS.md`.
-- `pnpm dev` (Vite + fiber live-reload) writes a loadable extension to
-  `dist/`; load that folder via `chrome://extensions` (Developer mode → Load
-  unpacked). `pnpm build` is the production build. In `dev`/serve mode the icon
-  plugin logs an `emitFile() not supported` warning and skips icon generation —
-  benign; icons are produced by `pnpm build`.
-- The page-adaptation agent needs an LLM key entered through the overlay's
-  "API Key" button (Anthropic, or a Vercel AI Gateway key per the model). The
-  overlay UI, live DOM-context measurement, and "Save DOM snap" (DOM
-  capture/cleaning pipeline) work without a key.
-- Lint/format per `CLAUDE.md`: run `deno check` and `deno lint --fix` in
-  `browser-extension`; repo-wide formatting/linting is Biome via `pnpm check`.
+# Best Practices
 
+- Write in TypeScript, use Deno
+- Use Lit's `css` template for styles instead of inline styles
+- Never install playwrite or puppetier. They are already installed, check out the skill

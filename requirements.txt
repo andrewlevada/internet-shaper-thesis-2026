@@ -1,14 +1,3 @@
-# Project-wide Python dependencies.
-#
-# Setup (from repo root):
-#   python3 -m venv .venv
-#   .venv/bin/pip install -U pip
-#   .venv/bin/pip install torch>=2.7.1
-#   .venv/bin/pip install -r requirements.txt
-#   .venv/bin/playwright install chromium
-#
-# Activate: source .venv/bin/activate
-
 accelerate>=1.0.0
 anthropic
 bitsandbytes

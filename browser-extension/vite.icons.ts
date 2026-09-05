@@ -35,25 +35,6 @@ async function generateIcons(
 	return icons
 }
 
-async function writeLog(sourcePath: string, icons: Map<number, Buffer>) {
-	const logsDir = path.resolve("scripts/logs")
-	await fs.mkdir(logsDir, { recursive: true })
-
-	const timestamp = new Date().toISOString().replaceAll(":", "-")
-	const logPath = path.join(logsDir, `${timestamp}-generate-icons.log`)
-	const lines = [
-		`timestamp: ${new Date().toISOString()}`,
-		`source: ${sourcePath}`,
-		`sizes: ${ICON_SIZES.join(", ")}`,
-		...ICON_SIZES.map((size) => {
-			const buffer = icons.get(size)
-			return `icon-${size}.png: ${buffer?.byteLength ?? 0} bytes`
-		}),
-	]
-
-	await fs.writeFile(logPath, `${lines.join("\n")}\n`)
-}
-
 async function writeIconsToDir(
 	icons: Map<(typeof ICON_SIZES)[number], Buffer>,
 	outDir: string,
@@ -81,7 +62,6 @@ export function extensionIcons(options: ExtensionIconsOptions = {}): Plugin {
 
 		async buildStart() {
 			const icons = await generateIcons(absoluteSource)
-			await writeLog(absoluteSource, icons)
 
 			for (const [size, buffer] of icons) {
 				this.emitFile({
@@ -95,7 +75,6 @@ export function extensionIcons(options: ExtensionIconsOptions = {}): Plugin {
 		configureServer(server) {
 			const syncIcons = async () => {
 				const icons = await generateIcons(absoluteSource)
-				await writeLog(absoluteSource, icons)
 				await writeIconsToDir(icons, path.resolve(server.config.build.outDir))
 			}
 
